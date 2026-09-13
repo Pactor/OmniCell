@@ -1,0 +1,105 @@
+﻿#region License
+
+// Copyright (c) 2005-2014, CellAO Team
+// 
+// 
+// All rights reserved.
+// 
+// 
+// Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+// 
+// 
+//     * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+//     * Neither the name of the CellAO Team nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+// 
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+// LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// 
+
+#endregion
+
+namespace OmniCell.Database.Entities
+{
+    #region Usings ...
+
+    using OmniCell.Database.Dao;
+
+    #endregion
+
+    /// <summary>
+    /// </summary>
+    [Tablename("vendors")]
+    public class DBVendor : IDBEntity
+    {
+        /// <summary>
+        /// </summary>
+        public int Playfield { get; set; }
+
+        /// <summary>
+        /// </summary>
+        public float X { get; set; }
+
+        /// <summary>
+        /// </summary>
+        public float Y { get; set; }
+
+        /// <summary>
+        /// </summary>
+        public float Z { get; set; }
+
+        /// <summary>
+        /// </summary>
+        public float HeadingX { get; set; }
+
+        /// <summary>
+        /// </summary>
+        public float HeadingY { get; set; }
+
+        /// <summary>
+        /// </summary>
+        public float HeadingZ { get; set; }
+
+        /// <summary>
+        /// </summary>
+        public float HeadingW { get; set; }
+
+        /// <summary>
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// </summary>
+        public int TemplateId { get; set; }
+
+        /// <summary>
+        /// </summary>
+        public string Hash { get; set; }
+
+        /// <summary>
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
+        /// The character whose shop this is, or zero when it stands on its own.
+        /// </summary>
+        /// <remarks>
+        /// A vending machine is a fixture and is placed by the playfield file.
+        /// A shopkeeper's stock is the same kind of object with no place of its
+        /// own: it is wherever its character is, and the live server says so on
+        /// the wire - a VendingMachineFullUpdate for one of these carries the
+        /// character's identity in NpcIdentity and no coordinates at all.
+        /// </remarks>
+        public int Npc { get; set; }
+    }
+}

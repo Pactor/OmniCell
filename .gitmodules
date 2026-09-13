@@ -1,0 +1,3 @@
+﻿[submodule "OmniCell/Libraries/Source/msgpack-cli"]
+	path = OmniCell/Libraries/Source/msgpack-cli
+	url = https://github.com/msgpack/msgpack-cli.git

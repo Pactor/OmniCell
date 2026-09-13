@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  What a SpawnItem key grants, where a retail capture shows it.
+
+  SpawnItem (53064) carries a four character key, not an item id. The same
+  function also summons pets, whose keys live in mobtemplate. No table in
+  items.ocp, nanos.ocp, the database or the client ResourceDatabase maps these
+  keys to items: none is an item or nano stat value in either byte order, and
+  "LOMH" (HMOL as stored) occurs once in the whole client database, inside the
+  package's own function arguments.
+
+  Most rows below come from a capture of the package being opened: the
+  server granted the items in the same order as the package lists its keys.
+  The rest come from client data alone: a single-key package named
+  "Vacuum Packed <name>" where exactly one item in the client has that name.
+  Only keys whose item is unambiguous are recorded.
+
+  Fan sites were checked on 2026-09-13 and add nothing: AUNO and aogalaxy show
+  these keys as raw text ("User Summon Item HMOL"), aoitems.com no longer
+  serves AO data, and Tinkerplants' data.json has no general items.
+
+  Not recorded:
+    VPPK  (303475) - grants a bag, sent as ChestItemFullUpdate; item id not
+                     established.
+    WK1Q, NTQL (248261) - two keys, four items granted
+                     (20260909-141545 seq 2848-2855); which key gave which is
+                     not determinable from one opening.
+-->
+<ItemSpawns>
+  <!-- Package 303474, opened in 20260911-171203_s12 seq 1617-1634. -->
+  <Spawn Key="HMOL" Item="300673" Source="20260911-171203_s12 seq 1617" />
+  <Spawn Key="TNAR" Item="300690" Source="20260911-171203_s12 seq 1619" />
+  <Spawn Key="PUOX" Item="300693" Source="20260911-171203_s12 seq 1621" />
+  <Spawn Key="SUOX" Item="300696" Source="20260911-171203_s12 seq 1623" />
+  <Spawn Key="SEOX" Item="300700" Source="20260911-171203_s12 seq 1625 and 1627 (the key is listed twice)" />
+  <Spawn Key="GLOL" Item="300703" Source="20260911-171203_s12 seq 1629" />
+  <Spawn Key="BLOX" Item="300705" Source="20260911-171203_s12 seq 1631" />
+
+  <!-- Package 303475, opened in 20260911-171203_s12 seq 1590-1606. -->
+  <Spawn Key="MKZD" Item="303384" Source="20260911-171203_s12 seq 1590" />
+  <Spawn Key="GGNW" Item="303385" Source="20260911-171203_s12 seq 1592" />
+  <Spawn Key="LDSF" Item="303388" Source="20260911-171203_s12 seq 1594" />
+  <Spawn Key="CPNM" Item="303376" Source="20260911-171203_s12 seq 1596 and 1598 (the key is listed twice)" />
+  <Spawn Key="SABC" Item="303474" Source="20260911-171203_s12 seq 1601" />
+
+  <!-- Item 295999, opened in 20260909-141545 seq 729-733. -->
+  <Spawn Key="BRAN" Item="95577" Source="20260909-141545 seq 729" />
+
+  <!-- From client data, no capture: the package's name, and the only item with that name. -->
+  <Spawn Key="ADHA" Item="87810" Source="client data: 302295 'Vacuum Packed Hacker Tool' has only SpawnItem [ADHA, 1, 0]; 87810 is the only item named 'Hacker Tool'" />
+  <Spawn Key="GDNF" Item="284567" Source="client data: 303466 'Vacuum Packed Santa Bag' has only SpawnItem [GDNF, 1, 0]; 284567 is the only item named 'Santa Bag'" />
+</ItemSpawns>

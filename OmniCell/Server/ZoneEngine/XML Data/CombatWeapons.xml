@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Normalized combat-weapon descriptors observed in the captures. These are
+  emulator data, not client resource files. Keeping them here makes the packet
+  data-driven instead of tying it to particular item or nano ids in code.
+-->
+<CombatWeapons DefaultInventoryId="1" DefaultAttackSlot="6">
+  <PlayerWeaponSlot Placement="6" />
+  <PlayerWeaponSlot Placement="8" />
+  <PlayerInnate LowTemplateId="43712" HighTemplateId="144745" AttackSelector="100" AttackCode="MAAT" />
+  <PlayerInnate LowTemplateId="211399" HighTemplateId="211400" AttackSelector="144" AttackCode="DIIT" />
+  <PlayerInnate LowTemplateId="70292" HighTemplateId="70293" AttackSelector="142" AttackCode="BRAW" />
+</CombatWeapons>

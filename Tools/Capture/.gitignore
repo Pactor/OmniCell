@@ -1,0 +1,45 @@
+# Captured traffic does not live here any more.
+#
+# It lives outside the repository entirely - see capture-dir.bat, which every
+# capture and decode script calls to find it. A capture is a live Anarchy
+# Online session from a real account: the login handshake, the account name and
+# the credential blob that goes with it, private messages, and every playfield
+# the character walked through. That must not reach a public repository, and a
+# list of ignore patterns is the wrong thing to rely on to keep it out - it only
+# has to be forgotten once, and it was: 81 stream csv files and 27 decoded
+# transcripts were tracked here until 2026-09-11.
+#
+# So the rule is now the stronger one. The data is not in the tree, and cannot
+# be committed by accident. The patterns below are a backstop for anything that
+# writes into this directory anyway, not the primary defence.
+
+pcap/
+*.pcapng
+*.pcap
+*.marks.txt
+
+# Reassembled streams, decoded output and everything derived from them.
+*.csv
+*.txt
+!n3imp.txt
+!client-actions.csv
+!client-commands.csv
+
+# Extracted game content. AreaExtract writes the quest text, NPC dialogue and
+# object placements of a live playfield out of the traffic. That is Funcom's
+# content, lifted verbatim - useful to build against, not ours to redistribute.
+# The tool that produces it is in git; what it produces is not.
+arete-landing/
+extracted-*/
+playfields.dat
+
+# Build output. build.bat compiles the tools into bin\ and copies the runtime
+# assemblies they need from OmniCell/Built beside them. Rebuild with build.bat.
+bin/
+*.tmp
+
+# Backstop, in case a binary lands outside bin\ anyway.
+*.exe
+*.pdb
+*.dll
+*.exe.config

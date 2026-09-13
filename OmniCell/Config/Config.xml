@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Defaults. This file is in git, so it holds placeholders and nothing else.
+
+  Do not put your database password or your server's address in here. Run
+  configure-server.bat in the root of the repository instead: it writes
+  Config.local.xml, which is read in preference to this file and is ignored by
+  git, so a real password cannot be committed by forgetting.
+
+  Everything below works as it stands for a server on the machine you are
+  sitting at, played by that machine only, once the database details are
+  filled in.
+-->
+<Config>
+
+  <!--
+    THE TWO KINDS OF ADDRESS, which are easy to mix up and behave very
+    differently when you do.
+
+    ListenIP is what the engines BIND to. It decides who is able to reach
+    them at all.
+
+        127.0.0.1   only this machine. The default, and right for testing.
+        0.0.0.0     every network card. Needed for anyone else to connect.
+
+    ZoneIP and ChatIP are what the server TELLS THE CLIENT to connect to
+    next. Logging in is a relay: the login engine hands the client off to a
+    zone, and the zone hands it off to chat, each by address. So these must
+    be an address the PLAYER can reach, which is not always the one the
+    server binds to.
+
+        127.0.0.1        players on this machine
+        192.168.x.x      players on your network
+        your public IP   players on the internet, with the ports forwarded
+        a hostname       resolved at handoff, so a changing address is fine
+
+    Getting this wrong has one obvious symptom: login works, character
+    selection works, and then the client hangs or drops on entering the
+    world. That is the handoff, sending the player to an address only the
+    server itself can reach.
+  -->
+  <ListenIP>127.0.0.1</ListenIP>
+  <ZoneIP>127.0.0.1</ZoneIP>
+  <ChatIP>127.0.0.1</ChatIP>
+
+  <!--
+    The inter-server channel, which the engines use to talk to each other.
+    It is unauthenticated: anything that can reach this port can act as one
+    of the engines. Leave it on loopback unless you have firewalled it
+    yourself, and never set it to 0.0.0.0 to "make things work".
+  -->
+  <CommListenIP>127.0.0.1</CommListenIP>
+
+  <!-- Ports. The client is told these along with the addresses above. -->
+  <LoginPort>7500</LoginPort>
+  <ZonePort>7501</ZonePort>
+  <ChatPort>7012</ChatPort>
+  <CommPort>6996</CommPort>
+
+  <!--
+    The database. See Documentation/Running-a-server.md for creating it and
+    loading the schema.
+
+    These are placeholders and will not connect. Put the real ones in
+    Config.local.xml, not here.
+  -->
+  <SQLType>MySql</SQLType>
+  <MysqlConnection>Database=omnicell;Data Source=localhost;User ID=omnicell;Password=CHANGEME;SslMode=None</MysqlConnection>
+  <MsSqlConnection>Data Source=localhost;Inital Catalog=omnicell;UserID=omnicell;Password=CHANGEME;Trusted_Connection=false</MsSqlConnection>
+
+  <!-- Logging -->
+  <SqlLog>true</SqlLog>
+  <LogChat>false</LogChat>
+
+  <!-- Shown to players as they enter. {0} becomes the name and version. -->
+  <Motd>Welcome to OmniCell {0}</Motd>
+
+  <!-- en, de, ro. Default en. -->
+  <Locale>en</Locale>
+
+  <!--
+    Relaying in-game chat to an IRC channel. Off by default: it sends what
+    your players say to a third party, so it should be a decision rather
+    than a default.
+  -->
+  <UseIRCRelay>false</UseIRCRelay>
+  <IRCServer>irc.example.net</IRCServer>
+  <RelayBotNick>OmniCell</RelayBotNick>
+  <RelayBotIdent>OmniCell</RelayBotIdent>
+  <IRCChannel>#OmniCellRelay</IRCChannel>
+  <RelayIngameChannel>OmniCell-Relay</RelayIngameChannel>
+
+  <!-- Address the IRC relay gives out in reply to !serverinfo. -->
+  <WebHostName></WebHostName>
+
+  <!--
+    Diffie-Hellman parameters for the login handshake. Protocol constants
+    shared with the game client, not secrets: changing them requires a
+    patched client and will stop every unpatched one from logging in.
+  -->
+  <LoginDhPrivateKey>7ad852c6494f664e8df21446285ecd6f400cf20e1d872ee96136d7744887424b</LoginDhPrivateKey>
+  <LoginDhPrime>eca2e8c85d863dcdc26a429a71a9815ad052f6139669dd659f98ae159d313d13c6bf2838e10a69b6478b64a24bd054ba8248e8fa778703b418408249440b2c1edd28853e240d8a7e49540b76d120d3b1ad2878b1b99490eb4a2a5e84caa8a91cecbdb1aa7c816e8be343246f80c637abc653b893fd91686cf8d32d6cfe5f2a6f</LoginDhPrime>
+</Config>

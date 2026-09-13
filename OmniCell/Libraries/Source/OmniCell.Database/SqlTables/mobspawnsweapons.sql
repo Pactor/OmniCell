@@ -1,0 +1,20 @@
+CREATE TABLE  `mobspawnsweapons` (
+  `Id` int(32) NOT NULL AUTO_INCREMENT,
+  `SpawnId` int(32) NOT NULL,
+  `Playfield` int(32) NOT NULL,
+  `WeaponType` int(32) NOT NULL DEFAULT 0,
+  `WeaponInstance` int(32) NOT NULL DEFAULT 0,
+  `InventoryId` int(32) DEFAULT NULL,
+  `BodyLocation` int(32) DEFAULT NULL,
+  `ItemFlags` int(32) NOT NULL DEFAULT 0,
+  `ItemLowId` int(32) NOT NULL DEFAULT 0,
+  `ItemHighId` int(32) NOT NULL DEFAULT 0,
+  `QualityLevel` int(32) NOT NULL DEFAULT 1,
+  `Unknown6` int(32) NOT NULL DEFAULT 0,
+  `Unknown7` int(32) NOT NULL DEFAULT 0,
+  `ItemDelay` int(32) DEFAULT NULL,
+  `RechargeDelay` int(32) DEFAULT NULL,
+  `Energy` int(32) DEFAULT NULL,
+  PRIMARY KEY (`Id`) USING BTREE,
+  KEY `spawn` (`SpawnId`,`Playfield`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

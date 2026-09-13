@@ -1,0 +1,33 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# cmd reads batch files with CRLF line endings. Checked out with LF only, goto
+# and call can miss their labels, so every clone gets CRLF whatever its git
+# settings say.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# OmniCell content packs and the canonical item-name SQL must come out of a
+# clone byte for byte.
+*.ocp binary
+OmniCell/Libraries/Source/OmniCell.Database/SqlTables/itemnames.sql -text
+
+# Custom for Visual Studio
+*.cs     diff=csharp
+*.sln    merge=union
+*.csproj merge=union
+*.vbproj merge=union
+*.fsproj merge=union
+*.dbproj merge=union
+
+# Standard to msysgit
+*.doc	 diff=astextplain
+*.DOC	 diff=astextplain
+*.docx diff=astextplain
+*.DOCX diff=astextplain
+*.dot  diff=astextplain
+*.DOT  diff=astextplain
+*.pdf  diff=astextplain
+*.PDF	 diff=astextplain
+*.rtf	 diff=astextplain
+*.RTF	 diff=astextplain

@@ -1,0 +1,109 @@
+﻿#region License
+
+// Copyright (c) 2005-2014, CellAO Team
+// 
+// 
+// All rights reserved.
+// 
+// 
+// Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+// 
+// 
+//     * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+//     * Neither the name of the CellAO Team nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+// 
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+// LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// 
+
+#endregion
+
+namespace ZoneEngine.Core.Packets
+{
+    #region Usings ...
+
+    using OmniCell.Core.Inventory;
+    using OmniCell.Core.Items;
+    using OmniCell.Core.Network;
+
+    using SmokeLounge.AOtomation.Messaging.GameData;
+    using SmokeLounge.AOtomation.Messaging.Messages.N3Messages;
+
+    using ZoneEngine.Core.Combat;
+
+    #endregion
+
+    /// <summary>
+    /// </summary>
+    public static class Equip
+    {
+        #region Public Methods and Operators
+
+        /// <summary>
+        /// </summary>
+        /// <param name="client">
+        /// </param>
+        /// <param name="page">
+        /// </param>
+        /// <param name="slotNumber">
+        /// </param>
+        public static void Send(IZoneClient client, IInventoryPage page, int slotNumber)
+        {
+            if (page is WeaponInventoryPage && CombatWeaponProfiles.IsPlayerWeaponSlot(slotNumber))
+            {
+                Identity weaponIdentity =
+                    MessageHandlers.WeaponItemFullUpdateMessageHandler.PlayerWeaponIdentity(
+                        client.Controller.Character,
+                        slotNumber);
+                var stanceMessage = new CharacterActionMessage
+                                    {
+                                        Identity = client.Controller.Character.Identity,
+                                        Action = CharacterActionType.ChangeAnimationAndStance
+                                    };
+                client.Controller.Character.Send(stanceMessage);
+
+                var equipMessage = new CharacterActionMessage
+                                   {
+                                       Identity = client.Controller.Character.Identity,
+                                       Action = CharacterActionType.Equip,
+                                       Target = weaponIdentity,
+                                       Parameter1 = 0,
+                                       Parameter2 = slotNumber
+                                   };
+                client.Controller.Character.Send(equipMessage);
+                return;
+            }
+
+            IItem item = page[slotNumber];
+            var templateActionMessage = new TemplateActionMessage
+                                        {
+                                            Identity = client.Controller.Character.Identity,
+                                            ItemHighId = item.HighID,
+                                            ItemLowId = item.LowID,
+                                            Quality = item.Quality,
+                                            Unknown1 = 1,
+                                            Unknown2 = page is SocialArmorInventoryPage ? 7 : 6,
+                                            Placement = new Identity
+                                                        {
+                                                            Type = (IdentityType)page.Identity.Instance,
+                                                            Instance = slotNumber
+                                                        },
+                                            Unknown = 0
+                                        };
+            client.Controller.Character.Send(templateActionMessage);
+        }
+
+        #endregion
+    }
+}

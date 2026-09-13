@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Experience needed to reach each level.
+
+  Read out of captured NewLevel messages from the live server, which carry both
+  thresholds either side of the level being reached: the experience needed for
+  the level just gained and for the next one. Seven captures across several
+  18.8.x sessions agree on every value below, and the pairs chain correctly -
+  the "next" of level 2 is the "this" of level 3, and so on - which is what
+  makes these thresholds rather than guesses.
+
+  The emulator proof-of-concept stops at level 10. Levels 9 and 10 use the
+  canonical Rubi-Ka experience thresholds already represented by
+  OmniCell.Stats.SpecialStats.XPTable; they are not extrapolated.
+-->
+<Levels>
+  <Level id="2" experience="1450" />
+  <Level id="3" experience="4050" />
+  <Level id="4" experience="7150" />
+  <Level id="5" experience="11150" />
+  <Level id="6" experience="15650" />
+  <Level id="7" experience="20650" />
+  <Level id="8" experience="26150" />
+  <Level id="9" experience="32150" />
+  <Level id="10" experience="38650" />
+</Levels>
