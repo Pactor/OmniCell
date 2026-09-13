@@ -85,6 +85,7 @@ namespace Extractor_Serializer
     using System.Text.RegularExpressions;
 
     using OmniCell.Core.Content;
+    using OmniCell.Core.Functions;
     using OmniCell.Core.Items;
     using OmniCell.Core.Nanos;
     using OmniCell.Core.Playfields;
@@ -618,6 +619,12 @@ namespace Extractor_Serializer
         /// </param>
         private static void Main(string[] args)
         {
+            if ((args.Length > 0) && string.Equals(args[0], "--verify-parser", StringComparison.OrdinalIgnoreCase))
+            {
+                VerifyParser(args);
+                return;
+            }
+
             if ((args.Length > 0) && string.Equals(args[0], "--convert-caches", StringComparison.OrdinalIgnoreCase))
             {
                 ConvertLegacyCaches(args);
@@ -764,6 +771,114 @@ namespace Extractor_Serializer
 
             Console.WriteLine("Press a key to exit.");
             Console.ReadLine();
+        }
+
+        /// <summary>
+        /// Parses every item and nano without writing files or entering the
+        /// interactive extractor workflow. This is safe for automated parser
+        /// validation against a specific client database.
+        /// </summary>
+        private static void VerifyParser(string[] args)
+        {
+            if (args.Length != 2)
+            {
+                Console.Error.WriteLine("Usage: Extractor Serializer.exe --verify-parser <rdb-directory>");
+                Environment.ExitCode = 2;
+                return;
+            }
+
+            try
+            {
+                string rdbDirectory = Path.GetFullPath(args[1]);
+                int itemCount = 0;
+                int nanoCount = 0;
+                int bareFunctionCount = 0;
+                var itemSamples = new List<ItemTemplate>();
+                var nanoSamples = new List<NanoFormula>();
+                using (var source = new Extractor(rdbDirectory))
+                {
+                    var parser = new NewParser();
+                    foreach (int recordId in source.GetRecordInstances(Extractor.RecordType.Item))
+                    {
+                        ItemTemplate item = parser.ParseItem(
+                            Extractor.RecordType.Item,
+                            recordId,
+                            source.GetRecordData(Extractor.RecordType.Item, recordId),
+                            null);
+                        bareFunctionCount += item.Record.BareFunctions.Count;
+                        if (itemSamples.Count == 0 ||
+                            (item.Record.BareFunctions.Count > 0 && !itemSamples.Any(x => x.Record.BareFunctions.Count > 0)))
+                        {
+                            itemSamples.Add(item);
+                        }
+                        itemCount++;
+                    }
+
+                    foreach (int recordId in source.GetRecordInstances(Extractor.RecordType.Nano))
+                    {
+                        NanoFormula nano = parser.ParseNano(recordId, source.GetRecordData(Extractor.RecordType.Nano, recordId), null);
+                        bareFunctionCount += nano.Record.BareFunctions.Count;
+                        if (nanoSamples.Count == 0 ||
+                            (nano.Record.BareFunctions.Count > 0 && !nanoSamples.Any(x => x.Record.BareFunctions.Count > 0)))
+                        {
+                            nanoSamples.Add(nano);
+                        }
+                        nanoCount++;
+                    }
+                }
+
+                VerifyParserPackRoundTrip(itemSamples, nanoSamples);
+                Console.WriteLine(
+                    "Parser verified {0} items and {1} nanos ({2} bare functions); v3 content-pack round trip passed.",
+                    itemCount,
+                    nanoCount,
+                    bareFunctionCount);
+            }
+            catch (Exception exception)
+            {
+                Console.Error.WriteLine("Parser verification failed: " + exception.Message);
+                Environment.ExitCode = 1;
+            }
+        }
+
+        private static void VerifyParserPackRoundTrip(List<ItemTemplate> items, List<NanoFormula> nanos)
+        {
+            // The current 18.8.62 client has no bare body functions, so include
+            // one synthetic value to exercise the version 3-only pack field.
+            if (items.Count > 0 && !items.Any(x => x.Record.BareFunctions.Count > 0))
+            {
+                items[0].Record.BareFunctions.Add(new Function
+                {
+                    FunctionType = 53000,
+                    Target = 2,
+                    TickCount = 1,
+                    TickInterval = 0,
+                    Record = new FunctionRecordData
+                    {
+                        LeadingZeroWords = 1,
+                        Header1 = 0,
+                        Header2 = 4,
+                        Header3 = 0,
+                        Arguments = new byte[] { 1, 2, 3, 4 }
+                    }
+                });
+            }
+
+            string stem = Path.Combine(Path.GetTempPath(), "omnicell-parser-" + Guid.NewGuid().ToString("N"));
+            string itemFile = stem + "-items.ocp";
+            string nanoFile = stem + "-nanos.ocp";
+            try
+            {
+                OmniCellContentPack.WriteItems(itemFile, items);
+                OmniCellContentPack.WriteNanos(nanoFile, nanos);
+                VerifyCanonicalRoundTrip(itemFile, path => OmniCellContentPack.WriteItems(path, OmniCellContentPack.ReadItems(itemFile)));
+                VerifyCanonicalRoundTrip(nanoFile, path => OmniCellContentPack.WriteNanos(path, OmniCellContentPack.ReadNanos(nanoFile)));
+            }
+            finally
+            {
+                if (File.Exists(itemFile)) File.Delete(itemFile);
+                if (File.Exists(nanoFile)) File.Delete(nanoFile);
+            }
         }
 
         /// <summary>

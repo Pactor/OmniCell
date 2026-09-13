@@ -29,13 +29,14 @@ namespace OmniCell.Core.Content
     /// Version 2 adds, after each item and nano, the rest of its client record
     /// (<see cref="RecordData"/>), and after each function its header int32s, raw
     /// requirement triples and raw argument bytes (<see cref="FunctionRecordData"/>).
-    /// Everything version 1 holds is written and read exactly as before. Version 1
-    /// packs still load; their Record fields are null.
+    /// Version 3 adds functions stored directly in the record body. Older packs
+    /// still load; version 1 Record fields are null and version 2 bare-function
+    /// lists are empty.
     /// </remarks>
     public static class OmniCellContentPack
     {
         private const string Magic = "OMNICELL-CONTENT";
-        private const int FormatVersion = 2;
+        private const int FormatVersion = 3;
         private const int OldestReadableVersion = 1;
 
         private enum ContentKind : byte
@@ -91,7 +92,7 @@ namespace OmniCell.Core.Content
                         Actions = ReadActions(reader),
                         Events = ReadEvents(reader, version)
                     };
-                    if (version >= 2) item.Record = ReadRecordData(reader);
+                    if (version >= 2) item.Record = ReadRecordData(reader, version);
                     result.Add(item);
                 }
                 return result;
@@ -140,7 +141,7 @@ namespace OmniCell.Core.Content
                         Actions = ReadActions(reader),
                         Events = ReadEvents(reader, version)
                     };
-                    if (version >= 2) nano.Record = ReadRecordData(reader);
+                    if (version >= 2) nano.Record = ReadRecordData(reader, version);
                     result.Add(nano);
                 }
                 return result;
@@ -518,9 +519,15 @@ namespace OmniCell.Core.Content
                     if (block.Entries != null) foreach (byte[] entry in block.Entries) WriteBytes(writer, entry);
                 }
             }
+
+            writer.Write(record.BareFunctions == null ? 0 : record.BareFunctions.Count);
+            if (record.BareFunctions != null)
+            {
+                foreach (Function function in record.BareFunctions) WriteFunction(writer, function);
+            }
         }
 
-        private static RecordData ReadRecordData(BinaryReader reader)
+        private static RecordData ReadRecordData(BinaryReader reader, int version)
         {
             if (!reader.ReadBoolean()) return null;
             var record = new RecordData
@@ -553,6 +560,12 @@ namespace OmniCell.Core.Content
                 int entries = ReadCount(reader, "shop entries");
                 for (int j = 0; j < entries; j++) block.Entries.Add(ReadBytes(reader));
                 record.ShopBlocks.Add(block);
+            }
+
+            if (version >= 3)
+            {
+                int functions = ReadCount(reader, "bare functions");
+                for (int i = 0; i < functions; i++) record.BareFunctions.Add(ReadFunction(reader, version));
             }
 
             return record;

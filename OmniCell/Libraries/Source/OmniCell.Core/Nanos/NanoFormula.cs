@@ -219,6 +219,7 @@ namespace OmniCell.Core.Nanos
             nanoFormula.flags = this.flags;
             nanoFormula.Instance = this.Instance;
             nanoFormula.ItemType = this.ItemType;
+            nanoFormula.Record = this.Record;
 
             return nanoFormula;
         }

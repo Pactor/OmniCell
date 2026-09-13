@@ -43,6 +43,8 @@ namespace Extractor_Serializer
 
     using MsgPack;
 
+    using OmniCell.Core.Content;
+
     using Utility;
 
     #endregion
@@ -90,48 +92,27 @@ namespace Extractor_Serializer
         /// <param name="ITEM">
         /// The item.
         /// </param>
-        public void ParseAnimSoundSet(int typeN, ItemTemplate ITEM)
+        private void ParseAnimSoundSet(int blockKey, RecordData record)
         {
-            int num = this.br.ReadInt32();
-            int num2 = this.br.Read3F1();
-            int arg_27_0 = 1;
-            int num3 = num2;
-            int num4 = arg_27_0;
-            checked
+            var set = new AnimSoundSet
             {
-                while (true)
+                BlockKey = blockKey,
+                Value = this.br.ReadInt32()
+            };
+            int count = this.Read3F1Count("animation/sound entries");
+            for (int i = 0; i < count; i++)
+            {
+                var entry = new AnimSoundEntry { Key = this.br.ReadInt32() };
+                int valueCount = this.Read3F1Count("animation/sound values");
+                for (int j = 0; j < valueCount; j++)
                 {
-                    int arg_13B_0 = num4;
-                    int num5 = num3;
-                    if (arg_13B_0 > num5)
-                    {
-                        break;
-                    }
-
-                    List<int> list = new List<int>();
-                    int actionNum = this.br.ReadInt32();
-                    int num6 = this.br.Read3F1();
-                    int arg_5C_0 = 1;
-                    int num7 = num6;
-                    int num8 = arg_5C_0;
-                    while (true)
-                    {
-                        int arg_96_0 = num8;
-                        num5 = num7;
-                        if (arg_96_0 > num5)
-                        {
-                            break;
-                        }
-
-                        int item = this.br.ReadInt32();
-                        list.Add(item);
-                        num8++;
-                    }
-
-                    // TODO: Add to item class
-                    num4++;
+                    entry.Values.Add(this.br.ReadInt32());
                 }
+
+                set.Entries.Add(entry);
             }
+
+            record.AnimSoundSets.Add(set);
         }
 
         /// <summary>
@@ -155,26 +136,13 @@ namespace Extractor_Serializer
         {
             int rectype = (int)recordType;
             this.br = new BufferedReader(rectype, recnum, data);
-            ItemTemplate aoi = new ItemTemplate();
+            var record = new RecordData();
+            var aoi = new ItemTemplate { ID = recnum, Record = record };
 
-            aoi.ID = recnum;
-            this.br.Skip(16);
-
-            int num = this.br.Read3F1();
-            int argc0 = 0;
-
-            int num2 = num - 1;
-            int num3 = argc0;
-
-            while (true)
+            this.ReadHeader(record);
+            int attributeCount = this.Read3F1Count("item attributes");
+            for (int i = 0; i < attributeCount; i++)
             {
-                int arg1c2 = num3;
-                int num4 = num2;
-                if (arg1c2 > num4)
-                {
-                    break;
-                }
-
                 int attrkey = this.br.ReadInt32();
                 int attrval = this.br.ReadInt32();
                 if (attrkey == 54)
@@ -185,19 +153,15 @@ namespace Extractor_Serializer
                 {
                     aoi.Stats.Add(attrkey, attrval);
                 }
-
-                num3++;
             }
 
-            this.br.Skip(8);
+            this.ExpectInt32(0x15, "name block key");
+            this.ExpectInt32(0x21, "name block value");
 
-            short num5 = this.br.ReadInt16();
-            short num6 = this.br.ReadInt16();
-            string itemname = string.Empty;
-            if (num5 > 0)
-            {
-                itemname = this.br.ReadString(num5);
-            }
+            int nameLength = this.ReadLength16("item name");
+            int descriptionLength = this.ReadLength16("item description");
+            string itemname = this.br.ReadString(nameLength);
+            record.Description = this.br.ReadString(descriptionLength);
 
             if (itemNamesSqlList != null)
             {
@@ -208,69 +172,7 @@ namespace Extractor_Serializer
                     aoi.getItemAttribute(79)));
             }
 
-            if (num6 > 0)
-            {
-                this.br.ReadString(num6); // Read and discard Description
-            }
-
-            bool flag4 = true;
-            checked
-            {
-                while (this.br.Ptr < this.br.Buffer.Length - 8 && flag4)
-                {
-                    switch (this.br.ReadInt32()) // what are these ints ?
-                    {
-                        case 2:
-                            this.ParseFunctionSet(aoi.Events);
-                            break;
-                        case 3:
-                        case 5:
-                        case 7:
-                        case 8:
-                        case 9:
-                        case 10:
-                        case 11:
-                        case 12:
-                        case 13:
-                        case 15:
-                        case 16:
-                        case 17:
-                        case 18:
-                        case 19:
-                        case 21:
-                            goto IL_4BF;
-                        case 4:
-                            this.ParseAtkDefSet(aoi.Attack, aoi.Defend);
-                            break;
-                        case 6:
-                            {
-                                this.br.Skip(4);
-                                int count = this.br.Read3F1() * 8;
-                                this.br.Skip(count);
-                                break;
-                            }
-
-                        case 14:
-                            this.ParseAnimSoundSet(1, aoi);
-                            break;
-                        case 20:
-                            this.ParseAnimSoundSet(2, aoi);
-                            break;
-                        case 22:
-                            this.ParseActionSet(aoi.Actions);
-                            break;
-                        case 23:
-                            this.ParseShopHash(aoi.Events);
-                            break;
-                        default:
-                            goto IL_4BF;
-                    }
-
-                    continue;
-                IL_4BF:
-                    flag4 = false;
-                }
-            }
+            this.ParseBody(record, aoi.Attack, aoi.Defend, aoi.Actions, aoi.Events);
 
             return aoi;
         }
@@ -296,43 +198,25 @@ namespace Extractor_Serializer
         public NanoFormula ParseNano(int recnum, byte[] data, List<string> itemNamesSqlList)
         {
             this.br = new BufferedReader((int)Extractor.RecordType.Nano, recnum, data);
-            NanoFormula aon = new NanoFormula();
-            aon.ID = recnum;
-            this.br.Skip(16);
+            var record = new RecordData();
+            var aon = new NanoFormula { ID = recnum, Record = record };
 
-            int numberOfAttributes = this.br.Read3F1() - 1;
-            int counter = 0;
-
-            while (true)
+            this.ReadHeader(record);
+            int attributeCount = this.Read3F1Count("nano attributes");
+            for (int i = 0; i < attributeCount; i++)
             {
-                if (counter > numberOfAttributes)
-                {
-                    break;
-                }
-
                 int attrkey = this.br.ReadInt32();
                 int attrval = this.br.ReadInt32();
-                if (attrkey == 54)
-                {
-                    aon.Stats.Add(attrkey, attrval);
-                }
-                else
-                {
-                    aon.Stats.Add(attrkey, attrval);
-                }
-
-                counter++;
+                aon.Stats.Add(attrkey, attrval);
             }
 
-            this.br.Skip(8);
+            this.ExpectInt32(0x15, "name block key");
+            this.ExpectInt32(0x21, "name block value");
 
-            short nameLength = this.br.ReadInt16();
-            short descriptionLength = this.br.ReadInt16();
-            string nanoName = string.Empty;
-            if (nameLength > 0)
-            {
-                nanoName = this.br.ReadString(nameLength);
-            }
+            int nameLength = this.ReadLength16("nano name");
+            int descriptionLength = this.ReadLength16("nano description");
+            string nanoName = this.br.ReadString(nameLength);
+            record.Description = this.br.ReadString(descriptionLength);
 
             // The name was previously read and dropped on the floor, so nanos never
             // reached the itemnames table at all. ParseItem records the same four
@@ -348,71 +232,125 @@ namespace Extractor_Serializer
                         aon.getItemAttribute(79)));
             }
 
-            if (descriptionLength > 0)
-            {
-                this.br.ReadString(descriptionLength); // Read and discard Description
-            }
-
-            bool flag4 = true;
-            checked
-            {
-                while (this.br.Ptr < this.br.Buffer.Length - 8 && flag4)
-                {
-                    switch (this.br.ReadInt32())
-                    {
-                        case 2:
-                            this.ParseFunctionSet(aon.Events);
-                            break;
-                        case 3:
-                        case 5:
-                        case 7:
-                        case 8:
-                        case 9:
-                        case 10:
-                        case 11:
-                        case 12:
-                        case 13:
-                        case 15:
-                        case 16:
-                        case 17:
-                        case 18:
-                        case 19:
-                        case 21:
-                            goto IL_4BF;
-                        case 4:
-                            this.ParseAtkDefSet(aon.Attack, aon.Defend);
-                            break;
-                        case 6:
-                            {
-                                this.br.Skip(4);
-                                int count = this.br.Read3F1() * 8;
-                                this.br.Skip(count);
-                                break;
-                            }
-
-                        case 14:
-                            this.ParseAnimSoundSet(1, null);
-                            break;
-                        case 20:
-                            this.ParseAnimSoundSet(2, null);
-                            break;
-                        case 22:
-                            this.ParseActionSet(aon.Actions);
-                            break;
-                        case 23:
-                            this.ParseShopHash(aon.Events);
-                            break;
-                        default:
-                            goto IL_4BF;
-                    }
-
-                    continue;
-                IL_4BF:
-                    flag4 = false;
-                }
-            }
+            this.ParseBody(record, aon.Attack, aon.Defend, aon.Actions, aon.Events);
 
             return aon;
+        }
+
+        private void ReadHeader(RecordData record)
+        {
+            record.HeaderA = this.br.ReadInt32();
+            record.HeaderB = this.br.ReadInt32();
+            record.HeaderC = this.br.ReadInt32();
+            this.ExpectInt32(0x17, "attribute block key");
+        }
+
+        private void ParseBody(
+            RecordData record,
+            Dictionary<int, int> attack,
+            Dictionary<int, int> defend,
+            List<AOAction> actions,
+            List<Event> events)
+        {
+            while (this.br.Ptr < this.br.Buffer.Length)
+            {
+                int blockOffset = this.br.Ptr;
+                int blockKey = this.br.ReadInt32();
+                record.BlockOrder.Add(blockKey);
+                switch (blockKey)
+                {
+                    case 0:
+                        break;
+                    case 2:
+                        this.ParseFunctionSet(events);
+                        break;
+                    case 4:
+                        this.ParseAtkDefSet(attack, defend, record);
+                        break;
+                    case 6:
+                        this.ParseBlock6(record);
+                        break;
+                    case 14:
+                    case 20:
+                        this.ParseAnimSoundSet(blockKey, record);
+                        break;
+                    case 22:
+                        this.ParseActionSet(actions, record);
+                        break;
+                    case 23:
+                        this.ParseShopHash(events, record);
+                        break;
+                    default:
+                        if (this.FunctionSets.ContainsKey(blockKey.ToString()))
+                        {
+                            record.BareFunctions.Add(this.ParseFunction(blockKey, 0));
+                            break;
+                        }
+
+                        throw this.ParseError("unknown body block " + blockKey, blockOffset);
+                }
+            }
+        }
+
+        private void ParseBlock6(RecordData record)
+        {
+            this.ExpectInt32(0x1B, "block 6 value");
+            int count = this.Read3F1Count("block 6 pairs");
+            for (int i = 0; i < count; i++)
+            {
+                record.Block6Pairs.Add(this.br.ReadInt32());
+                record.Block6Pairs.Add(this.br.ReadInt32());
+            }
+        }
+
+        private int ReadLength16(string description)
+        {
+            int offset = this.br.Ptr;
+            short value = this.br.ReadInt16();
+            if (value < 0)
+            {
+                throw this.ParseError("negative " + description + " length " + value, offset);
+            }
+
+            return value;
+        }
+
+        private int Read3F1Count(string description)
+        {
+            int offset = this.br.Ptr;
+            int encoded = this.br.ReadInt32();
+            if (encoded < 1009 || (encoded % 1009) != 0)
+            {
+                throw this.ParseError("invalid " + description + " counter " + encoded, offset);
+            }
+
+            int count = (encoded / 1009) - 1;
+            if (count < 0 || count > 10000000)
+            {
+                throw this.ParseError("out-of-range " + description + " count " + count, offset);
+            }
+
+            return count;
+        }
+
+        private void ExpectInt32(int expected, string description)
+        {
+            int offset = this.br.Ptr;
+            int actual = this.br.ReadInt32();
+            if (actual != expected)
+            {
+                throw this.ParseError(
+                    description + " is " + actual + ", expected " + expected,
+                    offset);
+            }
+        }
+
+        private InvalidDataException ParseError(string message, int offset)
+        {
+            return new InvalidDataException(
+                "RDB record type " + this.br.RecordType + " id " + this.br.RecordNum
+                + " at offset 0x" + offset.ToString("X") + ": " + message
+                + ". Nearby bytes: " + this.br.DescribeBytes(offset, 16, 32));
         }
 
         /// <summary>
@@ -509,38 +447,37 @@ namespace Extractor_Serializer
         /// </returns>
         public List<Requirement> ReadReqs(int numreqs)
         {
-            int num4 = numreqs;
-            bool flag = num4 > 0;
-            if (flag)
+            if (numreqs > 0)
             {
-                List<rawreqs> list = new List<rawreqs>();
-                int arg_86_0 = 0;
-                int num5 = num4 - 1;
-                int num6 = arg_86_0;
-                while (true)
-                {
-                    int arg_F0_0 = num6;
-                    if (arg_F0_0 > num5)
-                    {
-                        break;
-                    }
-
-                    int stat = this.br.ReadInt32();
-                    int val = this.br.ReadInt32();
-                    int ops = this.br.ReadInt32();
-                    rawreqs r = new rawreqs();
-                    r.ops = ops;
-                    r.stat = stat;
-                    r.val = val;
-                    list.Add(r);
-
-                    num6++;
-                }
-
-                return this.ParseReqs(list);
+                return this.ParseReqs(this.ReadRawReqs(numreqs, null));
             }
 
             return new List<Requirement>();
+        }
+
+        private List<rawreqs> ReadRawReqs(int count, List<int> flattened)
+        {
+            if (count < 0 || count > 1000000)
+            {
+                throw this.ParseError("invalid requirement count " + count, this.br.Ptr - 4);
+            }
+
+            var result = new List<rawreqs>(count);
+            for (int i = 0; i < count; i++)
+            {
+                int stat = this.br.ReadInt32();
+                int value = this.br.ReadInt32();
+                int operation = this.br.ReadInt32();
+                result.Add(new rawreqs { stat = stat, val = value, ops = operation });
+                if (flattened != null)
+                {
+                    flattened.Add(stat);
+                    flattened.Add(value);
+                    flattened.Add(operation);
+                }
+            }
+
+            return result;
         }
 
         #endregion
@@ -553,7 +490,8 @@ namespace Extractor_Serializer
         private void LoadFunctionSets()
         {
             this.FunctionSets = new Dictionary<string, string>();
-            TextReader tr = new StreamReader("FunctionSets.cfg", Encoding.GetEncoding("windows-1252"));
+            string filename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "FunctionSets.cfg");
+            TextReader tr = new StreamReader(filename, Encoding.GetEncoding("windows-1252"));
             string line;
             while ((line = tr.ReadLine()) != null)
             {
@@ -575,49 +513,25 @@ namespace Extractor_Serializer
         /// </param>
         /// <exception cref="Exception">
         /// </exception>
-        private void ParseActionSet(List<AOAction> actions)
+        private void ParseActionSet(List<AOAction> actions, RecordData record)
         {
-            bool flag = this.br.ReadInt32() != 36;
-            if (flag)
+            this.ExpectInt32(0x24, "action block value");
+            int count = this.Read3F1Count("actions");
+            for (int i = 0; i < count; i++)
             {
-                throw new Exception("Why am I here?");
-            }
-
-            int arg_3D_0 = 1;
-            int num = this.br.Read3F1();
-            int num2 = arg_3D_0;
-            checked
-            {
-                while (true)
+                int actionNumber = this.br.ReadInt32();
+                int requirementCount = this.Read3F1Count("action requirements");
+                var raw = new RequirementSet { Hook = actionNumber };
+                List<rawreqs> requirements = this.ReadRawReqs(requirementCount, raw.Triples);
+                var action = new AOAction
                 {
-                    int arg_160_0 = num2;
-                    int num3 = num;
-                    if (arg_160_0 > num3)
-                    {
-                        break;
-                    }
-
-                    int actionNum = this.br.ReadInt32();
-
-                    AOAction aoa = new AOAction();
-                    aoa.ActionType = (ActionType)Enum.ToObject(typeof(ActionType), actionNum);
-
-                    int numreqs = this.br.Read3F1();
-                    List<Requirement> cookedreqs = this.ReadReqs(numreqs);
-                    foreach (Requirement REQ in cookedreqs)
-                    {
-                        aoa.Requirements.Add(REQ);
-                    }
-
-                    if (actions == null)
-                    {
-                        actions = new List<AOAction>();
-                    }
-
-                    actions.Add(aoa);
-                    cookedreqs.Clear();
-                    num2++;
-                }
+                    ActionType = (ActionType)Enum.ToObject(typeof(ActionType), actionNumber),
+                    Requirements = requirementCount == 0
+                        ? new List<Requirement>()
+                        : this.ParseReqs(requirements)
+                };
+                actions.Add(action);
+                record.ActionRequirements.Add(raw);
             }
         }
 
@@ -635,120 +549,76 @@ namespace Extractor_Serializer
         /// </returns>
         /// <exception cref="IndexOutOfRangeException">
         /// </exception>
-        private object[] ParseArgs(int funcNum, ref bool R)
+        private object[] ParseArgs(int funcNum)
         {
-            bool flag = !this.FunctionSets.ContainsKey(funcNum.ToString());
-            if (flag)
+            string definition;
+            if (!this.FunctionSets.TryGetValue(funcNum.ToString(), out definition))
             {
-                TextWriter lastitem = new StreamWriter("lastitem.txt");
-                lastitem.WriteLine(HexOutput.Output(this.br.Buffer));
-                lastitem.Close();
-                throw new IndexOutOfRangeException("Not handled function " + funcNum.ToString());
+                throw this.ParseError("unknown function " + funcNum, this.br.Ptr);
             }
 
-            string[] array = this.FunctionSets[funcNum.ToString()].Split(',');
-            List<object> list = new List<object>();
-            string[] array2 = array;
-            checked
+            var values = new List<object>();
+            foreach (string rawPart in definition.Split(','))
             {
-                for (int i = 0; i < array2.Length; i++)
+                string part = rawPart.Trim().ToLowerInvariant();
+                if (part.Length < 2)
                 {
-                    string str = array2[i];
-                    int num = int.Parse(str.Trim().Substring(0, str.Length - 1));
-                    string text = str.Trim().ToLower().Substring(str.Length - 1, 1);
+                    throw this.ParseError("invalid FunctionSets entry '" + rawPart + "' for function " + funcNum, this.br.Ptr);
+                }
 
-                    // Strings.LCase(Strings.Right(Strings.Trim(str), 1));
-                    string left = text;
-                    flag = left == "n";
-                    if (flag)
+                int count;
+                if (!int.TryParse(part.Substring(0, part.Length - 1), out count) || count < 0)
+                {
+                    throw this.ParseError("invalid FunctionSets count '" + rawPart + "' for function " + funcNum, this.br.Ptr);
+                }
+
+                char kind = part[part.Length - 1];
+                for (int i = 0; i < count; i++)
+                {
+                    if (kind == 'n')
                     {
-                        int arg_A6_0 = 1;
-                        int num2 = num;
-                        int num3 = arg_A6_0;
-                        while (true)
+                        values.Add(this.br.ReadInt32());
+                    }
+                    else if (kind == 'h')
+                    {
+                        values.Add(this.br.ReadHash());
+                    }
+                    else if (kind == 's')
+                    {
+                        int lengthOffset = this.br.Ptr;
+                        int storedLength = this.br.ReadInt32();
+                        if (storedLength < 0 || storedLength > this.br.Buffer.Length - this.br.Ptr)
                         {
-                            int arg_D9_0 = num3;
-                            int num4 = num2;
-                            if (arg_D9_0 > num4)
-                            {
-                                break;
-                            }
-
-                            int value = this.br.ReadInt32();
-                            list.Add(value);
-                            num3++;
+                            throw this.ParseError(
+                                "invalid string argument length " + storedLength + " for function " + funcNum,
+                                lengthOffset);
                         }
+
+                        string value = string.Empty;
+                        if (storedLength > 0)
+                        {
+                            value = this.br.ReadString(storedLength - 1);
+                            int terminatorOffset = this.br.Ptr;
+                            if (this.br.ReadByte() != 0)
+                            {
+                                throw this.ParseError("string argument has no null terminator", terminatorOffset);
+                            }
+                        }
+
+                        values.Add(value);
+                    }
+                    else if (kind == 'x')
+                    {
+                        this.br.ReadBytes(1);
                     }
                     else
                     {
-                        flag = left == "h";
-                        if (flag)
-                        {
-                            int arg_FD_0 = 1;
-                            int num5 = num;
-                            int num6 = arg_FD_0;
-                            while (true)
-                            {
-                                int arg_12B_0 = num6;
-                                int num4 = num5;
-                                if (arg_12B_0 > num4)
-                                {
-                                    break;
-                                }
-
-                                string item = this.br.ReadHash();
-                                list.Add(item);
-                                num6++;
-                            }
-                        }
-                        else
-                        {
-                            flag = left == "s";
-                            if (flag)
-                            {
-                                int arg_14F_0 = 1;
-                                int num7 = num;
-                                int num8 = arg_14F_0;
-                                while (true)
-                                {
-                                    int arg_1B5_0 = num8;
-                                    int num4 = num7;
-                                    if (arg_1B5_0 > num4)
-                                    {
-                                        break;
-                                    }
-
-                                    string item2 = string.Empty;
-                                    int num9 = this.br.ReadInt32() - 1;
-                                    flag = num9 > 0;
-                                    if (flag)
-                                    {
-                                        item2 = this.br.ReadString();
-                                    }
-
-                                    this.br.Skip(1);
-                                    list.Add(item2);
-                                    num8++;
-                                }
-                            }
-                            else
-                            {
-                                flag = left == "x";
-                                if (flag)
-                                {
-                                    this.br.Skip(num);
-                                }
-                                else
-                                {
-                                    R = true;
-                                }
-                            }
-                        }
+                        throw this.ParseError("unknown FunctionSets type '" + kind + "' for function " + funcNum, this.br.Ptr);
                     }
                 }
-
-                return list.ToArray();
             }
+
+            return values.ToArray();
         }
 
         /// <summary>
@@ -760,68 +630,25 @@ namespace Extractor_Serializer
         /// <param name="defstat">
         /// The defstat.
         /// </param>
-        private void ParseAtkDefSet(Dictionary<int, int> attackstat, Dictionary<int, int> defstat)
+        private void ParseAtkDefSet(Dictionary<int, int> attackstat, Dictionary<int, int> defstat, RecordData record)
         {
-            Dictionary<int, int> list = new Dictionary<int, int>();
-            Dictionary<int, int> list2 = new Dictionary<int, int>();
-
-            this.br.Skip(4);
-            int num2 = this.br.Read3F1(); // Number of Attack/Defense Stat members
-            int num3 = 1;
-            checked
+            this.ExpectInt32(4, "attack/defense block value");
+            int groupCount = this.Read3F1Count("attack/defense groups");
+            for (int i = 0; i < groupCount; i++)
             {
-                while (true)
+                var group = new AttributeGroup { Key = this.br.ReadInt32() };
+                int memberCount = this.Read3F1Count("attack/defense group members");
+                for (int j = 0; j < memberCount; j++)
                 {
-                    if (num3 > num2)
-                    {
-                        break;
-                    }
-
+                    int key = this.br.ReadInt32();
                     int value = this.br.ReadInt32();
-                    int numberOfMembers = this.br.Read3F1();
-                    int num7 = 1;
-                    while (true)
-                    {
-                        if (num7 > numberOfMembers)
-                        {
-                            break;
-                        }
-
-                        try
-                        {
-                            int attrkey = this.br.ReadInt32();
-                            int attrval = this.br.ReadInt32();
-
-                            if (value == 12)
-                            {
-                                list.Add(attrkey, attrval);
-                                num7++;
-                            }
-
-                            if (value == 13)
-                            {
-                                list2.Add(attrkey, attrval);
-                                num7++;
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            num7++;
-                        }
-                    }
-
-                    num3++;
+                    group.Pairs.Add(key);
+                    group.Pairs.Add(value);
+                    if (group.Key == 12) attackstat[key] = value;
+                    else if (group.Key == 13) defstat[key] = value;
                 }
 
-                foreach (KeyValuePair<int, int> ua in list)
-                {
-                    attackstat.Add(ua.Key, ua.Value);
-                }
-
-                foreach (KeyValuePair<int, int> ua in list2)
-                {
-                    defstat.Add(ua.Key, ua.Value);
-                }
+                record.AttributeGroups.Add(group);
             }
         }
 
@@ -834,65 +661,63 @@ namespace Extractor_Serializer
         private void ParseFunctionSet(List<Event> retlist)
         {
             int eventTypeValue = this.br.ReadInt32();
-            int num = this.br.Read3F1();
-            List<Function> list = new List<Function>();
-            int arg_2F_0 = 0;
-            bool R;
-            int num2 = num - 1;
-            int num3 = arg_2F_0;
-            while (true)
+            int count = this.Read3F1Count("event functions");
+            var aoe = new Event
             {
-                int arg_1C3_0 = num3;
-                int num4 = num2;
-                if (arg_1C3_0 > num4)
+                EventType = (EventType)Enum.ToObject(typeof(EventType), eventTypeValue)
+            };
+
+            for (int i = 0; i < count; i++)
+            {
+                int leadingZeroWords = 0;
+                while (this.br.PeekInt32() == 0)
                 {
-                    break;
+                    this.br.ReadInt32();
+                    leadingZeroWords++;
                 }
 
-                Function func = new Function();
-
-                func.FunctionType = this.br.ReadInt32();
-                this.br.Skip(8);
-                int num5 = this.br.ReadInt32(); // Reqs
-                bool flag = num5 > 0;
-                if (flag)
-                {
-                    foreach (Requirement ur in this.ReadReqs(num5))
-                    {
-                        func.Requirements.Add(ur);
-                    }
-                }
-
-                func.TickCount = this.br.ReadInt32();
-                func.TickInterval = (uint)this.br.ReadInt32();
-                func.Target = this.br.ReadInt32();
-
-                this.br.Skip(4);
-                R = false;
-                foreach (object oo in this.ParseArgs(func.FunctionType, ref R))
-                {
-                    MessagePackObject x = MessagePackObject.FromObject(oo);
-                    func.Arguments.Values.Add(x);
-                }
-
-                list.Add(func);
-                num3++;
-            }
-
-            Event aoe = new Event();
-            aoe.EventType = (EventType)Enum.ToObject(typeof(EventType), eventTypeValue);
-
-            foreach (Function ff in list)
-            {
-                aoe.Functions.Add(ff);
-            }
-
-            if (retlist == null)
-            {
-                retlist = new List<Event>();
+                int functionId = this.br.ReadInt32();
+                aoe.Functions.Add(this.ParseFunction(functionId, leadingZeroWords));
             }
 
             retlist.Add(aoe);
+        }
+
+        private Function ParseFunction(int functionId, int leadingZeroWords)
+        {
+            if (!this.FunctionSets.ContainsKey(functionId.ToString()))
+            {
+                throw this.ParseError("unknown function " + functionId, this.br.Ptr - 4);
+            }
+
+            var raw = new FunctionRecordData { LeadingZeroWords = leadingZeroWords };
+            var function = new Function { FunctionType = functionId, Record = raw };
+            raw.Header1 = this.br.ReadInt32();
+            raw.Header2 = this.br.ReadInt32();
+
+            int requirementCountOffset = this.br.Ptr;
+            int requirementCount = this.br.ReadInt32();
+            if (requirementCount < 0 || requirementCount > 1000000)
+            {
+                throw this.ParseError("invalid function requirement count " + requirementCount, requirementCountOffset);
+            }
+
+            List<rawreqs> requirements = this.ReadRawReqs(requirementCount, raw.RequirementTriples);
+            if (requirements.Count > 0) function.Requirements.AddRange(this.ParseReqs(requirements));
+
+            function.TickCount = this.br.ReadInt32();
+            function.TickInterval = unchecked((uint)this.br.ReadInt32());
+            function.Target = this.br.ReadInt32();
+            raw.Header3 = this.br.ReadInt32();
+
+            int argumentOffset = this.br.Ptr;
+            foreach (object value in this.ParseArgs(functionId))
+            {
+                function.Arguments.Values.Add(MessagePackObject.FromObject(value));
+            }
+
+            raw.Arguments = this.br.CopyBytes(argumentOffset, this.br.Ptr - argumentOffset);
+            return function;
         }
 
         /// <summary>
@@ -901,59 +726,42 @@ namespace Extractor_Serializer
         /// <param name="events">
         /// The events.
         /// </param>
-        private void ParseShopHash(List<Event> events)
+        private void ParseShopHash(List<Event> events, RecordData record)
         {
             int eventNum = this.br.ReadInt32();
-            int num = this.br.Read3F1();
-            int arg_2D_0 = 1;
-            int num2 = num;
-            int num3 = arg_2D_0;
-            Event aoe = new Event();
-            aoe.EventType = (EventType)Enum.ToObject(typeof(EventType), eventNum);
-            checked
+            int count = this.Read3F1Count("shop entries");
+            var aoe = new Event { EventType = (EventType)Enum.ToObject(typeof(EventType), eventNum) };
+            var block = new ShopBlock { EventType = eventNum };
+            for (int i = 0; i < count; i++)
             {
-                while (true)
+                int entryOffset = this.br.Ptr;
+                string hash = this.br.ReadString(4);
+                int first = this.br.ReadByte();
+                int second = this.br.ReadByte();
+                if (first == 0 && second == 0)
                 {
-                    int arg_151_0 = num3;
-                    int num4 = num2;
-                    if (arg_151_0 > num4)
-                    {
-                        break;
-                    }
-
-                    string text = this.br.ReadString(4);
-                    int num5 = this.br.ReadByte();
-                    int num6 = this.br.ReadByte();
-                    bool flag = num5 == 0 && num6 == 0;
-                    if (flag)
-                    {
-                        num5 = this.br.ReadInt16();
-                        num6 = this.br.ReadInt16();
-                    }
-
-                    int count = Math.Min(11, this.br.Buffer.Length - this.br.Ptr);
-                    this.br.Skip(count);
-
-                    Function aof = new Function();
-                    aof.Arguments.Values.Add(text);
-                    aof.Arguments.Values.Add(num5);
-                    aof.Arguments.Values.Add(num6);
-                    aof.Target = 255;
-                    aof.TickCount = 1;
-                    aof.TickInterval = 0;
-                    aof.FunctionType = (int)FunctionType.Shophash;
-                    aoe.Functions.Add(aof);
-
-                    num3++;
+                    first = this.br.ReadInt16();
+                    second = this.br.ReadInt16();
                 }
-            }
 
-            if (events == null)
-            {
-                events = new List<Event>();
+                this.br.ReadBytes(11);
+                block.Entries.Add(this.br.CopyBytes(entryOffset, this.br.Ptr - entryOffset));
+
+                var function = new Function
+                {
+                    Target = 255,
+                    TickCount = 1,
+                    TickInterval = 0,
+                    FunctionType = (int)FunctionType.Shophash
+                };
+                function.Arguments.Values.Add(hash);
+                function.Arguments.Values.Add(first);
+                function.Arguments.Values.Add(second);
+                aoe.Functions.Add(function);
             }
 
             events.Add(aoe);
+            record.ShopBlocks.Add(block);
         }
 
         #endregion
@@ -1020,9 +828,8 @@ namespace Extractor_Serializer
             /// </returns>
             public int Read3F1()
             {
-                int num = BitConverter.ToInt32(this.Buffer, this.Ptr);
+                int num = this.ReadInt32();
                 num = (int)((long)Math.Round(Math.Round(unchecked(num / 1009.0 - 1.0))));
-                this.Ptr += 4;
                 return num;
             }
 
@@ -1034,9 +841,52 @@ namespace Extractor_Serializer
             /// </returns>
             public byte ReadByte()
             {
+                this.EnsureAvailable(1, "byte");
                 byte b = this.Buffer[this.Ptr];
                 this.Ptr++;
                 return b;
+            }
+
+            public byte[] ReadBytes(int count)
+            {
+                this.EnsureAvailable(count, "byte sequence");
+                byte[] result = this.CopyBytes(this.Ptr, count);
+                this.Ptr += count;
+                return result;
+            }
+
+            public byte[] CopyBytes(int offset, int count)
+            {
+                if (offset < 0 || count < 0 || offset > this.Buffer.Length - count)
+                {
+                    throw this.CreateReadError("invalid byte range offset " + offset + " length " + count, offset);
+                }
+
+                var result = new byte[count];
+                Array.Copy(this.Buffer, offset, result, 0, count);
+                return result;
+            }
+
+            public string DescribeBytes(int offset, int before, int after)
+            {
+                int start = Math.Max(0, offset - before);
+                int end = Math.Min(this.Buffer.Length, offset + after);
+                var result = new StringBuilder();
+                for (int i = start; i < end; i++)
+                {
+                    if (result.Length > 0) result.Append(' ');
+                    if (i == offset) result.Append('[');
+                    result.Append(this.Buffer[i].ToString("X2"));
+                    if (i == offset) result.Append(']');
+                }
+
+                return result.ToString();
+            }
+
+            public int PeekInt32()
+            {
+                this.EnsureAvailable(4, "int32");
+                return BitConverter.ToInt32(this.Buffer, this.Ptr);
             }
 
             /// <summary>
@@ -1047,10 +897,8 @@ namespace Extractor_Serializer
             /// </returns>
             public string ReadHash()
             {
-                byte[] array = new byte[4];
-                Array.Copy(this.Buffer, this.Ptr, array, 0, 4);
+                byte[] array = this.ReadBytes(4);
                 Array.Reverse(array);
-                this.Ptr += 4;
                 return Encoding.ASCII.GetString(array);
             }
 
@@ -1062,6 +910,7 @@ namespace Extractor_Serializer
             /// </returns>
             public short ReadInt16()
             {
+                this.EnsureAvailable(2, "int16");
                 short num = BitConverter.ToInt16(this.Buffer, this.Ptr);
                 this.Ptr += 2;
                 return num;
@@ -1075,6 +924,7 @@ namespace Extractor_Serializer
             /// </returns>
             public int ReadInt32()
             {
+                this.EnsureAvailable(4, "int32");
                 int num = BitConverter.ToInt32(this.Buffer, this.Ptr);
                 this.Ptr += 4;
                 return num;
@@ -1088,29 +938,18 @@ namespace Extractor_Serializer
             /// </returns>
             public string ReadString()
             {
-                StringBuilder stringBuilder = new StringBuilder();
-                int arg_19_0 = this.Ptr;
-                int num = this.Buffer.Length - 1;
-                int num2 = arg_19_0;
-                while (true)
+                int start = this.Ptr;
+                while (this.Ptr < this.Buffer.Length && this.Buffer[this.Ptr] != 0)
                 {
-                    byte b = this.Buffer[num2];
-                    if (this.Buffer[num2] == 0)
-                    {
-                        break;
-                    }
-
-                    stringBuilder.Append((char)this.Buffer[num2]);
-                    num2++;
-                    if (num2 > this.Buffer.Length - 1)
-                    {
-                        break;
-                    }
+                    this.Ptr++;
                 }
 
-                string text = stringBuilder.ToString();
-                this.Ptr += text.Length;
-                return text;
+                if (this.Ptr == this.Buffer.Length)
+                {
+                    throw this.CreateReadError("unterminated string", start);
+                }
+
+                return Encoding.UTF8.GetString(this.Buffer, start, this.Ptr - start);
             }
 
             /// <summary>
@@ -1124,6 +963,7 @@ namespace Extractor_Serializer
             /// </returns>
             public string ReadString(int Length)
             {
+                this.EnsureAvailable(Length, "string");
                 string result = Encoding.UTF8.GetString(this.Buffer, this.Ptr, Length);
                 this.Ptr += Length;
                 return result;
@@ -1137,7 +977,26 @@ namespace Extractor_Serializer
             /// </param>
             public void Skip(int Count)
             {
+                this.EnsureAvailable(Count, "skip");
                 this.Ptr += Count;
+            }
+
+            private void EnsureAvailable(int count, string valueType)
+            {
+                if (count < 0 || this.Ptr > this.Buffer.Length - count)
+                {
+                    throw this.CreateReadError(
+                        "cannot read " + valueType + " (need " + count + " bytes, have " + (this.Buffer.Length - this.Ptr) + ")",
+                        this.Ptr);
+                }
+            }
+
+            private InvalidDataException CreateReadError(string message, int offset)
+            {
+                return new InvalidDataException(
+                    "RDB record type " + this.RecordType + " id " + this.RecordNum
+                    + " at offset 0x" + offset.ToString("X") + ": " + message
+                    + ". Nearby bytes: " + this.DescribeBytes(offset, 16, 32));
             }
 
             #endregion

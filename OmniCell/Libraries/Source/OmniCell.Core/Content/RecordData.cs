@@ -3,6 +3,8 @@ namespace OmniCell.Core.Content
     using System;
     using System.Collections.Generic;
 
+    using OmniCell.Core.Functions;
+
     /// <summary>
     /// What an item or nano record in the client resource database carries
     /// beyond the fields the game model uses, kept so extraction loses nothing.
@@ -64,6 +66,13 @@ namespace OmniCell.Core.Content
         /// Block 23: each shop inventory event and the raw bytes of its entries.
         /// </summary>
         public List<ShopBlock> ShopBlocks = new List<ShopBlock>();
+
+        /// <summary>
+        /// Functions stored directly as body blocks instead of inside block 2.
+        /// These are kept separate because assigning a made-up event type would
+        /// change the meaning of the source record.
+        /// </summary>
+        public List<Function> BareFunctions = new List<Function>();
     }
 
     [Serializable]

@@ -177,6 +177,7 @@ namespace OmniCell.Core.Functions
             newAOF.Target = this.Target;
             newAOF.TickCount = this.TickCount;
             newAOF.TickInterval = this.TickInterval;
+            ((Function)newAOF).Record = this.Record;
 
             return newAOF;
         }
