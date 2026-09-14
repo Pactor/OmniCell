@@ -197,11 +197,6 @@ namespace Utility.Config
         public string Motd { get; set; }
 
         /// <summary>
-        /// Gets or sets the MsSQL Connection String...
-        /// </summary>
-        public string MsSqlConnection { get; set; }
-
-        /// <summary>
         /// Gets or sets the Mysql Connection String...
         /// </summary>
         public string MysqlConnection { get; set; }

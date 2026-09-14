@@ -291,54 +291,6 @@ namespace OmniCell.Database
 
         /// <summary>
         /// </summary>
-        /// <param name="orgId">
-        /// </param>
-        /// <returns>
-        /// </returns>
-        public static List<int> GetOrgMembers(uint orgId)
-        {
-            return GetOrgMembers(orgId, false);
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="orgId">
-        /// </param>
-        /// <param name="excludePresident">
-        /// </param>
-        /// <returns>
-        /// </returns>
-        public static List<int> GetOrgMembers(uint orgId, bool excludePresident)
-        {
-            List<int> orgMembers = new List<int>();
-            try
-            {
-                using (IDbConnection conn = Connector.GetConnection())
-                {
-                    string pres = string.Empty;
-
-                    if (excludePresident)
-                    {
-                        pres =
-                            " AND `ID` NOT IN (SELECT `ID` FROM `characters_stats` WHERE `Stat` = '48' AND `Value` = '0')";
-                    }
-
-                    orgMembers.AddRange(
-                        conn.Query<int>(
-                            "SELECT `ID` FROM `characters_stats` WHERE `Stat` = '5' AND `Value` = @orgId " + pres,
-                            new { orgId }));
-                }
-            }
-            catch (Exception e)
-            {
-                LogUtil.ErrorException(e);
-            }
-
-            return orgMembers;
-        }
-
-        /// <summary>
-        /// </summary>
         public static void LogOffAll()
         {
             try
@@ -393,8 +345,6 @@ namespace OmniCell.Database
             {
                 case "MySql":
                     return conn.Query<string>("show tables").Contains(fName);
-                case "MsSql":
-                    return conn.Query<string>("SELECT table_name FROM INFORMATION_SCHEMA.TABLES").Contains(fName);
                 default:
                     throw new Exception("Unknown database type encountered. Check your Config.xml or tell the coders");
             }

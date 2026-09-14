@@ -66,7 +66,6 @@
   -->
   <SQLType>MySql</SQLType>
   <MysqlConnection>Database=omnicell;Data Source=localhost;User ID=omnicell;Password=CHANGEME;SslMode=None</MysqlConnection>
-  <MsSqlConnection>Data Source=localhost;Inital Catalog=omnicell;UserID=omnicell;Password=CHANGEME;Trusted_Connection=false</MsSqlConnection>
 
   <!-- Logging -->
   <SqlLog>true</SqlLog>
