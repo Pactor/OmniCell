@@ -15,9 +15,9 @@ clone you already have, run `git submodule update --init`.
 
 ## Build it
 
-Install what `SETUP.md` lists under "Programs to install" - Visual Studio 2022 or
-its Build Tools with .NET Framework 4.8, and MySQL 8 or MariaDB 10.11 if you want
-to run a server.
+Install what `SETUP.md` lists under "Programs to install" - Visual Studio 2026
+(version 18) or its Build Tools with the .NET 10 SDK and the .NET Framework 4.8
+and 4.0 targeting packs, and MySQL 8 or MariaDB 10.11 if you want to run a server.
 
 Build `OmniCell/OmniCell.sln` in Release. In Visual Studio, just build; it
 restores packages as it goes. From a Developer Command Prompt:
@@ -26,11 +26,11 @@ restores packages as it goes. From a Developer Command Prompt:
 msbuild OmniCell\OmniCell.sln -restore -p:Configuration=Release
 ```
 
-`-restore` matters: without it a command-line build cannot find the packages
-`OmniCell.Database` references. The first build needs an internet connection:
-it downloads NuGet 7.9.0 from Microsoft into `OmniCell/.nuget/` and restores the
-NuGet packages. Neither is kept in the repository. The build output goes to
-`OmniCell/Built/Release`.
+`-restore` matters: the projects are SDK-style, and without it a command-line
+build cannot find their NuGet packages. The first build needs an internet
+connection to restore them; they are not kept in the repository. `global.json`
+pins the .NET 10 SDK, so an older MSBuild stops with an error instead of quietly
+building with an older SDK. The build output goes to `OmniCell/Built/Release`.
 
 ## Run the tests
 

@@ -1,15 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <!-- net48 for the engines as they are; net10.0 for the move to .NET 10. Each framework builds
+         into its own subfolder of bin\<Configuration>. -->
+    <TargetFrameworks>net48;net10.0</TargetFrameworks>
     <OutputType>Library</OutputType>
     <AssemblyName>Cell.Util</AssemblyName>
     <RootNamespace>Cell.Util</RootNamespace>
     <Platforms>AnyCPU</Platforms>
-    <!-- Kept from the old project format: every project has its own Properties\AssemblyInfo.cs,
-         outputs go exactly where they did, and only .cs and .resx files are picked up by default. -->
+    <!-- Kept from the old project format: the project has its own Properties\AssemblyInfo.cs,
+         and only .cs and .resx files are picked up by default. -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
     <EmbeddedResourceUseDependentUponConvention>false</EmbeddedResourceUseDependentUponConvention>
@@ -32,7 +33,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
 
-  <ItemGroup>
+  <!-- .NET Framework only: Microsoft.CSharp is part of .NET 10 and DataSetExtensions is not used. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>

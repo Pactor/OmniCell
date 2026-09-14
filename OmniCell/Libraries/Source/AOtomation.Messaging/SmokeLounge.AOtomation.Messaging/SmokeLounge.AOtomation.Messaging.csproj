@@ -1,17 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net40</TargetFramework>
+    <!-- net40 for the engines and the tests as they are; net10.0 for the move to .NET 10. Each
+         framework builds into its own subfolder of bin\<Configuration>. -->
+    <TargetFrameworks>net40;net10.0</TargetFrameworks>
     <OutputType>Library</OutputType>
     <AssemblyName>SmokeLounge.AOtomation.Messaging</AssemblyName>
     <RootNamespace>SmokeLounge.AOtomation.Messaging</RootNamespace>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\SmokeLounge.snk</AssemblyOriginatorKeyFile>
     <Platforms>AnyCPU</Platforms>
-    <!-- Kept from the old project format: every project has its own Properties\AssemblyInfo.cs,
-         outputs go exactly where they did, and only .cs and .resx files are picked up by default. -->
+    <!-- Kept from the old project format: the project has its own Properties\AssemblyInfo.cs,
+         and only .cs and .resx files are picked up by default. -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
     <EmbeddedResourceUseDependentUponConvention>false</EmbeddedResourceUseDependentUponConvention>
@@ -21,7 +22,6 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>$(BaseOutputPath)$(Configuration)\</OutputPath>
     <DefineConstants>TRACE;DEBUG;CONTRACTS_FULL</DefineConstants>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -29,7 +29,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>$(BaseOutputPath)$(Configuration)\</OutputPath>
     <DefineConstants>TRACE;CONTRACTS_FULL</DefineConstants>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>

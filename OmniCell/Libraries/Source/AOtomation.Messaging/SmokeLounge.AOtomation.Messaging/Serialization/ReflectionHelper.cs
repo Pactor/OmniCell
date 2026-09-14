@@ -37,19 +37,21 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization
                 throw new InvalidOperationException();
             }
 
-            if (methodCallExpression.Arguments.Count < 3)
+            // A method group converted to a delegate (o => o.ReadInt32) compiles to one of two
+            // expression trees, depending on the compiler and target framework:
+            //   .NET Framework 4.0:  Delegate.CreateDelegate(Type, object, MethodInfo) - the method is
+            //                        the third argument;
+            //   .NET 5 and later:    methodInfo.CreateDelegate(Type, object) - the method is the
+            //                        object the call is made on.
+            // Only the first was handled, so every serializer built on .NET 10 threw here.
+            var target = methodCallExpression.Object as ConstantExpression;
+            var methodInfo = target != null ? target.Value as MethodInfo : null;
+            if (methodInfo == null && methodCallExpression.Arguments.Count >= 3)
             {
-                throw new InvalidOperationException();
+                var argument = methodCallExpression.Arguments[2] as ConstantExpression;
+                methodInfo = argument != null ? argument.Value as MethodInfo : null;
             }
 
-            // TODO: use methodCallExpression.Object with .NET 4.5
-            var constantExpression = methodCallExpression.Arguments[2] as ConstantExpression;
-            if (constantExpression == null)
-            {
-                throw new InvalidOperationException();
-            }
-
-            var methodInfo = constantExpression.Value as MethodInfo;
             if (methodInfo == null)
             {
                 throw new InvalidOperationException();

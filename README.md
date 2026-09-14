@@ -33,16 +33,15 @@ Developer Command Prompt, restore and build in one step:
 msbuild OmniCell\OmniCell.sln -restore -p:Configuration=Release
 ```
 
-Leave out `-restore` and a command-line build cannot find the packages
-`OmniCell.Database` references, and stops.
+Leave out `-restore` and a command-line build cannot find the projects' NuGet
+packages, and stops. Use Visual Studio 2026 (version 18) or its Build Tools:
+`global.json` pins the .NET 10 SDK, which Visual Studio 2022's MSBuild cannot
+load.
 
 The first build needs an internet connection. The NuGet packages (Dapper,
 MySqlConnector, NLog and the rest, listed in `THIRD-PARTY-NOTICES.md`) are not
-kept in the repository, and neither is NuGet's own `NuGet.exe`: the build
-downloads NuGet 7.9.0 from Microsoft into `OmniCell/.nuget/` and restores the
-packages with it. To build offline, put a `NuGet.exe` from
-<https://www.nuget.org/downloads> in `OmniCell/.nuget/` and restore once while
-connected.
+kept in the repository; restore downloads them into your NuGet package cache,
+and later builds work offline from there.
 
 The folders that hold data on your machine - recorded sessions and your
 Anarchy Online client - are set in one file, `paths.cfg`. `SETUP.md` explains
