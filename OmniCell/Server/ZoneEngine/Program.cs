@@ -173,7 +173,6 @@ namespace ZoneEngine
                         if (args[0].ToLower() == "/autostart")
                         {
                             Console.WriteLine(locales.ServerConsoleAutostart);
-                            ScriptCompiler.Instance.Compile(false);
                             StartTheServer();
                         }
                     }
@@ -564,7 +563,7 @@ namespace ZoneEngine
             try
             {
 
-                Console.WriteLine(locales.ItemLoaderLoadedItems, ItemLoader.CacheAllItems());
+                ItemLoader.CacheAllItems();
             }
             catch (Exception e)
             {
@@ -583,7 +582,7 @@ namespace ZoneEngine
             Colouring.Push(ConsoleColor.Green);
             try
             {
-                Console.WriteLine(locales.NanoLoaderLoadedNanos, NanoLoader.CacheAllNanos());
+                NanoLoader.CacheAllNanos();
                 Console.WriteLine();
             }
             catch (Exception e)
@@ -1154,7 +1153,6 @@ namespace ZoneEngine
             else
             {
                 // TODO: Add Sql Check.
-                ScriptCompiler.Instance.Compile(false);
                 StartTheServer();
             }
         }
@@ -1175,7 +1173,6 @@ namespace ZoneEngine
             else
             {
                 // TODO: Add Sql Check.
-                ScriptCompiler.Instance.Compile(true);
                 StartTheServer();
             }
         }

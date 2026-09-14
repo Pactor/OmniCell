@@ -40,6 +40,7 @@ namespace OmniCell.Core.Inventory
     using OmniCell.Core.Functions;
     using OmniCell.Core.Items;
     using OmniCell.Core.Requirements;
+    using OmniCell.Core.Textures;
     using OmniCell.Enums;
 
     using MsgPack;
@@ -52,6 +53,11 @@ namespace OmniCell.Core.Inventory
     /// </summary>
     public class WeaponInventoryPage : BaseInventoryPage, IItemSlotHandler, IItemHotSwapHandler, IEquipmentPage
     {
+        /// <summary>
+        /// The item stat holding a weapon's in-hand mesh (Stats.WeaponMeshHolder).
+        /// </summary>
+        private const int WeaponMeshHolder = 209;
+
         #region Constructors and Destructors
 
         /// <summary>
@@ -79,6 +85,20 @@ namespace OmniCell.Core.Inventory
                 IItem item = this[itemSlot];
                 if (item != null)
                 {
+                    // A held weapon is drawn from its WeaponMeshHolder stat, not
+                    // an OnWear function; see MeshLayers. Without it every
+                    // AppearanceUpdate - the one at login included - told the
+                    // client the hands were empty. Not a reason to send one:
+                    // retail sends no AppearanceUpdate for a weapon equip.
+                    int handPosition = itemSlot == 6
+                                           ? MeshLayers.RightHandPosition
+                                           : itemSlot == 8 ? MeshLayers.LeftHandPosition : -1;
+                    int weaponMesh = handPosition < 0 ? 0 : item.GetAttribute(WeaponMeshHolder);
+                    if (weaponMesh > 0)
+                    {
+                        character.MeshLayer.AddMesh(handPosition, weaponMesh, 0, MeshLayers.HandWeaponLayer);
+                    }
+
                     foreach (Event events in item.Events.Where(x => x.EventType == EventType.OnWear))
                     {
                         foreach (Function functions in events.Functions)

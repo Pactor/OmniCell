@@ -62,6 +62,14 @@ namespace OmniCell.Core.Textures
     ///   BackMesh [mesh]       position 5, layer 0
     ///   Shouldermesh [mesh]   position 3 from armor slot 20, 4 from slot 22
     ///   the head itself       position 0, layer 4, always present
+    ///   hand weapons          position 1 from weapon slot 6, 2 from slot 8,
+    ///                         layer 2, mesh = the item's WeaponMeshHolder (209)
+    ///
+    /// The hand weapons are not an item function; the mesh is an item stat.
+    /// newchar_s9 and 20260911-171203_s12: Worn Blade 218403 (209 = 96309) in
+    /// slot 6, 96309 at position 1 layer 2. 20260911-171203_s8 (759513654):
+    /// 280729 (209 = 247128) in slot 6 and 246256 (209 = 247129) in slot 8,
+    /// 247128 at position 1 and 247129 at position 2, both layer 2.
     /// </remarks>
     public class MeshLayers
     {
@@ -71,6 +79,21 @@ namespace OmniCell.Core.Textures
         /// The character's own head, at position 0.
         /// </summary>
         public const int BaseHeadLayer = 4;
+
+        /// <summary>
+        /// The weapon in weapon slot 6.
+        /// </summary>
+        public const int RightHandPosition = 1;
+
+        /// <summary>
+        /// The weapon in weapon slot 8.
+        /// </summary>
+        public const int LeftHandPosition = 2;
+
+        /// <summary>
+        /// The layer both hand weapons are drawn at.
+        /// </summary>
+        public const int HandWeaponLayer = 2;
 
         /// <summary>
         /// The first slot of the social page. Slots from here on are social.

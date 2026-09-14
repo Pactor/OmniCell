@@ -703,6 +703,8 @@ namespace ZoneEngine.Script
             return report.ToString();
         }
 
+        private static readonly HashSet<string> StartedScripts = new HashSet<string>();
+
         /// <summary>
         /// Loads all classes contained in our
         /// Assembly file that publically inherit
@@ -714,6 +716,7 @@ namespace ZoneEngine.Script
         /// </param>
         private static void RunScript(Assembly script)
         {
+            // The same script class can arrive in more than one assembly; start it once.
             // Now that we have a compiled script, lets run them
             foreach (Type type in script.GetExportedTypes())
             {
@@ -722,6 +725,11 @@ namespace ZoneEngine.Script
                 {
                     if (iface.FullName == typeof(IAOScript).FullName)
                     {
+                        if (!StartedScripts.Add(type.FullName))
+                        {
+                            break;
+                        }
+
                         // yay, we found a script interface, lets create it and run it!
                         // Get the constructor for the current type
                         // you can also specify what creation parameter types you want to pass to it,
