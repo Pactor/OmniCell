@@ -1873,12 +1873,13 @@ namespace SmokeLounge.AOtomation.Messaging.Tests
             CollectionAssert.AreEqual(
                 expected,
                 actual,
-                "Expected ({0}): {1}{2}Actual ({3}): {4}",
-                expected.Length,
-                BitConverter.ToString(expected),
-                Environment.NewLine,
-                actual.Length,
-                BitConverter.ToString(actual));
+                string.Format(
+                    "Expected ({0}): {1}{2}Actual ({3}): {4}",
+                    expected.Length,
+                    BitConverter.ToString(expected),
+                    Environment.NewLine,
+                    actual.Length,
+                    BitConverter.ToString(actual)));
         }
 
         [TestMethod]
@@ -2871,12 +2872,13 @@ namespace SmokeLounge.AOtomation.Messaging.Tests
             CollectionAssert.AreEqual(
                 expected,
                 actual,
-                "Expected ({0}): {1}{2}Actual ({3}): {4}",
-                expected.Length,
-                BitConverter.ToString(expected),
-                Environment.NewLine,
-                actual.Length,
-                BitConverter.ToString(actual));
+                string.Format(
+                    "Expected ({0}): {1}{2}Actual ({3}): {4}",
+                    expected.Length,
+                    BitConverter.ToString(expected),
+                    Environment.NewLine,
+                    actual.Length,
+                    BitConverter.ToString(actual)));
         }
 
         [TestMethod]
@@ -4282,12 +4284,13 @@ namespace SmokeLounge.AOtomation.Messaging.Tests
             CollectionAssert.AreEqual(
                 expected,
                 actual,
-                "Expected ({0}): {1}{2}Actual ({3}): {4}",
-                expected.Length,
-                BitConverter.ToString(expected),
-                Environment.NewLine,
-                actual.Length,
-                BitConverter.ToString(actual));
+                string.Format(
+                    "Expected ({0}): {1}{2}Actual ({3}): {4}",
+                    expected.Length,
+                    BitConverter.ToString(expected),
+                    Environment.NewLine,
+                    actual.Length,
+                    BitConverter.ToString(actual)));
         }
 
         private static void AssertMoveItem(

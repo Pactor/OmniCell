@@ -161,9 +161,14 @@ were verified against the nuspec for the exact version referenced.
 |---|---|---|---|
 | Dapper | 2.1.66 | Apache 2.0 | Database, ZoneEngine |
 | MySqlConnector | 2.4.0 | MIT | Database |
-| NLog | 2.1.0 (.NET Framework), 5.3.4 (.NET 10) | BSD 3-clause | all engines |
+| NLog | 5.3.4 | BSD 3-clause | all engines |
 | MsgPack.Cli | 1.0.1 | Apache 2.0 | datafiles, inter-server messages |
 | SharpZipLib | 1.4.2 | MIT | Utility, ZoneEngine |
+| Microsoft.CodeAnalysis.CSharp | 5.3.0 | MIT | ZoneEngine script compiler |
+| System.ComponentModel.Composition | 10.0.0 | MIT | Core |
+| System.Drawing.Common | 10.0.6 | MIT | Extractor Serializer (icons) |
+| MSTest.TestFramework, MSTest.TestAdapter | 4.2.1 | MIT | protocol tests only |
+| Microsoft.NET.Test.Sdk | 18.9.0 | MIT | protocol tests only |
 
 ---
 

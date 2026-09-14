@@ -1,14 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- net48 is the engine start-engines.bat runs by default; net10.0 is the move to .NET 10. -->
-    <TargetFrameworks>net48;net10.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <AssemblyName>ZoneEngine</AssemblyName>
     <RootNamespace>ZoneEngine</RootNamespace>
     <ApplicationIcon>zone.ico</ApplicationIcon>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <Platforms>AnyCPU</Platforms>
@@ -40,33 +37,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
 
-  <!-- The net10.0 engine goes into its own subfolder, so it cannot replace the net48 one;
-       "start-engines.bat net10" runs it. -->
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
-    <OutputPath>..\..\Built\$(Configuration)\net10.0\</OutputPath>
-  </PropertyGroup>
-
-  <!-- .NET Framework only: MEF comes with OmniCell.Core's package on .NET 10, the rest is part of
-       .NET 10. Microsoft.VisualBasic was referenced but never used. -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <PackageReference Include="NLog" Version="2.1.0" />
-    <PackageReference Include="NLog.Config" Version="2.1.0" />
-  </ItemGroup>
-
-  <!-- The script compiler uses CodeDom on .NET Framework and Roslyn on .NET 10, where CodeDom's
-       C# compiler does not exist. -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+  <!-- The script compiler compiles Scripts\*.cs with Roslyn. -->
+  <ItemGroup>
     <PackageReference Include="NLog" Version="5.3.4" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.3.0" />
   </ItemGroup>
@@ -89,20 +66,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Component\ClientFactory.cs" />
-    <Compile Remove="Core\InternalMessageHandler\ChatTextMessageHandler.cs" />
-    <Compile Remove="Core\InternalMessageHandler\DespawnMessageHandler.cs" />
-    <Compile Remove="Core\InternalMessages\Bulk.cs" />
     <Compile Remove="Scripts\InfoBot.cs" />
     <Compile Remove="Scripts\KnuBotFlappy.cs" />
     <Compile Include="..\..\SolutionAssemblyInfo.cs" Link="Properties\SolutionAssemblyInfo.cs" />
     <!-- Compiled into ZoneEngine and also copied to Scripts, where the script compiler loads it. -->
     <Compile Update="Scripts\KnuBotItemGiver.cs" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <!-- Listed so the build uses it as the base of ZoneEngine.exe.config. -->
-    <None Include="App.config" />
   </ItemGroup>
 
   <ItemGroup>

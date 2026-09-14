@@ -1,13 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- net48 is the engine start-engines.bat runs by default; net10.0 is the move to .NET 10. -->
-    <TargetFrameworks>net48;net10.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <AssemblyName>WebEngine</AssemblyName>
     <RootNamespace>WebEngine</RootNamespace>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <Platforms>AnyCPU</Platforms>
     <!-- Kept from the old project format: every project has its own Properties\AssemblyInfo.cs,
          outputs go exactly where they did, and only .cs and .resx files are picked up by default. -->
@@ -19,7 +16,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
     <Optimize>False</Optimize>
@@ -29,19 +26,12 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\Built\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-
-  <!-- The net10.0 engine goes into its own subfolder, so it cannot replace the net48 one;
-       "start-engines.bat net10" runs it. x86 stays on the net48 build only. -->
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
-    <OutputPath>..\..\Built\$(Configuration)\net10.0\</OutputPath>
-    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>

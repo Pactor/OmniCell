@@ -46,13 +46,12 @@ than guessing a folder:
 
 These are not part of the repository.
 
-- **Visual Studio 2026** (version 18, or its Build Tools) with the .NET 10 SDK
-  and the .NET Framework 4.8 and 4.0 targeting packs, to build
-  `OmniCell/OmniCell.sln` - in Visual Studio, or from a Developer Command Prompt
-  with `msbuild OmniCell\OmniCell.sln -restore -p:Configuration=Release`.
-  Visual Studio 2022's MSBuild cannot load the .NET 10 SDK that `global.json`
-  asks for, and stops. The first build needs an internet connection to restore
-  the NuGet packages. See `README.md`.
+- **The .NET 10 SDK**, to build `OmniCell/OmniCell.sln` with
+  `dotnet build OmniCell\OmniCell.sln -c Release` and to run the server.
+  Visual Studio 2026 (version 18) builds it as well; Visual Studio 2022's
+  MSBuild cannot load the .NET 10 SDK that `global.json` asks for, and stops.
+  The first build needs an internet connection to restore the NuGet packages.
+  See `README.md`.
 - **MySQL 8** or **MariaDB 10.11** or newer, for the server's database. See
   `OmniCell/Documentation/Running-a-server.md`.
 - **Wireshark**, including Npcap, only if you record sessions. The capture

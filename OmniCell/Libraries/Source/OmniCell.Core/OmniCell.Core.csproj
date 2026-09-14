@@ -1,9 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- net48 for the engines as they are; net10.0 for the move to .NET 10. Each framework builds
-         into its own subfolder of bin\<Configuration>. -->
-    <TargetFrameworks>net48;net10.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>OmniCell.Core</AssemblyName>
     <RootNamespace>OmniCell.Core</RootNamespace>
@@ -33,13 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
 
-  <!-- .NET Framework only: these are part of .NET 10 or not used there. -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\AOtomation.Messaging\SmokeLounge.AOtomation.Messaging\SmokeLounge.AOtomation.Messaging.csproj" />
     <ProjectReference Include="..\Cell.Core\Cell.Core.csproj" />
@@ -59,17 +50,12 @@
     <Compile Include="..\..\..\SolutionAssemblyInfo.cs" Link="Properties\SolutionAssemblyInfo.cs" />
   </ItemGroup>
 
-  <!-- NLog 2.1.0 has no .NET Standard or .NET build. The engines keep it on net48 until they
-       move; the net10.0 build uses NLog 5, which has every API LogUtil calls. -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <PackageReference Include="NLog" Version="2.1.0" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+  <ItemGroup>
     <PackageReference Include="NLog" Version="5.3.4" />
   </ItemGroup>
 
-  <!-- MEF is part of .NET Framework; on .NET 10 it comes as a package. -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+  <!-- MEF comes as a package on .NET. -->
+  <ItemGroup>
     <PackageReference Include="System.ComponentModel.Composition" Version="10.0.0" />
   </ItemGroup>
 

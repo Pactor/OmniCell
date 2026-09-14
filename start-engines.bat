@@ -13,26 +13,18 @@ rem separate windows rather than in the background. Closing a window stops that
 rem engine.
 rem
 rem Pass "debug" as an argument to run the Debug build instead of Release.
-rem
-rem Pass "net10" to run every engine from its .NET 10 build in
-rem Built\<configuration>\net10.0 instead of the .NET Framework build.
 rem ---------------------------------------------------------------------------
 
 set "CONFIG=Release"
 set "AUTO="
 set "WEBPORT="
-set "NET10="
 for %%A in (%*) do (
   if /i "%%~A"=="debug" set "CONFIG=Debug"
   if /i "%%~A"=="auto" set "AUTO=1"
-  if /i "%%~A"=="net10" set "NET10=1"
   echo %%~A| findstr /b /i "port=" >nul && set "WEBPORT=%%~A"
 )
 
 set "BUILT=%~dp0OmniCell\Built\%CONFIG%"
-rem The engines that have moved to .NET 10 run from here when "net10" is given.
-set "MOVED=%BUILT%"
-if defined NET10 set "MOVED=%BUILT%\net10.0"
 
 if not exist "%BUILT%\LoginEngine.exe" (
   echo ERROR: %CONFIG% build not found at:
@@ -42,23 +34,9 @@ if not exist "%BUILT%\LoginEngine.exe" (
   exit /b 1
 )
 
-if not exist "%MOVED%\LoginEngine.exe" (
-  echo ERROR: .NET 10 build not found at:
-  echo   %MOVED%
-  echo Build OmniCell.sln first.
-  if not defined AUTO pause
-  exit /b 1
-)
-
-rem Config.local.xml holds this server's database and address. configure-server.bat
-rem puts it next to the engines in Built\<configuration>; the .NET 10 engines run
-rem from the subfolder, so they get the same copy.
-if defined NET10 if exist "%BUILT%\Config.local.xml" copy /Y "%BUILT%\Config.local.xml" "%MOVED%\Config.local.xml" >nul
-
 echo.
 echo   Configuration : %CONFIG%
 echo   From          : %BUILT%
-if defined NET10 echo   Engines       : %MOVED% [.NET 10]
 echo.
 
 tasklist /FI "IMAGENAME eq ZoneEngine.exe" 2>nul | find /i "ZoneEngine.exe" >nul
@@ -71,15 +49,15 @@ if not errorlevel 1 (
 )
 
 echo   Starting ChatEngine...
-start "OmniCell ChatEngine" /D "%MOVED%" "%MOVED%\ChatEngine.exe" -autostart
+start "OmniCell ChatEngine" /D "%BUILT%" "%BUILT%\ChatEngine.exe" -autostart
 timeout /t 4 /nobreak >nul
 
 echo   Starting LoginEngine...
-start "OmniCell LoginEngine" /D "%MOVED%" "%MOVED%\LoginEngine.exe" -autostart
+start "OmniCell LoginEngine" /D "%BUILT%" "%BUILT%\LoginEngine.exe" -autostart
 timeout /t 3 /nobreak >nul
 
 echo   Starting ZoneEngine...
-start "OmniCell ZoneEngine" /D "%MOVED%" "%MOVED%\ZoneEngine.exe" -autostart
+start "OmniCell ZoneEngine" /D "%BUILT%" "%BUILT%\ZoneEngine.exe" -autostart
 timeout /t 6 /nobreak >nul
 
 rem The in-game browser panels - shop, market, petition, daily - point at
@@ -91,7 +69,7 @@ rem strings they replace and ":8080" costs five characters the shortest ones
 rem do not have. If something else already holds 80, pass port=8080 here and
 rem set the same port in the launcher.
 echo   Starting WebEngine...
-start "OmniCell WebEngine" /D "%MOVED%" "%MOVED%\WebEngine.exe" %WEBPORT%
+start "OmniCell WebEngine" /D "%BUILT%" "%BUILT%\WebEngine.exe" %WEBPORT%
 timeout /t 2 /nobreak >nul
 
 echo.

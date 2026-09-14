@@ -1,9 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- net48 for the engines as they are; net10.0 for the move to .NET 10. Each framework builds
-         into its own subfolder of bin\<Configuration>. -->
-    <TargetFrameworks>net48;net10.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>OmniCell.ObjectManager</AssemblyName>
     <RootNamespace>OmniCell.ObjectManager</RootNamespace>
@@ -32,12 +30,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-
-  <!-- .NET Framework only: these are part of .NET 10 or not used there. -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AOtomation.Messaging\SmokeLounge.AOtomation.Messaging\SmokeLounge.AOtomation.Messaging.csproj" />

@@ -42,9 +42,6 @@ namespace ZoneEngine.Script
     using ZoneEngine.Core.MessageHandlers;
 
     using System;
-#if NETFRAMEWORK
-    using System.CodeDom.Compiler;
-#endif
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
@@ -55,12 +52,8 @@ namespace ZoneEngine.Script
     using OmniCell.Core.Entities;
     using OmniCell.Enums;
 
-#if NETFRAMEWORK
-    using Microsoft.CSharp;
-#else
     using Roslyn = Microsoft.CodeAnalysis;
     using RoslynCSharp = Microsoft.CodeAnalysis.CSharp;
-#endif
 
     using SmokeLounge.AOtomation.Messaging.GameData;
 
@@ -624,9 +617,7 @@ namespace ZoneEngine.Script
                 }
             }
 
-#if !NETFRAMEWORK
-            // The .NET Framework compiler finds the framework by itself. On .NET the
-            // runtime's own list of its assemblies is the framework to compile against.
+            // The runtime's own list of its assemblies is the framework to compile against.
             string platform = AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") as string ?? string.Empty;
             foreach (string dll in platform.Split(new[] { Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries))
             {
@@ -635,7 +626,6 @@ namespace ZoneEngine.Script
                     references.Add(dll);
                 }
             }
-#endif
 
             return references;
         }
@@ -649,25 +639,6 @@ namespace ZoneEngine.Script
         /// </returns>
         private static string CompileToFile(IList<string> sourceFiles, string outputAssembly, IList<string> references)
         {
-#if NETFRAMEWORK
-            CompilerParameters parameters = new CompilerParameters
-                                            {
-                                                GenerateInMemory = false,
-                                                GenerateExecutable = false,
-                                                IncludeDebugInformation = true,
-                                                OutputAssembly = outputAssembly,
-                                                TreatWarningsAsErrors = false,
-                                                WarningLevel = 3,
-                                                CompilerOptions = "/optimize"
-                                            };
-            parameters.ReferencedAssemblies.AddRange(references.ToArray());
-            using (CodeDomProvider compiler =
-                new CSharpCodeProvider(new Dictionary<string, string> { { "CompilerVersion", "v4.0" } }))
-            {
-                return ErrorReporting(compiler.CompileAssemblyFromFile(parameters, sourceFiles.ToArray()));
-            }
-#else
-            // CodeDom's C# compiler exists only on .NET Framework; Roslyn does the same job here.
             RoslynCSharp.CSharpParseOptions parseOptions =
                 new RoslynCSharp.CSharpParseOptions(RoslynCSharp.LanguageVersion.Latest);
             List<Roslyn.SyntaxTree> syntaxTrees = new List<Roslyn.SyntaxTree>();
@@ -717,7 +688,6 @@ namespace ZoneEngine.Script
             }
 
             return report.ToString();
-#endif
         }
 
         #endregion
@@ -739,35 +709,6 @@ namespace ZoneEngine.Script
             }
             this.disposed = true;
         }
-
-#if NETFRAMEWORK
-        /// <summary>
-        /// Our Error reporting method.
-        /// </summary>
-        /// <param name="results">
-        /// </param>
-        /// <returns>
-        /// </returns>
-        private static string ErrorReporting(CompilerResults results)
-        {
-            StringBuilder report = new StringBuilder();
-            if (results.Errors.HasErrors)
-            {
-                // Count the errors and return them
-
-                int count = results.Errors.Count;
-                for (int i = 0; i < count; i++)
-                {
-                    report.Append(results.Errors[i].FileName);
-                    report.AppendLine(
-                        " In Line: " + results.Errors[i].Line + " Error: " + results.Errors[i].ErrorNumber + " "
-                        + results.Errors[i].ErrorText);
-                }
-            }
-
-            return report.ToString();
-        }
-#endif
 
         private static readonly HashSet<string> StartedScripts = new HashSet<string>();
 

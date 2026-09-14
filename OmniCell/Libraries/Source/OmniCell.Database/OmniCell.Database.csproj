@@ -1,9 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- net48 for the engines as they are; net10.0 for the move to .NET 10. Each framework builds
-         into its own subfolder of bin\<Configuration>. -->
-    <TargetFrameworks>net48;net10.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>OmniCell.Database</AssemblyName>
     <RootNamespace>OmniCell.Database</RootNamespace>
@@ -33,12 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
 
-  <!-- .NET Framework only: these are part of .NET 10 or not used there. -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="MySqlConnector" Version="2.4.0" />
@@ -52,17 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="DatabaseTests\**" />
-    <Compile Remove="Dao\BuddyListDao.cs" />
-    <Compile Remove="Entities\DBBuddyListEntry.cs" />
     <Compile Include="..\..\..\SolutionAssemblyInfo.cs" Link="Properties\SolutionAssemblyInfo.cs" />
-  </ItemGroup>
-
-  <!-- System.Data.SqlClient is not part of .NET 10. MSSQL was never usable here - every config
-       uses MySql and the SQL is MySQL-only (backticks, ON DUPLICATE KEY UPDATE) - so the net10.0
-       build leaves the connector out instead of taking on Microsoft.Data.SqlClient. -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
-    <Compile Remove="MSSqlConnector.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -106,12 +88,7 @@
     <Content Include="SqlTables\vendortemplate.sql" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
-  <!-- NLog 2.1.0 has no .NET Standard or .NET build. The engines keep it on net48 until they
-       move; the net10.0 build uses NLog 5, which has every API LogUtil calls. -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <PackageReference Include="NLog" Version="2.1.0" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+  <ItemGroup>
     <PackageReference Include="NLog" Version="5.3.4" />
   </ItemGroup>
 

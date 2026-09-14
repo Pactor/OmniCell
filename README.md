@@ -18,25 +18,18 @@ of what the client archive contains versus what the server actually reads.
 
 ## Running one
 
-Clone with submodules - `git clone --recursive <url>`, or
-`git submodule update --init` in a clone you already have. msgpack-cli is a
-submodule, and the solution does not build without it.
+Build `OmniCell/OmniCell.sln` in Release with the .NET 10 SDK, and use MySQL 8
+or MariaDB 10.11 or newer. The server's data set is in the repository, so a
+clone runs as it stands.
 
-Build `OmniCell/OmniCell.sln` in Release — .NET Framework 4.8, and MySQL 8 or
-MariaDB 10.11 or newer. The server's data set is in the repository, so a clone
-runs as it stands.
-
-In Visual Studio, build the solution; it restores packages as it builds. From a
-Developer Command Prompt, restore and build in one step:
+From the repository root:
 
 ```
-msbuild OmniCell\OmniCell.sln -restore -p:Configuration=Release
+dotnet build OmniCell\OmniCell.sln -c Release
 ```
 
-Leave out `-restore` and a command-line build cannot find the projects' NuGet
-packages, and stops. Use Visual Studio 2026 (version 18) or its Build Tools:
-`global.json` pins the .NET 10 SDK, which Visual Studio 2022's MSBuild cannot
-load.
+Visual Studio 2026 (version 18) builds it too. `global.json` pins the .NET 10
+SDK, which Visual Studio 2022's MSBuild cannot load.
 
 The first build needs an internet connection. The NuGet packages (Dapper,
 MySqlConnector, NLog and the rest, listed in `THIRD-PARTY-NOTICES.md`) are not

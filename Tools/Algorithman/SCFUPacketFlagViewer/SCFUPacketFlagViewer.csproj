@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <AssemblyName>SCFUPacketFlagViewer</AssemblyName>
     <RootNamespace>SCFUPacketFlagViewer</RootNamespace>
@@ -35,16 +35,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\OmniCell\Libraries\Source\AOtomation.Messaging\SmokeLounge.AOtomation.Messaging\SmokeLounge.AOtomation.Messaging.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
 
 </Project>

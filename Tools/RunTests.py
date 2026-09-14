@@ -1,6 +1,6 @@
 """Build the tests, then run them - and refuse to report a stale result.
 
-vstest.console.exe is happy to run yesterday's DLL. If the test project fails to
+A test runner is happy to run yesterday's DLL. If the test project fails to
 compile, the DLL on disk is whatever last succeeded, and the run prints a
 cheerful "Passed!" for code that no longer exists. That has already happened
 once in this repo: SimpleNpcInfo.Unknown1 was renamed, the test project stopped
@@ -11,11 +11,13 @@ is older than the newest source file under the messaging tree.
 
     python RunTests.py
 
-Exit code is zero only when the build succeeded, the DLL is newer than every
-source file, and every test passed.
+It needs only the .NET 10 SDK - the dotnet command - so it runs the same way
+wherever that is installed. Exit code is zero only when the build succeeded,
+the DLL is newer than every source file, and every test passed.
 """
 import os
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -27,15 +29,8 @@ PROJECT = os.path.join(MESSAGING, 'SmokeLounge.AOtomation.Messaging.Tests',
 
 # Where the build is told to put the DLL, rather than where it is guessed to
 # have put it.
-#
-# The project says $(SolutionDir)\..\bin\test, and SolutionDir is only defined
-# when MSBuild is given a solution - this gives it a project. So the path
-# resolved from the drive root and the tests were being built to \bin\test at
-# the root of whatever drive the repository was on, outside the repository
-# entirely, which this script then had hard coded with a drive letter in it.
 OUTPUT = os.path.join(ROOT, 'OmniCell', 'Built', 'test')
-DLL = os.path.join(OUTPUT, 'Release', 'SmokeLounge.AOtomation.Messaging.Tests.dll')
-
+DLL = os.path.join(OUTPUT, 'Release', 'net10.0', 'SmokeLounge.AOtomation.Messaging.Tests.dll')
 
 
 def fail(message):
@@ -44,64 +39,26 @@ def fail(message):
     sys.exit(1)
 
 
-# Visual Studio is wherever its installer put it: Community, Professional or
-# Build Tools, 2022 or later, on whatever drive. vswhere.exe is installed with
-# every one of them, always at this path, and is Microsoft's way of asking.
-VSWHERE = os.path.join(os.environ.get('ProgramFiles(x86)', r'C:\Program Files (x86)'),
-                       'Microsoft Visual Studio', 'Installer', 'vswhere.exe')
-
-
-def find_in_visual_studio(pattern, requires=None):
-    """The newest installed copy of a file, or None.
-
-    -sort lists instances newest first, and -find returns only files that
-    exist, so the first line is the newest instance that actually has it.
-    """
-    if not os.path.exists(VSWHERE):
-        return None
-    command = [VSWHERE, '-products', '*', '-sort', '-find', pattern]
-    if requires:
-        command[1:1] = ['-requires', requires]
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    out = process.communicate()[0].decode('utf-8', 'replace')
-    for line in out.splitlines():
-        if line.strip() and os.path.exists(line.strip()):
-            return line.strip()
-    return None
-
-
-MSBUILD = find_in_visual_studio(r'MSBuild\**\Bin\MSBuild.exe', 'Microsoft.Component.MSBuild')
-VSTEST = find_in_visual_studio(r'**\TestWindow\vstest.console.exe')
-if not MSBUILD:
-    fail('MSBuild not found. Install Visual Studio 2022 or its Build Tools - see SETUP.md')
-if not VSTEST:
-    fail('vstest.console.exe not found. Install the Visual Studio testing tools '
-         '(the ".NET desktop development" workload, or "Testing tools core features" in Build Tools)')
+DOTNET = shutil.which('dotnet')
+if not DOTNET:
+    fail('dotnet not found. Install the .NET 10 SDK - see SETUP.md')
 
 
 def run(command):
+    # From the repository root, so global.json picks the .NET 10 SDK.
     process = subprocess.Popen(command, stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT)
+                               stderr=subprocess.STDOUT, cwd=ROOT)
     out = process.communicate()[0].decode('utf-8', 'replace')
     return process.returncode, out
 
 
 print('building ' + os.path.basename(PROJECT))
-# -restore: the messaging library the tests reference is an SDK-style project,
-# which will not build without its package assets.
-#
-# SolutionDir, not BaseIntermediateOutputPath: the test project derives its obj
-# folder from $(SolutionDir), so given SolutionDir it lands in <repo>\obj\test.
-# Overriding BaseIntermediateOutputPath instead applies to the messaging project
-# too, and the two then shared one obj folder, restore assets included - which
-# made NuGet treat the old-style test project as a package project and fail.
-SOLUTION_DIR = os.path.join(ROOT, 'OmniCell') + os.sep
-code, out = run([MSBUILD, PROJECT, '-restore', '-p:Configuration=Release', '-v:m', '-nologo',
-                 '-p:SolutionDir=' + SOLUTION_DIR,
+code, out = run([DOTNET, 'build', PROJECT, '-c', 'Release', '-v:m', '-nologo',
                  '-p:BaseOutputPath=' + OUTPUT + os.sep])
-errors = [line for line in out.splitlines() if re.search(r'\berror\b', line, re.I)]
+# MSBuild writes compile errors as "file(line,column): error CODE: text".
+errors = [line for line in out.splitlines() if re.search(r':\s*error\s+[A-Z]+\d+', line)]
 if code != 0 or errors:
-    for line in errors[:20]:
+    for line in (errors or out.splitlines())[:20]:
         print('  ' + line.strip())
     fail('the tests did not compile, so any run would be the previous DLL')
 
@@ -128,13 +85,13 @@ if newest > built:
     fail('the DLL is older than a source file, so the run would be stale')
 
 print('running')
-code, out = run([VSTEST, DLL, '/Logger:console;verbosity=minimal'])
+code, out = run([DOTNET, 'test', DLL, '--logger', 'console;verbosity=minimal'])
 summary = [line for line in out.splitlines() if 'Total:' in line]
 for line in summary:
     print('  ' + line.strip())
 if code != 0 or not summary:
     for line in out.splitlines():
-        if 'Failed ' in line or 'Assert' in line:
+        if 'Failed ' in line or 'Assert' in line or 'error' in line.lower():
             print('  ' + line.strip())
     fail('tests did not pass')
 

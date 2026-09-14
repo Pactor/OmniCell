@@ -1,0 +1,8 @@
+<Project>
+
+  <!-- These tools build into Built\<configuration> with the engines. See
+       OmniCell\Server\Directory.Build.targets: MSBuild's incremental clean would otherwise delete the
+       engines' launchers when one of these is built on its own. -->
+  <Target Name="IncrementalClean" />
+
+</Project>

@@ -1,14 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- net48 is the engine start-engines.bat runs by default; net10.0 is the move to .NET 10. -->
-    <TargetFrameworks>net48;net10.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <AssemblyName>LoginEngine</AssemblyName>
     <RootNamespace>LoginEngine</RootNamespace>
     <ApplicationIcon>login.ico</ApplicationIcon>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <Platforms>AnyCPU</Platforms>
@@ -22,7 +19,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
     <Optimize>False</Optimize>
@@ -40,26 +37,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
 
-  <!-- The net10.0 engine goes into its own subfolder, so it cannot replace the net48 one;
-       "start-engines.bat net10" runs it. x86 was only for the old Debug build. -->
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
-    <OutputPath>..\..\Built\$(Configuration)\net10.0\</OutputPath>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-
-  <!-- .NET Framework only: MEF comes with OmniCell.Core's package on .NET 10, the rest is part of
-       .NET 10 or not used. -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <PackageReference Include="NLog" Version="2.1.0" />
-    <PackageReference Include="NLog.Config" Version="2.1.0" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+  <ItemGroup>
     <PackageReference Include="NLog" Version="5.3.4" />
   </ItemGroup>
 
@@ -77,8 +55,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Listed so the build uses it as the base of LoginEngine.exe.config. -->
-    <None Include="App.config" />
     <Content Include="..\..\Config\Config.xml" Link="Config.xml" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

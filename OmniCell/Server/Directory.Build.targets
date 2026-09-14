@@ -1,0 +1,11 @@
+<Project>
+
+  <!-- The engines all build into one folder, Built\<configuration>, and so do the tools in
+       Tools\Algorithman. MSBuild's incremental clean deletes, from the output folder, files a project
+       recorded as its own on an earlier build and did not write this time. In a shared folder those
+       records pick up the other programs' launchers (<name>.exe, .deps.json, .runtimeconfig.json),
+       so building one project on its own deleted the others' launchers. Nothing in Built needs that
+       cleanup; delete the folder to start clean. -->
+  <Target Name="IncrementalClean" />
+
+</Project>

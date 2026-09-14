@@ -1,9 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- net48 for the engines as they are; net10.0 for the move to .NET 10. Each framework builds
-         into its own subfolder of bin\<Configuration>. -->
-    <TargetFrameworks>net48;net10.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>Cell.Core</AssemblyName>
     <RootNamespace>Cell.Core</RootNamespace>
@@ -33,36 +31,21 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\Run\Release\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
-
-  <!-- .NET Framework only: these are part of .NET 10 or not used there. -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <Reference Include="System.Net" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Cell.Util\Cell.Util.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="StringStream.cs" />
-    <Compile Remove="XmlConfig.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Update="Localization\Cell.Core.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Cell.Core.Designer.cs" SubType="Designer" />
   </ItemGroup>
 
-  <!-- NLog 2.1.0 has no .NET Standard or .NET build. The engines keep it on net48 until they
-       move; the net10.0 build uses NLog 5, which has every API LogUtil calls. -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <PackageReference Include="NLog" Version="2.1.0" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+  <ItemGroup>
     <PackageReference Include="NLog" Version="5.3.4" />
   </ItemGroup>
 
