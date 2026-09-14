@@ -130,11 +130,12 @@ namespace ZoneEngine.Core.Packets
                                           }
                                       }
                               };
-            var statM = new Message { Body = statMessage };
             if (!client.Controller.Character.DoNotDoTimers)
             {
-                client.Controller.Character.Playfield.Publish(
-                    new IMSendAOtomationMessageToClient { client = client, message = statM });
+                // Straight to the client, the same path as StatMessageHandler's stats, so one stat never
+                // reaches its own client by two paths out of order. (This used to be published to the
+                // playfield bus, whose handler did exactly this SendCompressed later.)
+                client.SendCompressed(statMessage);
             }
 
             /* announce to playfield? */

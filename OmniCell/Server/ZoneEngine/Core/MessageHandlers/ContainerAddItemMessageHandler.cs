@@ -224,7 +224,10 @@ namespace ZoneEngine.Core.MessageHandlers
                                         + (itemTo.GetAttribute(211) == 1234567890 ? 20 : itemTo.GetAttribute(211));
                             }
 
-                            Thread.Sleep(delay * 10); // social has to wait for 0.2 secs too (for helmet update)
+                            // social has to wait for 0.2 secs too (for helmet update). The wait holds this
+                            // client's message queue, so an item with a huge or broken equip delay is capped
+                            // at three seconds rather than stalling the client.
+                            Thread.Sleep(Math.Min(Math.Max(delay, 0), 300) * 10);
 
                             client.Controller.Character.Send(message);
 
@@ -283,7 +286,7 @@ namespace ZoneEngine.Core.MessageHandlers
                                     delay = 20;
                                 }
 
-                                Thread.Sleep(delay * 10);
+                                Thread.Sleep(Math.Min(Math.Max(delay, 0), 300) * 10); // capped, as above
                             }
 
                             if (sendingPage == receivingPage)
@@ -339,7 +342,7 @@ namespace ZoneEngine.Core.MessageHandlers
                             delay = 20;
                         }
 
-                        Thread.Sleep(delay * 10);
+                        Thread.Sleep(Math.Min(Math.Max(delay, 0), 300) * 10); // capped, as above
                     }
 
                     UnEquip.Send(client, sendingPage, fromPlacement);

@@ -165,10 +165,15 @@ namespace ZoneEngine.Core
         /// </param>
         public void SendCompressed(MessageBody messageBody)
         {
-            if ((this.controller == null) || (this.controller.Character == null))
+            // Read once. Dispose clears the controller on another thread, and a message queued before a
+            // disconnect can be sent after it; reading the character twice could throw in between.
+            IController currentController = this.controller;
+            var character = currentController == null ? null : currentController.Character;
+            if (character == null)
             {
                 return;
             }
+
             var message = new Message
                           {
                               Body = messageBody,
@@ -179,7 +184,7 @@ namespace ZoneEngine.Core
                                       PacketType = messageBody.PacketType,
                                       Unknown = 0x0001,
                                       Sender = this.server.Id,
-                                      Receiver = this.Controller.Character.Identity.Instance
+                                      Receiver = character.Identity.Instance
                                   }
                           };
 
@@ -190,6 +195,32 @@ namespace ZoneEngine.Core
                 this.sendQueue.Enqueue(buffer);
             }
             LogUtil.Debug(DebugInfoDetail.AoTomation, messageBody.GetType().ToString());
+        }
+
+        /// <summary>
+        /// Runs an action on this client's queue after a delay, behind whatever the client has sent by
+        /// then, without holding a thread while it waits. Skipped if the client has gone.
+        /// </summary>
+        public void Later(int milliseconds, Action action)
+        {
+            System.Threading.Tasks.Task.Delay(milliseconds).ContinueWith(
+                delay => this.inbound.Post(
+                    () =>
+                    {
+                        if (this.disposed)
+                        {
+                            return;
+                        }
+
+                        try
+                        {
+                            action();
+                        }
+                        catch (Exception e)
+                        {
+                            LogUtil.ErrorException(e, "A delayed action for a zone client failed");
+                        }
+                    }));
         }
 
         /// <summary>
@@ -363,9 +394,15 @@ namespace ZoneEngine.Core
                 {
                     this.stopDispatcher = true;
 
-                    while (this.stopDispatcher)
+                    // The dispatcher thread clears the flag as it leaves its loop. A failed write
+                    // disconnects the client from that very thread, and waiting here for it to clear the
+                    // flag would wait forever.
+                    if (Thread.CurrentThread != this.dispatcherThread)
                     {
-                        Thread.Sleep(10);
+                        while (this.stopDispatcher)
+                        {
+                            Thread.Sleep(10);
+                        }
                     }
 
                     // Remove reference of character
@@ -492,7 +529,16 @@ namespace ZoneEngine.Core
             wrapped.GetType().GetProperty("Message").SetValue(wrapped, message, null);
             wrapped.GetType().GetProperty("MessageBody").SetValue(wrapped, message.Body, null);
 
-            this.bus.Publish(wrapped, this.inbound);
+            // Delivered on this client's queue. A message still queued when the client disconnects - or
+            // is disposed for a teleport - is dropped rather than handled for a client that has gone.
+            this.inbound.Post(
+                () =>
+                {
+                    if (!this.disposed)
+                    {
+                        this.bus.Deliver(wrapped);
+                    }
+                });
 
             return true;
         }

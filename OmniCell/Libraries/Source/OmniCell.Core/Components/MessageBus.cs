@@ -176,10 +176,12 @@ namespace OmniCell.Core.Components
                 {
                     handle.Invoke(handler, new[] { message });
                 }
-                catch (TargetInvocationException e)
+                catch (Exception e)
                 {
+                    // Any failure, not only one the handler threw, so the remaining handlers still run.
+                    TargetInvocationException invocation = e as TargetInvocationException;
                     LogUtil.ErrorException(
-                        e.InnerException ?? e,
+                        invocation != null && invocation.InnerException != null ? invocation.InnerException : e,
                         "{0} threw while handling {1}",
                         handler.GetType().Name,
                         messageType.Name);

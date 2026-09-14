@@ -61,6 +61,12 @@ namespace OmniCell.Core.Network
         /// </param>
         void SendCompressed(MessageBody messageBody);
 
+        /// <summary>
+        /// Runs an action on this client's message queue once a delay has passed, instead of sleeping
+        /// on the queue. Skipped if the client has disconnected by then.
+        /// </summary>
+        void Later(int milliseconds, System.Action action);
+
         #endregion
     }
 }

@@ -435,7 +435,10 @@ namespace OmniCell.Core.Playfields
         /// </remarks>
         private static int Uptime()
         {
-            return unchecked((int)(DateTime.UtcNow - Started).TotalMilliseconds);
+            // Through long first: casting a double straight to int does not wrap even when unchecked -
+            // past 24.8 days it gave int.MinValue on .NET Framework and gives int.MaxValue on .NET 10,
+            // and the stamp stopped moving. The long keeps counting and its low 32 bits wrap.
+            return unchecked((int)(long)(DateTime.UtcNow - Started).TotalMilliseconds);
         }
 
         /// <summary>
@@ -948,12 +951,11 @@ namespace OmniCell.Core.Playfields
                             known.Remove(subject.Identity);
                         }
 
-                        this.Publish(
-                            new IMSendAOtomationMessageBodyToClient()
-                                {
-                                    client = player.Controller.Client,
-                                    Body = DespawnMessageHandler.Default.Create(subject.Identity)
-                                });
+                        // Straight to the client, the way Introduce sends. Through the playfield bus
+                        // this waited behind everything queued there, so a character walking out and
+                        // back in could be introduced again before the older despawn went out, and
+                        // then disappear for that client while the server believed it knew it.
+                        player.Controller.Client.SendCompressed(DespawnMessageHandler.Default.Create(subject.Identity));
                     }
                 }
             }
@@ -1332,6 +1334,24 @@ namespace OmniCell.Core.Playfields
         /// </param>
         public void Publish(object obj)
         {
+            // A message for the whole playfield becomes one message per listener here, as it is sent.
+            // Queued as a single message and only expanded when the queue reached it, each copy went to
+            // the back of the queue at that point - behind messages sent after it - and who could see it
+            // was decided then rather than when it was sent.
+            var toPlayfield = obj as IMSendAOtomationMessageToPlayfield;
+            if (toPlayfield != null)
+            {
+                this.Announce(toPlayfield.Body);
+                return;
+            }
+
+            var toOthers = obj as IMSendAOtomationMessageToPlayfieldOthers;
+            if (toOthers != null)
+            {
+                this.AnnounceOthers(toOthers.Body, toOthers.Identity);
+                return;
+            }
+
             this.playfieldBus.Publish(obj);
         }
 
@@ -1374,13 +1394,44 @@ namespace OmniCell.Core.Playfields
             {
                 return;
             }
-            Thread.Sleep(200);
-            int dynelId = dynel.Identity.Instance;
 
-            // Disable sending stat changes and wait a bit to clear the queue
+            // Disable sending stat changes at once, then give what is already queued for the client time
+            // to go out before the teleport. The wait used to be two Thread.Sleeps, holding whatever called
+            // this - the client's own message queue, or the playfield's heartbeat for a wall - for 1.2
+            // seconds. The rest now runs after the delay, on the client's queue, and nothing is held.
             dynel.DoNotDoTimers = true;
-            Thread.Sleep(1000);
+            IZoneClient waitingClient = dynel.Controller == null ? null : dynel.Controller.Client;
+            if (waitingClient != null)
+            {
+                waitingClient.Later(TeleportDelayMs, () => this.CompleteTeleport(dynel, destination, heading, playfield));
+            }
+            else
+            {
+                System.Threading.Tasks.Task.Delay(TeleportDelayMs).ContinueWith(
+                    delay =>
+                    {
+                        try
+                        {
+                            this.CompleteTeleport(dynel, destination, heading, playfield);
+                        }
+                        catch (Exception e)
+                        {
+                            LogUtil.ErrorException(e, "Teleport of {0} failed", dynel.Identity.Instance);
+                        }
+                    });
+            }
+        }
 
+        /// <summary>
+        /// How long a teleport waits, so the messages queued for the client go out first.
+        /// </summary>
+        private const int TeleportDelayMs = 1200;
+
+        /// <summary>
+        /// The teleport itself, once Teleport's delay has passed.
+        /// </summary>
+        private void CompleteTeleport(Dynel dynel, Coordinate destination, IQuaternion heading, Identity playfield)
+        {
             // Teleport to another playfield
             TeleportMessageHandler.Default.Send(
                 dynel as ICharacter,

@@ -76,7 +76,15 @@ namespace ZoneEngine.Core.MessageHandlers
 
             if (statsToPlayfield.Count > 0)
             {
-                this.Send(character, this.FillerBulk(character, statsToPlayfield), true);
+                // The character's own copy goes straight to its client, like its private stats above,
+                // so no stat reaches that client by two paths and arrives older after newer. Everyone
+                // else gets it through the playfield, as before.
+                StatMessage body = this.Create(character, this.FillerBulk(character, statsToPlayfield));
+                character.Send(body);
+                if (character.Playfield != null)
+                {
+                    character.Playfield.AnnounceOthers(body, character.Identity);
+                }
             }
         }
 

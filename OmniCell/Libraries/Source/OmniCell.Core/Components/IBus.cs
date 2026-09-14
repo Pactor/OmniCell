@@ -50,6 +50,13 @@ namespace OmniCell.Core.Components
         void Publish(object message);
 
         /// <summary>
+        /// Hands a message to its subscribers and handlers now, on the calling thread.
+        /// </summary>
+        /// <param name="message">
+        /// </param>
+        void Deliver(object message);
+
+        /// <summary>
         /// Publishes a message in the order of the given queue rather than the bus's own.
         /// </summary>
         /// <param name="message">

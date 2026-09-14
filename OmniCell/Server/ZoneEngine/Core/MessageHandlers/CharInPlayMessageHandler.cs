@@ -34,7 +34,6 @@ namespace ZoneEngine.Core.MessageHandlers
     #region Usings ...
 
     using System.Collections.Generic;
-    using System.Threading;
 
     using OmniCell.Core.Components;
     using OmniCell.Core.Entities;
@@ -72,7 +71,23 @@ namespace ZoneEngine.Core.MessageHandlers
         {
             LogUtil.Debug(DebugInfoDetail.NetworkMessages, "Client connected...");
             client.Controller.Character.DoNotDoTimers = true;
-            Thread.Sleep(1000);
+
+            // The rest a second later, on this client's queue. It was Thread.Sleep(1000), which held the
+            // client's queue - and a thread-pool thread with it - for the whole second.
+            client.Later(1000, () => FinishEntry(client));
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="client">
+        /// </param>
+        private static void FinishEntry(IZoneClient client)
+        {
+            if (client.Controller == null || client.Controller.Character == null)
+            {
+                return;
+            }
+
             // The client has finished loading and says so. Nothing is sent back.
             //
             // This used to announce another CharInPlay to the whole playfield,

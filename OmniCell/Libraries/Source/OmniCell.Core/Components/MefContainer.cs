@@ -146,11 +146,25 @@ namespace OmniCell.Core.Components
             var catalog = new AggregateCatalog();
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
+                // Assemblies emitted at run time (serializers) have no exports and cannot be catalogued.
+                if (assembly.IsDynamic)
+                {
+                    continue;
+                }
+
                 try
                 {
                     var assemblyCatalog = new AssemblyCatalog(assembly);
                     ComposablePartDefinition[] assemblyParts = assemblyCatalog.Parts.ToArray();
                     catalog.Catalogs.Add(assemblyCatalog);
+                }
+                catch (ReflectionTypeLoadException e)
+                {
+                    // Silently skipped, this hid any export in an assembly with a type that failed to load.
+                    global::Utility.LogUtil.Debug(
+                        global::Utility.DebugInfoDetail.Engine,
+                        "MEF skipped " + assembly.GetName().Name + ": "
+                        + (e.LoaderExceptions.FirstOrDefault(x => x != null) ?? (Exception)e).Message);
                 }
                 catch (Exception)
                 {
@@ -158,7 +172,8 @@ namespace OmniCell.Core.Components
                 }
             }
 
-            var container = new CompositionContainer(catalog);
+            // Thread safe: the message bus asks for handlers from every client's queue at the same time.
+            var container = new CompositionContainer(catalog, CompositionOptions.IsThreadSafe);
             var batch = new CompositionBatch();
             batch.AddExportedValue<IContainer>(this);
             container.Compose(batch);
