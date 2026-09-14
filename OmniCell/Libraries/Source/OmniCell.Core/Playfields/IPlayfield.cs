@@ -44,8 +44,6 @@ namespace OmniCell.Core.Playfields
     using OmniCell.Interfaces;
     using OmniCell.ObjectManager;
 
-    using MemBus;
-
     using SmokeLounge.AOtomation.Messaging.GameData;
     using SmokeLounge.AOtomation.Messaging.Messages;
 
@@ -68,10 +66,6 @@ namespace OmniCell.Core.Playfields
         /// <summary>
         /// </summary>
         Expansions Expansion { get; set; }
-
-        /// <summary>
-        /// </summary>
-        IBus PlayfieldBus { get; set; }
 
         /// <summary>
         /// </summary>

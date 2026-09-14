@@ -164,7 +164,6 @@ were verified against the nuspec for the exact version referenced.
 | NLog | 2.1.0 (.NET Framework), 5.3.4 (.NET 10) | BSD 3-clause | all engines |
 | MsgPack.Cli | 1.0.1 | Apache 2.0 | datafiles, inter-server messages |
 | SharpZipLib | 1.4.2 | MIT | Utility, ZoneEngine |
-| MemBus | 2.0.2 | Apache 2.0 | Core, Communication, Interfaces, ZoneEngine |
 
 ---
 

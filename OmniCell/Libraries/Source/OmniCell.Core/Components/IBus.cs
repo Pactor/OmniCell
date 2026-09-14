@@ -50,6 +50,16 @@ namespace OmniCell.Core.Components
         void Publish(object message);
 
         /// <summary>
+        /// Publishes a message in the order of the given queue rather than the bus's own.
+        /// </summary>
+        /// <param name="message">
+        /// </param>
+        /// <param name="queue">
+        /// One per client, so each client's messages are handled in the order they arrived.
+        /// </param>
+        void Publish(object message, SerialQueue queue);
+
+        /// <summary>
         /// </summary>
         /// <param name="action">
         /// </param>

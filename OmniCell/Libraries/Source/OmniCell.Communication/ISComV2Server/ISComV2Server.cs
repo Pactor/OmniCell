@@ -41,9 +41,6 @@ namespace OmniCell.Communication.ISComV2Server
 
     using OmniCell.Communication.Messages;
 
-    using MemBus;
-    using MemBus.Configurators;
-
     using MsgPack.Serialization;
 
     #endregion
@@ -60,26 +57,11 @@ namespace OmniCell.Communication.ISComV2Server
 
         /// <summary>
         /// </summary>
-        private readonly IBus bus;
-
-        /// <summary>
-        /// </summary>
         private Dictionary<int, IClient> clientDictionary = new Dictionary<int, IClient>();
 
         /// <summary>
         /// </summary>
         private readonly HashSet<IClient> clients = new HashSet<IClient>();
-
-        #endregion
-
-        #region Constructors and Destructors
-
-        /// <summary>
-        /// </summary>
-        public ISComV2Server()
-        {
-            this.bus = BusSetup.StartWith<AsyncConfiguration>().Construct();
-        }
 
         #endregion
 
@@ -131,7 +113,7 @@ namespace OmniCell.Communication.ISComV2Server
             lock (this.clients)
             {
                 this.lastClientNumber++;
-                temp = new ISComV2ClientHandler(this, this.bus, this.lastClientNumber);
+                temp = new ISComV2ClientHandler(this, this.lastClientNumber);
                 this.clients.Add(temp);
                 ((ISComV2ClientHandler)temp).DataReceived += this.ISComV2ServerDataReceived;
             }

@@ -56,10 +56,6 @@ namespace OmniCell.Core.Playfields
     using OmniCell.ObjectManager;
     using OmniCell.Stats.SpecialStats;
 
-    using MemBus;
-    using MemBus.Configurators;
-    using MemBus.Support;
-
     using SmokeLounge.AOtomation.Messaging.GameData;
     using SmokeLounge.AOtomation.Messaging.Messages;
     using SmokeLounge.AOtomation.Messaging.Messages.N3Messages;
@@ -96,11 +92,13 @@ namespace OmniCell.Core.Playfields
 
         /// <summary>
         /// </summary>
-        private readonly DisposeContainer memBusDisposeContainer = new DisposeContainer();
+        private readonly OmniCell.Core.Components.DisposeContainer memBusDisposeContainer =
+            new OmniCell.Core.Components.DisposeContainer();
 
         /// <summary>
+        /// Everything sent through this playfield, delivered in the order it was published.
         /// </summary>
-        private readonly IBus playfieldBus;
+        private readonly OmniCell.Core.Components.MessageBus playfieldBus;
 
         /// <summary>
         /// </summary>
@@ -138,7 +136,7 @@ namespace OmniCell.Core.Playfields
             : base(Identity.None, playfieldIdentity)
         {
             this.server = zoneServer;
-            this.playfieldBus = BusSetup.StartWith<AsyncConfiguration>().Construct();
+            this.playfieldBus = new OmniCell.Core.Components.MessageBus();
 
             this.memBusDisposeContainer.Add(
                 this.playfieldBus.Subscribe<IMSendAOtomationMessageToClient>(SendAOtomationMessageToClient));
@@ -666,10 +664,6 @@ namespace OmniCell.Core.Playfields
         /// <summary>
         /// </summary>
         public Expansions Expansion { get; set; }
-
-        /// <summary>
-        /// </summary>
-        public IBus PlayfieldBus { get; set; }
 
         /// <summary>
         /// </summary>

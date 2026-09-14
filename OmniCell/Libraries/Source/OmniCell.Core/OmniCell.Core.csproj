@@ -39,7 +39,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MemBus" Version="2.0.2" />
     <PackageReference Include="NLog" Version="2.1.0" />
   </ItemGroup>
 

@@ -50,17 +50,11 @@ namespace ZoneEngine.Core
     using OmniCell.Core.Playfields;
     using OmniCell.ObjectManager;
 
-    using MemBus;
-    using MemBus.Configurators;
-    using MemBus.Support;
-
     using SmokeLounge.AOtomation.Messaging.GameData;
     using SmokeLounge.AOtomation.Messaging.Messages;
 
     using ZoneEngine.Core.Controllers;
     using ZoneEngine.Script;
-
-    using IBus = MemBus.IBus;
 
     #endregion
 
@@ -84,7 +78,11 @@ namespace ZoneEngine.Core
 
         private readonly DisposeContainer memBusDisposeContainer = new DisposeContainer();
 
-        private readonly IBus zoneBus;
+        /// <summary>
+        /// Client messages. Each ZoneClient publishes with its own queue, so one client's
+        /// messages are handled in the order they arrived.
+        /// </summary>
+        private readonly MessageBus zoneBus;
 
         private readonly MessageSerializer messageSerializer = new MessageSerializer();
 
@@ -103,7 +101,7 @@ namespace ZoneEngine.Core
             this.ClientDisconnected += this.ZoneServerClientDisconnected;
 
             // New Bus initialization
-            this.zoneBus = BusSetup.StartWith<AsyncConfiguration>().Construct();
+            this.zoneBus = new MessageBus();
 
             this.subscribedMessageHandlers.Clear();
 

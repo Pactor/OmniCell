@@ -58,6 +58,11 @@ namespace LoginEngine.CoreClient
         private readonly IBus bus;
 
         /// <summary>
+        /// Keeps this client's messages in the order they arrived.
+        /// </summary>
+        private readonly SerialQueue inbound = new SerialQueue();
+
+        /// <summary>
         /// </summary>
         private readonly IMessageSerializer messageSerializer;
 
@@ -271,7 +276,7 @@ namespace LoginEngine.CoreClient
                 return false;
             }
 
-            this.bus.Publish(new MessageReceivedEvent(this, message));
+            this.bus.Publish(new MessageReceivedEvent(this, message), this.inbound);
 
             return true;
         }

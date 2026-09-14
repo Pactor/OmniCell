@@ -38,8 +38,6 @@ namespace OmniCell.Core.Components
     using OmniCell.Core.Entities;
     using OmniCell.Core.Network;
 
-    using MemBus.Support;
-
     using SmokeLounge.AOtomation.Messaging.Messages;
 
     using Utility;
@@ -69,7 +67,9 @@ namespace OmniCell.Core.Components
         /// </summary>
         public BaseMessageHandler()
         {
-            this.Direction = this.GetType().GetAttribute<MessageHandlerAttribute>().Direction;
+            this.Direction =
+                ((MessageHandlerAttribute)
+                    Attribute.GetCustomAttribute(this.GetType(), typeof(MessageHandlerAttribute), true)).Direction;
         }
 
         /// <summary>
@@ -126,16 +126,12 @@ namespace OmniCell.Core.Components
                 T body = messageBody as T;
                 if (body != null)
                 {
-                    // The zone bus is asynchronous and throws whatever a handler
-                    // throws away without a word. A handler that failed halfway
-                    // therefore left no log line at all, and the only symptom was
-                    // that the client stopped receiving whatever came after -
-                    // which, for the handler that walks a player into the world,
-                    // means sitting on the loading screen forever with a healthy
-                    // looking server.
-                    //
-                    // Say what happened. The message is lost either way; the
-                    // difference is whether anyone can find out why.
+                    // A handler that fails halfway leaves the client without
+                    // whatever came after - for the handler that walks a player
+                    // into the world, sitting on the loading screen forever with a
+                    // healthy looking server. Say which handler and which message.
+                    // The message is lost either way; the difference is whether
+                    // anyone can find out why.
                     try
                     {
                         this.Read(body, client);

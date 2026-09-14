@@ -39,8 +39,6 @@ namespace OmniCell.Communication.ISComV2Server
 
     using OmniCell.Communication.Messages;
 
-    using MemBus;
-
     using MsgPack.Serialization;
 
     using Utility;
@@ -56,10 +54,6 @@ namespace OmniCell.Communication.ISComV2Server
         /// <summary>
         /// </summary>
         private readonly int ID;
-
-        /// <summary>
-        /// </summary>
-        private readonly IBus bus;
 
         #endregion
 
@@ -78,15 +72,12 @@ namespace OmniCell.Communication.ISComV2Server
         /// </summary>
         /// <param name="server">
         /// </param>
-        /// <param name="messageBus">
-        /// </param>
         /// <param name="clientNumber">
         /// </param>
-        public ISComV2ClientHandler(ServerBase server, IBus messageBus, int clientNumber)
+        public ISComV2ClientHandler(ServerBase server, int clientNumber)
             : base(server)
         {
             this.ID = clientNumber;
-            this.bus = messageBus;
         }
 
         #endregion

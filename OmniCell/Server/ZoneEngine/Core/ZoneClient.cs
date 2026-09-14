@@ -58,8 +58,6 @@ namespace ZoneEngine.Core
 
     using Utility;
 
-    using IBus = MemBus.IBus;
-
     #endregion
 
     /// <summary>
@@ -79,6 +77,11 @@ namespace ZoneEngine.Core
         /// <summary>
         /// </summary>
         private readonly IBus bus;
+
+        /// <summary>
+        /// Keeps this client's messages in the order they arrived.
+        /// </summary>
+        private readonly SerialQueue inbound = new SerialQueue();
 
         /// <summary>
         /// </summary>
@@ -489,7 +492,7 @@ namespace ZoneEngine.Core
             wrapped.GetType().GetProperty("Message").SetValue(wrapped, message, null);
             wrapped.GetType().GetProperty("MessageBody").SetValue(wrapped, message.Body, null);
 
-            this.bus.Publish(wrapped);
+            this.bus.Publish(wrapped, this.inbound);
 
             return true;
         }
