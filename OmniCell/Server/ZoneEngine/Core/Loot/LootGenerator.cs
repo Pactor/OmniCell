@@ -29,7 +29,9 @@ namespace ZoneEngine.Core.Loot
 
             int added = 0;
             int playfield = victim.Playfield.Identity.Instance;
-            IEnumerable<DBMobLootProfile> profiles = MobLootProfileDao.Instance.GetAll()
+
+            // Only this mob's profiles. Reading the whole table on every kill filtered it in memory.
+            IEnumerable<DBMobLootProfile> profiles = MobLootProfileDao.Instance.GetWhere(new { MobName = victim.Name })
                 .Where(p => (p.Playfield == 0 || p.Playfield == playfield)
                             && p.Rolls > 0
                             && p.Chance > 0
@@ -67,8 +69,8 @@ namespace ZoneEngine.Core.Loot
                         continue;
                     }
 
-                    var item = new Item(quality, template.GetLowId(quality), template.GetHighId(quality));
-                    if (corpse.BaseInventory.TryAdd(item) == InventoryError.OK)
+                    Item item = CreateItem(template, quality);
+                    if (item != null && corpse.BaseInventory.TryAdd(item) == InventoryError.OK)
                     {
                         added++;
                     }
@@ -76,6 +78,40 @@ namespace ZoneEngine.Core.Loot
             }
 
             return added;
+        }
+
+        /// <summary>
+        /// An item of the template's family at the rolled quality.
+        /// </summary>
+        /// <remarks>
+        /// A drop row's quality range is its own, not the item family's. Rolled below every related
+        /// template GetLowId answers -1, rolled above every one GetHighId answers 1234567890, and the
+        /// Item constructor throws for either - which, thrown out of a kill, stopped the mob from ever
+        /// respawning. The side that was not found takes the other side's template (or this template),
+        /// and the Item constructor clamps the quality into that template's range.
+        /// </remarks>
+        private static Item CreateItem(ItemTemplate template, int quality)
+        {
+            int lowId = template.GetLowId(quality);
+            int highId = template.GetHighId(quality);
+            bool lowKnown = ItemLoader.ItemList.ContainsKey(lowId);
+            bool highKnown = ItemLoader.ItemList.ContainsKey(highId);
+
+            if (!lowKnown && !highKnown)
+            {
+                lowId = template.ID;
+                highId = template.ID;
+            }
+            else if (!lowKnown)
+            {
+                lowId = highId;
+            }
+            else if (!highKnown)
+            {
+                highId = lowId;
+            }
+
+            return ItemLoader.ItemList.ContainsKey(lowId) ? new Item(quality, lowId, highId) : null;
         }
     }
 }

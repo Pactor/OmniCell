@@ -596,7 +596,17 @@ namespace ZoneEngine.Core.Combat
             }
 
             var loot = new CorpseLoot(victim.Playfield.Identity, corpse);
-            LootGenerator.Fill(loot, victim);
+
+            // Loot comes from database rows. A bad row or a database error must not stop the rest of
+            // the kill - the corpse and, above all, telling the playfield so the mob respawns.
+            try
+            {
+                LootGenerator.Fill(loot, victim);
+            }
+            catch (System.Exception e)
+            {
+                global::Utility.LogUtil.ErrorException(e, "Loot for {0} could not be generated", victim.Name);
+            }
 
             // The corpse is the model; this is the container that makes it
             // clickable. The live server sends both.
