@@ -43,8 +43,6 @@ namespace OmniCell.Core.Vector
 
     using OmniCell.Interfaces;
 
-    using MathNet.Numerics.LinearAlgebra.Single;
-
     #endregion
 
     /// <summary>
@@ -286,17 +284,17 @@ namespace OmniCell.Core.Vector
             Vector3 vRight = Vector3.Cross(vUp, vDirNormalized); // The perpendicular vector to Up and Direction
             vUp = Vector3.Cross(vDirNormalized, vRight); // The actual up vector given the direction and the right vector
 
-            // Step 2. Put the three vectors into the matrix to bulid a basis rotation matrix
-            // This step isnt necessary, but im adding it because often you would want to convert from matricies to quaternions instead of vectors to quaternions
-            // If you want to skip this step, you can use the vector values directly in the quaternion setup below
-            Matrix mBasis = new DenseMatrix(4, 4);
-            mBasis.SetRow(0, new[] { (float)vRight.x, (float)vRight.y, (float)vRight.z, 0.0f });
-            mBasis.SetRow(1, new[] { (float)vUp.x, (float)vUp.y, (float)vUp.z, 0.0f });
-            mBasis.SetRow(2, new[] { (float)vDirNormalized.x, (float)vDirNormalized.y, (float)vDirNormalized.z, 0.0f });
-            mBasis.SetRow(3, new[] { 0.0f, 0.0f, 0.0f, 1.0f });
+            // Step 2. The basis rotation matrix, rows right, up, direction and (0, 0, 0, 1), as floats.
+            // This was a MathNet.Numerics 2.6 DenseMatrix used only to hold these sixteen values;
+            // the locals keep the same float values and the same float arithmetic below, so the
+            // result is bit for bit what the matrix gave, without a .NET Framework-only package.
+            float m00 = (float)vRight.x, m01 = (float)vRight.y, m02 = (float)vRight.z, m03 = 0.0f;
+            float m10 = (float)vUp.x, m11 = (float)vUp.y, m12 = (float)vUp.z, m13 = 0.0f;
+            float m20 = (float)vDirNormalized.x, m21 = (float)vDirNormalized.y, m22 = (float)vDirNormalized.z, m23 = 0.0f;
+            float m30 = 0.0f, m31 = 0.0f, m32 = 0.0f, m33 = 1.0f;
 
             // Step 3. Build a quaternion from the matrix
-            double dfWScale = Math.Sqrt(1.0f + mBasis.At(0, 0) + mBasis.At(1, 1) + mBasis.At(2, 2)) / 2.0f * 4.0;
+            double dfWScale = Math.Sqrt(1.0f + m00 + m11 + m22) / 2.0f * 4.0;
             if (dfWScale == 0.0)
             {
                 Quaternion q = new Quaternion(0, 1, 0, 0);
@@ -304,10 +302,10 @@ namespace OmniCell.Core.Vector
             }
 
             Quaternion qrot = new Quaternion(
-                (float)((mBasis.At(3, 2) - mBasis.At(2, 3)) / dfWScale),
-                (float)((mBasis.At(0, 2) - mBasis.At(2, 0)) / dfWScale),
-                (float)((mBasis.At(1, 0) - mBasis.At(0, 1)) / dfWScale),
-                (float)Math.Sqrt(1.0f + mBasis.At(0, 0) + mBasis.At(1, 1) + mBasis.At(2, 2)) / 2.0f);
+                (float)((m32 - m23) / dfWScale),
+                (float)((m02 - m20) / dfWScale),
+                (float)((m10 - m01) / dfWScale),
+                (float)Math.Sqrt(1.0f + m00 + m11 + m22) / 2.0f);
             var temp = qrot.w;
             qrot.w = qrot.y;
             qrot.y = temp;
