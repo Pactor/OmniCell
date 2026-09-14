@@ -4,7 +4,6 @@ namespace WebEngine
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
-    using System.Web.Script.Serialization;
 
     using OmniCell.Database.Dao;
     using OmniCell.Database.Entities;
@@ -111,7 +110,7 @@ namespace WebEngine
 
                 return json == null
                            ? NotFound()
-                           : new PageResult(200, new JavaScriptSerializer().Serialize(json), Json);
+                           : new PageResult(200, JsonWriter.Serialize(json), Json);
             }
             catch (Exception e)
             {

@@ -14,9 +14,9 @@ rem engine.
 rem
 rem Pass "debug" as an argument to run the Debug build instead of Release.
 rem
-rem Pass "net10" to run LoginEngine and ChatEngine from their .NET 10 build in
-rem Built\<configuration>\net10.0. ZoneEngine and WebEngine still run on .NET
-rem Framework until they move too.
+rem Pass "net10" to run LoginEngine, ChatEngine and WebEngine from their .NET 10
+rem build in Built\<configuration>\net10.0. ZoneEngine still runs on .NET
+rem Framework until it moves too.
 rem ---------------------------------------------------------------------------
 
 set "CONFIG=Release"
@@ -31,8 +31,9 @@ for %%A in (%*) do (
 )
 
 set "BUILT=%~dp0OmniCell\Built\%CONFIG%"
-set "LOGINCHAT=%BUILT%"
-if defined NET10 set "LOGINCHAT=%BUILT%\net10.0"
+rem The engines that have moved to .NET 10 run from here when "net10" is given.
+set "MOVED=%BUILT%"
+if defined NET10 set "MOVED=%BUILT%\net10.0"
 
 if not exist "%BUILT%\LoginEngine.exe" (
   echo ERROR: %CONFIG% build not found at:
@@ -42,9 +43,9 @@ if not exist "%BUILT%\LoginEngine.exe" (
   exit /b 1
 )
 
-if not exist "%LOGINCHAT%\LoginEngine.exe" (
+if not exist "%MOVED%\LoginEngine.exe" (
   echo ERROR: .NET 10 build not found at:
-  echo   %LOGINCHAT%
+  echo   %MOVED%
   echo Build OmniCell.sln first.
   if not defined AUTO pause
   exit /b 1
@@ -53,12 +54,12 @@ if not exist "%LOGINCHAT%\LoginEngine.exe" (
 rem Config.local.xml holds this server's database and address. configure-server.bat
 rem puts it next to the engines in Built\<configuration>; the .NET 10 engines run
 rem from the subfolder, so they get the same copy.
-if defined NET10 if exist "%BUILT%\Config.local.xml" copy /Y "%BUILT%\Config.local.xml" "%LOGINCHAT%\Config.local.xml" >nul
+if defined NET10 if exist "%BUILT%\Config.local.xml" copy /Y "%BUILT%\Config.local.xml" "%MOVED%\Config.local.xml" >nul
 
 echo.
 echo   Configuration : %CONFIG%
 echo   From          : %BUILT%
-if defined NET10 echo   Login and Chat: %LOGINCHAT% [.NET 10]
+if defined NET10 echo   Login, Chat, Web: %MOVED% [.NET 10]
 echo.
 
 tasklist /FI "IMAGENAME eq ZoneEngine.exe" 2>nul | find /i "ZoneEngine.exe" >nul
@@ -71,11 +72,11 @@ if not errorlevel 1 (
 )
 
 echo   Starting ChatEngine...
-start "OmniCell ChatEngine" /D "%LOGINCHAT%" "%LOGINCHAT%\ChatEngine.exe" -autostart
+start "OmniCell ChatEngine" /D "%MOVED%" "%MOVED%\ChatEngine.exe" -autostart
 timeout /t 4 /nobreak >nul
 
 echo   Starting LoginEngine...
-start "OmniCell LoginEngine" /D "%LOGINCHAT%" "%LOGINCHAT%\LoginEngine.exe" -autostart
+start "OmniCell LoginEngine" /D "%MOVED%" "%MOVED%\LoginEngine.exe" -autostart
 timeout /t 3 /nobreak >nul
 
 echo   Starting ZoneEngine...
@@ -91,7 +92,7 @@ rem strings they replace and ":8080" costs five characters the shortest ones
 rem do not have. If something else already holds 80, pass port=8080 here and
 rem set the same port in the launcher.
 echo   Starting WebEngine...
-start "OmniCell WebEngine" /D "%BUILT%" "%BUILT%\WebEngine.exe" %WEBPORT%
+start "OmniCell WebEngine" /D "%MOVED%" "%MOVED%\WebEngine.exe" %WEBPORT%
 timeout /t 2 /nobreak >nul
 
 echo.
