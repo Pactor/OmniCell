@@ -31,8 +31,15 @@
 
 namespace OmniCell.Database.Entities
 {
+    #region Usings ...
+
+    using OmniCell.Database.Dao;
+
+    #endregion
+
     /// <summary>
     /// </summary>
+    [Tablename("mobdroptable")]
     public class DBMobDroptable : IDBEntity
     {
         /// <summary>
