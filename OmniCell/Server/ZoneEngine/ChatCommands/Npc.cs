@@ -35,7 +35,6 @@ namespace ZoneEngine.ChatCommands
 
     using System;
     using System.Collections.Generic;
-    using System.Data.Linq;
     using System.Linq;
     using System.Text;
 
@@ -143,7 +142,7 @@ namespace ZoneEngine.ChatCommands
                 if (mob.Waypoints.Count > 0)
                 {
                     List<MobSpawnWaypoint> temp = this.GetMobWaypoints(mob);
-                    mobdbo.Waypoints = new Binary(MessagePackZip.SerializeData(temp));
+                    mobdbo.Waypoints = MessagePackZip.SerializeData(temp);
                 }
 
                 if (MobSpawnDao.Instance.Exists(mobdbo.Id))

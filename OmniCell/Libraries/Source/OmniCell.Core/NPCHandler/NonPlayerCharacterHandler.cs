@@ -205,7 +205,7 @@ namespace OmniCell.Core.NPCHandler
                 List<MobSpawnWaypoint> waypoints = mob.Waypoints == null || mob.Waypoints.Length == 0
                                                        ? new List<MobSpawnWaypoint>()
                                                        : MessagePackZip.DeserializeData<MobSpawnWaypoint>(
-                                                           mob.Waypoints.ToArray());
+                                                           mob.Waypoints);
                 foreach (MobSpawnWaypoint wp in waypoints)
                 {
                     Waypoint mobwp = new Waypoint();

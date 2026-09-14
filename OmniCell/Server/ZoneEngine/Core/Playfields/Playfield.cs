@@ -520,7 +520,7 @@ namespace OmniCell.Core.Playfields
             foreach (DBStaticDynel sd in dynels)
             {
                 List<GameTuple<CharacterStat, uint>> tempStats =
-                    MessagePackZip.DeserializeData<GameTuple<CharacterStat, uint>>(sd.stats.ToArray());
+                    MessagePackZip.DeserializeData<GameTuple<CharacterStat, uint>>(sd.stats);
 
                 if (tempStats.Any(x => x.Value1 == (CharacterStat)StatIds.acgitemtemplateid))
                 {

@@ -33,7 +33,6 @@ namespace OmniCell.Database.Entities
 {
     #region Usings ...
 
-    using System.Data.Linq;
 
     using OmniCell.Database.Dao;
 
@@ -64,9 +63,9 @@ namespace OmniCell.Database.Entities
 
         public float HeadingW { get; set; }
 
-        public Binary stats { get; set; }
+        public byte[] stats { get; set; }
         
         // For future use (override item templates events
-        public Binary customevents { get; set; }
+        public byte[] customevents { get; set; }
     }
 }

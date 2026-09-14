@@ -33,7 +33,6 @@ namespace OmniCell.Database.Dao
 {
     #region Usings ...
 
-    using System.Data.Linq;
 
     using OmniCell.Database.Entities;
 
@@ -47,27 +46,27 @@ namespace OmniCell.Database.Dao
         {
             if (entity.Waypoints == null)
             {
-                entity.Waypoints = new Binary(new byte[0]);
+                entity.Waypoints = new byte[0];
             }
 
             if (entity.Weaponpairs == null)
             {
-                entity.Weaponpairs = new Binary(new byte[0]);
+                entity.Weaponpairs = new byte[0];
             }
 
             if (entity.RunningNanos == null)
             {
-                entity.RunningNanos = new Binary(new byte[0]);
+                entity.RunningNanos = new byte[0];
             }
 
             if (entity.MobMeshs == null)
             {
-                entity.MobMeshs = new Binary(new byte[0]);
+                entity.MobMeshs = new byte[0];
             }
 
             if (entity.AdditionalMeshs == null)
             {
-                entity.AdditionalMeshs = new Binary(new byte[0]);
+                entity.AdditionalMeshs = new byte[0];
             }
 
             return this.Add(entity, null, null, false);

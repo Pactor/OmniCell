@@ -326,7 +326,7 @@ namespace OmniCell.Database
                     orgMembers.AddRange(
                         conn.Query<int>(
                             "SELECT `ID` FROM `characters_stats` WHERE `Stat` = '5' AND `Value` = @orgId " + pres,
-                            orgId));
+                            new { orgId }));
                 }
             }
             catch (Exception e)

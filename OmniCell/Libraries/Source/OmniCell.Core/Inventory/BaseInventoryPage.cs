@@ -35,7 +35,6 @@ namespace OmniCell.Core.Inventory
 
     using System;
     using System.Collections.Generic;
-    using System.Data.Linq;
 
     using OmniCell.Core.Entities;
     using OmniCell.Core.Items;
@@ -239,7 +238,7 @@ namespace OmniCell.Core.Inventory
                 temp.Instance = item.Id;
                 newItem.Identity = temp;
 
-                byte[] binaryStats = item.stats.ToArray();
+                byte[] binaryStats = item.stats;
                 for (int i = 0; i < binaryStats.Length / 8; i++)
                 {
                     int statid = BitConverter.ToInt32(binaryStats, i * 8);
@@ -382,7 +381,7 @@ namespace OmniCell.Core.Inventory
                                               highid = kv.Value.HighID,
                                               quality = kv.Value.Quality,
                                               multiplecount = kv.Value.MultipleCount,
-                                              stats = new Binary(kv.Value.GetItemAttributes())
+                                              stats = kv.Value.GetItemAttributes()
                                           };
 
                     DBinstanced.Add(dbi);

@@ -571,7 +571,7 @@ namespace OmniCell.Database.Dao
                 IDbTransaction trans = transaction;
                 try
                 {
-                    result = conn.Query<long>(SqlMapperUtil.CreateCountSQL(this.TableName, parameter), trans).Single();
+                    result = conn.Query<long>(SqlMapperUtil.CreateCountSQL(this.TableName, parameter), parameter, trans).Single();
                 }
                 finally
                 {

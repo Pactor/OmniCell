@@ -1651,7 +1651,7 @@ namespace ZoneEngine.Core.Quests
                                     highid = item.HighID,
                                     quality = item.Quality,
                                     multiplecount = item.MultipleCount,
-                                    stats = new System.Data.Linq.Binary(item.GetItemAttributes())
+                                    stats = item.GetItemAttributes()
                                 },
                             connection,
                             transaction,

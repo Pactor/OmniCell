@@ -33,7 +33,6 @@ namespace OmniCell.Database.Entities
 {
     #region Usings ...
 
-    using System.Data.Linq;
 
     using OmniCell.Database.Dao;
 
@@ -102,23 +101,23 @@ namespace OmniCell.Database.Entities
 
         /// <summary>
         /// </summary>
-        public Binary Waypoints { get; set; }
+        public byte[] Waypoints { get; set; }
 
         /// <summary>
         /// </summary>
-        public Binary Weaponpairs { get; set; }
+        public byte[] Weaponpairs { get; set; }
 
         /// <summary>
         /// </summary>
-        public Binary RunningNanos { get; set; }
+        public byte[] RunningNanos { get; set; }
 
         /// <summary>
         /// </summary>
-        public Binary MobMeshs { get; set; }
+        public byte[] MobMeshs { get; set; }
 
         /// <summary>
         /// </summary>
-        public Binary AdditionalMeshs { get; set; }
+        public byte[] AdditionalMeshs { get; set; }
 
         /// <summary>
         /// </summary>

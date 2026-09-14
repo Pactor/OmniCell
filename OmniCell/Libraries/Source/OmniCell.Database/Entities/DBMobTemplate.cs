@@ -33,7 +33,6 @@ namespace OmniCell.Database.Dao
 {
     #region Usings ...
 
-    using System.Data.Linq;
 
     using OmniCell.Database.Entities;
 
@@ -88,9 +87,9 @@ namespace OmniCell.Database.Dao
 
         public int HeadMesh { get; set; }
 
-        public Binary MobMeshs { get; set; }
+        public byte[] MobMeshs { get; set; }
 
-        public Binary AdditionalMeshs { get; set; }
+        public byte[] AdditionalMeshs { get; set; }
 
         /// <summary>
         /// Comma-delimited item hashes from mobdroptable. Hashes can be added to form a union of items. e.g. HASH01+HASH02, HASH03+HASH04, HASH05

@@ -33,7 +33,6 @@ namespace OmniCell.Database.Dao
 {
     #region Usings ...
 
-    using System.Data.Linq;
 
     using OmniCell.Database.Entities;
 
@@ -110,7 +109,7 @@ namespace OmniCell.Database.Dao
         /// <summary>
         /// Item's stats held as blob from msgpack serialization
         /// </summary>
-        public Binary stats { get; set; }
+        public byte[] stats { get; set; }
 
         /// <summary>
         /// Coordinates (X)
