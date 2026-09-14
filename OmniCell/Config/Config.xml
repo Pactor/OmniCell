@@ -79,21 +79,6 @@
   <Locale>en</Locale>
 
   <!--
-    Relaying in-game chat to an IRC channel. Off by default: it sends what
-    your players say to a third party, so it should be a decision rather
-    than a default.
-  -->
-  <UseIRCRelay>false</UseIRCRelay>
-  <IRCServer>irc.example.net</IRCServer>
-  <RelayBotNick>OmniCell</RelayBotNick>
-  <RelayBotIdent>OmniCell</RelayBotIdent>
-  <IRCChannel>#OmniCellRelay</IRCChannel>
-  <RelayIngameChannel>OmniCell-Relay</RelayIngameChannel>
-
-  <!-- Address the IRC relay gives out in reply to !serverinfo. -->
-  <WebHostName></WebHostName>
-
-  <!--
     Diffie-Hellman parameters for the login handshake. Protocol constants
     shared with the game client, not secrets: changing them requires a
     patched client and will stop every unpatched one from logging in.

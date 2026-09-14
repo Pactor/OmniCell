@@ -72,16 +72,6 @@ namespace ChatEngine.PacketHandlers
                 return;
             }
 
-            if (playerName == ConfigReadWrite.Instance.CurrentConfig.RelayBotNick)
-            {
-                byte[] botlookup = NameLookupResult.Create(
-                    0x80000000,
-                    ConfigReadWrite.Instance.CurrentConfig.RelayBotNick);
-                client.Send(botlookup);
-                client.Send(BuddyOnlineStatus.Create(0x80000000, 1, new byte[] { 0x00, 0x01, 0x00 }));
-                return;
-            }
-
             client.Server.Debug(
                 client,
                 "{0} >> PlayerNameLookup: PlayerName: {1}",

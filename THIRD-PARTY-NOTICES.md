@@ -152,15 +152,6 @@ which only have it in a namespace.
 
 ---
 
-## msgpack-cli — Apache License 2.0
-
-MessagePack serialisation, used for the extracted client datafiles. Included as
-a git submodule.
-
-- Full text: `OmniCell/Libraries/Source/msgpack-cli/LICENSE.txt`
-
----
-
 ## NuGet dependencies
 
 Resolved at build time and not redistributed in this repository. Licences below
@@ -168,13 +159,12 @@ were verified against the nuspec for the exact version referenced.
 
 | package | version | licence | used by |
 |---|---|---|---|
-| Dapper | 1.13 | Apache 2.0 | Database, ZoneEngine |
+| Dapper | 2.1.66 | Apache 2.0 | Database, ZoneEngine |
 | MySqlConnector | 2.4.0 | MIT | Database |
-| NLog | 2.1.0 | BSD 3-clause | all engines |
+| NLog | 2.1.0 (.NET Framework), 5.3.4 (.NET 10) | BSD 3-clause | all engines |
+| MsgPack.Cli | 1.0.1 | Apache 2.0 | datafiles, inter-server messages |
 | SharpZipLib | 1.4.2 | MIT | Utility, ZoneEngine |
 | MemBus | 2.0.2 | Apache 2.0 | Core, Communication, Interfaces, ZoneEngine |
-| MathNet.Numerics | 2.6.2 | MIT | Core |
-| IrcDotNet | 0.4.1 | MIT | ChatEngine |
 
 ---
 

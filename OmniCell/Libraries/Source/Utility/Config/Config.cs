@@ -119,42 +119,7 @@ namespace Utility.Config
         /// <summary>
         /// Locale language selection for you, en = english , gr = german, more languages as we go
         /// </summary>
-        Locale,
-
-        /// <summary>
-        /// 
-        /// </summary>
-        IRCServer,
-
-        /// <summary>
-        /// 
-        /// </summary>
-        RelayBotNick,
-
-        /// <summary>
-        /// 
-        /// </summary>
-        RelayBotIdent,
-
-        /// <summary>
-        /// 
-        /// </summary>
-        IRCChannel,
-
-        /// <summary>
-        /// 
-        /// </summary>
-        RelayIngameChannel,
-
-        /// <summary>
-        /// 
-        /// </summary>
-        UseIRCRelay,
-
-        /// <summary>
-        /// 
-        /// </summary>
-        WebHostName
+        Locale
     }
 
     #endregion
@@ -182,16 +147,6 @@ namespace Utility.Config
         /// Gets or sets Communication Port for Communicating between Zone and Chat Engines.
         /// </summary>
         public int CommPort { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string IRCChannel { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string IRCServer { get; set; }
 
         /// <summary>
         /// Gets or sets Local ISComm IP address
@@ -252,21 +207,6 @@ namespace Utility.Config
         public string MysqlConnection { get; set; }
 
         /// <summary>
-        /// 
-        /// </summary>
-        public string RelayBotIdent { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string RelayBotNick { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string RelayIngameChannel { get; set; }
-
-        /// <summary>
         /// Gets or sets Your SQL Type
         /// </summary>
         public string SQLType { get; set; }
@@ -277,11 +217,6 @@ namespace Utility.Config
         public bool SqlLog { get; set; }
 
         /// <summary>
-        /// 
-        /// </summary>
-        public bool UseIRCRelay { get; set; }
-
-        /// <summary>
         /// Gets or sets Zone server IP
         /// </summary>
         public string ZoneIP { get; set; }
@@ -290,11 +225,6 @@ namespace Utility.Config
         /// Gets or sets the Zone Port
         /// </summary>
         public int ZonePort { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string WebHostName { get; set; }
 
         #endregion
     }

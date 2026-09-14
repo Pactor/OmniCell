@@ -46,7 +46,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="IrcDotNet" Version="0.4.1" />
     <PackageReference Include="NLog" Version="2.1.0" />
     <PackageReference Include="NLog.Config" Version="2.1.0" />
   </ItemGroup>
