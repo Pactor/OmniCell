@@ -203,9 +203,13 @@ namespace OmniCell.Stats
         {
             get
             {
-                this.LastCalculatedValue = (int)Math.Floor(
-                    (double) // ReSharper disable PossibleLossOfFraction
-                        ((this.BaseValue + this.Modifier + this.Trickle) * this.PercentageModifier / 100));
+                // Integer arithmetic throughout. BaseValue is a uint, so a stat holding a negative number
+                // (a default of -1, say) makes the sum a long above int.MaxValue, and keeping the low 32
+                // bits gives the signed value back. This used to be (int)Math.Floor((double)(...)), which
+                // gave the same answer on .NET Framework x64 only because that cast kept the low 32 bits
+                // too; .NET 9 and later clamp an out-of-range double to int.MaxValue instead.
+                this.LastCalculatedValue =
+                    unchecked((int)((this.BaseValue + this.Modifier + this.Trickle) * this.PercentageModifier / 100));
                 return this.LastCalculatedValue;
             }
         }

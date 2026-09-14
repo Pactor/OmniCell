@@ -144,10 +144,9 @@ namespace OmniCell.Stats.SpecialStats
         {
             get
             {
-                return
-                    (int)
-                        Math.Floor(
-                            (double)((this.BaseValue + this.Modifier + this.Trickle) * this.PercentageModifier / 100));
+                // See Stat.GetValue: the long result is truncated to 32 bits rather than going through a
+                // double, whose out-of-range cast to int saturates on .NET 9 and later.
+                return unchecked((int)((this.BaseValue + this.Modifier + this.Trickle) * this.PercentageModifier / 100));
             }
         }
 
