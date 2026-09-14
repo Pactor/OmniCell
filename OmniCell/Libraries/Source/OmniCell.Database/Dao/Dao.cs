@@ -182,16 +182,25 @@ namespace OmniCell.Database.Dao
                         throw new DataBaseException(
                             string.Format("Failed to create new record on table '{0}'", this.TableName));
                     }
+                    if (transaction == null && trans != null)
+                    {
+                        trans.Commit();
+                    }
+                }
+                catch
+                {
+                    if (transaction == null && trans != null)
+                    {
+                        Rollback(trans);
+                    }
+
+                    throw;
                 }
                 finally
                 {
-                    if (transaction == null)
+                    if (transaction == null && trans != null)
                     {
-                        if (trans != null)
-                        {
-                            trans.Commit();
-                            trans.Dispose();
-                        }
+                        trans.Dispose();
                     }
                 }
             }
@@ -237,16 +246,25 @@ namespace OmniCell.Database.Dao
                         SqlMapperUtil.CreateDeleteSQL(this.TableName),
                         new { id = entityId },
                         trans);
+                    if (transaction == null && trans != null)
+                    {
+                        trans.Commit();
+                    }
+                }
+                catch
+                {
+                    if (transaction == null && trans != null)
+                    {
+                        Rollback(trans);
+                    }
+
+                    throw;
                 }
                 finally
                 {
-                    if (transaction == null)
+                    if (transaction == null && trans != null)
                     {
-                        if (trans != null)
-                        {
-                            trans.Commit();
-                            trans.Dispose();
-                        }
+                        trans.Dispose();
                     }
                 }
             }
@@ -292,16 +310,25 @@ namespace OmniCell.Database.Dao
                         SqlMapperUtil.CreateDeleteSQL(this.TableName, whereParameters),
                         whereParameters,
                         trans);
+                    if (transaction == null && trans != null)
+                    {
+                        trans.Commit();
+                    }
+                }
+                catch
+                {
+                    if (transaction == null && trans != null)
+                    {
+                        Rollback(trans);
+                    }
+
+                    throw;
                 }
                 finally
                 {
-                    if (transaction == null)
+                    if (transaction == null && trans != null)
                     {
-                        if (trans != null)
-                        {
-                            trans.Commit();
-                            trans.Dispose();
-                        }
+                        trans.Dispose();
                     }
                 }
             }
@@ -413,16 +440,25 @@ namespace OmniCell.Database.Dao
                         SqlMapperUtil.CreateUpdateSQL(this.TableName, parameters ?? entity),
                         parameters ?? entity,
                         trans);
+                    if (transaction == null && trans != null)
+                    {
+                        trans.Commit();
+                    }
+                }
+                catch
+                {
+                    if (transaction == null && trans != null)
+                    {
+                        Rollback(trans);
+                    }
+
+                    throw;
                 }
                 finally
                 {
-                    if (transaction == null)
+                    if (transaction == null && trans != null)
                     {
-                        if (trans != null)
-                        {
-                            trans.Commit();
-                            trans.Dispose();
-                        }
+                        trans.Dispose();
                     }
                 }
             }
@@ -472,16 +508,25 @@ namespace OmniCell.Database.Dao
                     {
                         rowsAffected += Save(entity, null, conn, trans); // Pass parameters instead of null here? 
                     }
+                    if (transaction == null && trans != null)
+                    {
+                        trans.Commit();
+                    }
+                }
+                catch
+                {
+                    if (transaction == null && trans != null)
+                    {
+                        Rollback(trans);
+                    }
+
+                    throw;
                 }
                 finally
                 {
-                    if (transaction == null)
+                    if (transaction == null && trans != null)
                     {
-                        if (trans != null)
-                        {
-                            trans.Commit();
-                            trans.Dispose();
-                        }
+                        trans.Dispose();
                     }
                 }
             }
@@ -502,6 +547,22 @@ namespace OmniCell.Database.Dao
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Rolls back a transaction that failed part way. Commit used to run in a finally block, so a
+        /// failed write - or the rows of a list saved before the failure - was committed anyway. A
+        /// rollback that fails too (the connection has usually gone) must not hide the original error.
+        /// </summary>
+        private static void Rollback(IDbTransaction transaction)
+        {
+            try
+            {
+                transaction.Rollback();
+            }
+            catch (Exception)
+            {
+            }
+        }
 
         /// <summary>
         /// </summary>
@@ -535,16 +596,25 @@ namespace OmniCell.Database.Dao
                 try
                 {
                     result = conn.Query<T>(SqlMapperUtil.CreateGetSQL(this.TableName, parameter), parameter, trans);
+                    if (transaction == null && trans != null)
+                    {
+                        trans.Commit();
+                    }
+                }
+                catch
+                {
+                    if (transaction == null && trans != null)
+                    {
+                        Rollback(trans);
+                    }
+
+                    throw;
                 }
                 finally
                 {
-                    if (transaction == null)
+                    if (transaction == null && trans != null)
                     {
-                        if (trans != null)
-                        {
-                            trans.Commit();
-                            trans.Dispose();
-                        }
+                        trans.Dispose();
                     }
                 }
             }
@@ -572,16 +642,25 @@ namespace OmniCell.Database.Dao
                 try
                 {
                     result = conn.Query<long>(SqlMapperUtil.CreateCountSQL(this.TableName, parameter), parameter, trans).Single();
+                    if (transaction == null && trans != null)
+                    {
+                        trans.Commit();
+                    }
+                }
+                catch
+                {
+                    if (transaction == null && trans != null)
+                    {
+                        Rollback(trans);
+                    }
+
+                    throw;
                 }
                 finally
                 {
-                    if (transaction == null)
+                    if (transaction == null && trans != null)
                     {
-                        if (trans != null)
-                        {
-                            trans.Commit();
-                            trans.Dispose();
-                        }
+                        trans.Dispose();
                     }
                 }
             }

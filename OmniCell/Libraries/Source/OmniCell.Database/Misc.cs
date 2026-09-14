@@ -121,7 +121,8 @@ namespace OmniCell.Database
 
             try
             {
-                using (IDbConnection conn = Connector.GetConnection())
+                // User variables allowed: staticdynels.sql sets @gas_fire_stats and uses it.
+                using (IDbConnection conn = Connector.GetConnection(true))
                 {
                     if (tablesNotFound.Count > 0)
                     {
@@ -142,13 +143,13 @@ namespace OmniCell.Database
                                 Colouring.Pop();
                                 if (fileSize > 10000)
                                 {
-                                    string[] queries = File.ReadAllLines(sqlFile);
+                                    string[] queries = ReadSqlText(sqlFile).Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
                                     int counter = 0;
                                     sqlQuery = string.Empty;
                                     string lastpercent = "0";
                                     while (counter < queries.Length)
                                     {
-                                        if (queries[counter].IndexOf("INSERT INTO") == -1)
+                                        if (queries[counter].IndexOf("INSERT INTO", StringComparison.Ordinal) == -1)
                                         {
                                             sqlQuery += queries[counter] + "\n";
                                         }
@@ -174,7 +175,8 @@ namespace OmniCell.Database
                                     string buf1 = string.Empty;
                                     while (counter < queries.Length)
                                     {
-                                        if (queries[counter].ToLower().Substring(0, 11) == "insert into")
+                                        // StartsWith rather than Substring(0, 11), which threw on any shorter line.
+                                        if (queries[counter].StartsWith("insert into", StringComparison.OrdinalIgnoreCase))
                                         {
                                             break;
                                         }
@@ -186,7 +188,7 @@ namespace OmniCell.Database
                                     {
                                         buf1 = queries[counter].Substring(
                                             0,
-                                            queries[counter].ToLower().IndexOf("values"));
+                                            queries[counter].IndexOf("values", StringComparison.OrdinalIgnoreCase));
                                         buf1 = buf1 + "VALUES ";
                                         StringBuilder Buffer = new StringBuilder(0, 1 * 1024 * 1024);
                                         while (counter < queries.Length)
@@ -203,8 +205,8 @@ namespace OmniCell.Database
                                                 {
                                                     part =
                                                         queries[counter].Substring(
-                                                            queries[counter].ToLower().IndexOf("values"));
-                                                    part = part.Substring(part.IndexOf("(")); // from '(' to end
+                                                            queries[counter].IndexOf("values", StringComparison.OrdinalIgnoreCase));
+                                                    part = part.Substring(part.IndexOf('(')); // from '(' to end
                                                     part = part.Substring(0, part.Length - 1); // Remove ';'
                                                     if (Buffer.Length + 1 + part.Length > 1024 * 1000)
                                                     {
@@ -265,7 +267,7 @@ namespace OmniCell.Database
                                 }
                                 else
                                 {
-                                    sqlQuery = File.ReadAllText(sqlFile);
+                                    sqlQuery = ReadSqlText(sqlFile);
                                     conn.Execute(sqlQuery);
                                     Colouring.Push(ConsoleColor.Green);
                                     Console.Write("\rTable " + fName.PadRight(67) + "[100%]");
@@ -328,6 +330,25 @@ namespace OmniCell.Database
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// A table file's text. The files in the repository are UTF-8, but the extractor writes
+        /// itemnames.sql in windows-1252, and reading a freshly extracted one as UTF-8 turned every
+        /// accented item name into replacement characters. Text that is not valid UTF-8 is read as 1252.
+        /// </summary>
+        private static string ReadSqlText(string path)
+        {
+            byte[] bytes = File.ReadAllBytes(path);
+            try
+            {
+                return new UTF8Encoding(false, true).GetString(bytes).TrimStart('﻿');
+            }
+            catch (DecoderFallbackException)
+            {
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                return Encoding.GetEncoding(1252).GetString(bytes);
+            }
+        }
 
         /// <summary>
         /// </summary>

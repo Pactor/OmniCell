@@ -69,7 +69,8 @@ namespace Utility
             using (MemoryStream ms = new MemoryStream())
             {
                 bf.Pack(ms, dataList);
-                temp = ms.GetBuffer();
+                // ToArray, not GetBuffer: the buffer is the stream's whole capacity, zero padding included.
+                temp = ms.ToArray();
             }
             return temp;
         }

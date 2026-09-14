@@ -98,11 +98,8 @@ namespace OmniCell.Database
         {
             if (scopeIdentity == string.Empty)
             {
-                scopeIdentity = ConfigReadWrite.Instance.CurrentConfig.SQLType.ToLower() == "mysql"
-                    ? "LAST_INSERT_ID()"
-                    : ConfigReadWrite.Instance.CurrentConfig.SQLType.ToLower() == "mssql"
-                        ? "@@SCOPE_IDENTITY"
-                        : "LASTVAL()";
+                // MySQL is the only database the server supports.
+                scopeIdentity = "LAST_INSERT_ID()";
             }
 
             dynamic identity =

@@ -111,6 +111,26 @@ namespace OmniCell.Database
             return conn;
         }
 
+        /// <summary>
+        /// A connection that allows MySQL user variables (SET @name = ...), for running table files.
+        /// Without it MySqlConnector reads @name as a query parameter nobody supplied, and throws.
+        /// </summary>
+        public static IDbConnection GetConnection(bool allowUserVariables)
+        {
+            if (!allowUserVariables)
+            {
+                return GetConnection();
+            }
+
+            var builder = new MySqlConnector.MySqlConnectionStringBuilder(ConnectionStringMySql)
+                          {
+                              AllowUserVariables = true
+                          };
+            var conn = new MySqlConnector.MySqlConnection(builder.ConnectionString);
+            conn.Open();
+            return conn;
+        }
+
         #endregion
 
         // CONNECTION POOLING IS A MUST!!!
