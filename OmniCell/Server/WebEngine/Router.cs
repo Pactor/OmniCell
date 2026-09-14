@@ -65,6 +65,13 @@ namespace WebEngine
                 return people;
             }
 
+            // Chat bot history, timers, market and tower lookups. See BotLookups.
+            PageResult lookup = BotLookups.Route(path);
+            if (lookup != null)
+            {
+                return lookup;
+            }
+
             // The client is inconsistent about trailing slashes across panels, so
             // match with and without one rather than trusting it to send exactly
             // what we patched in.

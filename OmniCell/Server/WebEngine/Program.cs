@@ -119,6 +119,8 @@ namespace WebEngine
             Console.WriteLine("    " + Endpoints.ShowItem + "      item bundle details");
             Console.WriteLine("    /org/stats/d/<dim>/name/<org id>/basicstats.xml   org roster JSON for chat bots");
             Console.WriteLine("    /character/bio/d/<dim>/name/<name>/bio.xml        character JSON for chat bots");
+            Console.WriteLine("    /history /timers/bosses /timers/gaubuffs /gmi/aoid/<id> /towers/sites");
+            Console.WriteLine("                                                      empty bot lookups (not tracked)");
             Console.WriteLine();
             Console.WriteLine("  Every request is logged below. A path shown as 'Not mapped'");
             Console.WriteLine("  is one the client wants that Endpoints.Mappings has missed.");

@@ -57,6 +57,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BotLookups.cs" />
     <Compile Include="Endpoints.cs" />
     <Compile Include="HttpServer.cs" />
     <Compile Include="Pages.cs" />
