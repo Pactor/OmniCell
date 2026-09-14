@@ -168,8 +168,9 @@ if not exist "%TARGET%" (
 )
 
 rem The engines read their settings from the directory they run in, which is
-rem the build output, so the file has to be beside each of them too.
-for %%D in ("%HERE%OmniCell\Built\Debug" "%HERE%OmniCell\Built\Release") do (
+rem the build output, so the file has to be beside each of them too - the .NET 10
+rem engines in the net10.0 subfolders included.
+for %%D in ("%HERE%OmniCell\Built\Debug" "%HERE%OmniCell\Built\Release" "%HERE%OmniCell\Built\Debug\net10.0" "%HERE%OmniCell\Built\Release\net10.0") do (
   if exist "%%~D" copy /Y "%TARGET%" "%%~D\Config.local.xml" >nul
 )
 
