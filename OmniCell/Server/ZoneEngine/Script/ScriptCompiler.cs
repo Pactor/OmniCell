@@ -187,7 +187,7 @@ namespace ZoneEngine.Script
         public static string RemoveCharactersAfterChar(string hayStack, char needle)
         {
             string input = hayStack;
-            int index = input.IndexOf(needle);
+            int index = input.IndexOf(needle, StringComparison.Ordinal);
             if (index > 0)
             {
                 input = input.Substring(0, index);
@@ -215,7 +215,7 @@ namespace ZoneEngine.Script
         public static string RemoveCharactersBeforeChar(string hayStack, char needle)
         {
             string input = hayStack;
-            int index = input.IndexOf(needle);
+            int index = input.IndexOf(needle, StringComparison.Ordinal);
             if (index >= 0)
             {
                 return input.Substring(index + 1);
@@ -501,34 +501,26 @@ namespace ZoneEngine.Script
                     ConsoleColor.Magenta);
                 foreach (string scriptFile in this.ScriptsList)
                 {
-                    string outputAssembly = Path.Combine("tmp", DllName(scriptFile));
-
-                    // CreateIM the directory if it doesnt exist
-                    FileInfo file = new FileInfo(Path.Combine("tmp", DllName(scriptFile)));
-                    if (file.Directory != null)
-                    {
-                        file.Directory.Create();
-                    }
-
                     // Now compile the dll's
-                    string errors = CompileToFile(new[] { scriptFile }, outputAssembly, references);
+                    string errors;
+                    Assembly compiled = CompileAndLoad(
+                        new[] { scriptFile },
+                        Path.GetFileNameWithoutExtension(DllName(scriptFile)),
+                        references,
+                        out errors);
 
                     // And check for errors
-                    if (errors.Length != 0)
+                    if (compiled == null)
                     {
                         // We have errors, display them
                         LogScriptAction("Error:", ConsoleColor.Yellow, errors, ConsoleColor.Red);
                         return false;
                     }
 
-                    LogScriptAction(
-                        "Script " + scriptFile,
-                        ConsoleColor.Green,
-                        "Compiled to: " + outputAssembly,
-                        ConsoleColor.Green);
+                    LogScriptAction("Script " + scriptFile, ConsoleColor.Green, "Compiled.", ConsoleColor.Green);
 
                     // Add the compiled assembly to our list
-                    this.multipleDllList.Add(Assembly.LoadFile(file.FullName));
+                    this.multipleDllList.Add(compiled);
                 }
 
                 // Ok all good, load em
@@ -539,45 +531,20 @@ namespace ZoneEngine.Script
             }
             else
             {
-                // Compile the full Scripts.dll
-                string errors = CompileToFile(this.ScriptsList, "Scripts.dll", references);
+                // Compile the full Scripts assembly
+                string errors;
+                Assembly compiled = CompileAndLoad(this.ScriptsList, "Scripts", references, out errors);
 
                 // And check for errors
-                if (errors.Length != 0)
+                if (compiled == null)
                 {
                     // We have errors, display them
                     LogScriptAction("Error:", ConsoleColor.Yellow, errors, ConsoleColor.Red);
                     return false;
                 }
 
-                // Load the full dll
-                try
-                {
-                    FileInfo file = new FileInfo("Scripts.dll");
-                    Assembly asm = Assembly.LoadFile(file.FullName);
-                    this.multipleDllList.Add(asm);
-                    RunScript(asm);
-                }
-                catch (FileLoadException ee)
-                {
-                    LogScriptAction(
-                        "ERROR",
-                        ConsoleColor.Red,
-                        "File loading not successful:\r\n" + ee,
-                        ConsoleColor.Red);
-                    return false;
-                }
-                catch (FileNotFoundException ee)
-                {
-                    LogScriptAction("ERROR", ConsoleColor.Red, "Script not found:\r\n" + ee, ConsoleColor.Red);
-                    return false;
-                }
-                catch (BadImageFormatException ee)
-                {
-                    LogScriptAction("ERROR", ConsoleColor.Red, "Bad image format:\r\n" + ee, ConsoleColor.Red);
-                    return false;
-                }
-
+                this.multipleDllList.Add(compiled);
+                RunScript(compiled);
                 this.AddScriptMembers();
             }
 
@@ -631,14 +598,39 @@ namespace ZoneEngine.Script
         }
 
         /// <summary>
-        /// Compiles script source files into one assembly on disk, with its debug symbols
-        /// beside it.
+        /// Metadata for each referenced assembly, read once rather than once per script.
         /// </summary>
-        /// <returns>
+        private static readonly Dictionary<string, Roslyn.MetadataReference> MetadataReferences =
+            new Dictionary<string, Roslyn.MetadataReference>(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// Compiles script source files into one assembly and loads it, with its debug symbols.
+        /// </summary>
+        /// <remarks>
+        /// Built and loaded in memory. It used to be written to tmp\ and loaded from there, which kept
+        /// the file locked for as long as the engine ran, so a second ZoneEngine started from the same
+        /// folder failed writing it and stopped.
+        /// </remarks>
+        /// <param name="errors">
         /// The errors, one per line as "file In Line: n Error: CSnnnn text"; empty when it compiled.
-        /// </returns>
-        private static string CompileToFile(IList<string> sourceFiles, string outputAssembly, IList<string> references)
+        /// </param>
+        /// <returns>The loaded assembly, or null when it did not compile.</returns>
+        private static Assembly CompileAndLoad(
+            IList<string> sourceFiles,
+            string assemblyName,
+            IList<string> references,
+            out string errors)
         {
+            // A single-file or trimmed publish has no framework assemblies on disk to compile against,
+            // which otherwise shows up as a flood of "type not found" errors.
+            if (!references.Any(
+                    r => string.Equals(Path.GetFileName(r), "System.Runtime.dll", StringComparison.OrdinalIgnoreCase)))
+            {
+                errors = "No .NET assemblies were found to compile scripts against. ZoneEngine has to run as a "
+                         + "normal .NET 10 application, not a single-file publish, to compile scripts.";
+                return null;
+            }
+
             RoslynCSharp.CSharpParseOptions parseOptions =
                 new RoslynCSharp.CSharpParseOptions(RoslynCSharp.LanguageVersion.Latest);
             List<Roslyn.SyntaxTree> syntaxTrees = new List<Roslyn.SyntaxTree>();
@@ -649,45 +641,59 @@ namespace ZoneEngine.Script
                 syntaxTrees.Add(RoslynCSharp.CSharpSyntaxTree.ParseText(text, parseOptions, sourceFile));
             }
 
+            List<Roslyn.MetadataReference> metadata = new List<Roslyn.MetadataReference>(references.Count);
+            lock (MetadataReferences)
+            {
+                foreach (string reference in references)
+                {
+                    Roslyn.MetadataReference cached;
+                    if (!MetadataReferences.TryGetValue(reference, out cached))
+                    {
+                        cached = Roslyn.MetadataReference.CreateFromFile(reference);
+                        MetadataReferences[reference] = cached;
+                    }
+
+                    metadata.Add(cached);
+                }
+            }
+
             RoslynCSharp.CSharpCompilation compilation = RoslynCSharp.CSharpCompilation.Create(
-                Path.GetFileNameWithoutExtension(outputAssembly),
+                assemblyName,
                 syntaxTrees,
-                references.Select(reference => (Roslyn.MetadataReference)Roslyn.MetadataReference.CreateFromFile(reference)),
+                metadata,
                 new RoslynCSharp.CSharpCompilationOptions(
                     Roslyn.OutputKind.DynamicallyLinkedLibrary,
                     optimizationLevel: Roslyn.OptimizationLevel.Release,
                     warningLevel: 3));
 
-            string pdbFile = Path.ChangeExtension(outputAssembly, ".pdb");
-            Roslyn.Emit.EmitResult result;
-            using (FileStream assemblyStream = File.Create(outputAssembly))
-            using (FileStream pdbStream = File.Create(pdbFile))
+            using (MemoryStream assemblyStream = new MemoryStream())
+            using (MemoryStream pdbStream = new MemoryStream())
             {
-                result = compilation.Emit(
+                Roslyn.Emit.EmitResult result = compilation.Emit(
                     assemblyStream,
                     pdbStream,
                     options: new Roslyn.Emit.EmitOptions(
-                        debugInformationFormat: Roslyn.Emit.DebugInformationFormat.PortablePdb,
-                        pdbFilePath: pdbFile));
-            }
+                        debugInformationFormat: Roslyn.Emit.DebugInformationFormat.PortablePdb));
 
-            StringBuilder report = new StringBuilder();
-            foreach (Roslyn.Diagnostic diagnostic in
-                result.Diagnostics.Where(d => d.Severity == Roslyn.DiagnosticSeverity.Error))
-            {
-                Roslyn.FileLinePositionSpan span = diagnostic.Location.GetLineSpan();
-                report.Append(span.Path);
-                report.AppendLine(
-                    " In Line: " + (span.StartLinePosition.Line + 1) + " Error: " + diagnostic.Id + " "
-                    + diagnostic.GetMessage(CultureInfo.InvariantCulture));
-            }
+                StringBuilder report = new StringBuilder();
+                foreach (Roslyn.Diagnostic diagnostic in
+                    result.Diagnostics.Where(d => d.Severity == Roslyn.DiagnosticSeverity.Error))
+                {
+                    Roslyn.FileLinePositionSpan span = diagnostic.Location.GetLineSpan();
+                    report.Append(span.Path);
+                    report.AppendLine(
+                        " In Line: " + (span.StartLinePosition.Line + 1) + " Error: " + diagnostic.Id + " "
+                        + diagnostic.GetMessage(CultureInfo.InvariantCulture));
+                }
 
-            if (!result.Success && report.Length == 0)
-            {
-                report.AppendLine(outputAssembly + " could not be compiled");
-            }
+                if (!result.Success && report.Length == 0)
+                {
+                    report.AppendLine(assemblyName + " could not be compiled");
+                }
 
-            return report.ToString();
+                errors = report.ToString();
+                return result.Success ? Assembly.Load(assemblyStream.ToArray(), pdbStream.ToArray()) : null;
+            }
         }
 
         #endregion

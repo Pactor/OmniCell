@@ -1189,7 +1189,15 @@ namespace ZoneEngine
 
             // Console.WriteLine(Core.Playfields.Playfields.Instance.playfields[0].name);
 
-            ScriptCompiler.Instance.Compile(true);
+            // Starting anyway left a zone without KnuBots or scripts and only a line in the console to say so.
+            if (!ScriptCompiler.Instance.Compile(true))
+            {
+                Colouring.Push(ConsoleColor.Red);
+                Console.WriteLine("The scripts did not compile, so the zone server was not started. Fix the errors above and type start.");
+                Colouring.Pop();
+                return;
+            }
+
             Console.WriteLine(ScriptCompiler.Instance.AddScriptMembers() + " chat commands loaded");
             zoneServer.Start(true, false);
         }
