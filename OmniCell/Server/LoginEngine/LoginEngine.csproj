@@ -56,6 +56,11 @@
 
   <ItemGroup>
     <Content Include="..\..\Config\Config.xml" Link="Config.xml" CopyToOutputDirectory="PreserveNewest" />
+    <!-- This server's own settings, once configure-server.bat has written them. Copied by the build so a
+         new or emptied Built folder does not fall back to Config.xml's placeholders. Ignored by git. -->
+    <None Include="..\..\Config\Config.local.xml" Link="Config.local.xml" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\..\Config\Config.local.xml')" />
+    <!-- Area names for the character list (PlayfieldNames). The file belongs to ZoneEngine. -->
+    <Content Include="..\ZoneEngine\XML Data\Playfields.xml" Link="XML Data\Playfields.xml" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

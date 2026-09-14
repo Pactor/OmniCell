@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The rest is set in Directory.Build.props. The message assembly is loaded by path at run time. -->
+  <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib"><HintPath>$(CaptureBin)ICSharpCode.SharpZipLib.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+</Project>

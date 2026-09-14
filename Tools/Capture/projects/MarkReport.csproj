@@ -1,0 +1,3 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Everything is set in Directory.Build.props. The message assembly is loaded by path at run time. -->
+</Project>

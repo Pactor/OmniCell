@@ -1,9 +1,8 @@
 <Project>
 
-  <!-- These tools build into Built\<configuration> with the engines. See
-       OmniCell\Server\Directory.Build.targets: the SDK's incremental clean, left as it is, deletes the
-       engines' launchers when one of these is built on its own. This keeps recording the build's files,
-       so Clean still works, without deleting other programs' files. -->
+  <!-- The tools all build into one folder, bin\. As with the server (see
+       OmniCell\Server\Directory.Build.targets), the SDK's incremental clean would then delete one tool's
+       files when another is built. This keeps recording each build's files, without the deleting. -->
   <Target Name="IncrementalClean" DependsOnTargets="$(IncrementalCleanDependsOn);_CleanGetCurrentAndPriorFileWrites">
 
     <ItemGroup>

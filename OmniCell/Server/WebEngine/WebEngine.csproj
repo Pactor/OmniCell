@@ -40,4 +40,10 @@
     <ProjectReference Include="..\..\Libraries\Source\Utility\Utility.csproj" />
   </ItemGroup>
 
+  <!-- The settings WebEngine reads through Utility's configuration, as the other engines copy them. -->
+  <ItemGroup>
+    <Content Include="..\..\Config\Config.xml" Link="Config.xml" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\Config\Config.local.xml" Link="Config.local.xml" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\..\Config\Config.local.xml')" />
+  </ItemGroup>
+
 </Project>

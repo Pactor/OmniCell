@@ -131,6 +131,7 @@ recording, one file each — which also covers a recording with two clients in i
 | `WireAudit.cs` | the round-trip audit |
 | `AreaExtract.cs` | a whole playfield out of the traffic — spawn points, shops, quests, dialogue — as SQL |
 
-`build.bat` compiles all of the above into `bin/`. Build `OmniCell.sln` in
-Release first — it copies the assemblies it needs out of `OmniCell/Built/Release`
-into `bin/` as well.
+`build.bat` compiles all of the above into `bin/`, as .NET 10 programs, with
+the .NET 10 SDK the server uses. Each tool has a project in `projects/` that
+compiles its one `.cs` file. Build `OmniCell.sln` in Release first — it copies
+the assemblies it needs out of `OmniCell/Built/Release` into `bin/` as well.

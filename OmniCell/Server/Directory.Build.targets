@@ -1,11 +1,31 @@
 <Project>
 
   <!-- The engines all build into one folder, Built\<configuration>, and so do the tools in
-       Tools\Algorithman. MSBuild's incremental clean deletes, from the output folder, files a project
-       recorded as its own on an earlier build and did not write this time. In a shared folder those
-       records pick up the other programs' launchers (<name>.exe, .deps.json, .runtimeconfig.json),
-       so building one project on its own deleted the others' launchers. Nothing in Built needs that
-       cleanup; delete the folder to start clean. -->
-  <Target Name="IncrementalClean" />
+       Tools\Algorithman. The SDK then records, in each project's obj\...FileListAbsolute.txt, other
+       programs' files in that folder as its own: a normal build of the solution makes ChatEngine claim
+       LoginEngine.exe, ZoneEngine.exe and FunctionSets.cfg. MSBuild's incremental clean deletes from the
+       output folder whatever a project recorded before and did not write this time, so building one
+       project on its own deleted the other programs' launchers and files.
+
+       This is the SDK's IncrementalClean without the deleting. It still records the files, so Clean
+       and Rebuild still remove the build output. Cleaning a single project can remove files the other
+       projects put in Built as well; build the solution afterwards. -->
+  <Target Name="IncrementalClean" DependsOnTargets="$(IncrementalCleanDependsOn);_CleanGetCurrentAndPriorFileWrites">
+
+    <ItemGroup>
+      <_CleanRemainingFileWritesAfterIncrementalClean Include="@(_CleanPriorFileWrites);@(_CleanCurrentFileWrites)" />
+    </ItemGroup>
+
+    <RemoveDuplicates Inputs="@(_CleanRemainingFileWritesAfterIncrementalClean)">
+      <Output TaskParameter="Filtered" ItemName="_CleanUniqueRemainingFileWritesAfterIncrementalClean" />
+    </RemoveDuplicates>
+
+    <WriteLinesToFile
+        File="$(IntermediateOutputPath)$(CleanFile)"
+        Lines="@(_CleanUniqueRemainingFileWritesAfterIncrementalClean)"
+        Condition="'@(_CleanUnfilteredPriorFileWrites)'!='@(_CleanUniqueRemainingFileWritesAfterIncrementalClean)'"
+        Overwrite="true" />
+
+  </Target>
 
 </Project>

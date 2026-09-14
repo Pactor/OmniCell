@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The rest is set in Directory.Build.props. AreaExtract reads the server's own types rather than a
+       copy of them, so it compiles against the server assemblies build.bat copies into bin\. -->
+  <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib"><HintPath>$(CaptureBin)ICSharpCode.SharpZipLib.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="SmokeLounge.AOtomation.Messaging"><HintPath>$(CaptureBin)SmokeLounge.AOtomation.Messaging.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="OmniCell.Core"><HintPath>$(CaptureBin)OmniCell.Core.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="OmniCell.Database"><HintPath>$(CaptureBin)OmniCell.Database.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="OmniCell.Enums"><HintPath>$(CaptureBin)OmniCell.Enums.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="OmniCell.Interfaces"><HintPath>$(CaptureBin)OmniCell.Interfaces.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Utility"><HintPath>$(CaptureBin)Utility.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="MsgPack"><HintPath>$(CaptureBin)MsgPack.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+</Project>

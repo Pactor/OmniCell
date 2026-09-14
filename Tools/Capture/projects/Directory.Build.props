@@ -1,0 +1,31 @@
+<Project>
+
+  <!-- One project per capture tool, all in this folder. Each compiles the tool's single .cs file one
+       folder up and builds into ..\bin, where the capture scripts run it from. Each gets an obj folder of
+       its own, which has to be settled before the SDK is imported - hence this file rather than the
+       projects. -->
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <CaptureBin>$(MSBuildThisFileDirectory)..\bin\</CaptureBin>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <OutputPath>$(CaptureBin)</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <!-- No .deps.json: without one, .NET resolves every assembly in bin\, which is how the tools find the
+         server assemblies build.bat copies there, and the ones they load by path. -->
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <!-- The tools were written against the old compiler's defaults; its warnings are not errors here. -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)..\$(MSBuildProjectName).cs" />
+  </ItemGroup>
+
+</Project>

@@ -77,6 +77,8 @@
     <None Include="Scripts\KnuBotFlappy.cs" CopyToOutputDirectory="PreserveNewest" />
     <None Include="Scripts\InfoBot.cs" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\..\Config\Config.xml" Link="Config.xml" CopyToOutputDirectory="PreserveNewest" />
+    <!-- This server's own settings, once configure-server.bat has written them. See LoginEngine.csproj. -->
+    <None Include="..\..\Config\Config.local.xml" Link="Config.local.xml" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\..\Config\Config.local.xml')" />
     <Content Include="Scripts\dummy.txt" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="XML Data\Levels.xml" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="XML Data\CombatWeapons.xml" CopyToOutputDirectory="PreserveNewest" />

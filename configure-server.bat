@@ -168,9 +168,12 @@ if not exist "%TARGET%" (
 )
 
 rem The engines read their settings from the directory they run in, which is
-rem the build output, so the file has to be beside each of them too.
+rem the build output, so the file has to be beside each of them too. The build
+rem copies it there as well; this puts it there now, before the first build or
+rem after Built has been deleted.
 for %%D in ("%HERE%OmniCell\Built\Debug" "%HERE%OmniCell\Built\Release") do (
-  if exist "%%~D" copy /Y "%TARGET%" "%%~D\Config.local.xml" >nul
+  if not exist "%%~D" mkdir "%%~D"
+  copy /Y "%TARGET%" "%%~D\Config.local.xml" >nul
 )
 
 cls
@@ -181,7 +184,7 @@ echo   ==========================================================
 echo.
 echo    %TARGET%
 echo.
-echo    and copied beside each engine that is already built.
+echo    and copied into OmniCell\Built\Debug and OmniCell\Built\Release.
 echo.
 echo    git ignores that file, so your password stays out of the
 echo    repository. Config.xml is untouched and still holds the

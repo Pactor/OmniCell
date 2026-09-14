@@ -3,20 +3,11 @@ param()
 
 $ErrorActionPreference = 'Stop'
 
-if ([IntPtr]::Size -ne 4) {
-    $powerShell32 = Join-Path $env:WINDIR 'SysWOW64\WindowsPowerShell\v1.0\powershell.exe'
-    if (-not (Test-Path -LiteralPath $powerShell32)) {
-        throw 'The 32-bit Windows PowerShell executable is required to inspect the x86 ChatEngine build.'
-    }
-
-    & $powerShell32 -NoProfile -ExecutionPolicy Bypass -File $PSCommandPath
-    exit $LASTEXITCODE
-}
-
 $root = Split-Path -Parent $PSScriptRoot
 $authenticatePath = Join-Path $root 'OmniCell\Server\ChatEngine\PacketHandlers\Authenticate.cs'
 $loginCharacterPath = Join-Path $root 'OmniCell\Server\ChatEngine\PacketHandlers\LoginCharacter.cs'
-$chatEnginePath = Join-Path $root 'OmniCell\Built\Debug\ChatEngine.exe'
+$builtPath = Join-Path $root 'OmniCell\Built\Debug'
+$chatEnginePath = Join-Path $builtPath 'ChatEngine.dll'
 
 function Assert-True {
     param(
@@ -58,12 +49,54 @@ Assert-True (-not $botLogin.Contains('ChannelJoin.Create(')) `
     'Bot login explicitly sends ChannelJoin in addition to ChannelBase.AddClient.'
 
 Assert-True (Test-Path -LiteralPath $chatEnginePath) `
-    'ChatEngine.exe is missing. Build ChatEngine Debug before running this test.'
+    'ChatEngine.dll is missing. Build ChatEngine Debug before running this test.'
 
-[void][Reflection.Assembly]::LoadFrom($chatEnginePath)
-$packet = [ChatEngine.Packets.LoginOk]::Create()
-Assert-True ($packet.Length -eq 4) 'LOGIN_OK packet is not the expected four-byte header-only packet.'
-Assert-True ($packet[0] -eq 0 -and $packet[1] -eq 5 -and $packet[2] -eq 0 -and $packet[3] -eq 0) `
-    'LOGIN_OK packet header is not message type 5 with an empty payload.'
+# ChatEngine is a .NET 10 assembly, and Windows PowerShell runs on .NET Framework, which cannot load
+# it. A throwaway console program references the built ChatEngine.dll and prints the LOGIN_OK packet
+# as hex. Anything ChatEngine needs besides itself is loaded from the build folder.
+$probe = Join-Path ([IO.Path]::GetTempPath()) ('OmniCell-LoginOk-' + [Guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Path $probe | Out-Null
+try {
+    $project = @"
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ChatEngine"><HintPath>$chatEnginePath</HintPath></Reference>
+  </ItemGroup>
+</Project>
+"@
+    $program = @'
+string built = args[0];
+System.Runtime.Loader.AssemblyLoadContext.Default.Resolving += (context, name) =>
+{
+    string path = System.IO.Path.Combine(built, name.Name + ".dll");
+    return System.IO.File.Exists(path) ? context.LoadFromAssemblyPath(path) : null;
+};
+Print();
+
+static void Print()
+{
+    System.Console.WriteLine(System.Convert.ToHexString(ChatEngine.Packets.LoginOk.Create()));
+}
+'@
+    [IO.File]::WriteAllText((Join-Path $probe 'LoginOkProbe.csproj'), $project)
+    [IO.File]::WriteAllText((Join-Path $probe 'Program.cs'), $program)
+
+    $output = & dotnet run --project (Join-Path $probe 'LoginOkProbe.csproj') -c Release -- $builtPath 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw "The LOGIN_OK probe did not run:`n$($output -join "`n")"
+    }
+
+    $hex = ([string]($output | Select-Object -Last 1)).Trim()
+}
+finally {
+    Remove-Item -LiteralPath $probe -Recurse -Force -ErrorAction SilentlyContinue
+}
+
+Assert-True ($hex -eq '00050000') `
+    "LOGIN_OK packet is not the four-byte header for message type 5 with an empty payload (got $hex)."
 
 Write-Host 'OK - normal client and bot login packet ordering checks passed.'

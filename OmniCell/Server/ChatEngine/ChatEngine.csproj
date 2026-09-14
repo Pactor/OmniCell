@@ -60,6 +60,8 @@
 
   <ItemGroup>
     <Content Include="..\..\Config\Config.xml" Link="Config.xml" CopyToOutputDirectory="PreserveNewest" />
+    <!-- This server's own settings, once configure-server.bat has written them. See LoginEngine.csproj. -->
+    <None Include="..\..\Config\Config.local.xml" Link="Config.local.xml" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\..\Config\Config.local.xml')" />
     <None Include="..\..\Datafiles\playfields.ocp" Link="playfields.ocp" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\..\Datafiles\playfields.ocp')" />
   </ItemGroup>
 
