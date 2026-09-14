@@ -619,6 +619,11 @@ namespace Extractor_Serializer
         /// </param>
         private static void Main(string[] args)
         {
+            // FunctionSets.cfg, itemnames.sql and config.txt are windows-1252. .NET Framework has every
+            // Windows code page built in; .NET has them only once this provider is registered, and
+            // Encoding.GetEncoding("windows-1252") throws until then.
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
             if ((args.Length > 0) && string.Equals(args[0], "--verify-parser", StringComparison.OrdinalIgnoreCase))
             {
                 VerifyParser(args);
