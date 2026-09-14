@@ -384,7 +384,9 @@ namespace Utility
         /// </param>
         public static void LogStacktrace(Action<string> logger)
         {
-            StackTrace stackTrace = new StackTrace(Thread.CurrentThread, true);
+            // The current thread's trace with file information. new StackTrace(Thread, bool) gave the
+            // same for the current thread, but it is obsolete and does not exist on .NET 10.
+            StackTrace stackTrace = new StackTrace(true);
             string temp = string.Empty;
             foreach (StackFrame stackFrame in stackTrace.GetFrames())
             {
