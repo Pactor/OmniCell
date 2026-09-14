@@ -141,6 +141,11 @@ namespace ChatEngine.CoreServer
         public void OnClientDisconnect(IClient client, bool forced)
         {
             Client cl = (Client)client;
+            foreach (ChannelBase channel in cl.Channels.ToArray())
+            {
+                channel.RemoveClient(cl);
+            }
+
             if (cl.Character.CharacterId != 0)
             {
                 CharacterDao.Instance.SetOffline((int)cl.Character.CharacterId);
@@ -179,10 +184,42 @@ namespace ChatEngine.CoreServer
                 channel.AddClient(client);
             }
 
-            foreach (ChannelBase channel in this.ChannelsByType<OrganizationChannel>())
+            int organizationId = client.Character.orgId;
+            if (organizationId != 0)
             {
-                channel.AddClient(client);
+                OrganizationChannel organizationChannel = this.GetOrCreateOrganizationChannel(organizationId);
+                if (organizationChannel != null)
+                {
+                    organizationChannel.AddClient(client);
+                }
             }
+        }
+
+        /// <summary>
+        /// Gets the chat channel for an existing organization, creating it on the
+        /// first member login. Organization channels are never shared between
+        /// organizations.
+        /// </summary>
+        /// <param name="organizationId">Organization id stored in stat 5.</param>
+        /// <returns>The matching channel, or null when the organization no longer exists.</returns>
+        private OrganizationChannel GetOrCreateOrganizationChannel(int organizationId)
+        {
+            OrganizationChannel existing = this.ChannelsByType<OrganizationChannel>()
+                .OfType<OrganizationChannel>()
+                .FirstOrDefault(channel => channel.ChannelId == (uint)organizationId);
+            if (existing != null)
+            {
+                return existing;
+            }
+
+            if (OrganizationDao.Instance.Get(organizationId) == null)
+            {
+                return null;
+            }
+
+            var organizationChannel = new OrganizationChannel(organizationId);
+            this.Channels.Add(organizationChannel);
+            return organizationChannel;
         }
 
         /// <summary>

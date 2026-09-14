@@ -61,6 +61,11 @@ namespace ChatEngine.PacketHandlers
             Array.Reverse(senderId);
 
             ChannelBase channel = client.ChatServer().GetChannel(packet);
+            if ((channel == null) || !client.Channels.Contains(channel))
+            {
+                client.Server.Warning(client, "Client attempted to send to a channel it has not joined.");
+                return;
+            }
 
             PacketReader reader = new PacketReader(ref packet);
             reader.ReadUInt16();

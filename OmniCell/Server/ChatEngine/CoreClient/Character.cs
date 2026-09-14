@@ -143,7 +143,8 @@ namespace ChatEngine.CoreClient
         {
             get
             {
-                return StatDao.Instance.GetById(50000, (int)this.CharacterId, 5).StatValue;
+                var organizationStat = StatDao.Instance.GetById(50000, (int)this.CharacterId, 5);
+                return organizationStat == null ? 0 : organizationStat.StatValue;
             }
         }
 

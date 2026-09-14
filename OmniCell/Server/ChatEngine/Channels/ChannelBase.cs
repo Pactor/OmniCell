@@ -228,9 +228,15 @@ namespace ChatEngine.Channels
         /// </returns>
         public bool RemoveClient(IClient client)
         {
-            if (this.clients.Contains(client))
+            lock (this.clients)
             {
+                if (!this.clients.Contains(client))
+                {
+                    return false;
+                }
+
                 this.clients.Remove(client);
+                ((Client)client).Channels.Remove(this);
 
                 if (this.OnClientLeaveChannel != null)
                 {
@@ -242,8 +248,6 @@ namespace ChatEngine.Channels
                 // TODO: Send feedback to client
                 return true;
             }
-
-            return false;
         }
 
         #endregion
