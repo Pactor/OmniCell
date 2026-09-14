@@ -1,19 +1,16 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Threading;
 
 namespace Cell.Core
 {
     class NativeMethods
     {
-        [DllImport("kernel32", ExactSpelling = true)]
-        private static extern int SwitchToThread();
-
+        /// <summary>
+        /// Gives the rest of the time slice to another ready thread. Thread.Yield calls
+        /// SwitchToThread on Windows and sched_yield on Linux.
+        /// </summary>
         public static void OsSwitchToThread()
         {
-#if LINUX
-            Thread.SpinWait(1);
-#else
-            SwitchToThread();
-#endif
+            Thread.Yield();
         }
     }
 }

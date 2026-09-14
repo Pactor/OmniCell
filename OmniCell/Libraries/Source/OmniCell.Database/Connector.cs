@@ -97,10 +97,13 @@ namespace OmniCell.Database
                     connector = new MySQLConnector(ConnectionStringMySql);
                 }
 
+#if NETFRAMEWORK
+                // Not in the .NET 10 build; see OmniCell.Database.csproj.
                 if (sqlType == "MsSql")
                 {
                     connector = new MSSqlConnector(ConnectionStringMssql);
                 }
+#endif
 
             }
 
