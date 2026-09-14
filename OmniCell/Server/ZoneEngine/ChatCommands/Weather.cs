@@ -114,7 +114,7 @@ namespace ZoneEngine.ChatCommands
                 newWeather.FadeIn = short.Parse(args[1]);
                 newWeather.Duration = int.Parse(args[2]);
                 newWeather.FadeOut = short.Parse(args[3]);
-                newWeather.Range = Single.Parse(args[4]);
+                newWeather.Range = Single.Parse(args[4], System.Globalization.CultureInfo.InvariantCulture);
                 newWeather.WeatherType = (WeatherType)byte.Parse(args[5]);
                 newWeather.Intensity = byte.Parse(args[6]);
                 newWeather.Wind = byte.Parse(args[7]);

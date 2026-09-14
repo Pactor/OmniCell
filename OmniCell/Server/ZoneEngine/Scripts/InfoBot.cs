@@ -121,7 +121,7 @@ namespace ZoneEngine.Scripts
             foreach (string command in ScriptCompiler.Instance.ChatCommands)
             {
                 string formatedText = "";
-                formatedText = command.Substring(command.IndexOf(":") + 1);
+                formatedText = command.Substring(command.IndexOf(':') + 1);
 
                 this.WriteLine(formatedText);
             }

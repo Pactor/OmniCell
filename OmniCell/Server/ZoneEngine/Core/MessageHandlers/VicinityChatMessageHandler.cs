@@ -62,7 +62,9 @@ namespace ZoneEngine.Core.MessageHandlers
         /// </param>
         protected override void Read(TextMessage message, IZoneClient client)
         {
-            if (message.Message.Text.StartsWith("."))
+            // A char, not ".": the string overload compares by culture on .NET 10, where a leading
+            // character the culture ignores (a soft hyphen) would still count as starting with '.'.
+            if (message.Message.Text.StartsWith('.'))
             {
                 MessageWrapper<ChatCmdMessage> wrapper = new MessageWrapper<ChatCmdMessage>()
                                                          {

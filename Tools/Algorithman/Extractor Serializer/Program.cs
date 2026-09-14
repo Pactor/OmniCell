@@ -472,7 +472,7 @@ namespace Extractor_Serializer
                     foreach (string line in File.ReadAllLines(candidate))
                     {
                         string trimmed = line.Trim();
-                        if (trimmed.StartsWith("#") || !trimmed.Contains("="))
+                        if (trimmed.StartsWith('#') || !trimmed.Contains('='))
                         {
                             continue;
                         }
@@ -588,12 +588,12 @@ namespace Extractor_Serializer
             {
                 string html = webClient.DownloadString("http://www.aoitems.com/item/" + template.ID + "/");
                 int pos;
-                if ((pos = html.IndexOf("<select class=\"TemplateSelector\">")) != -1)
+                if ((pos = html.IndexOf("<select class=\"TemplateSelector\">", StringComparison.Ordinal)) != -1)
                 {
                     // found template selector
                     // now narrow down to the links
                     html = html.Substring(pos + 33);
-                    html = html.Substring(0, html.IndexOf("</select"));
+                    html = html.Substring(0, html.IndexOf("</select", StringComparison.Ordinal));
                     foreach (Match r in reg.Matches(html))
                     {
                         int id = int.Parse(r.Groups[1].Value);

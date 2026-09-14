@@ -86,8 +86,19 @@ namespace OmniCell.Core.Entities
                 this.Name = vendorTemplate.Name;
 
                 this.BaseInventory.Read();
-                this.Stats[StatIds.sellmodifier].BaseValue = (uint)(vendorTemplate.Sell * 100.0f);
-                this.Stats[StatIds.buymodifier].BaseValue = (uint)(vendorTemplate.Buy * 100.0f);
+                // Only a modifier a uint can hold. A negative or NaN one (a bad row) cast to uint gives a
+                // different nonsense price on .NET 10 than it did on .NET Framework; keep the default.
+                double sell = vendorTemplate.Sell * 100.0;
+                double buy = vendorTemplate.Buy * 100.0;
+                if (sell >= 0 && sell <= uint.MaxValue)
+                {
+                    this.Stats[StatIds.sellmodifier].BaseValue = (uint)sell;
+                }
+
+                if (buy >= 0 && buy <= uint.MaxValue)
+                {
+                    this.Stats[StatIds.buymodifier].BaseValue = (uint)buy;
+                }
             }
         }
 

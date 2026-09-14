@@ -167,7 +167,7 @@ namespace Extractor_Serializer
             {
                 itemNamesSqlList.Add(string.Format("( {0} , '{1}' , '{2}', '{3}' ) ",
                     recnum,
-                    itemname.Replace("'", "''"),
+                    SqlText(itemname),
                     Enum.GetName(typeof(Extractor.RecordType), recordType),
                     aoi.getItemAttribute(79)));
             }
@@ -195,6 +195,15 @@ namespace Extractor_Serializer
         /// <returns>
         /// The <see cref="AONanos"/>.
         /// </returns>
+        /// <summary>
+        /// A name as the inside of a MySQL string literal. MySQL reads a backslash as an escape, so a
+        /// name ending in one swallowed its closing quote and broke every row after it in the file.
+        /// </summary>
+        private static string SqlText(string text)
+        {
+            return text.Replace("\\", "\\\\").Replace("'", "''");
+        }
+
         public NanoFormula ParseNano(int recnum, byte[] data, List<string> itemNamesSqlList)
         {
             this.br = new BufferedReader((int)Extractor.RecordType.Nano, recnum, data);
@@ -227,7 +236,7 @@ namespace Extractor_Serializer
                     string.Format(
                         "( {0} , '{1}' , '{2}', '{3}' ) ",
                         recnum,
-                        nanoName.Replace("'", "''"),
+                        SqlText(nanoName),
                         Enum.GetName(typeof(Extractor.RecordType), Extractor.RecordType.Nano),
                         aon.getItemAttribute(79)));
             }

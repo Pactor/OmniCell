@@ -145,7 +145,7 @@ namespace OmniCell.Stats.SpecialStats
             get
             {
                 // See Stat.GetValue: the long result is truncated to 32 bits rather than going through a
-                // double, whose out-of-range cast to int saturates on .NET 9 and later.
+                // double, whose out-of-range cast to int differs between .NET Framework and .NET 9+.
                 return unchecked((int)((this.BaseValue + this.Modifier + this.Trickle) * this.PercentageModifier / 100));
             }
         }

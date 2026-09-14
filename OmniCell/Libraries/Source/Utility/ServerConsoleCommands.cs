@@ -79,7 +79,9 @@ namespace Utility
         public bool Execute(string commandString)
         {
             // First lets remove double spaces
-            while (commandString.IndexOf("  ") > -1)
+            // Contains compares ordinally. IndexOf("  ") compares by culture on .NET 10, which can find a
+            // match that Replace does not remove, and this loop then never ends.
+            while (commandString.Contains("  "))
             {
                 commandString = commandString.Replace("  ", " ");
             }

@@ -204,10 +204,10 @@ namespace OmniCell.Stats
             get
             {
                 // Integer arithmetic throughout. BaseValue is a uint, so a stat holding a negative number
-                // (a default of -1, say) makes the sum a long above int.MaxValue, and keeping the low 32
-                // bits gives the signed value back. This used to be (int)Math.Floor((double)(...)), which
-                // gave the same answer on .NET Framework x64 only because that cast kept the low 32 bits
-                // too; .NET 9 and later clamp an out-of-range double to int.MaxValue instead.
+                // (a stored -1, say) makes the sum a long above int.MaxValue, and keeping the low 32 bits
+                // gives the signed value back. This used to be (int)Math.Floor((double)(...)), whose
+                // out-of-range cast gave int.MinValue on .NET Framework x64 and gives int.MaxValue on
+                // .NET 9 and later - wrong either way, and different on each runtime.
                 this.LastCalculatedValue =
                     unchecked((int)((this.BaseValue + this.Modifier + this.Trickle) * this.PercentageModifier / 100));
                 return this.LastCalculatedValue;

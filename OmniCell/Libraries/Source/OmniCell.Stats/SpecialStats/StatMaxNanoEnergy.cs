@@ -144,9 +144,9 @@ namespace OmniCell.Stats.SpecialStats
                             * (tableProfessionNanoPoints[titleLevel - 1, profession - 1]
                                + breedModificatorNanoPoints[breed - 1]))
                          + (this.Stats[StatIds.nanoenergypool].Value * breedMultiplicatorNanoPoints[breed - 1]));
-                return (int)Math.Floor(
-                    (double) // ReSharper disable PossibleLossOfFraction
-                        ((beforeModifiers + this.Modifier + this.Trickle) * this.PercentageModifier / 100));
+                // Integer arithmetic, like Stat.GetValue, with no double-to-int cast to behave
+                // differently on .NET Framework and .NET 10.
+                return unchecked((beforeModifiers + this.Modifier + this.Trickle) * this.PercentageModifier / 100);
             }
         }
 

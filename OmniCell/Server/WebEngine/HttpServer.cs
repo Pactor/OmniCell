@@ -26,6 +26,14 @@ namespace WebEngine
 
         private const int MaxRequestLineBytes = 8192;
 
+        /// <summary>
+        /// Connections served at once. Each one has its own thread, and a scanner opening connections
+        /// faster than they time out used to get a thread for every one of them.
+        /// </summary>
+        private const int MaxConnections = 64;
+
+        private readonly SemaphoreSlim connectionSlots = new SemaphoreSlim(MaxConnections, MaxConnections);
+
         private readonly IPAddress bindAddress;
 
         private readonly int port;
@@ -91,7 +99,24 @@ namespace WebEngine
                     return;
                 }
 
-                Thread worker = new Thread(() => this.Handle(client));
+                if (!this.connectionSlots.Wait(0))
+                {
+                    client.Close();
+                    continue;
+                }
+
+                Thread worker = new Thread(
+                    () =>
+                    {
+                        try
+                        {
+                            this.Handle(client);
+                        }
+                        finally
+                        {
+                            this.connectionSlots.Release();
+                        }
+                    });
                 worker.IsBackground = true;
                 worker.Start();
             }
