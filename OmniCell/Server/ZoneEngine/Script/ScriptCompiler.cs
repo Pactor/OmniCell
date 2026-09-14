@@ -42,7 +42,9 @@ namespace ZoneEngine.Script
     using ZoneEngine.Core.MessageHandlers;
 
     using System;
+#if NETFRAMEWORK
     using System.CodeDom.Compiler;
+#endif
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
@@ -53,7 +55,12 @@ namespace ZoneEngine.Script
     using OmniCell.Core.Entities;
     using OmniCell.Enums;
 
+#if NETFRAMEWORK
     using Microsoft.CSharp;
+#else
+    using Roslyn = Microsoft.CodeAnalysis;
+    using RoslynCSharp = Microsoft.CodeAnalysis.CSharp;
+#endif
 
     using SmokeLounge.AOtomation.Messaging.GameData;
 
@@ -86,31 +93,10 @@ namespace ZoneEngine.Script
         private readonly Dictionary<string, Type> chatCommands = new Dictionary<string, Type>();
 
         /// <summary>
-        /// Our CSharp compiler object
-        /// </summary>
-        private readonly CodeDomProvider compiler =
-            new CSharpCodeProvider(new Dictionary<string, string> { { "CompilerVersion", "v4.0" } });
-
-        /// <summary>
         /// </summary>
         private readonly List<Assembly> multipleDllList = new List<Assembly>();
 
         private bool disposed = false;
-
-        /// <summary>
-        /// Our compiler parameter command line to pass 
-        /// when we compile the scripts.
-        /// </summary>
-        private readonly CompilerParameters p = new CompilerParameters
-                                                {
-                                                    GenerateInMemory = false,
-                                                    GenerateExecutable = false,
-                                                    IncludeDebugInformation = true,
-                                                    OutputAssembly = "Scripts.dll",
-                                                    TreatWarningsAsErrors = false,
-                                                    WarningLevel = 3,
-                                                    CompilerOptions = "/optimize"
-                                                };
 
         /// <summary>
         /// </summary>
@@ -511,30 +497,7 @@ namespace ZoneEngine.Script
                 return false;
             }
 
-            // Add all loaded assemblies to the Referenced assemblies list
-            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().Where(x=>x.IsDynamic==false))
-            {
-                this.p.ReferencedAssemblies.Add(assembly.Location);
-            }
-
-            // Loaded is not the same as available. The CLR loads an assembly
-            // only when something first touches it, so a server assembly that
-            // nothing has used yet is absent from the list above - and a script
-            // mentioning one of its types then fails to compile with CS0012.
-            // OmniCell.Stats did exactly that, which stopped ZoneEngine on
-            // Scripts/InfoBot.cs.
-            //
-            // So add every OmniCell assembly sitting beside the engine too.
-            var referenced = new HashSet<string>(
-                this.p.ReferencedAssemblies.Cast<string>(), StringComparer.OrdinalIgnoreCase);
-            string engineDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            foreach (string dll in Directory.GetFiles(engineDirectory, "OmniCell.*.dll"))
-            {
-                if (referenced.Add(dll))
-                {
-                    this.p.ReferencedAssemblies.Add(dll);
-                }
-            }
+            List<string> references = ScriptReferences();
 
             if (multipleFiles)
             {
@@ -545,9 +508,7 @@ namespace ZoneEngine.Script
                     ConsoleColor.Magenta);
                 foreach (string scriptFile in this.ScriptsList)
                 {
-                    this.p.OutputAssembly = string.Format(
-                        CultureInfo.CurrentCulture,
-                        Path.Combine("tmp", DllName(scriptFile)));
+                    string outputAssembly = Path.Combine("tmp", DllName(scriptFile));
 
                     // CreateIM the directory if it doesnt exist
                     FileInfo file = new FileInfo(Path.Combine("tmp", DllName(scriptFile)));
@@ -557,20 +518,20 @@ namespace ZoneEngine.Script
                     }
 
                     // Now compile the dll's
-                    CompilerResults results = this.compiler.CompileAssemblyFromFile(this.p, scriptFile);
+                    string errors = CompileToFile(new[] { scriptFile }, outputAssembly, references);
 
                     // And check for errors
-                    if (ErrorReporting(results).Length != 0)
+                    if (errors.Length != 0)
                     {
                         // We have errors, display them
-                        LogScriptAction("Error:", ConsoleColor.Yellow, ErrorReporting(results), ConsoleColor.Red);
+                        LogScriptAction("Error:", ConsoleColor.Yellow, errors, ConsoleColor.Red);
                         return false;
                     }
 
                     LogScriptAction(
                         "Script " + scriptFile,
                         ConsoleColor.Green,
-                        "Compiled to: " + this.p.OutputAssembly,
+                        "Compiled to: " + outputAssembly,
                         ConsoleColor.Green);
 
                     // Add the compiled assembly to our list
@@ -586,13 +547,13 @@ namespace ZoneEngine.Script
             else
             {
                 // Compile the full Scripts.dll
-                CompilerResults results = this.compiler.CompileAssemblyFromFile(this.p, this.ScriptsList);
+                string errors = CompileToFile(this.ScriptsList, "Scripts.dll", references);
 
                 // And check for errors
-                if (ErrorReporting(results).Length != 0)
+                if (errors.Length != 0)
                 {
                     // We have errors, display them
-                    LogScriptAction("Error:", ConsoleColor.Yellow, ErrorReporting(results), ConsoleColor.Red);
+                    LogScriptAction("Error:", ConsoleColor.Yellow, errors, ConsoleColor.Red);
                     return false;
                 }
 
@@ -630,46 +591,133 @@ namespace ZoneEngine.Script
             return true;
         }
 
-        private bool TryResolve(CompilerError e, string scriptFile)
+        /// <summary>
+        /// Every assembly a script may use: those the engine has loaded, every OmniCell
+        /// assembly beside the engine, and on .NET the framework itself.
+        /// </summary>
+        private static List<string> ScriptReferences()
         {
-            bool resolved = false;
-            string line = this.GetLineOfFile(scriptFile, e.Line).Replace("using", "").Replace(";", "").Trim();
-            bool runLoop = true;
-            while (runLoop)
+            List<string> references = new List<string>();
+            HashSet<string> referenced = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().Where(x => x.IsDynamic == false))
             {
-                if (File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, line + ".dll")))
+                if (!string.IsNullOrEmpty(assembly.Location) && referenced.Add(assembly.Location))
                 {
-                    this.p.ReferencedAssemblies.Add(
-                        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, line + ".dll"));
-                    resolved = true;
-                    break;
-                }
-
-                runLoop = line.IndexOf(".") > -1;
-                if (line.IndexOf(".") > -1)
-                {
-                    line = line.Substring(0, line.LastIndexOf("."));
+                    references.Add(assembly.Location);
                 }
             }
-            return resolved;
+
+            // Loaded is not the same as available. The CLR loads an assembly
+            // only when something first touches it, so a server assembly that
+            // nothing has used yet is absent from the list above - and a script
+            // mentioning one of its types then fails to compile with CS0012.
+            // OmniCell.Stats did exactly that, which stopped ZoneEngine on
+            // Scripts/InfoBot.cs.
+            //
+            // So add every OmniCell assembly sitting beside the engine too.
+            string engineDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            foreach (string dll in Directory.GetFiles(engineDirectory, "OmniCell.*.dll"))
+            {
+                if (referenced.Add(dll))
+                {
+                    references.Add(dll);
+                }
+            }
+
+#if !NETFRAMEWORK
+            // The .NET Framework compiler finds the framework by itself. On .NET the
+            // runtime's own list of its assemblies is the framework to compile against.
+            string platform = AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") as string ?? string.Empty;
+            foreach (string dll in platform.Split(new[] { Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (referenced.Add(dll))
+                {
+                    references.Add(dll);
+                }
+            }
+#endif
+
+            return references;
         }
 
-        private string GetLineOfFile(string scriptFile, int p)
+        /// <summary>
+        /// Compiles script source files into one assembly on disk, with its debug symbols
+        /// beside it.
+        /// </summary>
+        /// <returns>
+        /// The errors, one per line as "file In Line: n Error: CSnnnn text"; empty when it compiled.
+        /// </returns>
+        private static string CompileToFile(IList<string> sourceFiles, string outputAssembly, IList<string> references)
         {
-            string res = "";
-            using (TextReader sr = new StreamReader(scriptFile))
+#if NETFRAMEWORK
+            CompilerParameters parameters = new CompilerParameters
+                                            {
+                                                GenerateInMemory = false,
+                                                GenerateExecutable = false,
+                                                IncludeDebugInformation = true,
+                                                OutputAssembly = outputAssembly,
+                                                TreatWarningsAsErrors = false,
+                                                WarningLevel = 3,
+                                                CompilerOptions = "/optimize"
+                                            };
+            parameters.ReferencedAssemblies.AddRange(references.ToArray());
+            using (CodeDomProvider compiler =
+                new CSharpCodeProvider(new Dictionary<string, string> { { "CompilerVersion", "v4.0" } }))
             {
-                while (p > 0)
-                {
-                    res = sr.ReadLine();
-                    p--;
-                    if ((p==0) && (string.IsNullOrWhiteSpace(res)))
-                    {
-                        res=sr.ReadLine();
-                    }
-                }
+                return ErrorReporting(compiler.CompileAssemblyFromFile(parameters, sourceFiles.ToArray()));
             }
-            return res;
+#else
+            // CodeDom's C# compiler exists only on .NET Framework; Roslyn does the same job here.
+            RoslynCSharp.CSharpParseOptions parseOptions =
+                new RoslynCSharp.CSharpParseOptions(RoslynCSharp.LanguageVersion.Latest);
+            List<Roslyn.SyntaxTree> syntaxTrees = new List<Roslyn.SyntaxTree>();
+            foreach (string sourceFile in sourceFiles)
+            {
+                // Text with an encoding, so the debug symbols can carry each file's checksum.
+                Roslyn.Text.SourceText text = Roslyn.Text.SourceText.From(File.ReadAllText(sourceFile), Encoding.UTF8);
+                syntaxTrees.Add(RoslynCSharp.CSharpSyntaxTree.ParseText(text, parseOptions, sourceFile));
+            }
+
+            RoslynCSharp.CSharpCompilation compilation = RoslynCSharp.CSharpCompilation.Create(
+                Path.GetFileNameWithoutExtension(outputAssembly),
+                syntaxTrees,
+                references.Select(reference => (Roslyn.MetadataReference)Roslyn.MetadataReference.CreateFromFile(reference)),
+                new RoslynCSharp.CSharpCompilationOptions(
+                    Roslyn.OutputKind.DynamicallyLinkedLibrary,
+                    optimizationLevel: Roslyn.OptimizationLevel.Release,
+                    warningLevel: 3));
+
+            string pdbFile = Path.ChangeExtension(outputAssembly, ".pdb");
+            Roslyn.Emit.EmitResult result;
+            using (FileStream assemblyStream = File.Create(outputAssembly))
+            using (FileStream pdbStream = File.Create(pdbFile))
+            {
+                result = compilation.Emit(
+                    assemblyStream,
+                    pdbStream,
+                    options: new Roslyn.Emit.EmitOptions(
+                        debugInformationFormat: Roslyn.Emit.DebugInformationFormat.PortablePdb,
+                        pdbFilePath: pdbFile));
+            }
+
+            StringBuilder report = new StringBuilder();
+            foreach (Roslyn.Diagnostic diagnostic in
+                result.Diagnostics.Where(d => d.Severity == Roslyn.DiagnosticSeverity.Error))
+            {
+                Roslyn.FileLinePositionSpan span = diagnostic.Location.GetLineSpan();
+                report.Append(span.Path);
+                report.AppendLine(
+                    " In Line: " + (span.StartLinePosition.Line + 1) + " Error: " + diagnostic.Id + " "
+                    + diagnostic.GetMessage(CultureInfo.InvariantCulture));
+            }
+
+            if (!result.Success && report.Length == 0)
+            {
+                report.AppendLine(outputAssembly + " could not be compiled");
+            }
+
+            return report.ToString();
+#endif
         }
 
         #endregion
@@ -686,12 +734,13 @@ namespace ZoneEngine.Script
             {
                 if (!this.disposed)
                 {
-                    this.compiler.Dispose();
+                    // Nothing to release: a compiler is created for each compile.
                 }
             }
             this.disposed = true;
         }
 
+#if NETFRAMEWORK
         /// <summary>
         /// Our Error reporting method.
         /// </summary>
@@ -718,6 +767,7 @@ namespace ZoneEngine.Script
 
             return report.ToString();
         }
+#endif
 
         private static readonly HashSet<string> StartedScripts = new HashSet<string>();
 

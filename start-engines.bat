@@ -14,9 +14,8 @@ rem engine.
 rem
 rem Pass "debug" as an argument to run the Debug build instead of Release.
 rem
-rem Pass "net10" to run LoginEngine, ChatEngine and WebEngine from their .NET 10
-rem build in Built\<configuration>\net10.0. ZoneEngine still runs on .NET
-rem Framework until it moves too.
+rem Pass "net10" to run every engine from its .NET 10 build in
+rem Built\<configuration>\net10.0 instead of the .NET Framework build.
 rem ---------------------------------------------------------------------------
 
 set "CONFIG=Release"
@@ -59,7 +58,7 @@ if defined NET10 if exist "%BUILT%\Config.local.xml" copy /Y "%BUILT%\Config.loc
 echo.
 echo   Configuration : %CONFIG%
 echo   From          : %BUILT%
-if defined NET10 echo   Login, Chat, Web: %MOVED% [.NET 10]
+if defined NET10 echo   Engines       : %MOVED% [.NET 10]
 echo.
 
 tasklist /FI "IMAGENAME eq ZoneEngine.exe" 2>nul | find /i "ZoneEngine.exe" >nul
@@ -80,7 +79,7 @@ start "OmniCell LoginEngine" /D "%MOVED%" "%MOVED%\LoginEngine.exe" -autostart
 timeout /t 3 /nobreak >nul
 
 echo   Starting ZoneEngine...
-start "OmniCell ZoneEngine" /D "%BUILT%" "%BUILT%\ZoneEngine.exe" -autostart
+start "OmniCell ZoneEngine" /D "%MOVED%" "%MOVED%\ZoneEngine.exe" -autostart
 timeout /t 6 /nobreak >nul
 
 rem The in-game browser panels - shop, market, petition, daily - point at
