@@ -96,14 +96,14 @@ Tools/Ashly/             the launcher, which points a client at your server
 The combined work is **GPL v3** (`LICENSE`). That follows from its parts rather
 than from preference: `Cell.Core` and `Cell.Util` come from
 [WCell](http://www.wcell.org/) under "GPL v2 or any later version", and
-msgpack-cli is Apache 2.0, which is compatible with GPLv3 but not v2.
+MsgPack.Cli (msgpack-cli) is Apache 2.0, which is compatible with GPLv3 but not v2.
 
 CellAO's own code is **BSD 3-clause**, carried in the per-file headers rather
 than a licence file. All 532 of those headers are retained unmodified. See
 `LICENSE-CellAO.txt`.
 
 `THIRD-PARTY-NOTICES.md` has the full picture: WCell, the AOtomation protocol
-layer (WTFPL), msgpack-cli, the NuGet dependencies, and one inherited open
+layer (WTFPL), the NuGet dependencies (MsgPack.Cli among them), and one inherited open
 question about six vendored collection classes that reserve rights to their
 original authors without stating a licence.
 

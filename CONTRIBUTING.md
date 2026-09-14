@@ -74,8 +74,8 @@ ordinary play is one of the most useful things you can contribute. Set
 - **Your own settings.** `paths.cfg` and `Config.local.xml` hold your folders and
   your database password. Both are ignored; edit those, not `paths.example.cfg`
   or `Config.xml`.
-- **Build output and downloaded tools** - `Built/`, `bin/`, `obj/`,
-  `packages/`, `NuGet.exe`.
+- **Build output and downloaded tools** - `Built/`, `bin/`, `obj/`, and the
+  launcher's `packages/` and `NuGet.exe`.
 
 Run `git status` before you commit. If something shows up that is not a change
 you meant to make, find out why before adding it.

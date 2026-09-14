@@ -143,9 +143,8 @@ Config.local.xml
 # Build output under Tools, which the root rules only anchored for OmniCell/.
 Built/
 
-# NuGet's command-line tool is Microsoft's, not ours. NuGet.targets downloads it
-# into .nuget/ on the first build (DownloadNuGetExe is true), so it is not kept here.
-# Two .nuget folders exist (OmniCell/ and the launcher), hence the **.
+# NuGet's command-line tool is Microsoft's, not ours. The launcher's old-style project downloads
+# it into its .nuget/ folder on the first build (DownloadNuGetExe is true), so it is not kept here.
 **/.nuget/NuGet.exe
 
 # Raw Anarchy Online client files are never committed: the resource database

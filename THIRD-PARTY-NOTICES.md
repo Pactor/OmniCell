@@ -7,7 +7,7 @@ reproduced or referenced as each requires.
 The combined work is distributed under the **GNU General Public License v3**
 (`LICENSE`). That follows from the components rather than from preference:
 `Cell.Core` and `Cell.Util` are GPL "version 2 or any later version", and
-msgpack-cli is Apache 2.0, which is compatible with GPLv3 but not GPLv2. Taking
+MsgPack.Cli is Apache 2.0, which is compatible with GPLv3 but not GPLv2. Taking
 WCell's "any later version" option makes v3 the version that satisfies both.
 
 File counts below were taken from tracked source in this repository and exclude

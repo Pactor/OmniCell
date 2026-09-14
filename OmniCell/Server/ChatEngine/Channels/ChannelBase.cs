@@ -90,23 +90,11 @@ namespace ChatEngine.Channels
         /// </summary>
         /// <param name="playerName">
         /// </param>
-        /// <param name="text">
-        /// </param>
-        public delegate void ChannelMessageEvent(object sender, ChannelMessageEventArgs e);
-
-        /// <summary>
-        /// </summary>
-        /// <param name="playerName">
-        /// </param>
         public delegate void ClientJoinEvent(object sender, ClientJoinEventArgs e);
 
         #endregion
 
         #region Public Events
-
-        /// <summary>
-        /// </summary>
-        public event ChannelMessageEvent OnChannelMessage;
 
         /// <summary>
         /// </summary>
@@ -181,31 +169,6 @@ namespace ChatEngine.Channels
             {
                 client.Send(channelMessageBytes);
             }
-
-            if (this.OnChannelMessage != null)
-            {
-                this.OnChannelMessage(
-                    this,
-                    new ChannelMessageEventArgs() { PlayerName = sourceClient.Character.characterName, Text = text });
-            }
-        }
-
-        // The IRC Relay version
-        /// <summary>
-        /// </summary>
-        /// <param name="nameTag">
-        /// </param>
-        /// <param name="text">
-        /// </param>
-        /// <param name="blob">
-        /// </param>
-        public void ChannelMessage(string nameTag, string text, string blob = "")
-        {
-            byte[] channelMessageBytes = Packets.ChannelMessage.Create(this, 0, "[" + nameTag + "] " + text, blob);
-            foreach (IClient client in this.clients)
-            {
-                client.Send(channelMessageBytes);
-            }
         }
 
         /// <summary>
@@ -247,24 +210,6 @@ namespace ChatEngine.Channels
 
                 // TODO: Send feedback to client
                 return true;
-            }
-        }
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// </summary>
-        /// <param name="characterName">
-        /// </param>
-        /// <param name="text">
-        /// </param>
-        internal void ChannelMessageToIRC(string characterName, string text)
-        {
-            if (this.OnChannelMessage != null)
-            {
-                this.OnChannelMessage(this, new ChannelMessageEventArgs() { PlayerName = characterName, Text = text });
             }
         }
 

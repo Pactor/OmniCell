@@ -102,8 +102,6 @@ namespace ChatEngine.PacketHandlers
                         recipient.Send(newpacket);
                     }
                 }
-
-                client.ChannelMessageReceived(channel, client.Character.characterName, text);
             }
 
             ChatLogger.WriteString(channelName, text, client.Character.characterName);
@@ -123,7 +121,7 @@ namespace ChatEngine.PacketHandlers
         /// </returns>
         private static bool ProcessServerCommand(string text, Client client)
         {
-            if (text.StartsWith("."))
+            if (text.StartsWith('.'))
             {
                 Program.ISCom.BroadCast(
                     new OmniCell.Communication.Messages.ChatCommand
