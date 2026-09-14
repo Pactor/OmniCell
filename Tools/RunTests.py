@@ -87,9 +87,18 @@ def run(command):
 
 
 print('building ' + os.path.basename(PROJECT))
-code, out = run([MSBUILD, PROJECT, '-p:Configuration=Release', '-v:m', '-nologo',
-                 '-p:BaseOutputPath=' + OUTPUT + os.sep,
-                 '-p:BaseIntermediateOutputPath=' + os.path.join(OUTPUT, 'obj') + os.sep])
+# -restore: the messaging library the tests reference is an SDK-style project,
+# which will not build without its package assets.
+#
+# SolutionDir, not BaseIntermediateOutputPath: the test project derives its obj
+# folder from $(SolutionDir), so given SolutionDir it lands in <repo>\obj\test.
+# Overriding BaseIntermediateOutputPath instead applies to the messaging project
+# too, and the two then shared one obj folder, restore assets included - which
+# made NuGet treat the old-style test project as a package project and fail.
+SOLUTION_DIR = os.path.join(ROOT, 'OmniCell') + os.sep
+code, out = run([MSBUILD, PROJECT, '-restore', '-p:Configuration=Release', '-v:m', '-nologo',
+                 '-p:SolutionDir=' + SOLUTION_DIR,
+                 '-p:BaseOutputPath=' + OUTPUT + os.sep])
 errors = [line for line in out.splitlines() if re.search(r'\berror\b', line, re.I)]
 if code != 0 or errors:
     for line in errors[:20]:
