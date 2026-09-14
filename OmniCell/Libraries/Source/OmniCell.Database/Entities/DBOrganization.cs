@@ -68,17 +68,21 @@ namespace OmniCell.Database.Dao
         /// <summary>
         /// Description of the organization
         /// </summary>
-        public string Description { get; set; }
+        /// <remarks>
+        /// Every property goes into the INSERT, so a null here is a null in a
+        /// NOT NULL column. Same for Objective and History.
+        /// </remarks>
+        public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// Organization's objective
         /// </summary>
-        public string Objective { get; set; }
+        public string Objective { get; set; } = string.Empty;
 
         /// <summary>
         /// Organizations history
         /// </summary>
-        public string History { get; set; }
+        public string History { get; set; } = string.Empty;
 
         /// <summary>
         /// Tax rate
@@ -93,7 +97,12 @@ namespace OmniCell.Database.Dao
         /// <summary>
         /// Organization commission
         /// </summary>
-        public int Commission { get; set; }
+        /// <remarks>
+        /// Spelled as the column is in SqlTables/organizations.sql and so in
+        /// every database created from it. Named Commission, the INSERT failed
+        /// with "Unknown column 'Commission'". The table defaults it to 1.
+        /// </remarks>
+        public int Comission { get; set; } = 1;
 
         /// <summary>
         /// Id of the organizations contracts

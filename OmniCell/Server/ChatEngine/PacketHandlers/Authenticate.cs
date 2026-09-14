@@ -113,11 +113,8 @@ namespace ChatEngine.PacketHandlers
             // save characters ID in client - note, this is usually 0 if it is a chat client connecting
             client.Character = new Character(characterId, client);
 
-            // add client to connected clients list
-            if (!client.ChatServer().ConnectedClients.ContainsKey(client.Character.CharacterId))
-            {
-                client.ChatServer().ConnectedClients.Add(client.Character.CharacterId, client);
-            }
+            // add client to connected clients list, and tell its buddies it is on
+            client.ChatServer().AddConnectedClient(client);
 
             // add yourself to that list
             client.KnownClients.Add(client.Character.CharacterId);

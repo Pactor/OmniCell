@@ -61,6 +61,13 @@ namespace ChatEngine.CoreClient
         public bool IsBot = false;
 
         /// <summary>
+        /// Characters this connection has added as buddies (packet 40) and not
+        /// removed (41). They are told when those characters log on or off; lock
+        /// the set to use it.
+        /// </summary>
+        public readonly HashSet<uint> Buddies = new HashSet<uint>();
+
+        /// <summary>
         /// Private known clients collection
         /// </summary>
         private readonly List<uint> knownClients;
@@ -218,12 +225,38 @@ namespace ChatEngine.CoreClient
             base.Send(packet, offset, length);
         }
 
+        /// <remarks>
+        /// A chat packet is a 2-byte type, a 2-byte length and that many bytes.
+        /// Everything received used to be handled as one packet, so a second
+        /// packet in the same read was lost; and a packet whose handler threw
+        /// returned false, which ClientBase takes to mean "incomplete, keep it",
+        /// so the failed packet stayed at the front of the buffer, was handled
+        /// again on every later read, and the buffer filled until the client
+        /// was dropped. That is how Tyrbot lost its connection after a lookup
+        /// threw. Now every complete packet is handled once, a packet that
+        /// throws is logged and dropped, and only a trailing partial packet is
+        /// kept.
+        /// </remarks>
         protected override bool OnReceive(BufferSegment buffer)
         {
-            if (this._remainingLength > 4)
+            byte[] received = buffer.Buffer.Array;
+            int start = buffer.Offset + this._offset;
+
+            while (this._remainingLength >= 4)
             {
-                byte[] packet = new byte[this._remainingLength];
-                Array.Copy(buffer.SegmentData, 0, packet, 0, this._remainingLength);
+                int length = 4 + ((received[start + 2] << 8) | received[start + 3]);
+                if (this._remainingLength < length)
+                {
+                    // The rest of this packet has not arrived yet
+                    return false;
+                }
+
+                byte[] packet = new byte[length];
+                Array.Copy(received, start, packet, 0, length);
+                start += length;
+                this._offset += length;
+                this._remainingLength -= length;
+
                 LogUtil.Debug(DebugInfoDetail.Network, "\r\nReceived:\r\n" + HexOutput.Output(packet));
 
                 ushort messageNumber = this.GetMessageNumber(packet);
@@ -234,17 +267,16 @@ namespace ChatEngine.CoreClient
                 // a client that was answered and lost interest.
                 try
                 {
-                    return parser.Parse(this, packet, messageNumber);
+                    parser.Parse(this, packet, messageNumber);
                 }
                 catch (Exception exception)
                 {
                     LogUtil.ErrorException(exception, "Chat message {0} threw", messageNumber);
-                    return false;
                 }
             }
 
-            // TODO: check what needs to be done if no suitable packet was found
-            return true;
+            // All of it handled, unless a few bytes of a packet header remain
+            return this._remainingLength == 0;
         }
 
         #endregion

@@ -34,6 +34,10 @@ namespace ChatEngine.PacketHandlers
     #region Usings ...
 
     using ChatEngine.CoreClient;
+    using ChatEngine.Packets;
+
+    using OmniCell.Database.Dao;
+    using OmniCell.Database.Entities;
 
     #endregion
 
@@ -70,6 +74,27 @@ namespace ChatEngine.PacketHandlers
                 unknown1,
                 unknown2);
             reader.Finish();
+
+            // Remembered, so this connection is told when the buddy logs on or
+            // off (ChatServer.NotifyBuddies).
+            lock (client.Buddies)
+            {
+                client.Buddies.Add(playerId);
+            }
+
+            // The buddy's status, as the live chat server answers a buddy add:
+            // in the retail chat captures each client buddy add is followed by a
+            // packet 40 with the id, online 0 or 1, and status bytes 00 01 00.
+            // Nothing was sent, so a bot never learned whether a buddy was on.
+            // Online means connected to chat, the same test the logon and logoff
+            // notifications use; the database flag is only set for bot logins.
+            bool online;
+            lock (client.ChatServer().ConnectedClients)
+            {
+                online = client.ChatServer().ConnectedClients.ContainsKey(playerId);
+            }
+
+            client.Send(BuddyOnlineStatus.Create(playerId, online ? 1u : 0u, new byte[] { 0x00, 0x01, 0x00 }));
         }
 
         #endregion

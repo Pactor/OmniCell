@@ -149,7 +149,74 @@ namespace ChatEngine.CoreServer
             if (cl.Character.CharacterId != 0)
             {
                 CharacterDao.Instance.SetOffline((int)cl.Character.CharacterId);
-                this.ConnectedClients.Remove(cl.Character.CharacterId);
+                bool wasConnected;
+                lock (this.ConnectedClients)
+                {
+                    wasConnected = this.ConnectedClients.TryGetValue(cl.Character.CharacterId, out Client registered)
+                                   && registered == cl
+                                   && this.ConnectedClients.Remove(cl.Character.CharacterId);
+                }
+
+                if (wasConnected)
+                {
+                    this.NotifyBuddies(cl.Character.CharacterId, false);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Tells every connection that has this character as a buddy that it has
+        /// logged on or off.
+        /// </summary>
+        /// <remarks>
+        /// The same packet 40 a buddy add is answered with: id, online 0 or 1,
+        /// status bytes 00 01 00. In the retail chat captures some arrive with
+        /// nothing from the client before them (6 of 13), which is this.
+        /// Online here means connected to chat, as for the buddy add answer.
+        /// </remarks>
+        public void NotifyBuddies(uint characterId, bool online)
+        {
+            Client[] clients;
+            lock (this.ConnectedClients)
+            {
+                clients = this.ConnectedClients.Values.ToArray();
+            }
+
+            byte[] status = BuddyOnlineStatus.Create(characterId, online ? 1u : 0u, new byte[] { 0x00, 0x01, 0x00 });
+            foreach (Client other in clients)
+            {
+                bool isBuddy;
+                lock (other.Buddies)
+                {
+                    isBuddy = other.Buddies.Contains(characterId);
+                }
+
+                if (isBuddy && other.Character.CharacterId != characterId)
+                {
+                    other.Send(status);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Registers a character's chat connection and tells its buddies it is on.
+        /// Does nothing for a character that is already registered.
+        /// </summary>
+        public void AddConnectedClient(Client client)
+        {
+            bool added = false;
+            lock (this.ConnectedClients)
+            {
+                if (!this.ConnectedClients.ContainsKey(client.Character.CharacterId))
+                {
+                    this.ConnectedClients.Add(client.Character.CharacterId, client);
+                    added = true;
+                }
+            }
+
+            if (added)
+            {
+                this.NotifyBuddies(client.Character.CharacterId, true);
             }
         }
 
@@ -290,24 +357,28 @@ namespace ChatEngine.CoreServer
                                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
                                    };
 
-            byte[] salt = new byte[0x20];
-            Random rand = new Random();
-
-            rand.NextBytes(salt);
+            // The seed is 32 lowercase hex characters, as the live chat server
+            // sends it (every login seed in the captures, e.g. "c9ca2625f9b909884e
+            // 79f85c854cfe2a"). It used to be 32 random bytes: the game client
+            // coped, but chat bots read the seed as text, and Tyrbot failed on
+            // bytes that are not valid UTF-8. ServerSalt stays the hex of the
+            // bytes sent, which is what LoginEncryption rebuilds from the key.
+            const string HexDigits = "0123456789abcdef";
+            byte[] random = new byte[0x20];
+            using (var generator = new System.Security.Cryptography.RNGCryptoServiceProvider())
+            {
+                generator.GetBytes(random);
+            }
 
             client1.ServerSalt = string.Empty;
 
             for (int i = 0; i < 32; i++)
             {
-                // 0x00 Breaks Things
-                if (salt[i] == 0)
-                {
-                    salt[i] = 42; // So we change it to something nicer
-                }
+                byte seedCharacter = (byte)HexDigits[random[i] & 0x0F];
 
-                welcomePacket[6 + i] = salt[i];
+                welcomePacket[6 + i] = seedCharacter;
 
-                client1.ServerSalt += string.Format("{0:x2}", salt[i]);
+                client1.ServerSalt += string.Format("{0:x2}", seedCharacter);
             }
 
             client1.Send(welcomePacket);

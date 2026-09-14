@@ -93,10 +93,8 @@ namespace ChatEngine.PacketHandlers
                 // processing name, welcome, or channel packets.
                 client.Send(LoginOk.Create());
 
-                if (!client.ChatServer().ConnectedClients.ContainsKey(client.Character.CharacterId))
-                {
-                    client.ChatServer().ConnectedClients.Add(client.Character.CharacterId, client);
-                }
+                // Registered, and its buddies told it is on
+                client.ChatServer().AddConnectedClient(client);
 
                 // add yourself to that list
                 client.KnownClients.Add(client.Character.CharacterId);

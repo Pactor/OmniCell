@@ -388,7 +388,23 @@ namespace ZoneEngine.Script
                             // Execute the command with the given command arguments, if CheckCommandArguments is true else print command help
                             if (aoc.CheckCommandArguments(commandArguments))
                             {
-                                aoc.ExecuteCommand(client.Controller.Character, target, commandArguments);
+                                // A command that throws used to leave the GM with no
+                                // reply at all and the reason only in the zone log.
+                                // Tell the GM who ran it; nobody else sees it.
+                                try
+                                {
+                                    aoc.ExecuteCommand(client.Controller.Character, target, commandArguments);
+                                }
+                                catch (Exception e)
+                                {
+                                    LogUtil.ErrorException(e);
+                                    Exception cause = e.GetBaseException();
+                                    client.Controller.Character.Playfield.Publish(
+                                        ChatTextMessageHandler.Default.CreateIM(
+                                            client.Controller.Character,
+                                            "Command " + commandName + " failed: " + cause.GetType().Name + ": "
+                                            + cause.Message));
+                                }
                             }
                             else
                             {

@@ -11,14 +11,23 @@ namespace WebEngine
     public class PageResult
     {
         public PageResult(int status, string html)
+            : this(status, html, "text/html; charset=utf-8")
+        {
+        }
+
+        public PageResult(int status, string body, string contentType)
         {
             this.Status = status;
-            this.Html = html;
+            this.Html = body;
+            this.ContentType = contentType;
         }
 
         public int Status { get; private set; }
 
+        /// <summary>The response body; HTML for the panels, JSON for People.</summary>
         public string Html { get; private set; }
+
+        public string ContentType { get; private set; }
 
         /// <summary>True when the client asked for something we do not serve.</summary>
         public bool IsUnmapped
@@ -47,6 +56,13 @@ namespace WebEngine
             {
                 path = target.Substring(0, q);
                 query = target.Substring(q + 1);
+            }
+
+            // Chat bot lookups, on people.anarchy-online.com's paths. See People.
+            PageResult people = People.Route(path);
+            if (people != null)
+            {
+                return people;
             }
 
             // The client is inconsistent about trailing slashes across panels, so

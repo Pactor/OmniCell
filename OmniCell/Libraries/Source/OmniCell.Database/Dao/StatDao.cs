@@ -129,6 +129,33 @@ namespace OmniCell.Database.Dao
         }
 
         /// <summary>
+        /// Writes one stat of one dynel, adding the row if there is none.
+        /// </summary>
+        /// <remarks>
+        /// For changing a character that is not in the zone. A character that is
+        /// in the zone saves its own stats on logout and would overwrite this, so
+        /// change it in memory as well.
+        /// </remarks>
+        public static void SetStat(int type, int instance, int statId, int value)
+        {
+            try
+            {
+                using (IDbConnection conn = Connector.GetConnection())
+                {
+                    conn.Execute(
+                        "INSERT INTO stats (Type, Instance, StatId, StatValue) VALUES (@type, @instance, @statId, @value) "
+                        + "ON DUPLICATE KEY UPDATE StatValue = @value",
+                        new { type, instance, statId, value });
+                }
+            }
+            catch (Exception e)
+            {
+                LogUtil.ErrorException(e);
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Get one stat from a particular character
         /// </summary>
         /// <param name="type">

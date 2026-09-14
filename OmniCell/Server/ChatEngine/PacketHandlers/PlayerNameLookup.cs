@@ -97,11 +97,18 @@ namespace ChatEngine.PacketHandlers
 
             byte[] namelookup = NameLookupResult.Create(playerId, playerName);
             client.Send(namelookup);
-            client.Send(
-                BuddyOnlineStatus.Create(
-                    playerId,
-                    (uint)CharacterDao.Instance.IsOnline((int)playerId),
-                    new byte[] { 0x00, 0x01, 0x00 }));
+
+            // An unknown name is answered with id 0xFFFFFFFF, which bots read as
+            // "no such character".
+            if (character == null)
+            {
+                return;
+            }
+
+            // No online status here. In the retail chat captures a buddy status
+            // (packet 40) follows a buddy add, login, or nothing the client sent
+            // - never a lookup - and Tyrbot takes every status as a logon: one
+            // here and one from the buddy add recorded the same org logon twice.
             client.KnownClients.Add(playerId);
         }
 

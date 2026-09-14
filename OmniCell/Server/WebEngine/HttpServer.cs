@@ -136,7 +136,7 @@ namespace WebEngine
 
                     PageResult page = Router.Route(target);
                     this.Announce(remote, method, target + (page.IsUnmapped ? "   <-- NOT MAPPED" : string.Empty));
-                    Respond(stream, page.Status, page.Html);
+                    Respond(stream, page.Status, page.ContentType, page.Html);
                 }
             }
             catch (IOException)
@@ -191,13 +191,15 @@ namespace WebEngine
             return sb.ToString();
         }
 
-        private static void Respond(Stream stream, int status, string body)
+        private static void Respond(Stream stream, int status, string contentType, string body)
         {
             byte[] payload = Encoding.UTF8.GetBytes(body);
 
+            string reason = status == 200 ? " OK" : status == 404 ? " Not Found" : " Internal Server Error";
+
             StringBuilder head = new StringBuilder();
-            head.Append("HTTP/1.1 ").Append(status).Append(status == 200 ? " OK" : " Not Found").Append("\r\n");
-            head.Append("Content-Type: text/html; charset=utf-8\r\n");
+            head.Append("HTTP/1.1 ").Append(status).Append(reason).Append("\r\n");
+            head.Append("Content-Type: ").Append(contentType).Append("\r\n");
             head.Append("Content-Length: ").Append(payload.Length).Append("\r\n");
             head.Append("Cache-Control: no-cache, no-store\r\n");
             head.Append("Connection: close\r\n");

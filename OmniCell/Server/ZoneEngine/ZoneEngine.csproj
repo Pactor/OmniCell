@@ -102,6 +102,7 @@
     <Compile Include="ChatCommands\Goto.cs" />
     <Compile Include="ChatCommands\Teleport.cs" />
     <Compile Include="ChatCommands\ChatCommandListStatels.cs" />
+    <Compile Include="ChatCommands\OrgTest.cs" />
     <Compile Include="ChatCommands\PlayfieldList.cs" />
     <Compile Include="ChatCommands\ShowStatel.cs" />
     <Compile Include="ChatCommands\tpout.cs" />

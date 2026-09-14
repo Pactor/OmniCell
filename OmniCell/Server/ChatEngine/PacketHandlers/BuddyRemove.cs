@@ -75,6 +75,12 @@ namespace ChatEngine.PacketHandlers
                 client.Character.characterName,
                 this.playerId);
             reader.Finish();
+
+            // No more logon and logoff notifications for this character.
+            lock (client.Buddies)
+            {
+                client.Buddies.Remove(this.playerId);
+            }
         }
 
         #endregion
