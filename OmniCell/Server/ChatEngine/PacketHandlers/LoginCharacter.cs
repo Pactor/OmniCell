@@ -36,7 +36,6 @@ namespace ChatEngine.PacketHandlers
     using OmniCell.Database.Dao;
     using OmniCell.Database.Entities;
 
-    using ChatEngine.Channels;
     using ChatEngine.CoreClient;
     using ChatEngine.Packets;
 
@@ -86,10 +85,22 @@ namespace ChatEngine.PacketHandlers
             client.Character.characterFirstName = character.FirstName;
             client.Character.characterLastName = character.LastName;
 
-            client.ChatServer().AddClientToChannels(client);
-
             if (client.IsBot)
             {
+                // A bot first authenticates its account and receives the character
+                // list. Character selection completes that login, so LOGIN_OK must
+                // be the first packet sent here. AO chat clients wait for it before
+                // processing name, welcome, or channel packets.
+                client.Send(LoginOk.Create());
+
+                if (!client.ChatServer().ConnectedClients.ContainsKey(client.Character.CharacterId))
+                {
+                    client.ChatServer().ConnectedClients.Add(client.Character.CharacterId, client);
+                }
+
+                // add yourself to that list
+                client.KnownClients.Add(client.Character.CharacterId);
+
                 // and give client its own name lookup
                 byte[] pname = PlayerName.Create(client, client.Character.CharacterId);
                 client.Send(pname);
@@ -104,26 +115,11 @@ namespace ChatEngine.PacketHandlers
                 client.Send(anonv);
 
                 // TODO: Add Buddies List/BuddyOnlineStatus messages
-
-                foreach (ChannelBase channel in client.Channels)
-                {
-                    byte[] channelJoin = ChannelJoin.Create(
-                        channel.channelType,
-                        channel.ChannelId,
-                        channel.ChannelName,
-                        channel.channelFlags,
-                        new byte[] { 0x00, 0x00 });
-                    client.Send(channelJoin);
-                }
-
-                if (!client.ChatServer().ConnectedClients.ContainsKey(client.Character.CharacterId))
-                {
-                    client.ChatServer().ConnectedClients.Add(client.Character.CharacterId, client);
-                }
-
-                // add yourself to that list
-                client.KnownClients.Add(client.Character.CharacterId);
             }
+
+            // ChannelBase.AddClient sends the channel announcement. Calling this
+            // once avoids the duplicate announcements previously sent to bots.
+            client.ChatServer().AddClientToChannels(client);
         }
 
         #endregion
