@@ -64,6 +64,14 @@ namespace OmniCell.Communication.Messages
         /// <summary>
         /// Holds the actual data object (MessageBase or any derived objects)
         /// </summary>
+        /// <remarks>
+        /// PackToMessage and UnpackFromMessage write and read this themselves. MsgPack.Cli 1.0
+        /// still builds a serializer for every member of an IPackable type when it creates
+        /// the type's serializer, and one for MessageBase, which has no members, throws
+        /// "Cannot serialize type MessageBase" - every ISCom send failed. msgpack-cli 0.4 did
+        /// not look at the members of an IPackable type.
+        /// </remarks>
+        [MessagePackIgnore]
         public MessageBase DataObject
         {
             get

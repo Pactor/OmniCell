@@ -45,7 +45,7 @@
     <ProjectReference Include="..\AOtomation.Messaging\SmokeLounge.AOtomation.Messaging\SmokeLounge.AOtomation.Messaging.csproj" />
     <ProjectReference Include="..\Cell.Core\Cell.Core.csproj" />
     <ProjectReference Include="..\OmniCell.Enums\OmniCell.Enums.csproj" />
-    <ProjectReference Include="..\msgpack-cli\src\MsgPack.Mono\MsgPack.Mono.csproj" />
+    <PackageReference Include="MsgPack.Cli" Version="1.0.1" />
     <ProjectReference Include="..\Utility\Utility.csproj" />
   </ItemGroup>
 

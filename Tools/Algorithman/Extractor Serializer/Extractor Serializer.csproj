@@ -49,7 +49,7 @@
     <ProjectReference Include="..\..\..\OmniCell\Libraries\Source\OmniCell.Core\OmniCell.Core.csproj" />
     <ProjectReference Include="..\..\..\OmniCell\Libraries\Source\OmniCell.Enums\OmniCell.Enums.csproj" />
     <ProjectReference Include="..\..\..\OmniCell\Libraries\Source\OmniCell.Interfaces\OmniCell.Interfaces.csproj" />
-    <ProjectReference Include="..\..\..\OmniCell\Libraries\Source\msgpack-cli\src\MsgPack.Mono\MsgPack.Mono.csproj" />
+    <PackageReference Include="MsgPack.Cli" Version="1.0.1" />
     <ProjectReference Include="..\..\..\OmniCell\Libraries\Source\Utility\Utility.csproj" />
   </ItemGroup>
 

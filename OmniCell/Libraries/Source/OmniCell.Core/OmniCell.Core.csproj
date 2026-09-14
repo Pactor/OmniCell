@@ -56,7 +56,7 @@
     <ProjectReference Include="..\OmniCell.ObjectManager\OmniCell.ObjectManager.csproj" />
     <ProjectReference Include="..\OmniCell.Stats\OmniCell.Stats.csproj" />
     <ProjectReference Include="..\Exceptions\OmniCell.Exceptions.csproj" />
-    <ProjectReference Include="..\msgpack-cli\src\MsgPack.Mono\MsgPack.Mono.csproj" />
+    <PackageReference Include="MsgPack.Cli" Version="1.0.1" />
     <ProjectReference Include="..\Translations\Translations.csproj" />
     <ProjectReference Include="..\Utility\Utility.csproj" />
   </ItemGroup>

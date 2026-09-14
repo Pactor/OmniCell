@@ -60,7 +60,6 @@
     <ProjectReference Include="..\..\Libraries\Source\OmniCell.Database\OmniCell.Database.csproj" />
     <ProjectReference Include="..\..\Libraries\Source\OmniCell.Enums\OmniCell.Enums.csproj" />
     <ProjectReference Include="..\..\Libraries\Source\OmniCell.Stats\OmniCell.Stats.csproj" />
-    <ProjectReference Include="..\..\Libraries\Source\msgpack-cli\src\MsgPack.Mono\MsgPack.Mono.csproj" />
     <ProjectReference Include="..\..\Libraries\Source\PlayfieldLoader\PlayfieldLoader.csproj" />
     <ProjectReference Include="..\..\Libraries\Source\Translations\Translations.csproj" />
     <ProjectReference Include="..\..\Libraries\Source\Utility\Utility.csproj" />

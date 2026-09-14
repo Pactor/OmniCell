@@ -44,7 +44,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AOtomation.Messaging\SmokeLounge.AOtomation.Messaging\SmokeLounge.AOtomation.Messaging.csproj" />
-    <ProjectReference Include="..\msgpack-cli\src\MsgPack.Mono\MsgPack.Mono.csproj" />
+    <PackageReference Include="MsgPack.Cli" Version="1.0.1" />
     <ProjectReference Include="..\Translations\Translations.csproj" />
   </ItemGroup>
 

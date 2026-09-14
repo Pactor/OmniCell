@@ -43,7 +43,7 @@
     <ProjectReference Include="..\OmniCell.Database\OmniCell.Database.csproj" />
     <ProjectReference Include="..\OmniCell.Enums\OmniCell.Enums.csproj" />
     <ProjectReference Include="..\OmniCell.Interfaces\OmniCell.Interfaces.csproj" />
-    <ProjectReference Include="..\msgpack-cli\src\MsgPack.Mono\MsgPack.Mono.csproj" />
+    <PackageReference Include="MsgPack.Cli" Version="1.0.1" />
     <ProjectReference Include="..\Utility\Utility.csproj" />
   </ItemGroup>
 
