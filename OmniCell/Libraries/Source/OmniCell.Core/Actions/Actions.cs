@@ -83,21 +83,10 @@ namespace OmniCell.Core.Actions
         /// </returns>
         public bool CheckRequirements(IInstancedEntity entity)
         {
-            bool result = true;
-            foreach (Requirement requirements in this.Requirements)
-            {
-                if (requirements.ChildOperator == Operator.And)
-                {
-                    result &= requirements.CheckRequirement(entity);
-                }
-
-                if (!result)
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            // Left to right with each entry's own And/Or, as item data writes it. This used to
+            // evaluate only the And entries and skip every Or, so "breed 1 Or breed 3" style
+            // conditions were never checked on equipping, wielding or using.
+            return Requirement.CheckAll(this.Requirements, entity);
         }
 
         #endregion

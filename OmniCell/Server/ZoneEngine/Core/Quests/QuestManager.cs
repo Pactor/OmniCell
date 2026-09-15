@@ -853,14 +853,23 @@ namespace ZoneEngine.Core.Quests
         /// <summary>
         /// Somebody put an item on.
         /// </summary>
-        public static void OnEquip(ICharacter character, string itemName)
+        public static void OnEquip(ICharacter character, string itemName, int itemLow, int itemHigh)
         {
-            if (string.IsNullOrEmpty(itemName))
-            {
-                return;
-            }
-
-            Advance(character, QuestObjectiveType.Equip, itemName);
+            // Name or template id, like a purchase: retail finishes "Install the implant" and the
+            // Shade's "become its vessel" the moment the item lands in its slot, and the extracted
+            // objectives name the item by its id (20260909-142713 s3 8042-8043, 20260914-220505
+            // 26820-26823).
+            Advance(
+                character,
+                QuestObjectiveType.Equip,
+                new[]
+                    {
+                        itemName,
+                        itemLow.ToString(CultureInfo.InvariantCulture),
+                        itemHigh.ToString(CultureInfo.InvariantCulture)
+                    },
+                itemLow,
+                itemHigh);
         }
 
         /// <summary>

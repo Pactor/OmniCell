@@ -69,6 +69,27 @@ namespace OmniCell.Core.Inventory
         #region Public Methods and Operators
 
         /// <summary>
+        /// Whether an item may go in an implant slot: its Placement (stat 298) must have the bit
+        /// for that slot. Slot 33 + n - 1 is bit n, eye 1 to feet 13 (the ImplantSlots values).
+        /// </summary>
+        /// <remarks>
+        /// Every implant and spirit retail was seen equipping fits this: legs 2048 in slot 43,
+        /// chest 32 in 37, right arm 16 in 36, waist 256 in 40, feet 8192 in 45
+        /// (20260909-142713, 20260914-220505, 20260915-042412). A few implants carry two bits
+        /// (both wrists 640, both arms 80) and fit either slot. Slots 46 and 47 take nothing.
+        /// </remarks>
+        public bool Fits(IItem item, int slot)
+        {
+            int bit = slot - this.FirstSlotNumber + 1;
+            if ((item == null) || (bit < 1) || (bit > 13))
+            {
+                return false;
+            }
+
+            return (item.GetAttribute(298) & (1 << bit)) != 0;
+        }
+
+        /// <summary>
         /// </summary>
         /// <param name="character">
         /// </param>

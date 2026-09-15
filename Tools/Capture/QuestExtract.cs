@@ -1661,6 +1661,17 @@ internal static class QuestExtract
                 return;
             }
 
+            // Putting an item on: the server confirms it with Unknown2 6 on the equipment page, and a
+            // stage that wants it worn finishes right after (20260909-142713 s3 8042-8043 implant,
+            // 20260914-220505 26820-26823 Shade spirit).
+            if (template.Identity.Instance == this.player && template.Unknown2 == 6
+                && (template.Placement.Type == IdentityType.ImplantPage || template.Placement.Type == IdentityType.ArmorPage
+                    || template.Placement.Type == IdentityType.WeaponPage || template.Placement.Type == IdentityType.SocialPage))
+            {
+                this.Act(new Trigger { Kind = "Equip", Item = item }, evidence);
+                return;
+            }
+
             if (template.Identity.Instance != this.player || template.Placement.Type != IdentityType.Inventory)
             {
                 return;
@@ -2058,7 +2069,7 @@ internal static class QuestExtract
             // What the stage's own text links to is what it wants handed over or used; the item a
             // capture shows in a slot is only inferred.
             List<ItemRef> linked = ItemRefs(stage.Description);
-            bool usesItem = t.Kind == "TradeHandIn" || t.Kind == "Buy" || t.Kind.StartsWith("UseItem", StringComparison.Ordinal);
+            bool usesItem = t.Kind == "TradeHandIn" || t.Kind == "Buy" || t.Kind == "Equip" || t.Kind.StartsWith("UseItem", StringComparison.Ordinal);
             if (usesItem && linked.Count > 0
                 && (t.Item == null || !linked.Any(r => r.LowId == t.Item.LowId || r.HighId == t.Item.HighId || r.LowId == t.Item.HighId || r.HighId == t.Item.LowId)))
             {
@@ -2122,6 +2133,11 @@ internal static class QuestExtract
                     break;
                 case "Tradeskill":
                     kind = 9;
+                    target = item == null ? null : Int(item.LowId);
+                    item = null;
+                    break;
+                case "Equip":
+                    kind = 6;
                     target = item == null ? null : Int(item.LowId);
                     item = null;
                     break;

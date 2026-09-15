@@ -223,8 +223,11 @@ namespace OmniCell.Core.Inventory
         {
             foreach (KeyValuePair<int, IInventoryPage> page in this.Pages)
             {
+                // A page of MaxSlots slots ends one before FirstSlotNumber + MaxSlots. With <= the
+                // weapon page also claimed slot 16, armor 32, implants 48, and social 64, which is
+                // the inventory's first slot.
                 if ((slotNum >= page.Value.FirstSlotNumber)
-                    && (slotNum <= page.Value.FirstSlotNumber + page.Value.MaxSlots))
+                    && (slotNum < page.Value.FirstSlotNumber + page.Value.MaxSlots))
                 {
                     return page.Value;
                 }

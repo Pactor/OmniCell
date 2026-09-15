@@ -155,11 +155,11 @@ namespace OmniCell.Core.Inventory
                     + this.Identity.Instance);
             }
 
-            if ((slot < this.FirstSlotNumber) || (slot > this.FirstSlotNumber + this.MaxSlots))
+            if (!this.ValidSlot(slot))
             {
                 throw new ArgumentOutOfRangeException(
                     "Slot out of range: " + slot + " not in " + this.FirstSlotNumber + " to "
-                    + (this.FirstSlotNumber + this.MaxSlots));
+                    + (this.FirstSlotNumber + this.MaxSlots - 1));
             }
 
             this.Content.Add(slot, item);
