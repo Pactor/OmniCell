@@ -85,6 +85,12 @@ namespace ZoneEngine.Core.Quests
             new ConcurrentDictionary<int, List<DBQuestWireReward>>();
 
         /// <summary>
+        /// The stages each stage grants the moment it finishes, by stage id.
+        /// </summary>
+        private static readonly ConcurrentDictionary<int, List<DBQuestTransition>> Transitions =
+            new ConcurrentDictionary<int, List<DBQuestTransition>>();
+
+        /// <summary>
         /// Progress in memory, by character id. The database has the same rows;
         /// this is here so that a mob dying does not turn into a query per
         /// objective per character.
@@ -140,6 +146,7 @@ namespace ZoneEngine.Core.Quests
             WireDefinitions.Clear();
             WireActions.Clear();
             WireRewards.Clear();
+            Transitions.Clear();
 
             foreach (DBQuest quest in QuestDao.Instance.GetAll())
             {
@@ -182,6 +189,16 @@ namespace ZoneEngine.Core.Quests
                 {
                     WireRewards.GetOrAdd(reward.QuestId, id => new List<DBQuestWireReward>()).Add(reward);
                 }
+            }
+
+            foreach (DBQuestTransition transition in QuestTransitionDao.Instance.GetAll())
+            {
+                Transitions.GetOrAdd(transition.FromQuest, id => new List<DBQuestTransition>()).Add(transition);
+            }
+
+            foreach (List<DBQuestTransition> list in Transitions.Values)
+            {
+                list.Sort((a, b) => a.Ordinal.CompareTo(b.Ordinal));
             }
 
             foreach (List<DBQuestObjective> list in Objectives.Values)
@@ -255,6 +272,9 @@ namespace ZoneEngine.Core.Quests
             }
             WireActions[questId] = wireActions;
             WireRewards[questId] = wireRewards;
+            Transitions[questId] = QuestTransitionDao.Instance.GetWhere(new { FromQuest = questId })
+                .OrderBy(t => t.Ordinal)
+                .ToList();
             Definitions[questId] = quest;
         }
 
@@ -340,6 +360,49 @@ namespace ZoneEngine.Core.Quests
         {
             List<DBQuestWireReward> list;
             return WireRewards.TryGetValue(questId, out list) ? list : new List<DBQuestWireReward>();
+        }
+
+        /// <summary>
+        /// The stages a stage grants the moment it finishes.
+        /// </summary>
+        public static IList<DBQuestTransition> TransitionsOf(int questId)
+        {
+            List<DBQuestTransition> list;
+            return Transitions.TryGetValue(questId, out list) ? list : new List<DBQuestTransition>();
+        }
+
+        /// <summary>
+        /// Whether a character is on a stage: begun and not finished.
+        /// </summary>
+        public static bool IsActive(ICharacter character, int questId)
+        {
+            lock (Sync(character))
+            {
+                return Rows(character).Any(r => r.QuestId == questId && r.State != (int)QuestState.HandedIn);
+            }
+        }
+
+        /// <summary>
+        /// Whether a character has finished a stage.
+        /// </summary>
+        public static bool IsDone(ICharacter character, int questId)
+        {
+            lock (Sync(character))
+            {
+                List<DBCharacterQuest> mine = Rows(character).Where(r => r.QuestId == questId).ToList();
+                return mine.Count > 0 && mine.All(r => r.State == (int)QuestState.HandedIn);
+            }
+        }
+
+        /// <summary>
+        /// Whether a character has ever begun a stage.
+        /// </summary>
+        public static bool IsStarted(ICharacter character, int questId)
+        {
+            lock (Sync(character))
+            {
+                return Rows(character).Any(r => r.QuestId == questId);
+            }
         }
 
         /// <summary>
@@ -464,21 +527,11 @@ namespace ZoneEngine.Core.Quests
 
             rows.AddRange(added);
 
-            BestEffort(() => NotifyItemRewards(character, pendingRewards));
-            BestEffort(() => Tell(character, "Quest started: " + quest.Name));
-            BestEffort(() => Describe(character, questId));
-
-            // The order the live server uses, which is three messages and not
-            // two: 30512, 30513 and 30516 of one captured session.
-            //
-            // The first is what was missing. Without it the client is told
-            // about a quest it has no window entry for - it says to go and
-            // check the mission window and there is nothing in it.
-            //
-            // And the update carries the one quest that changed rather than
-            // the whole log. Live sends QuestInfos=[1] here.
-            BestEffort(() => CharacterActionMessageHandler.Default.SendMissionChanged(character, questId));
-            BestEffort(() => QuestMessageHandler.Default.Send(character, questId));
+            // What the live server sends for a stage being granted: whatever comes with it into the
+            // overflow window, then the stage alone in a quest log update announced as new - and nothing
+            // else (20260914-124401 #1688-1697, #3382-3384; 20260914-120906 #2796). MissionChanged and
+            // QuestMessage belong to a stage finishing, never to one starting.
+            BestEffort(() => NotifyItemRewards(character, pendingRewards, false));
             BestEffort(() => SendQuestWindow(character, true, questId));
             return true;
         }
@@ -588,12 +641,95 @@ namespace ZoneEngine.Core.Quests
         /// objectives use <see cref="OnUseItemOn"/> and may deliberately name a
         /// class of fixtures, such as any of Arete's four Gas Fires.
         /// </remarks>
-        public static void OnUse(ICharacter character, Identity fixture)
+        public static void OnUse(ICharacter character, Identity fixture, int template = 0)
         {
+            // By instance for authored objectives, by template for extracted ones: a fixture that
+            // comes back after use is not guaranteed its old instance id.
             Advance(
                 character,
                 QuestObjectiveType.Use,
-                fixture.Instance.ToString(CultureInfo.InvariantCulture));
+                new[]
+                    {
+                        fixture.Instance.ToString(CultureInfo.InvariantCulture),
+                        template == 0 ? null : template.ToString(CultureInfo.InvariantCulture)
+                    },
+                0,
+                0);
+        }
+
+        /// <summary>
+        /// Somebody used an item from their inventory.
+        /// </summary>
+        public static void OnUseItem(ICharacter character, int itemLow, int itemHigh, string itemName)
+        {
+            Advance(
+                character,
+                QuestObjectiveType.UseItem,
+                new[]
+                    {
+                        itemName,
+                        itemLow.ToString(CultureInfo.InvariantCulture),
+                        itemHigh.ToString(CultureInfo.InvariantCulture)
+                    },
+                itemLow,
+                itemHigh);
+        }
+
+        /// <summary>
+        /// Somebody used an item on a character - the stim on a Wounded Dockworker.
+        /// </summary>
+        public static void OnUseItemOnCharacter(ICharacter character, ICharacter target, int itemLow, int itemHigh)
+        {
+            if (target == null)
+            {
+                return;
+            }
+
+            Advance(character, QuestObjectiveType.UseItemOnCharacter, new[] { target.Name }, itemLow, itemHigh);
+        }
+
+        /// <summary>
+        /// Somebody chose an answer in a conversation.
+        /// </summary>
+        public static void OnDialogueAnswer(ICharacter character, string answer)
+        {
+            Advance(character, QuestObjectiveType.DialogueAnswer, answer);
+        }
+
+        /// <summary>
+        /// Somebody bought an item, known by name and id.
+        /// </summary>
+        public static void OnPurchase(ICharacter character, string itemName, int itemLow, int itemHigh)
+        {
+            Advance(
+                character,
+                QuestObjectiveType.Purchase,
+                new[]
+                    {
+                        itemName,
+                        itemLow.ToString(CultureInfo.InvariantCulture),
+                        itemHigh.ToString(CultureInfo.InvariantCulture)
+                    },
+                0,
+                0);
+        }
+
+        /// <summary>
+        /// Somebody built an item, known by name and id.
+        /// </summary>
+        public static void OnTradeSkill(ICharacter character, string itemName, int itemLow, int itemHigh)
+        {
+            Advance(
+                character,
+                QuestObjectiveType.TradeSkill,
+                new[]
+                    {
+                        itemName,
+                        itemLow.ToString(CultureInfo.InvariantCulture),
+                        itemHigh.ToString(CultureInfo.InvariantCulture)
+                    },
+                0,
+                0);
         }
 
         /// <summary>
@@ -603,16 +739,25 @@ namespace ZoneEngine.Core.Quests
         /// Authored objectives may use a readable target name or the stable
         /// world-object instance id. Both are checked when available.
         /// </remarks>
-        public static void OnUseItemOn(ICharacter character, Identity target, string targetName = null)
+        public static void OnUseItemOn(
+            ICharacter character,
+            Identity target,
+            string targetName = null,
+            int template = 0,
+            int itemLow = 0,
+            int itemHigh = 0)
         {
-            string instance = target.Instance.ToString(CultureInfo.InvariantCulture);
-            if (!string.IsNullOrEmpty(targetName)
-                && !string.Equals(targetName, instance, StringComparison.OrdinalIgnoreCase))
-            {
-                Advance(character, QuestObjectiveType.UseItemOn, targetName);
-            }
-
-            Advance(character, QuestObjectiveType.UseItemOn, instance);
+            Advance(
+                character,
+                QuestObjectiveType.UseItemOn,
+                new[]
+                    {
+                        targetName,
+                        target.Instance.ToString(CultureInfo.InvariantCulture),
+                        template == 0 ? null : template.ToString(CultureInfo.InvariantCulture)
+                    },
+                itemLow,
+                itemHigh);
         }
 
         /// <summary>
@@ -794,21 +939,63 @@ namespace ZoneEngine.Core.Quests
             string target,
             int amount = 1)
         {
-            if (character == null || string.IsNullOrEmpty(target) || amount < 1)
+            Advance(character, kind, new[] { target }, 0, 0, amount);
+        }
+
+        /// <summary>
+        /// Advances every objective of this kind that any of the targets names.
+        /// </summary>
+        /// <param name="targets">
+        /// The ways the thing can be named - a name, an instance, a template - any of which an
+        /// objective may use.
+        /// </param>
+        /// <param name="itemLow">
+        /// The item used, for objectives that name one (TargetLowId); 0 when no item was used.
+        /// </param>
+        private static void Advance(
+            ICharacter character,
+            QuestObjectiveType kind,
+            IEnumerable<string> targets,
+            int itemLow,
+            int itemHigh,
+            int amount = 1)
+        {
+            List<string> candidates = targets == null
+                                          ? new List<string>()
+                                          : targets.Where(t => !string.IsNullOrEmpty(t)).Distinct().ToList();
+            if (character == null || candidates.Count == 0 || amount < 1)
             {
                 return;
             }
 
             lock (Sync(character))
             {
-                AdvanceLocked(character, kind, target, amount);
+                AdvanceLocked(character, kind, candidates, itemLow, itemHigh, amount);
             }
+        }
+
+        /// <summary>
+        /// Whether the item used is the one an objective asks for, where it asks for one.
+        /// </summary>
+        private static bool ItemMatches(DBQuestObjective objective, QuestObjectiveType kind, int itemLow, int itemHigh)
+        {
+            if (objective.TargetLowId == 0
+                || (kind != QuestObjectiveType.UseItemOn && kind != QuestObjectiveType.UseItemOnCharacter))
+            {
+                return true;
+            }
+
+            return itemLow != 0
+                   && (itemLow == objective.TargetLowId || itemHigh == objective.TargetLowId
+                       || itemLow == objective.TargetHighId || itemHigh == objective.TargetHighId);
         }
 
         private static void AdvanceLocked(
             ICharacter character,
             QuestObjectiveType kind,
-            string target,
+            IList<string> targets,
+            int itemLow,
+            int itemHigh,
             int amount)
         {
             var advanced = new List<AdvancedObjective>();
@@ -821,6 +1008,10 @@ namespace ZoneEngine.Core.Quests
 
                 DBQuestObjective objective = ObjectivesOf(row.QuestId)
                     .FirstOrDefault(o => o.Ordinal == row.Ordinal);
+                if (objective == null || !ItemMatches(objective, kind, itemLow, itemHigh))
+                {
+                    continue;
+                }
 
                 var before = new ProgressSnapshot
                                  {
@@ -828,7 +1019,7 @@ namespace ZoneEngine.Core.Quests
                                      Progress = row.Progress,
                                      State = row.State
                                  };
-                if (!QuestStateRules.TryAdvance(row, objective, kind, target, amount))
+                if (!targets.Any(target => QuestStateRules.TryAdvance(row, objective, kind, target, amount)))
                 {
                     continue;
                 }
@@ -880,32 +1071,29 @@ namespace ZoneEngine.Core.Quests
                 DBCharacterQuest row = change.Row;
                 DBQuestObjective objective = change.Objective;
 
-                // Tell the client the quest moved, the way the live server
-                // does: the whole log, then the one that changed. It sends that
-                // pair on every quest event - twenty seven of each in one
-                // captured session - and without it the window keeps showing
-                // whatever it was told when the quest was taken, however many
-                // robots have died since.
-                BestEffort(() => CharacterActionMessageHandler.Default.SendMissionChanged(character, row.QuestId));
-                BestEffort(() => QuestMessageHandler.Default.Send(character, row.QuestId));
-                BestEffort(() => SendQuestWindow(character, false, row.QuestId));
-
-                DBQuest quest = Get(row.QuestId);
-                string name = quest == null ? row.QuestId.ToString(CultureInfo.InvariantCulture) : quest.Name;
-
-                // A count is worth reporting; a one-off is not. "Talk to Dr.
-                // Mason 1/1" says nothing the next line does not.
-                if (objective.Required > 1)
+                // While a stage is in progress the live server says nothing about it, except for a kill
+                // that counts towards a number: how many are left (20260914-120906 #2999, #3260, #3461,
+                // #3945). The kill that finishes the stage gets no counter.
+                if (objective.ObjectiveType == (int)QuestObjectiveType.Kill
+                    && objective.Required > 1
+                    && row.Progress < objective.Required)
                 {
+                    int remaining = objective.Required - row.Progress;
                     BestEffort(
-                        () => Tell(
+                        () => FormatFeedbackMessageHandler.Default.Send(
                             character,
-                            name + ": " + objective.Target + " " + row.Progress + "/" + objective.Required));
+                            QuestFeedback.KillCounter(remaining, QuestStateRules.CounterName(objective.Target))));
                 }
+            }
 
-                if (IsComplete(character, row.QuestId))
+            // A stage finishes the moment its objective is met and hands over the next one. A hand-in
+            // finishes in its trade instead, where the items change hands.
+            foreach (int questId in advanced.Select(a => a.Row.QuestId).Distinct().ToList())
+            {
+                if (QuestStateRules.IsComplete(Rows(character), questId)
+                    && ObjectivesOf(questId).All(o => o.ObjectiveType != (int)QuestObjectiveType.HandIn))
                 {
-                    BestEffort(() => Tell(character, name + " is ready to hand in."));
+                    HandInLocked(character, questId);
                 }
             }
         }
@@ -1116,25 +1304,7 @@ namespace ZoneEngine.Core.Quests
 
                 character.Stats[StatIds.cash].Value = cashAfter;
                 character.Stats[StatIds.xp].Value = xpAfter;
-                BestEffort(character.SendChangedStats);
-                BestEffort(() => NotifyItemRewards(character, pendingRewards));
-            }
-
-            BestEffort(() => CharacterActionMessageHandler.Default.SendMissionChanged(character, questId));
-            BestEffort(() => QuestMessageHandler.Default.Send(character, questId));
-            BestEffort(() => SendQuestWindow(character, false, questId));
-
-            if (completed)
-            {
-                BestEffort(
-                    () => Tell(
-                        character,
-                        "Quest complete: " + quest.Name + ". " + quest.CashReward + " credits, "
-                        + quest.ExperienceReward + " experience."));
-            }
-            else
-            {
-                BestEffort(() => Describe(character, questId));
+                SendCompletion(character, quest, pendingRewards);
             }
 
             return true;
@@ -1243,21 +1413,39 @@ namespace ZoneEngine.Core.Quests
 
             character.Stats[StatIds.cash].Value = cashAfter;
             character.Stats[StatIds.xp].Value = xpAfter;
+            SendCompletion(character, quest, pendingRewards);
+            return true;
+        }
+
+        /// <summary>
+        /// Tells the client a stage has finished and grants the stages that follow it.
+        /// </summary>
+        /// <remarks>
+        /// The live server's order (20260914-124401 #3071-3080 and #5482-5500, 20260914-120906
+        /// #5799-5804): the reward line, the new stats, each item into the overflow window followed by
+        /// its "item received" feedback, the finished stage leaving the log (MissionChanged, then
+        /// QuestMessage), and the next stages arriving announced as new. Must be called under the
+        /// character's lock.
+        /// </remarks>
+        private static void SendCompletion(ICharacter character, DBQuest quest, IEnumerable<PendingItemReward> pendingRewards)
+        {
+            if (quest.CashReward > 0 || quest.ExperienceReward > 0)
+            {
+                BestEffort(
+                    () => FormatFeedbackMessageHandler.Default.Send(
+                        character,
+                        QuestFeedback.Reward(quest.ExperienceReward, quest.CashReward)));
+            }
 
             BestEffort(character.SendChangedStats);
-            BestEffort(() => NotifyItemRewards(character, pendingRewards));
+            BestEffort(() => NotifyItemRewards(character, pendingRewards, true));
+            BestEffort(() => CharacterActionMessageHandler.Default.SendMissionChanged(character, quest.Id));
+            BestEffort(() => QuestMessageHandler.Default.Send(character, quest.Id));
 
-            BestEffort(() => CharacterActionMessageHandler.Default.SendMissionChanged(character, questId));
-            BestEffort(() => QuestMessageHandler.Default.Send(character, questId));
-            BestEffort(() => SendQuestWindow(character));
-
-            BestEffort(
-                () => Tell(
-                    character,
-                    "Quest complete: " + quest.Name + ". " + quest.CashReward + " credits, "
-                    + quest.ExperienceReward + " experience."));
-
-            return true;
+            foreach (DBQuestTransition transition in TransitionsOf(quest.Id))
+            {
+                AcceptLocked(character, transition.ToQuest);
+            }
         }
 
         /// <summary>
@@ -1488,39 +1676,49 @@ namespace ZoneEngine.Core.Quests
                     return false;
                 }
 
-                for (int count = 0; count < reward.Quantity; count++)
+                // One stack of the quantity: the live server hands over fifty of one item as one item
+                // with a count of fifty (20260914-124401 #5493, 291082 x50).
+                try
                 {
-                    try
-                    {
-                        var item = new Item(quality, lowId, highId);
-                        int slot = page.FindFreeSlot();
-                        if (slot < 0 || page.Add(slot, item) != InventoryError.OK)
-                        {
-                            RemovePendingRewards(pending);
-                            Tell(character, "Make room in your inventory for the quest item before continuing.");
-                            return false;
-                        }
-
-                        pending.Add(new PendingItemReward { Item = item, Page = page, Slot = slot });
-                    }
-                    catch (Exception exception)
+                    var item = new Item(quality, lowId, highId);
+                    item.MultipleCount = reward.Quantity;
+                    int slot = page.FindFreeSlot();
+                    if (slot < 0 || page.Add(slot, item) != InventoryError.OK)
                     {
                         RemovePendingRewards(pending);
-                        LogUtil.ErrorException(exception);
-                        Tell(character, "The quest item could not be prepared safely.");
+                        Tell(character, "Make room in your inventory for the quest item before continuing.");
                         return false;
                     }
+
+                    pending.Add(new PendingItemReward { Item = item, Page = page, Slot = slot });
+                }
+                catch (Exception exception)
+                {
+                    RemovePendingRewards(pending);
+                    LogUtil.ErrorException(exception);
+                    Tell(character, "The quest item could not be prepared safely.");
+                    return false;
                 }
             }
 
             return true;
         }
 
-        private static void NotifyItemRewards(ICharacter character, IEnumerable<PendingItemReward> pending)
+        /// <summary>
+        /// Quest items go through the overflow window, as the live server gives them; a stage's
+        /// reward items are each followed by the "item received" feedback, items that come with a
+        /// stage being granted are not (20260914-124401 #1688-1689 against #3075-3077).
+        /// </summary>
+        private static void NotifyItemRewards(ICharacter character, IEnumerable<PendingItemReward> pending, bool completion)
         {
             foreach (PendingItemReward reward in pending)
             {
-                AddTemplateMessageHandler.Default.Send(character, reward.Item);
+                TemplateActionMessageHandler.Default.SendToOverflow(character, reward.Item);
+                ContainerAddItemMessageHandler.Default.SendFromOverflow(character);
+                if (completion)
+                {
+                    FeedbackMessageHandler.Default.Send(character, 110, 108871108);
+                }
             }
         }
 
@@ -1567,7 +1765,7 @@ namespace ZoneEngine.Core.Quests
                     return false;
                 }
 
-                needed += reward.Quantity;
+                needed++;
             }
 
             var page = character.BaseInventory[character.BaseInventory.StandardPage];

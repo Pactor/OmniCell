@@ -492,6 +492,25 @@ namespace ZoneEngine.Core.Controllers
 
             item.PerformAction(this.Character, EventType.OnUse, itemPosition.Instance);
 
+            // A quest can ask for an item to be used, or used on whoever the player has selected - the
+            // stim on a Wounded Dockworker (20260914-124401 #4489-4525).
+            QuestManager.OnUseItem(
+                this.Character,
+                item.LowID,
+                item.HighID,
+                TradeSkill.Instance.GetItemName(item.LowID, item.HighID, item.Quality));
+            Identity selected = this.Character.SelectedTarget;
+            if (selected.Type == IdentityType.CanbeAffected
+                && selected.Instance != this.Character.Identity.Instance
+                && this.Character.Playfield != null)
+            {
+                QuestManager.OnUseItemOnCharacter(
+                    this.Character,
+                    Pool.Instance.GetObject<ICharacter>(this.Character.Playfield.Identity, selected),
+                    item.LowID,
+                    item.HighID);
+            }
+
             if (destroysItself)
             {
                 return true;

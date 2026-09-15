@@ -52,6 +52,12 @@ namespace OmniCell.Core.Entities
         public SortedDictionary<int, int> Stats = new SortedDictionary<int, int>();
 
         /// <summary>
+        /// Used and gone for now - a Gas Fire put out, the quest Cargo Box opened - until it comes back.
+        /// Not sent to players and not usable meanwhile. See ZoneEngine's FixtureBehaviours.
+        /// </summary>
+        public bool Hidden;
+
+        /// <summary>
         /// Stat pairs in their captured SimpleItemFullUpdate order. Stats remains
         /// the indexed runtime view; this list preserves byte-level wire order.
         /// </summary>

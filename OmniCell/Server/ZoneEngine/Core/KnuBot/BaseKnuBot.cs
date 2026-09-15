@@ -331,6 +331,15 @@ namespace ZoneEngine.Core.KnuBot
         }
 
         /// <summary>
+        /// A line with the client's emote flag: 1 for a narrated line ("Rex lowers his voice.").
+        /// </summary>
+        protected void WriteLine(string text, int flag)
+        {
+            KnuBotAppendTextMessageHandler.Default.Send(this.GetCharacter(), this.KnuBotIdentity, text + "\n", flag);
+            Thread.Sleep(20);
+        }
+
+        /// <summary>
         /// </summary>
         protected void OpenWindow()
         {
@@ -565,11 +574,29 @@ namespace ZoneEngine.Core.KnuBot
 
         public void CloseChatWindow()
         {
+            this.CloseChatWindow(3);
+        }
+
+        public void CloseChatWindow(int seconds)
+        {
             // Before the talker is let go of, for the same reason as in Answer.
             this.ReturnEverything();
 
-            KnuBotCloseChatWindowMessageHandler.Default.Send(this.Character.Target, this.KnuBotIdentity);
+            ICharacter talker = this.Character.Target;
+            KnuBotCloseChatWindowMessageHandler.Default.Send(talker, this.KnuBotIdentity, seconds);
             this.Character = new WeakRef<ICharacter>(null);
+
+            // The server closed it, and the client does not say so when the window goes on its own timer.
+            // A session left behind makes the character refuse every later conversation with the player.
+            if (talker != null && talker.Playfield != null)
+            {
+                ICharacter npc = Pool.Instance.GetObject<ICharacter>(talker.Playfield.Identity, this.KnuBotIdentity);
+                NPCController controller = npc == null ? null : npc.Controller as NPCController;
+                if (controller != null)
+                {
+                    controller.EndKnuBotDialog(talker, this);
+                }
+            }
             LogUtil.Debug(DebugInfoDetail.KnuBot, string.Format("Close KnuBot window"));
         }
     }

@@ -90,7 +90,23 @@ namespace OmniCell.Enums
         /// Create a named item by completing a tradeskill build. Merely
         /// receiving or looting the same item does not satisfy this objective.
         /// </summary>
-        TradeSkill = 9
+        TradeSkill = 9,
+
+        /// <summary>
+        /// Use an item from the inventory. The target is the item's id or name.
+        /// </summary>
+        UseItem = 10,
+
+        /// <summary>
+        /// Use an item on a character - the stim on a Wounded Dockworker. The target is the
+        /// character's name; TargetLowId, when set, is the item that has to be used.
+        /// </summary>
+        UseItemOnCharacter = 11,
+
+        /// <summary>
+        /// Choose an answer in a conversation. The target is the answer's text.
+        /// </summary>
+        DialogueAnswer = 12
     }
 
     /// <summary>

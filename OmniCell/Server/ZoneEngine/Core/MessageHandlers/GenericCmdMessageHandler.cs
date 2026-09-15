@@ -126,6 +126,22 @@ namespace ZoneEngine.Core.MessageHandlers
                             }
                             if (temp != null)
                             {
+                                var fixture = temp as StaticDynel;
+                                if (fixture != null)
+                                {
+                                    // Gone until it comes back: nothing to use.
+                                    if (fixture.Hidden)
+                                    {
+                                        break;
+                                    }
+
+                                    // Using a fixture is a quest event whether or not its template has
+                                    // an OnUse event. The quest Cargo Box has none, and this path never
+                                    // told the quests - opening it never advanced "Open the Cargo Box".
+                                    FixtureBehaviours.Used(client.Controller.Character, fixture);
+                                    QuestManager.OnUse(client.Controller.Character, message.Target[0], fixture.Template.ID);
+                                }
+
                                 var entity = temp as IEntity;
                                 if (entity != null)
                                 {
@@ -175,6 +191,10 @@ namespace ZoneEngine.Core.MessageHandlers
                                 message.Target[0].ToString(true));
                             ChatTextMessageHandler.Default.Send(client.Controller.Character, s);
 #endif
+                            // A fixture the client has from its own playfield data and the server never
+                            // spawns: the Merchant's Strongbox, where the thief hides (20260911-163012_s8
+                            // #2372, #6729). Using it is a quest event all the same.
+                            QuestManager.OnUse(client.Controller.Character, message.Target[0]);
                             client.Controller.UseStatel(message.Target[0]);
                         }
                     }
@@ -189,8 +209,23 @@ namespace ZoneEngine.Core.MessageHandlers
                                 Instance = (int)message.Target[0].Type
                             })[message.Target[0].Instance];
                     client.Controller.Character.Stats[StatIds.secondaryitemtemplate].Value = item.LowID;
+
+                    // Fixture templates test the item used on them against stat 83: the Gas Fire's
+                    // OnUseItemOn requires "Self 83 EqualTo 296780", the Compact Fire Suppressant
+                    // Container (items.ocp). With only 273 set the requirement never held.
+                    client.Controller.Character.Stats[StatIds.secondaryiteminstance].Value = item.LowID;
                     //client.Controller.Character.Stats[StatIds.secondaryitemtype]
-                    if (Pool.Instance.Contains(message.Target[1]))
+                    bool pooledTarget = Pool.Instance.Contains(message.Target[1]);
+                    NLog.LogManager.GetCurrentClassLogger().Info(
+                        "USEON character={0} item={1}:{2} low={3} target={4}:{5} pooled={6}",
+                        client.Controller.Character.Identity.Instance,
+                        message.Target[0].Type,
+                        message.Target[0].Instance,
+                        item == null ? 0 : item.LowID,
+                        message.Target[1].Type,
+                        message.Target[1].Instance,
+                        pooledTarget);
+                    if (pooledTarget)
                     {
                         StaticDynel temp =
                             Pool.Instance.GetObject<StaticDynel>(
@@ -198,17 +233,43 @@ namespace ZoneEngine.Core.MessageHandlers
                                 message.Target[1]);
                         if (temp != null)
                         {
+                            if (temp.Hidden)
+                            {
+                                break;
+                            }
+
                             Event ev = temp.Events.FirstOrDefault(x => x.EventType == EventType.OnUseItemOn);
-                            bool allowed = ev == null || ev.Perform(client.Controller.Character, temp);
+                            // Only the event's requirements are asked (the Gas Fire: the item used is the
+                            // Compact Fire Suppressant Container). Its functions are not run: this server
+                            // applies template functions to the player, and the fire's "Set timeexist 0" is
+                            // meant for the fire. Going out, the feedback line and the quest come from
+                            // FixtureBehaviours and QuestManager below.
+                            bool allowed = ev == null
+                                           || ev.Functions.Any(
+                                               f => OmniCell.Core.Requirements.Requirement.CheckAll(
+                                                   f.Requirements,
+                                                   client.Controller.Character));
+                            NLog.LogManager.GetCurrentClassLogger().Info(
+                                "USEON fixture template={0} hidden={1} event={2} allowed={3}",
+                                temp.Template.ID,
+                                temp.Hidden,
+                                ev != null,
+                                allowed);
                             if (allowed)
                             {
+                                // The fixture's feedback first ("You extinguish the Gas Fire."), then the
+                                // quest, as retail orders them (20260914-124401 #2122-2125).
+                                FixtureBehaviours.Used(client.Controller.Character, temp);
                                 QuestManager.OnUseItemOn(
                                     client.Controller.Character,
                                     message.Target[1],
                                     TradeSkill.Instance.GetItemName(
                                         temp.Template.ID,
                                         temp.Template.ID,
-                                        temp.Template.Quality));
+                                        temp.Template.Quality),
+                                    temp.Template.ID,
+                                    item == null ? 0 : item.LowID,
+                                    item == null ? 0 : item.HighID);
                             }
                         }
                         else

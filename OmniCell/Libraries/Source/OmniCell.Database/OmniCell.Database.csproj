@@ -74,6 +74,10 @@
     <Content Include="SqlTables\questwire.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\questwireactions.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\questwirerewards.sql" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="SqlTables\questtransitions.sql" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="SqlTables\knubotdialogue.sql" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="SqlTables\knubotopeners.sql" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="SqlTables\fixturebehaviours.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\charactersquests.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\mobtemplate.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\organizations.sql" CopyToOutputDirectory="PreserveNewest" />

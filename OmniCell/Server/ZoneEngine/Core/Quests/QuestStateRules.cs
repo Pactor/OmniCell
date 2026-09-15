@@ -119,6 +119,24 @@ namespace ZoneEngine.Core.Quests
             return IsUnlocked(quest, rows) && rows.All(row => row.QuestId != quest.Id);
         }
 
+        /// <summary>
+        /// The names an objective's target stands for. A kill counter can name a group of creatures -
+        /// "Junkyard Robots" for Cleaning Robots and Malfunctioning Cleaning Robots (follow_new #8628) -
+        /// written "label|creature|creature"; any other target is one name.
+        /// </summary>
+        public static string[] TargetNames(string target)
+        {
+            return (target ?? string.Empty).Split('|');
+        }
+
+        /// <summary>
+        /// What the kill counter calls an objective's creatures: the label, or the one name.
+        /// </summary>
+        public static string CounterName(string target)
+        {
+            return TargetNames(target)[0];
+        }
+
         public static bool TryAdvance(
             DBCharacterQuest row,
             DBQuestObjective objective,
@@ -134,7 +152,7 @@ namespace ZoneEngine.Core.Quests
                 || objective.Required < 1
                 || objective.ObjectiveType != (int)kind
                 || string.IsNullOrEmpty(target)
-                || !string.Equals(objective.Target, target, StringComparison.OrdinalIgnoreCase)
+                || !TargetNames(objective.Target).Any(name => string.Equals(name, target, StringComparison.OrdinalIgnoreCase))
                 || amount < 1)
             {
                 return false;

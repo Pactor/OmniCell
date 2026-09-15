@@ -572,6 +572,16 @@ namespace OmniCell.Core.Playfields
         private void LoadMobSpawns(Identity playfieldIdentity)
         {
             IEnumerable<DBMobSpawn> mobs = MobSpawnDao.Instance.GetWhere(new { Playfield = playfieldIdentity.Instance });
+
+            // Conversations extracted from captures, by character name - see
+            // Documentation/Quest-System.md. Read once for the playfield rather than per spawn.
+            ILookup<string, DBKnuBotDialogue> conversations = KnuBotDialogueDao.Instance
+                .GetWhere(new { Playfield = playfieldIdentity.Instance })
+                .ToLookup(d => d.NpcName, StringComparer.Ordinal);
+            ILookup<string, DBKnuBotOpener> openers = KnuBotOpenerDao.Instance
+                .GetWhere(new { Playfield = playfieldIdentity.Instance })
+                .ToLookup(o => o.NpcName, StringComparer.Ordinal);
+
             foreach (DBMobSpawn mob in mobs)
             {
                 IEnumerable<DBMobSpawnStat> stats = MobSpawnStatDao.Instance.GetWhere(new { mob.Id, mob.Playfield });
@@ -616,7 +626,12 @@ namespace OmniCell.Core.Playfields
                 // every one of those was unapproachable because nothing had
                 // given them a conversation. Rex Larsson sends you to Stan
                 // Goodman and Stan Goodman had nothing to say.
-                if (script.Count > 0)
+                if (cmob != null && conversations[mob.Name].Any())
+                {
+                    ((NPCController)cmob.Controller).SetKnuBot(
+                        new ConversationKnuBot(cmob.Identity, mob.Name, conversations[mob.Name], openers[mob.Name]));
+                }
+                else if (script.Count > 0)
                 {
                     ((NPCController)cmob.Controller).SetKnuBot(new ScriptedKnuBot(cmob.Identity, script));
                 }

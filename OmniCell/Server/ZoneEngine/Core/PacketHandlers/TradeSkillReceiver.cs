@@ -122,7 +122,7 @@ namespace ZoneEngine.Core.PacketHandlers
                             ts.ResultLowId,
                             ts.ResultHighId,
                             quality);
-                        QuestManager.OnTradeSkill(client.Controller.Character, resultName);
+                        QuestManager.OnTradeSkill(client.Controller.Character, resultName, ts.ResultLowId, ts.ResultHighId);
 
                         // A generic Collect objective intentionally accepts an
                         // item from any route, including a completed build.

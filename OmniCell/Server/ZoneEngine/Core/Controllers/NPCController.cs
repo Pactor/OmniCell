@@ -221,6 +221,13 @@ namespace ZoneEngine.Core.Controllers
                 return false;
             }
 
+            // A conversation can end as it opens - a farewell and the window closing. Kept, it would
+            // make this character refuse every later conversation with the player.
+            if (!session.IsTalkingTo(talker))
+            {
+                return true;
+            }
+
             if (this.knuBotSessions.TryAdd(talker.Identity.Instance, session))
             {
                 return true;
@@ -236,6 +243,19 @@ namespace ZoneEngine.Core.Controllers
             return talker != null && this.knuBotSessions.TryGetValue(talker.Identity.Instance, out session)
                        ? session
                        : null;
+        }
+
+        /// <summary>
+        /// Ends one particular session, if it is still the player's: the server closed the window, and
+        /// the client does not say so when a window closes on its own timer.
+        /// </summary>
+        public void EndKnuBotDialog(ICharacter talker, BaseKnuBot session)
+        {
+            if (talker != null && session != null)
+            {
+                ((System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<int, BaseKnuBot>>)this.knuBotSessions)
+                    .Remove(new System.Collections.Generic.KeyValuePair<int, BaseKnuBot>(talker.Identity.Instance, session));
+            }
         }
 
         public void EndKnuBotDialog(ICharacter talker)

@@ -72,7 +72,7 @@ rem playfield, a statel, an identity - so it wants most of what the server was
 rem built from. That is on purpose: a second definition of a statel that drifted
 rem from the first would extract the wrong thing and look right doing it. Its
 rem project lists those assemblies; the copies above are what it compiles against.
-for %%T in (FollowToCsv PcapDecode MarkReport ChatMarks Scrub WireAudit AreaExtract) do (
+for %%T in (FollowToCsv PcapDecode MarkReport ChatMarks Scrub WireAudit AreaExtract QuestExtract) do (
   call :one %%T
   if errorlevel 1 goto :failed
 )

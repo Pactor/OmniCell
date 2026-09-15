@@ -113,7 +113,8 @@ namespace ZoneEngine.Core.MessageHandlers
                     x.ItemLowId = item.LowID;
                     x.ItemHighId = item.HighID;
                     x.Quality = item.Quality;
-                    x.Unknown1 = 1;
+                    // The stack size: 50 for fifty of one item (20260914-124401 #5493).
+                    x.Unknown1 = System.Math.Max(1, item.MultipleCount);
                     x.Unknown2 = 87;
                     x.Placement = new Identity { Type = IdentityType.OverflowWindow, Instance = 0 };
                     x.Unknown3 = 0;

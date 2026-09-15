@@ -264,7 +264,7 @@ namespace ZoneEngine.Core.MessageHandlers
                                         item.LowID,
                                         item.HighID,
                                         item.Quality);
-                                    QuestManager.OnPurchase(client.Controller.Character, purchasedName);
+                                    QuestManager.OnPurchase(client.Controller.Character, purchasedName, item.LowID, item.HighID);
 
                                     // Collect means acquire by any route, so a
                                     // purchase also remains a collection event.

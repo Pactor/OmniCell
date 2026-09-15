@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The rest is set in Directory.Build.props. Reads the message models directly, unlike the tools that
+       load them by path, because it works on the quest and conversation messages by type. -->
+  <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib"><HintPath>$(CaptureBin)ICSharpCode.SharpZipLib.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="SmokeLounge.AOtomation.Messaging"><HintPath>$(CaptureBin)SmokeLounge.AOtomation.Messaging.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+</Project>

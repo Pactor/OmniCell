@@ -580,7 +580,30 @@ namespace ZoneEngine.Core.Combat
 
             // Quests that are counting this kind of kill hear about it here.
             // Nothing else in the server knows a mob has died.
-            QuestManager.OnKill(attacker, victim);
+            // Experience, then "You can loot these remains.", then the corpse - the order the live
+            // server sends them in (newchar_s20 seq 736-738). None of it may stop the body being left
+            // and the playfield being told: a mob that is not told it died keeps walking about.
+            try
+            {
+                QuestManager.OnKill(attacker, victim);
+            }
+            catch (System.Exception e)
+            {
+                global::Utility.LogUtil.ErrorException(e, "Quests could not hear about the kill of {0}", victim.Name);
+            }
+
+            try
+            {
+                Experience.OnKill(attacker, victim);
+                if (attacker.Controller is PlayerController)
+                {
+                    FeedbackMessageHandler.Default.Send(attacker, 110, 249817907);
+                }
+            }
+            catch (System.Exception e)
+            {
+                global::Utility.LogUtil.ErrorException(e, "Experience for the kill of {0} could not be given", victim.Name);
+            }
 
             // And something has to be left behind, or the kill produces nothing
             // at all - no body, nothing to loot.

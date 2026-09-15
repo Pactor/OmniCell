@@ -132,7 +132,11 @@ namespace ZoneEngine.Core.PacketHandlers
                 Pool.Instance.GetAll<StaticDynel>(client.Controller.Character.Playfield.Identity).ToArray();
             foreach (StaticDynel fixture in fixtures)
             {
-                SimpleItemFullUpdateMessageHandler.Default.Send(client.Controller.Character, fixture);
+                // A fixture used and not back yet is not there to be sent.
+                if (!fixture.Hidden)
+                {
+                    SimpleItemFullUpdateMessageHandler.Default.Send(client.Controller.Character, fixture);
+                }
             }
 
             // Logged at info rather than behind the statel debug switch, because

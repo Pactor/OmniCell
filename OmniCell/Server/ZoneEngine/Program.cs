@@ -605,6 +605,8 @@ namespace ZoneEngine
                 Console.WriteLine("Loaded {0} Playfields", PlayfieldLoader.CacheAllPlayfieldData());
                 Console.WriteLine("Loaded {0} Quests", QuestManager.Load());
                 Console.WriteLine("Loaded {0} Levels", Leveling.Load());
+                Console.WriteLine("Loaded {0} Creature Experience Levels", Experience.Load());
+                Console.WriteLine("Loaded {0} Fixture Behaviours", FixtureBehaviours.Load());
                 Console.WriteLine("Loaded {0} Combat Weapon Descriptors", CombatWeaponProfiles.Load());
                 Console.WriteLine("Loaded {0} SpawnItem Keys", ItemSpawns.Load());
                 Console.WriteLine();
@@ -913,12 +915,26 @@ namespace ZoneEngine
             int walkable = 0;
             var broken = new List<string>();
 
+            // A staged quest is handed out by a conversation, or by the stage before it finishing.
+            List<DBKnuBotDialogue> dialogue = KnuBotDialogueDao.Instance.GetWhere(new { Playfield = playfieldId }).ToList();
+            var follows = new HashSet<int>(
+                QuestManager.All().SelectMany(q => QuestManager.TransitionsOf(q.Id)).Select(t => t.ToQuest));
+
             foreach (DBQuest quest in QuestManager.All().Where(q => q.Playfield == playfieldId).OrderBy(q => q.Id))
             {
                 var wrong = new List<string>();
 
                 ICharacter giver;
-                if (!byId.TryGetValue(quest.GiverId, out giver))
+                DBKnuBotDialogue handout = dialogue.FirstOrDefault(l => l.Kind == 2 && l.ActionValue == quest.Id);
+                if (handout != null && !talkable.Contains(handout.NpcName))
+                {
+                    wrong.Add(handout.NpcName + " hands it out but cannot be spoken to");
+                }
+                else if (handout != null || follows.Contains(quest.Id))
+                {
+                    // Handed out; nothing more to check about who gives it.
+                }
+                else if (!byId.TryGetValue(quest.GiverId, out giver))
                 {
                     wrong.Add("nobody gives it");
                 }
@@ -975,7 +991,7 @@ namespace ZoneEngine
                             break;
 
                         case QuestObjectiveType.Kill:
-                            if (!present.Contains(objective.Target))
+                            if (!QuestStateRules.TargetNames(objective.Target).Any(present.Contains))
                             {
                                 wrong.Add("nothing called " + objective.Target + " is here to kill");
                             }
@@ -983,8 +999,7 @@ namespace ZoneEngine
                             break;
 
                         case QuestObjectiveType.Use:
-                            int instance;
-                            if (!int.TryParse(objective.Target, out instance) || !standing.Contains(instance))
+                            if (!FixtureExists(objective.Target, playfieldId, standing, fixtures))
                             {
                                 wrong.Add("fixture " + objective.Target + " is not here");
                             }
@@ -996,7 +1011,8 @@ namespace ZoneEngine
                             bool targetExists;
                             if (int.TryParse(objective.Target, out usedOn))
                             {
-                                targetExists = standing.Contains(usedOn) || byId.ContainsKey(usedOn);
+                                targetExists = FixtureExists(objective.Target, playfieldId, standing, fixtures)
+                                               || byId.ContainsKey(usedOn);
                             }
                             else
                             {
@@ -1042,8 +1058,7 @@ namespace ZoneEngine
                             // shop here has something of that name, or a recipe
                             // makes it", because an implant is bought in pieces
                             // and never sold whole.
-                            if (!TradeSkill.Instance.ItemNames.Values.Any(
-                                    n => string.Equals(n, objective.Target, StringComparison.OrdinalIgnoreCase)))
+                            if (!ItemExists(objective.Target))
                             {
                                 wrong.Add("nothing called " + objective.Target + " exists to be made");
                             }
@@ -1057,10 +1072,13 @@ namespace ZoneEngine
                             // never ask for it, in which case the box the
                             // player would put it in is never opened and the
                             // quest sits in the log forever.
-                            if (!TradeSkill.Instance.ItemNames.Values.Any(
-                                    n => string.Equals(n, objective.Target, StringComparison.OrdinalIgnoreCase)))
+                            if (!ItemExists(objective.Target) && !TradeSkill.Instance.ItemNames.ContainsKey(objective.TargetLowId))
                             {
                                 wrong.Add("nothing called " + objective.Target + " exists to hand over");
+                            }
+                            else if (dialogue.Any(l => l.Kind == 3))
+                            {
+                                // A conversation's trade opens for whichever stage wants an item.
                             }
                             else
                             {
@@ -1081,6 +1099,30 @@ namespace ZoneEngine
                                 {
                                     wrong.Add("the recipient for " + objective.Target + " cannot be spoken to");
                                 }
+                            }
+
+                            break;
+
+                        case QuestObjectiveType.UseItem:
+                            if (!ItemExists(objective.Target))
+                            {
+                                wrong.Add("nothing called " + objective.Target + " exists to use");
+                            }
+
+                            break;
+
+                        case QuestObjectiveType.UseItemOnCharacter:
+                            if (!present.Contains(objective.Target))
+                            {
+                                wrong.Add("nobody called " + objective.Target + " is here to use an item on");
+                            }
+
+                            break;
+
+                        case QuestObjectiveType.DialogueAnswer:
+                            if (!dialogue.Any(l => l.Kind == 1 && string.Equals(l.Text, objective.Target, StringComparison.Ordinal)))
+                            {
+                                wrong.Add("no conversation offers \"" + objective.Target + "\"");
                             }
 
                             break;
@@ -1116,6 +1158,34 @@ namespace ZoneEngine
             {
                 Console.WriteLine(line);
             }
+        }
+
+        /// <summary>
+        /// A fixture objective's target is here: a spawned fixture's instance or template, or a fixture
+        /// of the playfield's own data, which the client has without being sent it.
+        /// </summary>
+        private static bool FixtureExists(string target, int playfieldId, HashSet<int> standing, IEnumerable<StaticDynel> fixtures)
+        {
+            int id;
+            if (!int.TryParse(target, NumberStyles.Integer, CultureInfo.InvariantCulture, out id))
+            {
+                return false;
+            }
+
+            return standing.Contains(id)
+                   || fixtures.Any(f => f.Template.ID == id)
+                   || PlayfieldLoader.PFData[playfieldId].Statels.Any(s => s.Identity.Instance == id);
+        }
+
+        /// <summary>
+        /// An item named by an objective exists, by id or by name.
+        /// </summary>
+        private static bool ItemExists(string target)
+        {
+            int id;
+            return int.TryParse(target, NumberStyles.Integer, CultureInfo.InvariantCulture, out id)
+                       ? TradeSkill.Instance.ItemNames.ContainsKey(id)
+                       : TradeSkill.Instance.ItemNames.Values.Any(n => string.Equals(n, target, StringComparison.OrdinalIgnoreCase));
         }
 
         private static string Cut(string text, int width)

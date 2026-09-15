@@ -131,6 +131,14 @@ namespace ZoneEngine.Core.MessageHandlers
                                 };
 
                 message.Name = "Remains of " + victim.Name;
+
+                // The lockable tail: 2, lockdifficulty 50, no keyholders, 3 - the same in every captured
+                // chest (see ChestItemFullUpdateMessage). Left unset the serializer failed on the null
+                // keyholder list and no corpse container ever reached the client.
+                message.TailVersion = 2;
+                message.LockDifficulty = 50;
+                message.Keyholders = new Identity[0];
+                message.TailEndVersion = 3;
             };
         }
 

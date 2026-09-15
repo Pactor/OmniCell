@@ -130,6 +130,7 @@ recording, one file each — which also covers a recording with two clients in i
 | `MarkReport.cs`, `ChatMarks.cs` | labels, from the console and from in-game chat |
 | `WireAudit.cs` | the round-trip audit |
 | `AreaExtract.cs` | a whole playfield out of the traffic — spawn points, shops, quests, dialogue — as SQL |
+| `QuestExtract.cs` | quest stages, what grants and finishes each, rewards, and conversations keyed by quest state — see `OmniCell/Documentation/Quest-System.md` |
 
 `build.bat` compiles all of the above into `bin/`, as .NET 10 programs, with
 the .NET 10 SDK the server uses. Each tool has a project in `projects/` that

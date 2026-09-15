@@ -61,6 +61,25 @@ namespace ZoneEngine.Core.MessageHandlers
         }
 
         /// <summary>
+        /// A line with the client's emote flag (Unknown2): 1 for a narrated line such as "Rex lowers
+        /// his voice.", as the live server sends them.
+        /// </summary>
+        public void Send(ICharacter character, Identity knubotTarget, string text, int flag)
+        {
+            this.Send(
+                character,
+                x =>
+                {
+                    x.Identity = character.Identity;
+                    x.Target = knubotTarget;
+                    x.Text = text;
+                    x.Version = 2;
+                    x.Unknown2 = flag;
+                },
+                false);
+        }
+
+        /// <summary>
         /// </summary>
         /// <param name="character">
         /// </param>
