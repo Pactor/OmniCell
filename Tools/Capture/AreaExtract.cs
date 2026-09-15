@@ -48,16 +48,16 @@ using Utility;
 // runs do not overlap. Those are representations made by OmniCell, not values
 // claimed to have appeared on the wire. Unresolved content is reported.
 //
-// One thing it cannot tell on its own: a capture records whatever was standing
-// there, and that includes other players' pets, which are not part of the
-// playfield and leave when their owner does. They are recognisable afterwards,
-// because a summoned creature has a nano crystal named after it - a spawn whose
-// name appears inside the brackets of an item name was made by a player. Arete
-// Landing had one, an Anger Manifestation, and it took the client down when
-// anyone clicked it. See arete-landing/mobspawns-cleanup.sql for the query.
+// A capture records whatever was standing there, and that includes other
+// players' pets, which are not part of the playfield and leave when their owner
+// does. The live server marks them: a pet's SimpleCharFullUpdate has a non-zero
+// PetType, and those characters are left out (see TakeNpc). Arete Landing had
+// thirteen - Bureaucrat Workers and Engineer Automatons - and an Anger
+// Manifestation that took the client down when anyone clicked it.
 //
-// Doing that here would mean this tool knowing about the item database, which
-// it does not and should not; it is a separate pass over the result.
+// mobspawns.sql still ends with the older, weaker test - a spawn whose name
+// appears inside the brackets of an item name - run against the database,
+// since this tool does not know the item names.
 internal static class AreaExtract
 {
     private const int HeaderLength = 16;
@@ -524,6 +524,9 @@ internal static class AreaExtract
         var questFields = new List<string>();
         var speakerNames = new Dictionary<int, string>();
 
+        // Characters the live server described as somebody's pet. See TakeNpc.
+        var pets = new HashSet<int>();
+
         // Conversations, by the session that heard them and the character who
         // was talking. Per session because a conversation is a walk through a
         // tree and two sessions take different turnings; the longest walk of
@@ -655,7 +658,7 @@ internal static class AreaExtract
                                 timeline.Add(new[] { who, 1 });
                             }
 
-                            TakeNpc(body, npcs, speakerNames, wantPlayfield, ref skipped);
+                            TakeNpc(body, npcs, speakerNames, pets, wantPlayfield, ref skipped);
                             break;
                         }
 
@@ -838,6 +841,10 @@ internal static class AreaExtract
 
         Thin(npcs, timeline);
 
+        // Other players' pets were standing there too. They belong to whoever summoned them, not to
+        // the playfield, so they are not spawned.
+        int petsDropped = pets.Count(npcs.Remove);
+
         WriteNpcs(outDir, npcs, weapons, damage, paths, writeAs);
         WriteStatics(outDir, statics, writeAs);
         WriteStaticDynels(outDir, statics, writeAs);
@@ -861,6 +868,7 @@ internal static class AreaExtract
             new[] { "Session\tQuestId\tField\tValue" }.Concat(questFields));
 
         Console.WriteLine("npcs      " + npcs.Count + " distinct (" + skipped + " skipped, wrong playfield)");
+        Console.WriteLine("pets      " + petsDropped + " player pets left out");
         if (legLengths.Count > 0)
         {
             legLengths.Sort();
@@ -894,6 +902,7 @@ internal static class AreaExtract
         object body,
         Dictionary<int, Npc> npcs,
         Dictionary<int, string> names,
+        HashSet<int> pets,
         int wantPlayfield,
         ref int skipped)
     {
@@ -916,6 +925,17 @@ internal static class AreaExtract
         {
             skipped++;
             return;
+        }
+
+        // A player's pet says so. The NPC block's PetType is non-zero on every pet in the retail
+        // captures (Bureaucrat Workers, Engineer Automatons, Anger Manifestations, metaphysicist
+        // demons) and zero on every ordinary creature. Checked on every update, not only the first:
+        // a pet is often introduced before it has been given to its master. PetMaster is not the
+        // test - a charmed creature has a master for a while and is still the playfield's own.
+        object npcInfo = Get(body, "CharacterInfo");
+        if (npcInfo != null && npcInfo.GetType().Name == "SimpleNpcInfo" && Int(Get(npcInfo, "PetType")) != 0)
+        {
+            pets.Add(instance);
         }
 
         if (npcs.ContainsKey(instance) || name.Length == 0)
