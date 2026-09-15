@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Decodes the classic Anarchy Online client's graphics (icons first, then textures and
+       meshes) straight from its ResourceDatabase. Reads the install named by AO_CLIENT in
+       paths.cfg; nothing from the client is ever written into the repository.
+       WebEngine references this to serve the icon browser. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>AssetDecoder</RootNamespace>
+  </PropertyGroup>
+
+</Project>

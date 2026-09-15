@@ -38,6 +38,12 @@
     <ProjectReference Include="..\..\Libraries\Source\OmniCell.Database\OmniCell.Database.csproj" />
     <ProjectReference Include="..\..\Libraries\Source\OmniCell.Enums\OmniCell.Enums.csproj" />
     <ProjectReference Include="..\..\Libraries\Source\Utility\Utility.csproj" />
+    <ProjectReference Include="..\..\..\Tools\AssetDecoder\AssetDecoder\AssetDecoder.csproj" />
+  </ItemGroup>
+
+  <!-- The icon browser page, served from the assembly so there is no folder to deploy. -->
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\icons.html" LogicalName="WebEngine.Assets.icons.html" />
   </ItemGroup>
 
   <!-- The settings WebEngine reads through Utility's configuration, as the other engines copy them. -->

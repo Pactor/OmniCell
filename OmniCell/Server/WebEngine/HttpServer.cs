@@ -1,6 +1,7 @@
 namespace WebEngine
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Net;
     using System.Net.Sockets;
@@ -25,6 +26,10 @@ namespace WebEngine
         private const int HeaderReadTimeoutMs = 10000;
 
         private const int MaxRequestLineBytes = 8192;
+
+        private const int MaxHeaders = 100;
+
+        private const int MaxBodyBytes = 16 * 1024;
 
         /// <summary>
         /// Connections served at once. Each one has its own thread, and a scanner opening connections
@@ -144,14 +149,21 @@ namespace WebEngine
                         return;
                     }
 
-                    // Drain headers. We do not use them, but the client will not
-                    // consider the exchange complete until they have been read.
-                    while (true)
+                    // Read every header; the client will not consider the exchange complete until
+                    // they have been read. Cookie, Content-Length and Accept-Encoding are used.
+                    Dictionary<string, string> headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                    for (int count = 0; count < MaxHeaders; count++)
                     {
                         string header = ReadLine(stream);
                         if (string.IsNullOrEmpty(header))
                         {
                             break;
+                        }
+
+                        int colon = header.IndexOf(':');
+                        if (colon > 0)
+                        {
+                            headers[header.Substring(0, colon).Trim()] = header.Substring(colon + 1).Trim();
                         }
                     }
 
@@ -159,9 +171,40 @@ namespace WebEngine
                     string method = parts.Length > 0 ? parts[0] : string.Empty;
                     string target = parts.Length > 1 ? parts[1] : "/";
 
-                    PageResult page = Router.Route(target);
+                    // Only the admin sign-in form sends a body, and it is small.
+                    string body = string.Empty;
+                    string lengthHeader;
+                    int length;
+                    if (headers.TryGetValue("Content-Length", out lengthHeader) && int.TryParse(lengthHeader, out length) && length > 0)
+                    {
+                        if (length > MaxBodyBytes)
+                        {
+                            Respond(stream, new PageResult(413, "Request body too large", "text/plain; charset=utf-8"), false);
+                            return;
+                        }
+
+                        byte[] buffer = new byte[length];
+                        int read = 0;
+                        while (read < length)
+                        {
+                            int n = stream.Read(buffer, read, length - read);
+                            if (n <= 0)
+                            {
+                                throw new IOException("Body ended early");
+                            }
+
+                            read += n;
+                        }
+
+                        body = Encoding.UTF8.GetString(buffer);
+                    }
+
+                    IPEndPoint endPoint = client.Client.RemoteEndPoint as IPEndPoint;
+                    HttpRequest request = new HttpRequest(method, target, headers, body, endPoint != null ? endPoint.Address : null);
+
+                    PageResult page = Router.Route(request);
                     this.Announce(remote, method, target + (page.IsUnmapped ? "   <-- NOT MAPPED" : string.Empty));
-                    Respond(stream, page.Status, page.ContentType, page.Html);
+                    Respond(stream, page, request.AcceptsGzip);
                 }
             }
             catch (IOException)
@@ -216,17 +259,48 @@ namespace WebEngine
             return sb.ToString();
         }
 
-        private static void Respond(Stream stream, int status, string contentType, string body)
+        private static void Respond(Stream stream, PageResult page, bool acceptsGzip)
         {
-            byte[] payload = Encoding.UTF8.GetBytes(body);
+            byte[] payload = page.Body ?? Encoding.UTF8.GetBytes(page.Html ?? string.Empty);
+            bool gzip = acceptsGzip && page.GzipBody != null;
+            if (gzip)
+            {
+                payload = page.GzipBody;
+            }
 
-            string reason = status == 200 ? " OK" : status == 404 ? " Not Found" : " Internal Server Error";
+            int status = page.Status;
+            string reason;
+            switch (status)
+            {
+                case 200: reason = " OK"; break;
+                case 303: reason = " See Other"; break;
+                case 401: reason = " Unauthorized"; break;
+                case 403: reason = " Forbidden"; break;
+                case 404: reason = " Not Found"; break;
+                case 405: reason = " Method Not Allowed"; break;
+                case 413: reason = " Payload Too Large"; break;
+                case 429: reason = " Too Many Requests"; break;
+                case 503: reason = " Service Unavailable"; break;
+                default: reason = " Internal Server Error"; break;
+            }
 
             StringBuilder head = new StringBuilder();
             head.Append("HTTP/1.1 ").Append(status).Append(reason).Append("\r\n");
-            head.Append("Content-Type: ").Append(contentType).Append("\r\n");
+            head.Append("Content-Type: ").Append(page.ContentType).Append("\r\n");
             head.Append("Content-Length: ").Append(payload.Length).Append("\r\n");
-            head.Append("Cache-Control: no-cache, no-store\r\n");
+            if (gzip)
+            {
+                head.Append("Content-Encoding: gzip\r\n");
+            }
+
+            // Admin-only images are cached by this browser only ("private"), never by a proxy.
+            head.Append(page.CacheSeconds > 0
+                            ? "Cache-Control: private, max-age=" + page.CacheSeconds + "\r\n"
+                            : "Cache-Control: no-cache, no-store\r\n");
+            foreach (var header in page.Headers)
+            {
+                head.Append(header.Key).Append(": ").Append(header.Value).Append("\r\n");
+            }
             head.Append("Connection: close\r\n");
             head.Append("\r\n");
 

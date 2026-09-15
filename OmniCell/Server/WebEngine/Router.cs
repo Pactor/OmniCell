@@ -22,12 +22,49 @@ namespace WebEngine
             this.ContentType = contentType;
         }
 
+        /// <summary>
+        /// A response whose body is already bytes - an image, or JSON built up front.
+        /// </summary>
+        /// <param name="cacheSeconds">How long the browser may keep it; 0 sends no-store.</param>
+        /// <param name="gzipBody">The same body gzip-compressed, sent when the browser accepts gzip.</param>
+        public PageResult(int status, byte[] body, string contentType, int cacheSeconds, byte[] gzipBody)
+        {
+            this.Status = status;
+            this.Body = body;
+            this.ContentType = contentType;
+            this.CacheSeconds = cacheSeconds;
+            this.GzipBody = gzipBody;
+        }
+
         public int Status { get; private set; }
 
         /// <summary>The response body; HTML for the panels, JSON for People.</summary>
         public string Html { get; private set; }
 
+        /// <summary>A byte body. When set, it is sent instead of <see cref="Html"/>.</summary>
+        public byte[] Body { get; private set; }
+
+        public byte[] GzipBody { get; private set; }
+
+        public int CacheSeconds { get; private set; }
+
         public string ContentType { get; private set; }
+
+        /// <summary>Extra response headers, such as Location and Set-Cookie.</summary>
+        public System.Collections.Generic.List<System.Collections.Generic.KeyValuePair<string, string>> Headers { get; } =
+            new System.Collections.Generic.List<System.Collections.Generic.KeyValuePair<string, string>>();
+
+        public PageResult WithHeader(string name, string value)
+        {
+            this.Headers.Add(new System.Collections.Generic.KeyValuePair<string, string>(name, value));
+            return this;
+        }
+
+        /// <summary>A 303 See Other to a same-site path.</summary>
+        public static PageResult Redirect(string location)
+        {
+            return new PageResult(303, string.Empty, "text/plain; charset=utf-8").WithHeader("Location", location);
+        }
 
         /// <summary>True when the client asked for something we do not serve.</summary>
         public bool IsUnmapped
@@ -41,21 +78,24 @@ namespace WebEngine
         /// <summary>
         /// Picks the page for a request target.
         /// </summary>
-        /// <param name="target">Request target, e.g. "/shop/" or "/showitem?bundle=lvl_25".</param>
-        public static PageResult Route(string target)
+        /// <param name="request">The request; its target is e.g. "/shop/" or "/showitem?bundle=lvl_25".</param>
+        public static PageResult Route(HttpRequest request)
         {
-            if (string.IsNullOrEmpty(target))
+            string path = request.Path;
+            string query = request.Query;
+
+            // Admin sign-in and sign-out. See AdminAuth.
+            PageResult admin = AdminAuth.Route(request);
+            if (admin != null)
             {
-                target = "/";
+                return admin;
             }
 
-            string path = target;
-            string query = string.Empty;
-            int q = target.IndexOf('?');
-            if (q >= 0)
+            // The icon browser and the icon images, for signed-in admins only. See IconPages.
+            PageResult icons = IconPages.Route(request);
+            if (icons != null)
             {
-                path = target.Substring(0, q);
-                query = target.Substring(q + 1);
+                return icons;
             }
 
             // Chat bot lookups, on people.anarchy-online.com's paths. See People.

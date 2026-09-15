@@ -58,6 +58,8 @@ namespace WebEngine
                    + "<div>" + Endpoints.DailyRewards + "</div>"
                    + "<div>" + Endpoints.ShowItem + "</div>"
                    + "</div>"
+                   + "<p class=\"sub\" style=\"margin-top:20px\"><a href=\"" + IconPages.Page
+                   + "\" style=\"color:#58a6ff\">Browse item icons</a></p>"
                    + "<p class=\"foot\">Running since " + DateTime.Now.ToString("u") + "</p>"
                    + "</div></body></html>";
         }

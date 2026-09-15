@@ -155,5 +155,7 @@ Built/
 # clone runs without reading a client first: the content packs
 # OmniCell/Datafiles/*.ocp and SqlTables/itemnames.sql.
 ResourceDatabase.*
+# ...except the AssetDecoder source that reads it, which only shares the name.
+!/Tools/AssetDecoder/AssetDecoder/Rdb/ResourceDatabase.cs
 /OmniCell/Datafiles/*.dat
 /OmniCell/Datafiles/itemrelations.txt

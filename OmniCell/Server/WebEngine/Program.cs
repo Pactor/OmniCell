@@ -41,6 +41,17 @@ namespace WebEngine
                         return 1;
                     }
                 }
+                else if (arg.StartsWith("adminlevel=", StringComparison.OrdinalIgnoreCase))
+                {
+                    int level;
+                    if (!int.TryParse(arg.Substring(11), out level) || level < 1)
+                    {
+                        Console.WriteLine("Bad admin level (a GM level of 1 or more): " + arg);
+                        return 1;
+                    }
+
+                    AdminAuth.RequiredGmLevel = level;
+                }
                 else if (arg == "/?" || arg == "-h" || arg == "--help")
                 {
                     Usage();
@@ -75,6 +86,10 @@ namespace WebEngine
             }
 
             Banner(bind, port);
+
+            // Reading every icon takes a few seconds; start now so the page is usually ready
+            // by the time anyone opens it.
+            IconCatalog.StartLoading();
 
             Console.CancelKeyPress += (s, e) =>
             {
@@ -121,6 +136,17 @@ namespace WebEngine
             Console.WriteLine("    /character/bio/d/<dim>/name/<name>/bio.xml        character JSON for chat bots");
             Console.WriteLine("    /history /timers/bosses /timers/gaubuffs /gmi/aoid/<id> /towers/sites");
             Console.WriteLine("                                                      empty bot lookups (not tracked)");
+            Console.WriteLine("    " + IconPages.Page + "                                            icon browser (client from AO_CLIENT in paths.cfg)");
+            Console.WriteLine("    " + IconPages.ImagePrefix + "<icon id>.png                            one icon image");
+            Console.WriteLine("    " + AdminAuth.LoginPath + "                                      admin sign-in for the two above");
+            Console.WriteLine();
+            Console.WriteLine("  Admin pages need a game account with GM level " + AdminAuth.RequiredGmLevel
+                              + " or higher (adminlevel=N to change), checked against MySQL.");
+            if (!IPAddress.IsLoopback(bind))
+            {
+                Console.WriteLine("  WARNING: admin sign-in is plain HTTP, so passwords cross the network unencrypted.");
+                Console.WriteLine("           Use bind=127.0.0.1 for admin work until WebEngine serves HTTPS.");
+            }
             Console.WriteLine();
             Console.WriteLine("  Every request is logged below. A path shown as 'Not mapped'");
             Console.WriteLine("  is one the client wants that Endpoints.Mappings has missed.");
@@ -131,7 +157,7 @@ namespace WebEngine
 
         private static void Usage()
         {
-            Console.WriteLine("WebEngine [port=80] [bind=0.0.0.0]");
+            Console.WriteLine("WebEngine [port=80] [bind=0.0.0.0] [adminlevel=1]");
         }
 
         private static void Log(string tag, string message)
