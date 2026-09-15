@@ -106,9 +106,10 @@ namespace ZoneEngine.Core
         }
 
         /// <summary>
-        /// Levels a character up if it has earned it. Called once per heartbeat.
+        /// Levels a character up if it has earned it. Called once per heartbeat, and straight after
+        /// a kill with the experience that kill gave, which the NewLevel message carries.
         /// </summary>
-        public static void Tick(ICharacter character)
+        public static void Tick(ICharacter character, int experienceAward = 0)
         {
             if (character == null || Thresholds.Count == 0)
             {
@@ -138,14 +139,17 @@ namespace ZoneEngine.Core
             }
 
             character.Stats[StatIds.level].Value = next;
-            character.SendChangedStats();
 
+            // NewLevel before the stats, the order the live server uses (newchar_s20 seq 10858, then
+            // the experience total at 10861).
             NewLevelMessageHandler.Default.Send(
                 character,
                 next,
                 experience,
                 Thresholds[next],
-                Thresholds.ContainsKey(next + 1) ? Thresholds[next + 1] : Thresholds[next]);
+                Thresholds.ContainsKey(next + 1) ? Thresholds[next + 1] : Thresholds[next],
+                experienceAward);
+            character.SendChangedStats();
         }
 
         /// <summary>

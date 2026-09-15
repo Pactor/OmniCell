@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Experience for killing a creature. Read by ZoneEngine.Core.Experience.
+
+  CAP (proven). One kill never gives more than a tenth of the experience the
+  player's own level needs (OmniCell.Stats XPTable). Every capped kill in the
+  retail captures is exactly that: 145 at level 1, 260 at level 2, 500 at
+  level 6, 550 at level 7.
+
+  SHARE (fitted - replace as better captures arrive). Below the cap a kill
+  gives a share of the player's cap, in thousandths, that grows with how many
+  levels above the player the creature is:
+
+      share = base + step * (creature level - player level), capped at 1000
+      and at a full 1000 once the creature is fullAt or more levels above.
+
+  A creature's experience depends on the player's level as well as its own:
+  the same kill gave a level 7 team member more than a level 6 one
+  (20260911-163012_s21/_s26). The rows below were fitted to the uncapped
+  retail kills with the "side bonus" some of them carried taken back out:
+
+    level 1   Leet L1 112, L2 creatures 140          (newchar_s10)
+    level 2   L2 creatures 131; L5-L7 creatures capped (newchar_s10/_s15/_s20)
+    level 5+  level 6 player: L8 284, L9 329, L10 375,
+              L11 and L13 capped; level 7: L13 capped (20260911-163012_s21/_s26)
+
+  New characters get a much larger share (the "newbie adjustment" agreed with
+  the user): the level 5+ row alone would pay a level 1 player 57 for a level
+  1 Leet, where the live server paid 112. Levels 3 and 4 have no captured
+  kill; they are interpolated between the level 2 and level 5 rows. The last
+  row applies to every level above it. Known misses of the level 5+ row: a
+  level 7 player got 383 for a level 10 creature where this gives 362.
+
+  GREY (from the NewLevel messages). A creature more than KillRange levels
+  below the player is grey and worth nothing. Grey is per player, so in a team
+  each member is judged on their own level. The live server put
+  ExperienceKillRange 4 in NewLevel at levels 3, 6 and 7, 5 at level 12 and 6
+  at levels 16 and 18. Each KillRange row applies from its level until the
+  next row; the levels between captured ones are inferred.
+
+  Not modelled: the side bonus (its source is unknown), team sharing (the
+  server has no teams yet; the captured two-player team got full amounts
+  each).
+-->
+<Experience>
+  <PlayerLevel level="1" base="773" step="194" fullAt="2" />
+  <PlayerLevel level="2" base="504" step="166" fullAt="3" />
+  <PlayerLevel level="5" base="386" step="91" fullAt="5" />
+
+  <KillRange level="1" range="4" />
+  <KillRange level="12" range="5" />
+  <KillRange level="16" range="6" />
+</Experience>

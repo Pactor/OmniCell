@@ -81,6 +81,7 @@
     <None Include="..\..\Config\Config.local.xml" Link="Config.local.xml" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\..\Config\Config.local.xml')" />
     <Content Include="Scripts\dummy.txt" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="XML Data\Levels.xml" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="XML Data\Experience.xml" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="XML Data\CombatWeapons.xml" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="XML Data\ItemSpawns.xml" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="XML Data\Districts\100.xml" CopyToOutputDirectory="PreserveNewest" />

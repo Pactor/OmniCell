@@ -34,13 +34,12 @@ namespace ZoneEngine.Core.MessageHandlers
     /// out as zero, and the client writes the field straight into stat 53 - so
     /// levelling up set the player's IP to nothing. It now sends the
     /// character's actual balance, and the title level likewise. The kill range
-    /// stays at the 4 every capture carries, since no stat of ours holds it.
+    /// is the one XML Data\Experience.xml gives the new level (4 at levels 3-7,
+    /// 5 at 12, 6 at 16 and 18 in the captures).
     ///
-    /// The experience award is still zero and that is now a known gap rather
-    /// than an unknown field: it is the experience the triggering event gave,
-    /// the client shows it in Feedback_NewLevel, and Leveling.Tick runs on a
-    /// heartbeat and does not know the delta. Threading it through is a change
-    /// to the caller, not to this file.
+    /// The experience award is the experience the triggering event gave; the
+    /// client shows it in Feedback_NewLevel. A kill passes it; the heartbeat
+    /// check, which does not know what changed, passes zero.
     /// </remarks>
     [MessageHandler(MessageHandlerDirection.OutboundOnly)]
     public class NewLevelMessageHandler : BaseMessageHandler<NewLevelMessage, NewLevelMessageHandler>
@@ -49,9 +48,15 @@ namespace ZoneEngine.Core.MessageHandlers
 
         /// <summary>
         /// </summary>
-        public void Send(ICharacter character, int level, int experience, int thisLevel, int nextLevel)
+        public void Send(
+            ICharacter character,
+            int level,
+            int experience,
+            int thisLevel,
+            int nextLevel,
+            int experienceAward = 0)
         {
-            this.Send(character, Filler(character, level, experience, thisLevel, nextLevel), false);
+            this.Send(character, Filler(character, level, experience, thisLevel, nextLevel, experienceAward), false);
         }
 
         private static MessageDataFiller Filler(
@@ -59,7 +64,8 @@ namespace ZoneEngine.Core.MessageHandlers
             int level,
             int experience,
             int thisLevel,
-            int nextLevel)
+            int nextLevel,
+            int experienceAward)
         {
             return message =>
             {
@@ -71,8 +77,8 @@ namespace ZoneEngine.Core.MessageHandlers
                 message.ExperienceThisLevel = thisLevel;
                 message.ExperienceNextLevel = nextLevel;
                 message.TitleLevel = character.Stats[StatIds.titlelevel].Value;
-                message.ExperienceKillRange = 4;
-                message.ExperienceAward = 0;
+                message.ExperienceKillRange = Experience.KillRange(level);
+                message.ExperienceAward = experienceAward;
             };
         }
 

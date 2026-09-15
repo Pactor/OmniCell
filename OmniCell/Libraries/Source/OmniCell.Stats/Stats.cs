@@ -3613,7 +3613,9 @@ namespace OmniCell.Stats
             this.weaponStyleLeft = new Stat(this, 1015, 0, false, false, false);
             this.weaponStyleRight = new Stat(this, 1016, 0, false, false, false);
             this.weaponsStyle = new Stat(this, 1003, 1234567890, false, false, false);
-            this.xp = new Stat(this, 52, 0, false, false, false);
+            // Announced: the live server sends a character's experience total to the players around
+            // it too, not only to the character (20260913-154958_s16).
+            this.xp = new Stat(this, 52, 0, false, false, true);
             this.xpBonus = new Stat(this, 341, 1234567890, false, false, false);
             this.xpKillRange = new Stat(this, 275, 5, false, false, false);
             this.xpModifier = new Stat(this, 319, 0, false, false, false);
