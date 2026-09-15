@@ -8,6 +8,7 @@ $chatServerPath = Join-Path $root 'OmniCell\Server\ChatEngine\CoreServer\ChatSer
 $channelPath = Join-Path $root 'OmniCell\Server\ChatEngine\Channels\ChannelBase.cs'
 $messagePath = Join-Path $root 'OmniCell\Server\ChatEngine\PacketHandlers\ChannelMessage.cs'
 $characterPath = Join-Path $root 'OmniCell\Server\ChatEngine\CoreClient\Character.cs'
+$orgTestPath = Join-Path $root 'OmniCell\Server\ZoneEngine\ChatCommands\OrgTest.cs'
 
 function Assert-Contains {
     param(
@@ -25,6 +26,7 @@ $chatServer = Get-Content -LiteralPath $chatServerPath -Raw
 $channel = Get-Content -LiteralPath $channelPath -Raw
 $message = Get-Content -LiteralPath $messagePath -Raw
 $character = Get-Content -LiteralPath $characterPath -Raw
+$orgTest = Get-Content -LiteralPath $orgTestPath -Raw
 
 Assert-Contains $character 'return organizationStat == null ? 0 : organizationStat.StatValue;' `
     'Characters without stat 5 do not safely resolve to no organization.'
@@ -42,6 +44,16 @@ Assert-Contains $channel '((Client)client).Channels.Remove(this);' `
     'Channel removal leaves stale membership on the client.'
 Assert-Contains $message 'if ((channel == null) || !client.Channels.Contains(channel))' `
     'Channel messages are not rejected when the sender has not joined the channel.'
+Assert-Contains $orgTest 'return 1;' 'The organization test command is not GM-only.'
+Assert-Contains $orgTest '"orgtest"' 'The organization test command is not registered as orgtest.'
+Assert-Contains $orgTest 'OrganizationDao.Instance.CreateOrganization' `
+    'The organization test command does not create an organization through the normal DAO.'
+Assert-Contains $orgTest 'member.Stats[StatIds.clan].Value = organizationId;' `
+    'The organization test command does not persist member organization membership.'
+Assert-Contains $orgTest 'StatDao.DisbandOrganization(organizationId);' `
+    'The organization test command does not clear membership before deleting an organization.'
+Assert-Contains $orgTest 'OrganizationDao.Instance.Delete(organizationId);' `
+    'The organization test command does not delete the organization record.'
 
 if ($chatServer.Contains('foreach (ChannelBase channel in this.ChannelsByType<OrganizationChannel>())')) {
     throw 'Chat login still adds every client to every organization channel.'

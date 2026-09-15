@@ -68,14 +68,49 @@ internal static class PcapDecode
                     continue;
                 }
 
-                var array = value as Array;
                 sb.Append(' ').Append(property.Name).Append('=');
-                sb.Append(array == null ? value : "[" + array.Length + "]");
+                sb.Append(DescribeValue(value));
             }
         }
 
         sb.Append(" raw=").Append(BitConverter.ToString(packet));
         return sb.ToString();
+    }
+
+    /// <summary>
+    /// Prints small value records whose default ToString only reveals their
+    /// CLR type. AcgItem is the important one: ItemReplaced carries its old
+    /// and new templates in two of these, and hiding the four fields made an
+    /// ordered capture unable to say what was actually replaced.
+    /// </summary>
+    private static string DescribeValue(object value)
+    {
+        if (value == null)
+        {
+            return string.Empty;
+        }
+
+        var array = value as Array;
+        if (array != null)
+        {
+            return "[" + array.Length + "]";
+        }
+
+        if (value.GetType().Name != "AcgItem")
+        {
+            return Convert.ToString(value);
+        }
+
+        var fields = new List<string>();
+        foreach (PropertyInfo property in value.GetType().GetProperties())
+        {
+            if (property.CanRead && property.GetIndexParameters().Length == 0)
+            {
+                fields.Add(property.Name + "=" + property.GetValue(value, null));
+            }
+        }
+
+        return "{" + string.Join(" ", fields) + "}";
     }
 
     private static string DescribeSimpleItem(object body, byte[] packet)
