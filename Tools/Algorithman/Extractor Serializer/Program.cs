@@ -115,11 +115,11 @@ namespace Extractor_Serializer
 
         /// <summary>
         /// </summary>
-        public static Regex reg = new Regex(@".*\/item\/([0-9]*)\/.*");
+        public static Dictionary<int, string> ItemNames = new Dictionary<int, string>(150000);
 
         /// <summary>
         /// </summary>
-        public static WebClient webClient = new WebClient();
+        public static readonly string RelationRulesDirectory = Path.Combine(AppContext.BaseDirectory, "RelationRules");
 
         /// <summary>
         /// The ext.
@@ -231,9 +231,17 @@ namespace Extractor_Serializer
 
         /// <summary>
         /// </summary>
-        public static void ReadItemRelations()
+        public static void ReadItemRelations(string path = "itemrelations.txt")
         {
-            TextReader tr = new StreamReader("itemrelations.txt");
+            // The relations aoitems.com supplied, if a copy is at hand. It is not in the repository
+            // and a fresh clone has none: ItemRelationMatcher then works out every family itself.
+            if (!File.Exists(path))
+            {
+                Console.WriteLine("No " + path + " - item relations come from the client data and RelationRules only.");
+                return;
+            }
+
+            TextReader tr = new StreamReader(path);
             string line;
             string lastline = null;
             while ((line = tr.ReadLine()) != null)
@@ -357,6 +365,7 @@ namespace Extractor_Serializer
             {
                 byte[] data = extractor.GetRecordData(Extractor.RecordType.Item, recnum);
                 ItemTemplate xt = np.ParseItem(Extractor.RecordType.Item, recnum, data, itemNamesSqls);
+                ItemNames[recnum] = np.LastItemName;
 
                 rawItemList.Add(xt);
                 rawItemDictionary.Add(recnum, xt);
@@ -441,6 +450,14 @@ namespace Extractor_Serializer
 
                         );
                 }
+            }
+
+            Console.WriteLine();
+            if (Structs.StatelDataExtractor.UnreadableEventBlocks > 0)
+            {
+                Console.WriteLine(
+                    "Statels whose events could not be read, given their template's events instead: "
+                    + Structs.StatelDataExtractor.UnreadableEventBlocks);
             }
         }
 
@@ -582,32 +599,119 @@ namespace Extractor_Serializer
         /// </summary>
         /// <param name="template">
         /// </param>
-        private static void GetItemRelations(ItemTemplate template)
+        /// <summary>
+        /// Every item's family by the client's own data and RelationRules. Replaces the per-item
+        /// lookup on aoitems.com, which no longer exists.
+        /// </summary>
+        private static Dictionary<int, List<int>> MatchItemRelations(List<ItemTemplate> items, bool applyDeleteList, out ItemRelationMatcher matcher)
         {
-            try
+            matcher = new ItemRelationMatcher(RelationRulesDirectory);
+            foreach (ItemTemplate item in items)
             {
-                string html = webClient.DownloadString("http://www.aoitems.com/item/" + template.ID + "/");
-                int pos;
-                if ((pos = html.IndexOf("<select class=\"TemplateSelector\">", StringComparison.Ordinal)) != -1)
+                string name;
+                int icon, itemClass;
+                ItemNames.TryGetValue(item.ID, out name);
+                item.Stats.TryGetValue(79, out icon);
+                item.Stats.TryGetValue(76, out itemClass);
+                matcher.Add(item.ID, item.Quality, name, icon, itemClass);
+            }
+
+            return matcher.Match(applyDeleteList);
+        }
+
+        /// <summary>
+        /// The aoitems.com families from itemrelations.txt that relate two or more records. Its
+        /// single-record lines carry no information - most were written when a lookup failed - so
+        /// they are left for the matcher to decide.
+        /// </summary>
+        private static Dictionary<int, List<int>> AoItemsFamilies(Dictionary<int, ItemTemplate> byId)
+        {
+            Dictionary<int, List<int>> families = new Dictionary<int, List<int>>();
+
+            // Earlier lines win, as when every line was applied from the last to the first.
+            for (int pos = Relations.Count - 1; pos >= 0; pos--)
+            {
+                List<int> family = Relations[pos].Where(byId.ContainsKey).ToList();
+                if (family.Count < 2)
                 {
-                    // found template selector
-                    // now narrow down to the links
-                    html = html.Substring(pos + 33);
-                    html = html.Substring(0, html.IndexOf("</select", StringComparison.Ordinal));
-                    foreach (Match r in reg.Matches(html))
-                    {
-                        int id = int.Parse(r.Groups[1].Value);
-                        template.Relations.Add(id);
-                    }
+                    continue;
+                }
+
+                foreach (int id in family)
+                {
+                    families[id] = family;
+                }
+            }
+
+            return families;
+        }
+
+        /// <summary>
+        /// --check-relations [itemrelations.txt] [--delete-list]: compares the matcher's families
+        /// with aoitems.com's for every record both know, matching as extraction does (without
+        /// Tyrbot's delete list unless --delete-list). Reads the client; writes nothing.
+        /// </summary>
+        private static void CheckItemRelations(string[] args)
+        {
+            string relationsPath = args.Skip(1).FirstOrDefault(a => !a.StartsWith("--", StringComparison.Ordinal)) ?? "itemrelations.txt";
+            bool applyDeleteList = args.Any(a => string.Equals(a, "--delete-list", StringComparison.OrdinalIgnoreCase));
+
+            if (GetAOPath() == string.Empty)
+            {
+                return;
+            }
+
+            ReadItemRelations(relationsPath);
+            List<ItemTemplate> items = ExtractItemTemplates(new List<string>());
+            Dictionary<int, ItemTemplate> byId = items.ToDictionary(t => t.ID);
+            Dictionary<int, List<int>> aoitems = AoItemsFamilies(byId);
+
+            ItemRelationMatcher matcher;
+            Dictionary<int, List<int>> matched = MatchItemRelations(items, applyDeleteList, out matcher);
+
+            int same = 0, different = 0, ruledOut = 0;
+            List<string> samples = new List<string>();
+            foreach (var pair in aoitems)
+            {
+                List<int> ours;
+                if (!matched.TryGetValue(pair.Key, out ours))
+                {
+                    ruledOut++;
+                    continue;
+                }
+
+                if (new HashSet<int>(ours).SetEquals(pair.Value))
+                {
+                    same++;
                 }
                 else
                 {
-                    template.Relations.Add(template.ID);
+                    different++;
+                    if (samples.Count < 15 && pair.Key == pair.Value[0])
+                    {
+                        string name;
+                        ItemNames.TryGetValue(pair.Key, out name);
+                        samples.Add("  " + name + "\n    aoitems: " + string.Join(" ", pair.Value) + "\n    matcher: " + string.Join(" ", ours));
+                    }
                 }
             }
-            catch (Exception)
+
+            int newFamilies = items.Count(t => !aoitems.ContainsKey(t.ID) && matched.ContainsKey(t.ID) && matched[t.ID].Count > 1);
+            int staticGrouped = matcher.StaticIds.Count(id => matched.ContainsKey(id) && matched[id].Count > 1);
+
+            Console.WriteLine();
+            Console.WriteLine("Delete list applied:                      " + applyDeleteList);
+            Console.WriteLine("Records in aoitems families (2+):          " + aoitems.Count);
+            Console.WriteLine("  same family from the matcher:            " + same + " (" + (100.0 * same / Math.Max(1, aoitems.Count)).ToString("0.0") + "%)");
+            Console.WriteLine("  different family:                        " + different);
+            Console.WriteLine("  not paired by the matcher (delete list): " + ruledOut);
+            Console.WriteLine("Records aoitems had no family for, now in one: " + newFamilies);
+            Console.WriteLine("static_list records now in a family:       " + staticGrouped + " of " + matcher.StaticIds.Count);
+            if (samples.Count > 0)
             {
-                template.Relations.Add(template.ID);
+                Console.WriteLine();
+                Console.WriteLine("Some families that differ:");
+                samples.ForEach(Console.WriteLine);
             }
         }
 
@@ -633,6 +737,12 @@ namespace Extractor_Serializer
             if ((args.Length > 0) && string.Equals(args[0], "--convert-caches", StringComparison.OrdinalIgnoreCase))
             {
                 ConvertLegacyCaches(args);
+                return;
+            }
+
+            if ((args.Length > 0) && string.Equals(args[0], "--check-relations", StringComparison.OrdinalIgnoreCase))
+            {
+                CheckItemRelations(args);
                 return;
             }
 
@@ -1087,92 +1197,52 @@ namespace Extractor_Serializer
         /// </summary>
         /// <param name="rawItemList">
         /// </param>
+        /// <summary>
+        /// Gives every item its family: the records that are the same item at other quality
+        /// levels, lowest quality first. In order of trust: static_list.txt (curated), the
+        /// aoitems.com families in itemrelations.txt, the matcher, and otherwise the item alone.
+        /// </summary>
         private static void SetItemRelations(List<ItemTemplate> rawItemList)
         {
-            Dictionary<int, ItemTemplate> tp = new Dictionary<int, ItemTemplate>(150000);
-
-            HashSet<ItemTemplate> hsitp = new HashSet<ItemTemplate>(rawItemList);
-
             Console.WriteLine("Setting item relations");
 
-            foreach (ItemTemplate tep in rawItemList)
+            Dictionary<int, ItemTemplate> byId = rawItemList.ToDictionary(t => t.ID);
+            Dictionary<int, List<int>> aoitems = AoItemsFamilies(byId);
+            // Without Tyrbot's delete list. That list keeps NPC attacks, implants and similar records
+            // out of a player item search, but the server needs their families too: against the
+            // client 18.8.62 records aoitems.com grouped, matching with the list reproduced 22% of
+            // families (it refused to pair 53,806 records) and without it 90.6%.
+            ItemRelationMatcher matcher;
+            Dictionary<int, List<int>> matched = MatchItemRelations(rawItemList, false, out matcher);
+
+            int fromStatic = 0, fromAoItems = 0, fromMatcher = 0, alone = 0;
+            foreach (ItemTemplate template in rawItemList)
             {
-                tp.Add(tep.ID, tep);
+                List<int> family;
+                if (matcher.StaticIds.Contains(template.ID) && matched.TryGetValue(template.ID, out family))
+                {
+                    fromStatic++;
+                }
+                else if (aoitems.TryGetValue(template.ID, out family))
+                {
+                    fromAoItems++;
+                }
+                else if (matched.TryGetValue(template.ID, out family) && family.Count > 1)
+                {
+                    fromMatcher++;
+                }
+                else
+                {
+                    family = new List<int> { template.ID };
+                    alone++;
+                }
+
+                template.Relations = family;
             }
 
-            int perc = Relations.Count / 100;
-            int counter = 0;
-            int counter2 = 0;
-            for (int pos = Relations.Count - 1; pos >= 0; pos--)
-            {
-                List<int> rels = Relations[pos];
-                foreach (int id in rels)
-                {
-                    try
-                    {
-                        ItemTemplate temp = tp[id];
-
-                        if (temp != null)
-                        {
-                            temp.Relations = rels;
-                            hsitp.Remove(temp);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        // throw;
-                    }
-                }
-                if (perc > 0)
-                {
-                    if (counter % perc == 0)
-                    {
-                        Console.Write("\r" + counter2 + "% done");
-                        counter2++;
-                    }
-                }
-
-                counter++;
-            }
-
-            Console.WriteLine("\r100% done");
-            if (hsitp.Count != 0)
-            {
-                foreach (ItemTemplate template in hsitp)
-                {
-                    GetItemRelations(template);
-                    Console.Write("\rFound missing item relations for " + template.ID);
-                }
-
-                Console.WriteLine();
-                Console.Write("Saving new itemrelations...");
-                List<string> newItemrelations = new List<string>();
-                foreach (ItemTemplate it in hsitp)
-                {
-                    string ir = string.Empty;
-                    foreach (int i in it.Relations)
-                    {
-                        ir += ir == string.Empty ? i.ToString() : " " + i;
-                    }
-
-                    if (!newItemrelations.Contains(ir))
-                    {
-                        newItemrelations.Add(ir);
-                    }
-                }
-
-                newItemrelations.Sort();
-
-                TextWriter tw = new StreamWriter("itemrelations.txt", true);
-                foreach (string s in newItemrelations)
-                {
-                    tw.WriteLine(s);
-                }
-
-                tw.Close();
-                Console.WriteLine(" done");
-            }
-
+            Console.WriteLine(
+                "Families: " + fromStatic + " from static_list.txt, " + fromAoItems + " from itemrelations.txt, "
+                + fromMatcher + " matched, " + alone + " items on their own");
             Console.WriteLine();
         }
 

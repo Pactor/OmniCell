@@ -54,6 +54,8 @@
 
   <ItemGroup>
     <None Include="FunctionSets.cfg" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Tyrbot's item relation rules, read by ItemRelationMatcher. -->
+    <None Include="RelationRules\*.txt" LinkBase="RelationRules" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

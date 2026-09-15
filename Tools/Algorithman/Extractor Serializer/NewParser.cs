@@ -132,6 +132,12 @@ namespace Extractor_Serializer
         /// <returns>
         /// The <see cref="AOItem"/>.
         /// </returns>
+        /// <summary>
+        /// The name of the item ParseItem read last. Kept here rather than on the template or its
+        /// RecordData, which are serialized into items.ocp; item relations are matched by name.
+        /// </summary>
+        public string LastItemName { get; private set; }
+
         public ItemTemplate ParseItem(Extractor.RecordType recordType, int recnum, byte[] data, List<string> itemNamesSqlList)
         {
             int rectype = (int)recordType;
@@ -162,6 +168,7 @@ namespace Extractor_Serializer
             int descriptionLength = this.ReadLength16("item description");
             string itemname = this.br.ReadString(nameLength);
             record.Description = this.br.ReadString(descriptionLength);
+            this.LastItemName = itemname;
 
             if (itemNamesSqlList != null)
             {

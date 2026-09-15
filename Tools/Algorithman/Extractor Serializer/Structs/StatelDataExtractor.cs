@@ -40,6 +40,9 @@ namespace Extractor_Serializer.Structs
     /// </summary>
     public static class StatelDataExtractor
     {
+        /// <summary>Statels whose event block could not be read, so their template's events were used.</summary>
+        public static int UnreadableEventBlocks;
+
         #region Public Methods and Operators
 
         /// <summary>
@@ -86,24 +89,39 @@ namespace Extractor_Serializer.Structs
             int C1 = IPAddress.NetworkToHostOrder(br2.ReadInt32());
             Debug.Assert(C1 % 0x3f1 == 0, "Wrong 3f1 encountered... stop please");
 
-            int evcount = IPAddress.NetworkToHostOrder(br2.ReadInt32());
-            while (evcount > 0)
+            try
             {
-                int dataType = IPAddress.NetworkToHostOrder(br2.ReadInt32());
-                switch (dataType)
+                int evcount = IPAddress.NetworkToHostOrder(br2.ReadInt32());
+                while (evcount > 0)
                 {
-                    case 2:
-                        HLFlatEvent flatEvent = new HLFlatEvent();
-                        flatEvent.ReadFromStream(ms);
-                        statel.Events.Add(flatEvent.ToEvents());
-                        break;
-                    default:
+                    int dataType = IPAddress.NetworkToHostOrder(br2.ReadInt32());
+                    switch (dataType)
+                    {
+                        case 2:
+                            HLFlatEvent flatEvent = new HLFlatEvent();
+                            flatEvent.ReadFromStream(ms);
+                            statel.Events.Add(flatEvent.ToEvents());
+                            break;
+                        default:
 
-                        // Console.WriteLine("DataType " + dataType + " found... stop please");
-                        break;
+                            // Console.WriteLine("DataType " + dataType + " found... stop please");
+                            break;
+                    }
+
+                    evcount--;
                 }
-
-                evcount--;
+            }
+            catch (System.Exception)
+            {
+                // Some 18.8.62 statels carry an event block this reader does not follow: an
+                // unhandled data type consumes nothing, and the reads after it are misaligned.
+                // What that throws depends on the garbage read (end of stream, "Not handled
+                // function 13572096", ...), so any exception counts. It cannot spread: each statel
+                // is its own length-prefixed buffer. Keep the statel (position, heading, template)
+                // and drop the partial events, so ParseStatels falls back to the template item's
+                // events, as for a statel without any.
+                statel.Events.Clear();
+                UnreadableEventBlocks++;
             }
 
             return statel;
