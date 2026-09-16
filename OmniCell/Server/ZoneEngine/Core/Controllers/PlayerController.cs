@@ -504,11 +504,14 @@ namespace ZoneEngine.Core.Controllers
                 && selected.Instance != this.Character.Identity.Instance
                 && this.Character.Playfield != null)
             {
-                QuestManager.OnUseItemOnCharacter(
-                    this.Character,
-                    Pool.Instance.GetObject<ICharacter>(this.Character.Playfield.Identity, selected),
-                    item.LowID,
-                    item.HighID);
+                ICharacter target = Pool.Instance.GetObject<ICharacter>(this.Character.Playfield.Identity, selected);
+
+                // The stim only counts on somebody who is wounded; on anybody else it says so and
+                // does nothing.
+                if (WoundedCharacters.ItemUsedOn(this.Character, target, item))
+                {
+                    QuestManager.OnUseItemOnCharacter(this.Character, target, item.LowID, item.HighID);
+                }
             }
 
             if (destroysItself)

@@ -49,10 +49,19 @@ namespace ZoneEngine.Core.MessageHandlers
         /// </summary>
         public void Send(ICharacter character, int newHealth, int delta)
         {
-            this.Send(character, Filler(character, newHealth, delta), true);
+            this.Send(character, Filler(character, newHealth, delta, DamageType.None), true);
         }
 
-        private static MessageDataFiller Filler(ICharacter character, int newHealth, int delta)
+        /// <summary>
+        /// Health changed on this character by <paramref name="delta"/>, as the given kind of harm. A
+        /// Wounded Dockworker sitting back down loses its 20 as Melee (20260914-124401 s4 5050).
+        /// </summary>
+        public void Send(ICharacter character, int newHealth, int delta, DamageType damageType)
+        {
+            this.Send(character, Filler(character, newHealth, delta, damageType), true);
+        }
+
+        private static MessageDataFiller Filler(ICharacter character, int newHealth, int delta, DamageType damageType)
         {
             return message =>
             {
@@ -60,7 +69,7 @@ namespace ZoneEngine.Core.MessageHandlers
                 message.Unknown = 0;
                 message.Health = newHealth;
                 message.Delta = delta;
-                message.DamageType = DamageType.None;
+                message.DamageType = damageType;
                 message.DeathCause = DeathCause.None;
                 message.Source = character.Identity;
                 message.SourceItem = 0;

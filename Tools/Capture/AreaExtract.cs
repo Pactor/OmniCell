@@ -318,6 +318,16 @@ internal static class AreaExtract
 
         public int Level, Health, Playfield, RunSpeed;
 
+        // Health is the most the character can have; HealthDamage is how far below that it stood.
+        // The Wounded Dockworkers at Arete Landing are all 32 with 20 of damage, lying on the
+        // ground (20260914-124401 s4).
+        public int HealthDamage;
+
+        // The movement mode, the first byte of the movement state in VehicleData (offset 12).
+        // Walking and running creatures say 1 to 3; the wounded lying about Arete Landing say 8,
+        // which is sitting on the ground.
+        public int MoveMode;
+
         public bool IsNpc;
 
         public uint Appearance;
@@ -960,6 +970,7 @@ internal static class AreaExtract
                       HW = (float)(Get(heading, "W") ?? 0f),
                       Level = Int(Get(body, "Level")),
                       Health = Int(Get(body, "Health")),
+                      HealthDamage = Int(Get(body, "HealthDamage")),
                       IsNpc = Get(body, "CharacterInfo") != null
                               && Get(body, "CharacterInfo").GetType().Name == "SimpleNpcInfo",
                       Appearance = Convert.ToUInt32(Get(Get(body, "Appearance"), "Value") ?? 0u),
@@ -978,6 +989,9 @@ internal static class AreaExtract
         npc.Race = Int(Get(appearance, "Race"));
 
         npc.RunSpeed = Int(Get(body, "RunSpeedBase"));
+
+        byte[] vehicle = Get(body, "VehicleData") as byte[];
+        npc.MoveMode = vehicle != null && vehicle.Length > 12 ? vehicle[12] : 0;
 
         object info = Get(body, "CharacterInfo");
         if (info != null && info.GetType().Name == "SimpleNpcInfo")
@@ -2477,7 +2491,7 @@ internal static class AreaExtract
             AddStat(sql, n, writeAs, 0, n.CharacterFlags);      // flags
             AddStat(sql, n, writeAs, 1, n.Health);              // life
             AddStat(sql, n, writeAs, 4, n.Breed);               // breed
-            AddStat(sql, n, writeAs, 27, n.Health);             // health
+            AddStat(sql, n, writeAs, 27, Math.Max(1, n.Health - n.HealthDamage)); // health, as it was
             AddStat(sql, n, writeAs, 33, n.Side);               // side
             AddStat(sql, n, writeAs, 47, n.Fatness);            // fatness
             AddStat(sql, n, writeAs, 54, n.Level);              // level
@@ -2489,6 +2503,14 @@ internal static class AreaExtract
             AddStat(sql, n, writeAs, 360, n.MonsterScale);      // monsterscale
             AddStat(sql, n, writeAs, 455, n.Family);            // npcfamily
             AddStat(sql, n, writeAs, 673, n.VisualFlags);       // visualflags
+
+            // Only a resting pose is kept: sitting (8), sleeping (11), lounging (12). Anything else is
+            // how the creature was getting about at the moment it was seen, and the server decides
+            // that for itself.
+            if (n.MoveMode == 8 || n.MoveMode == 11 || n.MoveMode == 12)
+            {
+                AddStat(sql, n, writeAs, 173, n.MoveMode);      // currentmovementmode
+            }
 
             // What this kind of character hits for: what it was seen hitting
             // for if it was ever in a fight, and the table otherwise.

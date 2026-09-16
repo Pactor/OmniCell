@@ -240,6 +240,17 @@ namespace OmniCell.Core.Playfields
             new Dictionary<Identity, OmniCell.Core.Vector.Quaternion>();
 
         /// <summary>
+        /// The health each spawn point makes its character with, where that is less than its most.
+        /// </summary>
+        /// <remarks>
+        /// The Wounded Dockworkers of Arete Landing are 32 health with 20 of it missing, and they stay
+        /// that way: the live server tells everyone nearby, once a second, that each of them is on 12
+        /// (20260914-124401 s4, 12:47:49 to 12:48:19). Regeneration brings a character back up to this
+        /// and no further. Characters that spawn whole are not in here and heal all the way.
+        /// </remarks>
+        private readonly Dictionary<Identity, int> spawnHealth = new Dictionary<Identity, int>();
+
+        /// <summary>
         /// When each body should be taken away, and when its spawn point should
         /// produce another.
         /// </summary>
@@ -601,6 +612,15 @@ namespace OmniCell.Core.Playfields
                         mob.HeadingY,
                         mob.HeadingZ,
                         mob.HeadingW);
+
+                    int health = cmob.Stats[StatIds.health].Value;
+                    if (health > 0 && health < cmob.Stats[StatIds.life].Value)
+                    {
+                        lock (this.spawnHealth)
+                        {
+                            this.spawnHealth[cmob.Identity] = health;
+                        }
+                    }
                 }
 
                 // What the live server had this character say, if a capture
@@ -1101,7 +1121,7 @@ namespace OmniCell.Core.Playfields
                 // Whole again, and back where the spawn point put it. The
                 // streaming pass introduces it to whoever is near enough on its
                 // next turn - there is nothing to send from here.
-                character.Stats[StatIds.health].Value = character.Stats[StatIds.life].Value;
+                character.Stats[StatIds.health].Value = this.SpawnHealth(character);
                 character.Stats[StatIds.currentnano].Value = character.Stats[StatIds.maxnanoenergy].Value;
 
                 Coordinate where;
@@ -1232,6 +1252,7 @@ namespace OmniCell.Core.Playfields
             Combat.Forget(identity);
             NanoCasting.Forget(identity);
             SurgeryClinic.Forget(identity);
+            WoundedCharacters.Forget(identity);
             QuestManager.Forget(identity);
             Pets.Forget(identity);
             CorpseLootAccess.ForgetCharacter(identity);
@@ -1843,6 +1864,23 @@ namespace OmniCell.Core.Playfields
         }
 
         /// <summary>
+        /// The health a character is whole at: what its spawn point made it with, or its most.
+        /// </summary>
+        public int SpawnHealth(ICharacter character)
+        {
+            int health;
+            lock (this.spawnHealth)
+            {
+                if (this.spawnHealth.TryGetValue(character.Identity, out health))
+                {
+                    return health;
+                }
+            }
+
+            return character.Stats[StatIds.life].Value;
+        }
+
+        /// <summary>
         /// </summary>
         /// <param name="sender">
         /// </param>
@@ -1891,7 +1929,11 @@ namespace OmniCell.Core.Playfields
                         int interval = healInterval.Value;
                         int delta = dynel.Stats[StatIds.healdelta].Value;
                         int before = dynel.Stats[StatIds.health].Value;
-                        dynel.Stats[StatIds.health].Value += delta;
+                        int ceiling = this.SpawnHealth(dynel);
+                        if (before < ceiling)
+                        {
+                            dynel.Stats[StatIds.health].Value = Math.Min(before + delta, ceiling);
+                        }
                         healInterval.LastTick = DateTime.UtcNow + TimeSpan.FromSeconds(interval);
                         changed |= dynel.Stats[StatIds.health].Value != before;
                     }

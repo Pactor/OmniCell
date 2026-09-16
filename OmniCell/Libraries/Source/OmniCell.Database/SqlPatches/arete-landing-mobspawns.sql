@@ -5395,6 +5395,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536257, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536257, 6553, 360, 100);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536257, 6553, 455, 104);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536257, 6553, 673, 31);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536257, 6553, 173, 8);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536257, 6553, 286, 36);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536257, 6553, 285, 77);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536257, 6553, 0, 0, 204887, 0);
@@ -5406,7 +5407,7 @@ INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, Hea
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 0, 277615105);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 1, 32);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 4, 4);
-INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 27, 32);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 27, 12);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 33, 0);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 47, 1);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 54, 1);
@@ -5418,6 +5419,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 360, 90);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 455, 137);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 673, 31);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 173, 8);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 286, 2);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 285, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (5715728, 6553, 0, 0, 205110, 2);
@@ -5427,7 +5429,7 @@ INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, Hea
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 0, 277615105);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 1, 32);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 4, 4);
-INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 27, 32);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 27, 12);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 33, 0);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 47, 1);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 54, 1);
@@ -5439,6 +5441,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 360, 90);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 455, 137);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 673, 31);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 173, 8);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 286, 2);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 285, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (5715729, 6553, 0, 0, 205110, 2);
@@ -5448,7 +5451,7 @@ INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, Hea
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 0, 277615105);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 1, 32);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 4, 4);
-INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 27, 32);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 27, 12);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 33, 0);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 47, 1);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 54, 1);
@@ -5460,6 +5463,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 360, 90);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 455, 137);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 673, 31);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 173, 8);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 286, 2);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 285, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536063, 6553, 0, 0, 205110, 2);
@@ -5469,7 +5473,7 @@ INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, Hea
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 0, 277615105);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 1, 32);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 4, 4);
-INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 27, 32);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 27, 12);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 33, 0);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 47, 1);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 54, 1);
@@ -5481,6 +5485,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 360, 90);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 455, 137);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 673, 31);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 173, 8);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 286, 2);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 285, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536064, 6553, 0, 0, 205110, 2);
@@ -5490,7 +5495,7 @@ INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, Hea
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 0, 277615105);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 1, 32);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 4, 4);
-INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 27, 32);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 27, 12);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 33, 0);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 47, 1);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 54, 1);
@@ -5502,6 +5507,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 360, 90);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 455, 137);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 673, 31);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 173, 8);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 286, 2);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 285, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536078, 6553, 0, 0, 205110, 2);
@@ -5511,7 +5517,7 @@ INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, Hea
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 0, 277615105);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 1, 32);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 4, 4);
-INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 27, 32);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 27, 12);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 33, 0);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 47, 1);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 54, 1);
@@ -5523,6 +5529,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 360, 90);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 455, 137);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 673, 31);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 173, 8);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 286, 2);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 285, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536079, 6553, 0, 0, 205110, 2);
@@ -5532,7 +5539,7 @@ INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, Hea
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 0, 277615105);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 1, 32);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 4, 4);
-INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 27, 32);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 27, 12);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 33, 0);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 47, 1);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 54, 1);
@@ -5544,6 +5551,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 360, 90);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 455, 137);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 673, 31);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 173, 8);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 286, 2);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 285, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536082, 6553, 0, 0, 205110, 2);
