@@ -68,6 +68,9 @@
     <Content Include="SqlTables\mobspawnsuploadednanos.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\mobspawnsweapons.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\mobcorpses.sql" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="SqlTables\npcactivenanos.sql" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="SqlTables\npcappearance.sql" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="SqlTables\npctextures.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\mobspawns_stats.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\quests.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\questobjectives.sql" CopyToOutputDirectory="PreserveNewest" />

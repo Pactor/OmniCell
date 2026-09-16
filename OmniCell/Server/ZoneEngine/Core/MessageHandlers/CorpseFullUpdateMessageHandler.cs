@@ -41,10 +41,11 @@ namespace ZoneEngine.Core.MessageHandlers
     /// that differ by creature are in the mobcorpses table, extracted from the
     /// same captures - the corpse model, how long it lies there, what is on it.
     ///
-    /// Meshes are deliberately not sent. Eight of the 154 captured corpses set
-    /// HasMeshes to zero and end the message there, so that form is known to be
-    /// accepted by a real client, whereas inventing mesh names for a creature is
-    /// not. A corpse renders from its CatMesh.
+    /// Meshes come from the creature's own textures (NpcAppearance). Sent without them, as this
+    /// used to, a creature's corpse was not drawn at all: the client could only find it while the
+    /// dying body still lay on top of it. 146 of the 154 captured corpses carry meshes, and for every
+    /// kind that has both they are the textures the living creature wore - "Material #1" 295519 on a
+    /// Cleaning Robot, "Material #9" 95883 on a Garbage Flea. Only humanoid corpses have none.
     /// </remarks>
     [MessageHandler(MessageHandlerDirection.OutboundOnly)]
     public class CorpseFullUpdateMessageHandler :
@@ -172,8 +173,9 @@ namespace ZoneEngine.Core.MessageHandlers
                 message.Textures =
                     Enumerable.Range(0, 5).Select(i => new Texture { Place = i, Id = 0, Group = 0 }).ToArray();
 
-                message.HasMeshes = 0;
-                message.Meshes = new CorpseMesh[0];
+                CorpseMesh[] meshes = NpcAppearance.CorpseMeshesOf(victim.Name);
+                message.HasMeshes = meshes.Length > 0 ? 1 : 0;
+                message.Meshes = meshes;
             };
         }
 

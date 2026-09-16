@@ -477,6 +477,13 @@ namespace ZoneEngine.Core.Packets
             // otherwise has it, so everything this server sends has it too.
             scfu.Flags |= SimpleCharFullUpdateFlags.UnknownFlag;
 
+            // A spawned creature's textures, second scale and glow, by name. Without the textures a
+            // Garbage Flea or a Waste Collector is not drawn at all; see NpcAppearance.
+            if (character.Controller == null || character.Controller.Client == null)
+            {
+                NpcAppearance.Apply(scfu, character.Name);
+            }
+
             scfu.Flags2 = 0; // packetFlags2
             scfu.Unknown2 = 0;
 
