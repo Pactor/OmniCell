@@ -245,7 +245,8 @@ namespace ZoneEngine.Core.MessageHandlers
             WriteInt32(arguments, 8, deathVariant);
             WriteInt32(arguments, 12, FixedArguments[0]);
             WriteInt32(arguments, 16, FixedArguments[1]);
-            WriteInt32(arguments, 20, corpse == null ? 0 : corpse.Unknown23);
+            int monsterData = victim.Stats[StatIds.monsterdata].Value;
+            WriteInt32(arguments, 20, monsterData != 0 ? monsterData : corpse == null ? 0 : corpse.MonsterData);
             WriteInt32(arguments, 24, 0);
 
             return new NanoEffect

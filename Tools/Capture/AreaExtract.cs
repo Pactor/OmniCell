@@ -359,7 +359,7 @@ internal static class AreaExtract
 
         public readonly Dictionary<int, int> Stats = new Dictionary<int, int>();
 
-        public int Unknown20, Unknown23;
+        public int DeathAnimation, MonsterData;
     }
 
     private sealed class Weapon
@@ -1385,8 +1385,8 @@ internal static class AreaExtract
             {
                 // Big-endian, like the rest of the wire. Read little-endian they came out
                 // byte-swapped: 503 as -150929408, and the client drew no corpse from them.
-                corpse.Unknown20 = (arguments[8] << 24) | (arguments[9] << 16) | (arguments[10] << 8) | arguments[11];
-                corpse.Unknown23 = (arguments[20] << 24) | (arguments[21] << 16) | (arguments[22] << 8) | arguments[23];
+                corpse.DeathAnimation = (arguments[8] << 24) | (arguments[9] << 16) | (arguments[10] << 8) | arguments[11];
+                corpse.MonsterData = (arguments[20] << 24) | (arguments[21] << 16) | (arguments[22] << 8) | arguments[23];
             }
 
             break;
@@ -1426,7 +1426,7 @@ internal static class AreaExtract
                 string.Format(
                     CultureInfo.InvariantCulture,
                     "REPLACE INTO mobcorpses (MobName, CatMesh, TimeExist, Cash, CanChangeClothes,"
-                    + " MonsterScale, Breed, Sex, Race, HeadMesh, DeadTimer, Unknown20, Unknown23)"
+                    + " MonsterScale, Breed, Sex, Race, HeadMesh, DeadTimer, DeathAnimation, MonsterData)"
                     + " VALUES ('{0}', {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12});",
                     Sql(c.MobName),
                     StatOr(c, 42, 0),
@@ -1439,8 +1439,8 @@ internal static class AreaExtract
                     StatOr(c, 89, 1),
                     StatOr(c, 64, 0),
                     StatOr(c, 34, 60),
-                    c.Unknown20,
-                    c.Unknown23));
+                    c.DeathAnimation,
+                    c.MonsterData));
         }
 
         File.WriteAllLines(Path.Combine(outDir, "corpses.sql"), sql);
