@@ -87,10 +87,15 @@ the `tradeskill` table).
         twice cleanly. The column is added by a guarded ALTER in the patch and is
         in `SqlTables/quests.sql` for a fresh database.
 - [ ] **Shade questline, what the captures do not show:**
-  - [ ] Soul Capsule drops. The stage asks for one (236635/238946), but no
-        capture shows a capsule dropping or its id; every spirit seen came from
-        using an item that turned into a spirit. Nothing spawns a capsule yet,
-        so a Shade cannot finish "Give a Soul Capsule" without one being given.
+  - [ ] Soul Capsule drops. The stage text asks for one (236635/238946), but
+        no capture shows a capsule dropping or its id; every spirit seen came
+        from using an item that turned into a spirit. The chain does not wait
+        on it: the captured hand-in objective is the Spirit Siphon (297333),
+        which the stage gives on accepting. Every stage was checked to be
+        finishable with what the chain itself hands over - her dialogue answer
+        is in her conversation, the siphon comes with stage 2, the spirit with
+        finishing stage 2, and the ID chip (296575) with "Return to Vernon
+        Godfray".
   - [ ] The final hand-in: Sheila asks for a Blank ICC ID Chip and Biological
         Survey Nanobots, but only the chip (296575) came back as a captured
         hand-in objective, so only the chip is required.
