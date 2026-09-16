@@ -122,5 +122,21 @@ namespace OmniCell.Database.Entities
         /// not a field claimed to come directly from the retail protocol.
         /// </remarks>
         public int Requires { get; set; }
+
+        /// <summary>
+        /// The profession this stage belongs to: 0 for anyone, a profession id for that profession
+        /// only, or minus a profession id for everyone except it.
+        /// </summary>
+        /// <remarks>
+        /// A giver's chain can fork on what the character is. After "Return to Vernon Godfray" he
+        /// sends most people to Dr. Mason to be fitted with an implant, and a Shade to Lady Sheila
+        /// Black instead, because "A normal doctor just won't be able to help you out"
+        /// (20260914-220505 s5 #24196). The Shade session was never granted a single Dr. Mason
+        /// stage, and the implant session never heard of Sheila Black, so the two are exclusive.
+        ///
+        /// Emulator-owned representation, like Requires: retail knows this from the character, not
+        /// from a field in the quest.
+        /// </remarks>
+        public int RequiresProfession { get; set; }
     }
 }

@@ -64,10 +64,42 @@ the `tradeskill` table).
 
 ## Not started
 
-- [ ] **The Shade questline.** Lady Sheila Black's quests (1440331282-85), the
-      Spirit Siphon (297333) and its effect nano 301114, the reward spirit
-      295715, and spirits from Soul Capsules as loot. None of it is in the
-      database; only a spawn entry mentions her.
+- [x] **The Shade questline** (`SqlPatches/arete-landing-shade-quests.sql`).
+      Generated with QuestExtract from the Shade session (37 stages, 40
+      conversations; the capture's playfield is instance 2150461, written as
+      6553 with `--as 6553`), then trimmed by hand: the generator rewrites a
+      whole playfield, and only Lady Sheila Black's four stages and her
+      conversation (36 dialogue rows, 6 openers) are new.
+  - [x] The chain forks at "Return to Vernon Godfray" (1439635802): Dr. Mason
+        and the implant chain for everyone else, Lady Sheila Black for a Shade.
+        The Shade session was granted no Dr. Mason stage and the implant session
+        never met Sheila Black. `quests.RequiresProfession` (0 anyone, 15 Shade
+        only, -15 everyone but Shades) keeps each branch to its own, checked
+        where a quest is accepted, so a transition to the other branch is passed
+        over. Emulator-owned, like `Requires`.
+  - [x] Stages: Talk to Lady Sheila Black (dialogue answer) -> Give a Soul
+        Capsule (hand-in; the Spirit Siphon 297333 is given on accepting, the
+        Comfortless Spirit of Defense 295715 on finishing) -> Become a Vessel for
+        the Spirit (Equip 295715, the equip trigger added for implants) -> Talk
+        to Lady Sheila Black (hand-in; 1400 credits, 2596 xp, Personalized ICC ID
+        Chip 296576).
+  - [x] Applied to the local database and re-applied to prove the patch loads
+        twice cleanly. The column is added by a guarded ALTER in the patch and is
+        in `SqlTables/quests.sql` for a fresh database.
+- [ ] **Shade questline, what the captures do not show:**
+  - [ ] Soul Capsule drops. The stage asks for one (236635/238946), but no
+        capture shows a capsule dropping or its id; every spirit seen came from
+        using an item that turned into a spirit. Nothing spawns a capsule yet,
+        so a Shade cannot finish "Give a Soul Capsule" without one being given.
+  - [ ] The final hand-in: Sheila asks for a Blank ICC ID Chip and Biological
+        Survey Nanobots, but only the chip (296575) came back as a captured
+        hand-in objective, so only the chip is required.
+  - [ ] Godfray tells a Shade about Sheila Black in his own line; that line is
+        node 10 of his conversation, where everyone else's answer sits, and the
+        dialogue tables cannot branch on profession. The quest branch is right;
+        his Shade-only line is not reproduced.
+  - [ ] The Spirit Siphon's effect (nano 301114 on a dying mob) and turning it
+        into a capsule are not implemented.
 - [ ] **Refusal messages.** No capture shows what retail says when a swap is
       refused (no clinic window, wrong slot, a Shade trying an implant, not
       enough credits at the clinic). Everything refused is silent for now.

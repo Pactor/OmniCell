@@ -105,6 +105,22 @@ namespace ZoneEngine.Core.Quests
                 row => row.QuestId == quest.Requires && row.State == (int)QuestState.HandedIn);
         }
 
+        /// <summary>
+        /// Whether a profession may be given this stage: RequiresProfession 0 is anyone, a positive
+        /// value is that profession only, a negative value is everyone except it.
+        /// </summary>
+        public static bool ProfessionAllows(DBQuest quest, int profession)
+        {
+            if ((quest == null) || (quest.RequiresProfession == 0))
+            {
+                return quest != null;
+            }
+
+            return quest.RequiresProfession > 0
+                       ? profession == quest.RequiresProfession
+                       : profession != -quest.RequiresProfession;
+        }
+
         public static bool CanAccept(
             DBQuest quest,
             IEnumerable<DBCharacterQuest> progress,

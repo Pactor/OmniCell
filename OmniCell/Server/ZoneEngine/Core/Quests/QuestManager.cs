@@ -438,6 +438,15 @@ namespace ZoneEngine.Core.Quests
                 return false;
             }
 
+            // A chain can fork on the profession: Vernon Godfray sends a Shade to Lady Sheila Black
+            // and everybody else to Dr. Mason, and both stages hang off the same finished quest.
+            // The one that is not for this character is passed over in silence, the way the branch
+            // that was never offered reads in the captures.
+            if (!QuestStateRules.ProfessionAllows(quest, character.Stats[StatIds.profession].Value))
+            {
+                return false;
+            }
+
             List<DBCharacterQuest> rows = Rows(character);
             IList<DBQuestObjective> objectives = ObjectivesOf(questId);
             if (objectives.Count == 0)
