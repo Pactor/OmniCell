@@ -213,6 +213,7 @@ namespace ZoneEngine.Core.MessageHandlers
                         AOAction action = this.getAction(receivingPage, itemFrom);
 
                         if (FitsSlot(receivingPage, itemFrom, toPlacement)
+                            && ProfessionAllows(receivingPage, itemFrom, client.Controller.Character)
                             && ClinicAllows(receivingPage, itemFrom, client.Controller.Character)
                             && ClinicAllows(receivingPage, itemTo, client.Controller.Character)
                             && action.CheckRequirements(client.Controller.Character))
@@ -279,6 +280,7 @@ namespace ZoneEngine.Core.MessageHandlers
                         AOAction action = this.getAction(receivingPage, itemFrom);
 
                         if (FitsSlot(receivingPage, itemFrom, toPlacement)
+                            && ProfessionAllows(receivingPage, itemFrom, client.Controller.Character)
                             && ClinicAllows(receivingPage, itemFrom, client.Controller.Character)
                             && action.CheckRequirements(client.Controller.Character))
                         {
@@ -426,6 +428,17 @@ namespace ZoneEngine.Core.MessageHandlers
         {
             ImplantInventoryPage implants = page as ImplantInventoryPage;
             return (implants == null) || implants.Fits(item, slot);
+        }
+
+        /// <summary>
+        /// Whether this character's profession may wear the item at all. Only the implant page is
+        /// checked: a Shade wears spirits and no implant, and nobody else wears a spirit. Taking one
+        /// off is not gated, so nothing can be stuck on a character.
+        /// </summary>
+        private static bool ProfessionAllows(IInventoryPage page, IItem item, ICharacter character)
+        {
+            return !(page is ImplantInventoryPage) || (character == null)
+                   || ImplantInventoryPage.ProfessionMayWear(character.Stats[StatIds.profession].Value, item);
         }
 
         /// <summary>

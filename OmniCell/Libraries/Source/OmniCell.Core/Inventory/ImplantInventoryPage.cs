@@ -52,6 +52,12 @@ namespace OmniCell.Core.Inventory
     /// </summary>
     public class ImplantInventoryPage : BaseInventoryPage, IItemSlotHandler, IEquipmentPage
     {
+        /// <summary>Item class (stat 76) of an implant.</summary>
+        public const int ImplantItemClass = 3;
+
+        /// <summary>Item class of a spirit, what a Shade wears in these slots instead.</summary>
+        public const int SpiritItemClass = 5;
+
         #region Constructors and Destructors
 
         /// <summary>
@@ -87,6 +93,36 @@ namespace OmniCell.Core.Inventory
             }
 
             return (item.GetAttribute(298) & (1 << bit)) != 0;
+        }
+
+        /// <summary>
+        /// Whether a profession may wear this implant slot item at all: a Shade wears spirits (item
+        /// class 5) and no implant (class 3), and nobody else wears a spirit.
+        /// </summary>
+        /// <remarks>
+        /// The implant trainer tells a Shade "You know your kind can't use implants, right?" and
+        /// Vernon Godfray sends them to Lady Sheila Black because "A normal doctor just won't be able
+        /// to help" (20260914-220505 24538, 24196). No implant carries a profession requirement of
+        /// its own, so the rule lives here; 842 of the 844 spirits do carry "profession is Shade",
+        /// and this covers the other two as well.
+        /// </remarks>
+        public static bool ProfessionMayWear(int profession, IItem item)
+        {
+            if (item == null)
+            {
+                return false;
+            }
+
+            bool shade = profession == (int)Profession.Shade;
+            switch (item.GetAttribute(76))
+            {
+                case ImplantItemClass:
+                    return !shade;
+                case SpiritItemClass:
+                    return shade;
+                default:
+                    return true;
+            }
         }
 
         /// <summary>
