@@ -260,9 +260,19 @@ namespace OmniCell.Core.Playfields
         private readonly Dictionary<Identity, DateTime> risesAt = new Dictionary<Identity, DateTime>();
 
         /// <summary>
-        /// When each corpse is taken away.
+        /// The corpses lying in this playfield: where, what a client is told about each, and when
+        /// each is taken away.
         /// </summary>
-        private readonly Dictionary<Identity, DateTime> corpseGoesAt = new Dictionary<Identity, DateTime>();
+        private readonly Dictionary<Identity, LyingCorpse> corpses = new Dictionary<Identity, LyingCorpse>();
+
+        private sealed class LyingCorpse
+        {
+            public Coordinate Where;
+
+            public MessageBody[] Introduction;
+
+            public DateTime GoesAt;
+        }
 
         /// <summary>
         /// How long a corpse lies there if nobody empties it.
@@ -1019,6 +1029,26 @@ namespace OmniCell.Core.Playfields
                         player.Controller.Client.SendCompressed(DespawnMessageHandler.Default.Create(subject.Identity));
                     }
                 }
+
+                // Corpses, the same way: told on coming within reach, told to forget past it.
+                List<KeyValuePair<Identity, LyingCorpse>> lying;
+                lock (this.deadLock)
+                {
+                    lying = this.corpses.ToList();
+                }
+
+                foreach (KeyValuePair<Identity, LyingCorpse> corpse in lying)
+                {
+                    double distance = from.Distance2D(corpse.Value.Where);
+                    if (distance <= VicinityRadius)
+                    {
+                        this.IntroduceCorpse(player, corpse.Key, corpse.Value);
+                    }
+                    else if (distance > ForgetRadius)
+                    {
+                        this.ForgetCorpse(player, corpse.Key);
+                    }
+                }
             }
         }
 
@@ -1055,12 +1085,71 @@ namespace OmniCell.Core.Playfields
         /// <summary>
         /// A corpse was left in this playfield; it goes in three minutes unless emptied first.
         /// </summary>
-        public void CorpseLeft(Identity corpse)
+        /// <remarks>
+        /// Whoever could see the body is told about the corpse at once. Anybody else is told by the
+        /// streaming pass when they come within reach, as for characters: the live server sends a
+        /// corpse again to a player who walks back to it.
+        /// </remarks>
+        public void CorpseLeft(ICharacter victim, Identity corpse, params MessageBody[] introduction)
         {
+            var lying = new LyingCorpse
+                        {
+                            Where = new Coordinate(victim.RawCoordinates),
+                            Introduction = introduction,
+                            GoesAt = DateTime.UtcNow + TimeSpan.FromSeconds(CorpseSeconds)
+                        };
+
             lock (this.deadLock)
             {
-                this.corpseGoesAt[corpse] = DateTime.UtcNow + TimeSpan.FromSeconds(CorpseSeconds);
+                this.corpses[corpse] = lying;
             }
+
+            foreach (Character player in this.PlayersHere())
+            {
+                if (this.Knows(player.Identity, victim.Identity)
+                    || player.Identity == victim.Identity
+                    || new Coordinate(player.RawCoordinates).Distance2D(lying.Where) <= VicinityRadius)
+                {
+                    this.IntroduceCorpse(player, corpse, lying);
+                }
+            }
+        }
+
+        private List<Character> PlayersHere()
+        {
+            return Pool.Instance.GetAll<Character>((int)IdentityType.CanbeAffected)
+                .Where(x => x != null && x.InPlayfield(this.Identity) && x.Controller != null
+                            && x.Controller.Client != null && !x.EnteringWorld)
+                .ToList();
+        }
+
+        private void IntroduceCorpse(Character player, Identity corpse, LyingCorpse lying)
+        {
+            lock (this.introducedLock)
+            {
+                if (!this.Known(player.Identity).Add(corpse))
+                {
+                    return;
+                }
+            }
+
+            foreach (MessageBody message in lying.Introduction)
+            {
+                player.Controller.Client.SendCompressed(message);
+            }
+        }
+
+        private void ForgetCorpse(Character player, Identity corpse)
+        {
+            lock (this.introducedLock)
+            {
+                if (!this.Known(player.Identity).Remove(corpse))
+                {
+                    return;
+                }
+            }
+
+            player.Controller.Client.SendCompressed(DespawnMessageHandler.Default.Create(corpse));
         }
 
         /// <summary>
@@ -1071,10 +1160,10 @@ namespace OmniCell.Core.Playfields
             lock (this.deadLock)
             {
                 DateTime soon = DateTime.UtcNow + EmptiedCorpseLingers;
-                DateTime due;
-                if (this.corpseGoesAt.TryGetValue(corpse, out due) && due > soon)
+                LyingCorpse lying;
+                if (this.corpses.TryGetValue(corpse, out lying) && lying.GoesAt > soon)
                 {
-                    this.corpseGoesAt[corpse] = soon;
+                    lying.GoesAt = soon;
                 }
             }
         }
@@ -1104,9 +1193,9 @@ namespace OmniCell.Core.Playfields
 
             lock (this.deadLock)
             {
-                foreach (var due in this.corpseGoesAt)
+                foreach (var due in this.corpses)
                 {
-                    if (due.Value <= DateTime.UtcNow)
+                    if (due.Value.GoesAt <= DateTime.UtcNow)
                     {
                         corpses = corpses ?? new List<Identity>();
                         corpses.Add(due.Key);
@@ -1117,7 +1206,7 @@ namespace OmniCell.Core.Playfields
                 {
                     foreach (Identity gone in corpses)
                     {
-                        this.corpseGoesAt.Remove(gone);
+                        this.corpses.Remove(gone);
                     }
                 }
 
@@ -1158,11 +1247,17 @@ namespace OmniCell.Core.Playfields
 
             if (corpses != null)
             {
+                List<Character> players = this.PlayersHere();
                 foreach (Identity corpse in corpses)
                 {
                     // The corpse and its loot go together, so nothing can be taken out of a corpse
-                    // the client has been told is gone.
-                    this.Announce(DespawnMessageHandler.Default.Create(corpse));
+                    // the client has been told is gone. Only those who were told about it are told.
+                    foreach (Character player in players)
+                    {
+                        this.ForgetCorpse(player, corpse);
+                    }
+
+                    this.Forget(corpse);
                     CorpseLifecycle.Expire(this.Identity, corpse);
                 }
             }

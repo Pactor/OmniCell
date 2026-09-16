@@ -596,7 +596,7 @@ namespace ZoneEngine.Core.Combat
             // on no health. CharacterAction 99 on the victim, before experience and the corpse
             // (20260914-124401 s4 4609, then the corpse at 4620); Parameter2 is 500 to 503 across
             // the 569 of them in the fifteen retail recordings.
-            DeathMessage(victim);
+            int deathVariant = DeathMessage(victim);
 
             // Quests that are counting this kind of kill hear about it here.
             // Nothing else in the server knows a mob has died.
@@ -629,17 +629,12 @@ namespace ZoneEngine.Core.Combat
             // at all - no body, nothing to loot. A corpse of its own: the character is taken away
             // ten seconds after it falls, the corpse stays until it is looted or three minutes pass,
             // and by then the spawn may have died again.
-            Identity corpse = CorpseFullUpdateMessageHandler.Default.Send(victim, NewCorpseIdentity());
+            Identity corpse = NewCorpseIdentity();
+            var playfield = victim.Playfield as OmniCell.Core.Playfields.Playfield;
 
             // The wire object and its inventory are separate things.  Keep the
             // inventory in the object pool so opening the corpse and moving an
             // item out of it follow the same path as every other container.
-            CorpseLoot previous = Pool.Instance.GetObject<CorpseLoot>(victim.Playfield.Identity, corpse);
-            if (previous != null)
-            {
-                previous.Dispose();
-            }
-
             var loot = new CorpseLoot(victim.Playfield.Identity, corpse);
 
             // Loot comes from database rows. A bad row or a database error must not stop the rest of
@@ -653,22 +648,24 @@ namespace ZoneEngine.Core.Combat
                 global::Utility.LogUtil.ErrorException(e, "Loot for {0} could not be generated", victim.Name);
             }
 
-            // The corpse is the model; this is the container that makes it
-            // clickable. The live server sends both.
-            ChestItemFullUpdateMessageHandler.Default.SendForCorpse(
-                victim,
-                corpse,
-                victim.Stats[StatIds.cash].Value);
-
-            // And the playfield is told, because it owns the spawn point this
-            // one came from and it is the only thing that can put another one
-            // there. Without this a killed character stays dead where it fell
-            // for as long as the zone is up.
-            var playfield = victim.Playfield as OmniCell.Core.Playfields.Playfield;
+            // The playfield keeps the corpse message, tells whoever can see the body now, and tells
+            // anybody who walks up while the corpse still lies there.
             if (playfield != null)
             {
-                playfield.CorpseLeft(corpse);
+                // No ChestItemFullUpdate: none of the 2717 in the retail recordings is for a corpse (all
+                // are identity type 51017), and one sent under the corpse's own identity took its place
+                // in the client - the corpse was never drawn and could not be clicked.
+                playfield.CorpseLeft(victim, corpse, CorpseFullUpdateMessageHandler.Default.Build(victim, corpse, deathVariant));
+
+                // And the playfield is told, because it owns the spawn point this
+                // one came from and it is the only thing that can put another one
+                // there. Without this a killed character stays dead where it fell
+                // for as long as the zone is up.
                 playfield.Died(victim);
+            }
+            else
+            {
+                CorpseFullUpdateMessageHandler.Default.Send(victim, corpse, deathVariant);
             }
         }
 
@@ -693,7 +690,7 @@ namespace ZoneEngine.Core.Combat
                    };
         }
 
-        private static void DeathMessage(ICharacter victim)
+        private static int DeathMessage(ICharacter victim)
         {
             int roll;
             lock (Rng)
@@ -715,7 +712,7 @@ namespace ZoneEngine.Core.Combat
 
             if (victim.Playfield == null)
             {
-                return;
+                return variant;
             }
 
             victim.Playfield.Announce(
@@ -730,6 +727,7 @@ namespace ZoneEngine.Core.Combat
                     Parameter2 = variant,
                     Unknown2 = 0
                 });
+            return variant;
         }
 
         private static bool IsDead(ICharacter character)

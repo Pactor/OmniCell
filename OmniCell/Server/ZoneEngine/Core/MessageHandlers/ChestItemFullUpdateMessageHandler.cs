@@ -82,6 +82,14 @@ namespace ZoneEngine.Core.MessageHandlers
             this.Send(victim, Filler(victim, corpse, cash), true);
         }
 
+        /// <summary>
+        /// The corpse's container message without sending it; see CorpseFullUpdateMessageHandler.Build.
+        /// </summary>
+        public ChestItemFullUpdateMessage BuildForCorpse(ICharacter victim, Identity corpse, int cash)
+        {
+            return this.Create(victim, Filler(victim, corpse, cash));
+        }
+
         private static MessageDataFiller Filler(ICharacter victim, Identity corpse, int cash)
         {
             return message =>

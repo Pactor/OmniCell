@@ -103,15 +103,31 @@ namespace ZoneEngine.Core.MessageHandlers
         /// The corpse's identity, so that whatever wants to put loot in it can
         /// find it again.
         /// </returns>
-        public Identity Send(ICharacter victim, Identity identity)
+        public Identity Send(ICharacter victim, Identity identity, int deathVariant)
         {
-            DBMobCorpse corpse = MobCorpseDao.Instance.GetWhere(new { MobName = victim.Name }).FirstOrDefault();
-
-            this.Send(victim, Filler(victim, corpse, identity), true);
+            this.Send(victim, Filler(victim, Look(victim), identity, deathVariant), true);
             return identity;
         }
 
-        private static MessageDataFiller Filler(ICharacter victim, DBMobCorpse corpse, Identity identity)
+        /// <summary>
+        /// The corpse message without sending it, for the playfield to tell whoever comes near while
+        /// the corpse lies there.
+        /// </summary>
+        /// <remarks>
+        /// <paramref name="deathVariant"/> is the Parameter2 of the CharacterAction 99 the victim fell
+        /// with; the corpse's effect repeats it (20260914-124401 s4: 503 in both at 4609 and 4620).
+        /// </remarks>
+        public CorpseFullUpdateMessage Build(ICharacter victim, Identity identity, int deathVariant)
+        {
+            return this.Create(victim, Filler(victim, Look(victim), identity, deathVariant));
+        }
+
+        private static DBMobCorpse Look(ICharacter victim)
+        {
+            return MobCorpseDao.Instance.GetWhere(new { MobName = victim.Name }).FirstOrDefault();
+        }
+
+        private static MessageDataFiller Filler(ICharacter victim, DBMobCorpse corpse, Identity identity, int deathVariant)
         {
             return message =>
             {
@@ -149,7 +165,7 @@ namespace ZoneEngine.Core.MessageHandlers
                 message.LockDifficulty = LockDifficultyConstant;
                 message.Keyholders = new Identity[0];
                 message.ChestVersion = ChestVersionConstant;
-                message.NanoEffects = new[] { Effect(victim, corpse) };
+                message.NanoEffects = new[] { Effect(victim, corpse, deathVariant) };
                 message.Owner = victim.Identity;
 
                 // Five places, ids all zero in every captured corpse.
@@ -221,12 +237,12 @@ namespace ZoneEngine.Core.MessageHandlers
         /// and come out of the database; two are fixed at 1 and 4 in every
         /// captured copy; the other three are zero.
         /// </remarks>
-        private static NanoEffect Effect(ICharacter victim, DBMobCorpse corpse)
+        private static NanoEffect Effect(ICharacter victim, DBMobCorpse corpse, int deathVariant)
         {
             var arguments = new byte[ArgumentBytes];
             WriteInt32(arguments, 0, 0);
             WriteInt32(arguments, 4, 0);
-            WriteInt32(arguments, 8, corpse == null ? 0 : corpse.Unknown20);
+            WriteInt32(arguments, 8, deathVariant);
             WriteInt32(arguments, 12, FixedArguments[0]);
             WriteInt32(arguments, 16, FixedArguments[1]);
             WriteInt32(arguments, 20, corpse == null ? 0 : corpse.Unknown23);

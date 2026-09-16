@@ -1383,8 +1383,10 @@ internal static class AreaExtract
             var arguments = (byte[])Get(effect, "Arguments");
             if (arguments != null && arguments.Length >= 24)
             {
-                corpse.Unknown20 = BitConverter.ToInt32(arguments, 8);
-                corpse.Unknown23 = BitConverter.ToInt32(arguments, 20);
+                // Big-endian, like the rest of the wire. Read little-endian they came out
+                // byte-swapped: 503 as -150929408, and the client drew no corpse from them.
+                corpse.Unknown20 = (arguments[8] << 24) | (arguments[9] << 16) | (arguments[10] << 8) | arguments[11];
+                corpse.Unknown23 = (arguments[20] << 24) | (arguments[21] << 16) | (arguments[22] << 8) | arguments[23];
             }
 
             break;
