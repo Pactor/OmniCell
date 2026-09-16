@@ -27,7 +27,6 @@ DELETE FROM questitemrewards WHERE QuestId IN (1440331282, 1440331284, 144033128
 DELETE FROM questwire WHERE QuestId IN (1440331282, 1440331284, 1440331285, 1440331288);
 DELETE FROM questwireactions WHERE QuestId IN (1440331282, 1440331284, 1440331285, 1440331288);
 DELETE FROM questwirerewards WHERE QuestId IN (1440331282, 1440331284, 1440331285, 1440331288);
-DELETE FROM charactersquests WHERE QuestId IN (1440331282, 1440331284, 1440331285, 1440331288);
 DELETE FROM quests WHERE Id IN (1440331282, 1440331284, 1440331285, 1440331288);
 DELETE FROM knubotdialogue WHERE Playfield = 6553 AND NpcName = 'Lady Sheila Black';
 DELETE FROM knubotopeners WHERE Playfield = 6553 AND NpcName = 'Lady Sheila Black';
@@ -123,4 +122,3 @@ INSERT INTO knubotopeners (Playfield, NpcName, Priority, RequireActive, RequireD
 INSERT INTO knubotopeners (Playfield, NpcName, Priority, RequireActive, RequireDone, ForbidStarted, Node) VALUES (6553, 'Lady Sheila Black', 110, '1440331284', '', '', 6);
 INSERT INTO knubotopeners (Playfield, NpcName, Priority, RequireActive, RequireDone, ForbidStarted, Node) VALUES (6553, 'Lady Sheila Black', 100, '', '', '', 9);
 INSERT INTO knubotopeners (Playfield, NpcName, Priority, RequireActive, RequireDone, ForbidStarted, Node) VALUES (6553, 'Lady Sheila Black', 110, '1440331288', '', '', 10);
-
