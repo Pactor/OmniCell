@@ -34,9 +34,12 @@
   GREY (from the NewLevel messages). A creature more than KillRange levels
   below the player is grey and worth nothing. Grey is per player, so in a team
   each member is judged on their own level. The live server put
-  ExperienceKillRange 4 in NewLevel at levels 3, 6 and 7, 5 at level 12 and 6
-  at levels 16 and 18. Each KillRange row applies from its level until the
-  next row; the levels between captured ones are inferred.
+  ExperienceKillRange in NewLevel as: 4 at levels 2-7, 5 at 12-14, 6 at 15-21,
+  7 at 23-25, 8 at 26-29, 9 at 31-32 (thirty level-ups across the fifteen
+  2026-09 recordings, plus level 12 from the earlier ones). Each KillRange row
+  starts at the lowest level seen with that range and applies until the next
+  row. Levels 8-11, 16-17, 22 and 30 were not seen and take the row before
+  them; above 32 the last row applies until a capture says otherwise.
 
   Not modelled: the side bonus (its source is unknown), team sharing (the
   server has no teams yet; the captured two-player team got full amounts
@@ -49,5 +52,8 @@
 
   <KillRange level="1" range="4" />
   <KillRange level="12" range="5" />
-  <KillRange level="16" range="6" />
+  <KillRange level="15" range="6" />
+  <KillRange level="23" range="7" />
+  <KillRange level="26" range="8" />
+  <KillRange level="31" range="9" />
 </Experience>

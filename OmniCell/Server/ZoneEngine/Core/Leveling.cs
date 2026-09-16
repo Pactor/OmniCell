@@ -37,9 +37,10 @@ namespace ZoneEngine.Core
     ///
     /// The thresholds come from those captured NewLevel messages, which carry
     /// the experience needed for the level just reached and for the next one.
-    /// They chain correctly across seven captures, which is what makes them
-    /// thresholds rather than guesses. The proof-of-concept table continues
-    /// through level 10 using OmniCell's canonical Rubi-Ka XP table.
+    /// They chain correctly across the captures, which is what makes them
+    /// thresholds rather than guesses: 27 of them (levels 2-8, 13-16, 18-33),
+    /// every one equal to OmniCell's Rubi-Ka XP table, which fills in the rest
+    /// of levels 2 to 200. See XML Data\Levels.xml.
     ///
     /// Past the last known threshold a character stops levelling and the server
     /// says so, once. Extending an experience curve by eye is how a server ends
