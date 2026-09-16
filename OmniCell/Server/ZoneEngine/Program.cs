@@ -606,6 +606,8 @@ namespace ZoneEngine
                 Console.WriteLine("Loaded {0} Quests", QuestManager.Load());
                 Console.WriteLine("Loaded {0} Levels", Leveling.Load());
                 Console.WriteLine("Loaded {0} Creature Experience Levels", Experience.Load());
+                Console.WriteLine("Loaded {0} Creature Behaviours", NpcLife.Load());
+                Console.WriteLine("Loaded {0} Creature Appearances", NpcAppearance.Load());
                 Console.WriteLine("Loaded {0} Fixture Behaviours", FixtureBehaviours.Load());
                 Console.WriteLine("Loaded {0} Combat Weapon Descriptors", CombatWeaponProfiles.Load());
                 Console.WriteLine("Loaded {0} SpawnItem Keys", ItemSpawns.Load());

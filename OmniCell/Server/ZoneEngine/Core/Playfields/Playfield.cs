@@ -649,6 +649,9 @@ namespace OmniCell.Core.Playfields
                         mob.HeadingZ,
                         mob.HeadingW);
 
+                    // Whether it wanders, and whether it picks fights: see NpcLife.
+                    NpcLife.Spawned(cmob, new Coordinate { x = mob.X, y = mob.Y, z = mob.Z });
+
                     int health = cmob.Stats[StatIds.health].Value;
                     if (health > 0 && health < cmob.Stats[StatIds.life].Value)
                     {
@@ -2057,6 +2060,13 @@ namespace OmniCell.Core.Playfields
                 Pool.Instance.GetAll<ICharacter>((int)IdentityType.CanbeAffected)
                     .Where(xx => !xx.DoNotDoTimers && xx.InPlayfield(this.Identity));
 
+            // The players here, once per beat, for creatures deciding whether to pick a fight.
+            List<ICharacter> players = Pool.Instance.GetAll<Character>((int)IdentityType.CanbeAffected)
+                .Where(x => x != null && x.InPlayfield(this.Identity) && x.Controller != null
+                            && x.Controller.Client != null && !x.EnteringWorld)
+                .Cast<ICharacter>()
+                .ToList();
+
             foreach (ICharacter dynel in dynels)
             {
                 if (dynel == null)
@@ -2133,6 +2143,12 @@ namespace OmniCell.Core.Playfields
                                 dynel.Controller.StartPatrolling();
                             }
                         }
+                    }
+
+                    // Creatures wander and pick fights (NpcLife), before the swing below.
+                    if (dynel.Controller is NPCController)
+                    {
+                        NpcLife.Tick(dynel, players);
                     }
 
                     // Auto attack. The client sends AttackMessage once and

@@ -166,7 +166,10 @@ namespace ZoneEngine.Core.Controllers
             ICharacter npc = Pool.Instance.GetObject<ICharacter>(this.Character.Playfield.Identity, target);
             if (npc != null)
             {
-                Vector3 temp = npc.Coordinates().coordinate - this.Character.Coordinates().coordinate;
+                // From the target back to here, the way every other move here builds its heading: built
+                // the other way round the server predicted the character running away from what it
+                // follows (checked: a heading from (destination - here) moves a character away).
+                Vector3 temp = this.Character.Coordinates().coordinate - npc.Coordinates().coordinate;
                 temp.y = 0;
                 this.Character.Heading = (Quaternion)Quaternion.GenerateRotationFromDirectionVector(temp).Normalize();
                 FollowTargetMessageHandler.Default.Send(
@@ -480,9 +483,15 @@ namespace ZoneEngine.Core.Controllers
             Vector3 start = sourceCoord.coordinate;
             Vector3 dest = targetPosition;
 
-            // Check if we have arrived
-            if (start.Distance2D(dest) < 0.3f)
+            // Check if we have arrived. A run covers about 0.42 m a beat and a walk 0.15 m, so a point can
+            // be stepped over between two beats; a walk to a fixed point has also arrived once it stops
+            // getting closer.
+            double distance = start.Distance2D(dest);
+            bool overshot = this.followIdentity.Equals(Identity.None) && distance > this.lastDistance;
+            this.lastDistance = distance;
+            if (distance < 0.5f || overshot)
             {
+                this.lastDistance = double.MaxValue;
                 this.StopMovement();
                 this.Character.RawCoordinates = dest;
                 FollowTargetMessageHandler.Default.Send(this.Character, dest);
@@ -542,6 +551,63 @@ namespace ZoneEngine.Core.Controllers
                     next.Position);
                 this.StartMovement();
                 LogUtil.Debug(DebugInfoDetail.Movement, "Walking to: " + this.followCoordinates);
+            }
+        }
+
+        /// <summary>
+        /// Walks (or runs) straight to a point: one FollowTarget from here to there, the way the live
+        /// server moves a wandering creature a step at a time. DoFollow stops it on arrival.
+        /// </summary>
+        public void WalkTo(Vector3 destination, bool run)
+        {
+            this.lastDistance = double.MaxValue;
+            if (run)
+            {
+                this.Run();
+            }
+            else
+            {
+                this.Walk();
+            }
+
+            Vector3 here = this.Character.Coordinates().coordinate;
+            this.followIdentity = Identity.None;
+            this.followCoordinates = destination;
+            Vector3 direction = here - destination;
+            direction.y = 0;
+            this.Character.Heading = (Quaternion)Quaternion.GenerateRotationFromDirectionVector(direction).Normalize();
+            FollowTargetMessageHandler.Default.Send(this.Character, here, destination);
+            this.StartMovement();
+        }
+
+        /// <summary>
+        /// Stops where it is and says so: a chase that has reached its target, or one given up.
+        /// </summary>
+        public void Halt()
+        {
+            Vector3 here = this.Character.Coordinates().coordinate;
+            this.StopFollow();
+            this.StopMovement();
+            this.Character.Coordinates(here);
+            FollowTargetMessageHandler.Default.Send(this.Character, here);
+        }
+
+        /// <summary>
+        /// Whether it is following this character.
+        /// </summary>
+        public bool IsFollowing(Identity target)
+        {
+            return this.followIdentity.Equals(target);
+        }
+
+        /// <summary>
+        /// Whether anybody has a conversation open with it.
+        /// </summary>
+        public bool InConversation
+        {
+            get
+            {
+                return !this.knuBotSessions.IsEmpty;
             }
         }
 

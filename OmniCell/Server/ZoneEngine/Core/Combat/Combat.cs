@@ -150,11 +150,6 @@ namespace ZoneEngine.Core.Combat
                 return;
             }
 
-            if (DateTime.UtcNow < fight.NextSwing)
-            {
-                return;
-            }
-
             if (attacker.Playfield == null || IsDead(attacker))
             {
                 Stop(attacker);
@@ -168,6 +163,44 @@ namespace ZoneEngine.Core.Combat
                 // announced when the killing blow landed.
                 Stop(attacker);
                 StopFightMessageHandler.Default.Send(attacker);
+                (attacker.Controller as NPCController)?.Halt();
+                return;
+            }
+
+            // A creature closes the distance before it swings. The live server sends the attack, then
+            // runs the creature at its target a step at a time, and the first hit lands on arrival
+            // (Garbage Flea, 20260914-220505: attack at 17 m, runs of 5 m, hit 2.7 s later). It used to
+            // swing from wherever it stood. Checked every tick, not only when a swing is due, so the
+            // chase keeps up with a target that moves.
+            var creature = attacker.Controller as NPCController;
+            if (creature != null)
+            {
+                if (NpcLife.GivesUp(attacker, victim))
+                {
+                    Stop(attacker);
+                    StopFightMessageHandler.Default.Send(attacker);
+                    creature.Halt();
+                    return;
+                }
+
+                if (attacker.Coordinates().Distance2D(victim.Coordinates()) > NpcLife.Reach)
+                {
+                    if (!creature.IsFollowing(victim.Identity))
+                    {
+                        creature.Follow(victim.Identity);
+                    }
+
+                    return;
+                }
+
+                if (creature.IsFollowing())
+                {
+                    creature.Halt();
+                }
+            }
+
+            if (DateTime.UtcNow < fight.NextSwing)
+            {
                 return;
             }
 
