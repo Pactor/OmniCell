@@ -251,6 +251,32 @@ namespace ZoneEngine.Core.Combat
             Landed.TryRemove(caster, out running);
         }
 
+        /// <summary>
+        /// Puts a nano on a character at once, with no cast time, nano cost or recharge: what a
+        /// CastNano item or fixture function does.
+        /// </summary>
+        /// <remarks>
+        /// Using the Surgery Clinic, retail sends CastNanoSpell for nano 157490 on the user and then
+        /// SetNanoDuration, with nothing between them (20260909-142713 s3 7192-7193). The effect lands
+        /// between the two, as it does at the end of a normal cast.
+        /// </remarks>
+        public static void ApplyWithoutCasting(ICharacter character, int nanoId)
+        {
+            NanoFormula nano;
+            if (character == null || !NanoLoader.NanoList.TryGetValue(nanoId, out nano))
+            {
+                return;
+            }
+
+            CastNanoSpellMessageHandler.Default.Send(character, nanoId, character.Identity);
+            Land(character, nano, character.Identity);
+            CharacterActionMessageHandler.Default.SetNanoDuration(
+                character,
+                character.Identity,
+                nanoId,
+                nano.getItemAttribute(DurationAttribute));
+        }
+
         #endregion
 
         #region Effects

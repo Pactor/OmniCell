@@ -1231,6 +1231,7 @@ namespace OmniCell.Core.Playfields
             // character that is no longer in the playfield.
             Combat.Forget(identity);
             NanoCasting.Forget(identity);
+            SurgeryClinic.Forget(identity);
             QuestManager.Forget(identity);
             Pets.Forget(identity);
             CorpseLootAccess.ForgetCharacter(identity);

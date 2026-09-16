@@ -213,6 +213,8 @@ namespace ZoneEngine.Core.MessageHandlers
                         AOAction action = this.getAction(receivingPage, itemFrom);
 
                         if (FitsSlot(receivingPage, itemFrom, toPlacement)
+                            && ClinicAllows(receivingPage, itemFrom, client.Controller.Character)
+                            && ClinicAllows(receivingPage, itemTo, client.Controller.Character)
                             && action.CheckRequirements(client.Controller.Character))
                         {
                             UnEquip.Send(client, receivingPage, toPlacement);
@@ -277,6 +279,7 @@ namespace ZoneEngine.Core.MessageHandlers
                         AOAction action = this.getAction(receivingPage, itemFrom);
 
                         if (FitsSlot(receivingPage, itemFrom, toPlacement)
+                            && ClinicAllows(receivingPage, itemFrom, client.Controller.Character)
                             && action.CheckRequirements(client.Controller.Character))
                         {
                             if (!noAppearanceUpdate)
@@ -336,6 +339,13 @@ namespace ZoneEngine.Core.MessageHandlers
             {
                 if (unequipFrom != null)
                 {
+                    // An implant comes out only at a Surgery Clinic, like it goes in.
+                    if (!ClinicAllows(sendingPage, itemFrom, client.Controller.Character))
+                    {
+                        client.Controller.Character.DoNotDoTimers = false;
+                        return;
+                    }
+
                     // Send to client first
                     if (!noAppearanceUpdate)
                     {
@@ -416,6 +426,15 @@ namespace ZoneEngine.Core.MessageHandlers
         {
             ImplantInventoryPage implants = page as ImplantInventoryPage;
             return (implants == null) || implants.Fits(item, slot);
+        }
+
+        /// <summary>
+        /// Implants go into and come out of the implant page only while a Surgery Clinic window is
+        /// open. Spirits and every other page are not gated.
+        /// </summary>
+        private static bool ClinicAllows(IInventoryPage page, IItem item, ICharacter character)
+        {
+            return !(page is ImplantInventoryPage) || SurgeryClinic.MayMoveImplant(character, item);
         }
 
         /// <summary>

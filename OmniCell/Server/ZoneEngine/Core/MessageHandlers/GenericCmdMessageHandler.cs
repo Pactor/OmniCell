@@ -195,6 +195,15 @@ namespace ZoneEngine.Core.MessageHandlers
                             // spawns: the Merchant's Strongbox, where the thief hides (20260911-163012_s8
                             // #2372, #6729). Using it is a quest event all the same.
                             QuestManager.OnUse(client.Controller.Character, message.Target[0]);
+
+                            // The Surgery Clinic runs its own data and opens the implant window;
+                            // retail acknowledges the use (20260909-142713 s3 7195).
+                            if (SurgeryClinic.TryUse(client.Controller.Character, message.Target[0]))
+                            {
+                                this.Acknowledge(client.Controller.Character, message);
+                                break;
+                            }
+
                             client.Controller.UseStatel(message.Target[0]);
                         }
                     }
