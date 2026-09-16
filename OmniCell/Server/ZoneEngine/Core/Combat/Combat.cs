@@ -15,6 +15,7 @@ namespace ZoneEngine.Core.Combat
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Linq;
 
     using OmniCell.Core.Entities;
     using OmniCell.Core.Inventory;
@@ -578,6 +579,25 @@ namespace ZoneEngine.Core.Combat
             Stop(attacker);
             StopFightMessageHandler.Default.Send(attacker);
 
+            // Everything else fighting the dead stops, and so does the dead - the live server stops
+            // every fight involved before anything else (20260914-124401 s4 4604-4608).
+            foreach (var entry in Fights)
+            {
+                if (entry.Value.Target == victim.Identity)
+                {
+                    Fight ignored;
+                    Fights.TryRemove(entry.Key, out ignored);
+                }
+            }
+
+            Stop(victim);
+
+            // Then it falls over. Without this the client kept the character standing where it was,
+            // on no health. CharacterAction 99 on the victim, before experience and the corpse
+            // (20260914-124401 s4 4609, then the corpse at 4620); Parameter2 is 500 to 503 across
+            // the 569 of them in the fifteen retail recordings.
+            DeathMessage(victim);
+
             // Quests that are counting this kind of kill hear about it here.
             // Nothing else in the server knows a mob has died.
             // Experience, then "You can loot these remains.", then the corpse - the order the live
@@ -606,8 +626,10 @@ namespace ZoneEngine.Core.Combat
             }
 
             // And something has to be left behind, or the kill produces nothing
-            // at all - no body, nothing to loot.
-            Identity corpse = CorpseFullUpdateMessageHandler.Default.Send(victim);
+            // at all - no body, nothing to loot. A corpse of its own: the character is taken away
+            // ten seconds after it falls, the corpse stays until it is looted or three minutes pass,
+            // and by then the spawn may have died again.
+            Identity corpse = CorpseFullUpdateMessageHandler.Default.Send(victim, NewCorpseIdentity());
 
             // The wire object and its inventory are separate things.  Keep the
             // inventory in the object pool so opening the corpse and moving an
@@ -645,19 +667,69 @@ namespace ZoneEngine.Core.Combat
             var playfield = victim.Playfield as OmniCell.Core.Playfields.Playfield;
             if (playfield != null)
             {
+                playfield.CorpseLeft(corpse);
                 playfield.Died(victim);
             }
+        }
 
-            // Anything that was attacking the corpse should stop too, otherwise
-            // it keeps swinging at a dead target every heartbeat.
-            foreach (var entry in Fights)
+        /// <summary>
+        /// How often each death animation was seen: Parameter2 of the 569 captured deaths.
+        /// </summary>
+        private static readonly int[][] DeathVariants = { new[] { 500, 152 }, new[] { 501, 328 }, new[] { 502, 13 }, new[] { 503, 76 } };
+
+        private static int lastCorpse = 0x01010000;
+
+        /// <summary>
+        /// A corpse identity nothing else holds. The live server numbers corpses from 0x0101xxxx
+        /// (16848897, 16877569); a spawn that dies again while its last corpse still lies there gets
+        /// a second one rather than taking the first one's place.
+        /// </summary>
+        private static Identity NewCorpseIdentity()
+        {
+            return new Identity
+                   {
+                       Type = IdentityType.Corpse,
+                       Instance = System.Threading.Interlocked.Increment(ref lastCorpse)
+                   };
+        }
+
+        private static void DeathMessage(ICharacter victim)
+        {
+            int roll;
+            lock (Rng)
             {
-                if (entry.Value.Target == victim.Identity)
-                {
-                    Fight ignored;
-                    Fights.TryRemove(entry.Key, out ignored);
-                }
+                roll = Rng.Next(DeathVariants.Sum(v => v[1]));
             }
+
+            int variant = DeathVariants[DeathVariants.Length - 1][0];
+            foreach (int[] candidate in DeathVariants)
+            {
+                if (roll < candidate[1])
+                {
+                    variant = candidate[0];
+                    break;
+                }
+
+                roll -= candidate[1];
+            }
+
+            if (victim.Playfield == null)
+            {
+                return;
+            }
+
+            victim.Playfield.Announce(
+                new SmokeLounge.AOtomation.Messaging.Messages.N3Messages.CharacterActionMessage
+                {
+                    Identity = victim.Identity,
+                    Unknown = 0,
+                    Action = (SmokeLounge.AOtomation.Messaging.Messages.N3Messages.CharacterActionType)99,
+                    Unknown1 = 0,
+                    Target = Identity.None,
+                    Parameter1 = 0,
+                    Parameter2 = variant,
+                    Unknown2 = 0
+                });
         }
 
         private static bool IsDead(ICharacter character)

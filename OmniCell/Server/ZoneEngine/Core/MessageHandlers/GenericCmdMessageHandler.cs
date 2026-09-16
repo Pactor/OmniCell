@@ -98,7 +98,20 @@ namespace ZoneEngine.Core.MessageHandlers
                                 CorpseLoot corpse = Pool.Instance.GetObject<CorpseLoot>(
                                     client.Controller.Character.Playfield.Identity,
                                     message.Target[0]);
-                                if (corpse != null)
+                                if (corpse != null
+                                    && CorpseLootAccess.IsOpen(client.Controller.Character, corpse.Identity))
+                                {
+                                    // The second use closes it. A corpse closed with nothing left in it
+                                    // is taken away (see Playfield.CorpseEmptied).
+                                    CorpseLootAccess.ForgetCharacter(client.Controller.Character.Identity);
+                                    this.Acknowledge(client.Controller.Character, message);
+                                    var playfield = client.Controller.Character.Playfield as OmniCell.Core.Playfields.Playfield;
+                                    if (playfield != null && CorpseLootAccess.IsEmpty(corpse))
+                                    {
+                                        playfield.CorpseEmptied(corpse.Identity);
+                                    }
+                                }
+                                else if (corpse != null)
                                 {
                                     int virtualSlot = CorpseLootAccess.Open(client.Controller.Character, corpse);
                                     InventoryUpdateMessageHandler.Default.SendForCorpse(

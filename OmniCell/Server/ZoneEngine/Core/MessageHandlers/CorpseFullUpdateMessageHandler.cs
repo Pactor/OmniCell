@@ -103,15 +103,9 @@ namespace ZoneEngine.Core.MessageHandlers
         /// The corpse's identity, so that whatever wants to put loot in it can
         /// find it again.
         /// </returns>
-        public Identity Send(ICharacter victim)
+        public Identity Send(ICharacter victim, Identity identity)
         {
             DBMobCorpse corpse = MobCorpseDao.Instance.GetWhere(new { MobName = victim.Name }).FirstOrDefault();
-
-            var identity = new Identity
-                           {
-                               Type = IdentityType.Corpse,
-                               Instance = victim.Identity.Instance
-                           };
 
             this.Send(victim, Filler(victim, corpse, identity), true);
             return identity;

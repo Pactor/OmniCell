@@ -260,6 +260,32 @@ namespace OmniCell.Core.Playfields
         private readonly Dictionary<Identity, DateTime> risesAt = new Dictionary<Identity, DateTime>();
 
         /// <summary>
+        /// When each corpse is taken away.
+        /// </summary>
+        private readonly Dictionary<Identity, DateTime> corpseGoesAt = new Dictionary<Identity, DateTime>();
+
+        /// <summary>
+        /// How long a corpse lies there if nobody empties it.
+        /// </summary>
+        /// <remarks>
+        /// Three minutes. Across the fifteen retail recordings, 1143 corpses: the ones nobody opened,
+        /// and the ones opened and left with something in them, go 181.7 to 186.9 seconds after they
+        /// appeared - over two hundred of them, and nothing lived longer. Anything shorter was taken
+        /// away because the player walked off or emptied it.
+        /// </remarks>
+        private const int CorpseSeconds = 180;
+
+        /// <summary>
+        /// How long an emptied corpse stays once its looter closes it.
+        /// </summary>
+        /// <remarks>
+        /// The client uses the corpse a second time to close it. If nothing is left in it the live
+        /// server takes it away 0.8 to 1.8 seconds later (20260915-182305, corpses 16877583, 16877577,
+        /// 16877573, 16877569); one with something left in it stays for its three minutes.
+        /// </remarks>
+        private static readonly TimeSpan EmptiedCorpseLingers = TimeSpan.FromSeconds(1);
+
+        /// <summary>
         /// The lock over the two above.
         /// </summary>
         private readonly object deadLock = new object();
@@ -1027,6 +1053,33 @@ namespace OmniCell.Core.Playfields
         }
 
         /// <summary>
+        /// A corpse was left in this playfield; it goes in three minutes unless emptied first.
+        /// </summary>
+        public void CorpseLeft(Identity corpse)
+        {
+            lock (this.deadLock)
+            {
+                this.corpseGoesAt[corpse] = DateTime.UtcNow + TimeSpan.FromSeconds(CorpseSeconds);
+            }
+        }
+
+        /// <summary>
+        /// Somebody closed a corpse with nothing left in it: it goes almost at once.
+        /// </summary>
+        public void CorpseEmptied(Identity corpse)
+        {
+            lock (this.deadLock)
+            {
+                DateTime soon = DateTime.UtcNow + EmptiedCorpseLingers;
+                DateTime due;
+                if (this.corpseGoesAt.TryGetValue(corpse, out due) && due > soon)
+                {
+                    this.corpseGoesAt[corpse] = soon;
+                }
+            }
+        }
+
+        /// <summary>
         /// Take away the bodies that have lain long enough, and put back the
         /// characters whose spawn points are due.
         /// </summary>
@@ -1047,9 +1100,27 @@ namespace OmniCell.Core.Playfields
         {
             List<Identity> bodies = null;
             List<Identity> rising = null;
+            List<Identity> corpses = null;
 
             lock (this.deadLock)
             {
+                foreach (var due in this.corpseGoesAt)
+                {
+                    if (due.Value <= DateTime.UtcNow)
+                    {
+                        corpses = corpses ?? new List<Identity>();
+                        corpses.Add(due.Key);
+                    }
+                }
+
+                if (corpses != null)
+                {
+                    foreach (Identity gone in corpses)
+                    {
+                        this.corpseGoesAt.Remove(gone);
+                    }
+                }
+
                 foreach (var due in this.bodyGoesAt)
                 {
                     if (due.Value <= DateTime.UtcNow)
@@ -1085,22 +1156,22 @@ namespace OmniCell.Core.Playfields
                 }
             }
 
+            if (corpses != null)
+            {
+                foreach (Identity corpse in corpses)
+                {
+                    // The corpse and its loot go together, so nothing can be taken out of a corpse
+                    // the client has been told is gone.
+                    this.Announce(DespawnMessageHandler.Default.Create(corpse));
+                    CorpseLifecycle.Expire(this.Identity, corpse);
+                }
+            }
+
             if (bodies != null)
             {
                 foreach (Identity gone in bodies)
                 {
-                    var corpse = new Identity
-                                 {
-                                     Type = IdentityType.Corpse,
-                                     Instance = gone.Instance
-                                 };
-
-                    // The body and its transient inventory are separate pooled
-                    // identities. Expire both at the same point; otherwise the
-                    // invisible inventory remains addressable until this spawn
-                    // dies again.
-                    this.Announce(DespawnMessageHandler.Default.Create(corpse));
-                    CorpseLifecycle.Expire(this.Identity, corpse);
+                    // Only the fallen character. Its corpse is a separate thing on its own clock.
                     this.Despawn(gone);
                 }
             }
