@@ -125,7 +125,7 @@ namespace ZoneEngine.Core
             byte scale;
             if (secondScales.TryGetValue(npcName, out scale))
             {
-                message.UnknownData3 = scale;
+                message.SecondMonsterScale = scale;
             }
 
             ActiveNano[] glow;

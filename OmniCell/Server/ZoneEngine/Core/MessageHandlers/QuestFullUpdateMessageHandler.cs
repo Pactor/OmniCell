@@ -40,7 +40,7 @@ namespace ZoneEngine.Core.MessageHandlers
     /// of being filled with a majority value or a guessed marker shape.
     ///
     /// The action tracking identity is the only runtime-created value. Captures
-    /// prove its type is quest-specific and that QuestInfo.Unknown18 repeats
+    /// prove its type is quest-specific and that QuestInfo.ActionTrackingInstances repeats
     /// the instance with its upper five bits masked. OmniCell allocates a fresh
     /// instance and preserves that exact relationship.
     /// </remarks>
@@ -118,7 +118,7 @@ namespace ZoneEngine.Core.MessageHandlers
             DBQuest quest = entry.Quest;
             DBQuestWire wire = entry.Wire;
             QuestActionList[] actions = entry.WireActions.Select(Action).ToArray();
-            int[] tracking = actions.Select(a => a.Unknown17.Instance & 0x07FFFFFF).ToArray();
+            int[] tracking = actions.Select(a => a.ActionTracking.Instance & 0x07FFFFFF).ToArray();
 
             return new QuestInfo
                    {
@@ -142,7 +142,7 @@ namespace ZoneEngine.Core.MessageHandlers
                                         LowId = r.LowId,
                                         HighId = r.HighId,
                                         Quality = r.Quality,
-                                        Unknown1 = r.Unknown1
+                                        Unused = r.Unused
                                     }).ToArray(),
                        QuestCode = wire.QuestCode,
                        Unknown8 = 0,
@@ -156,12 +156,12 @@ namespace ZoneEngine.Core.MessageHandlers
                        TimeLimitCopy = wire.TimeLimit,
                        QuestActions = actions,
                        Unknown17 = new[] { character.Identity },
-                       Unknown18 = tracking,
+                       ActionTrackingInstances = tracking,
                        Unknown19 = new int[0],
                        CharInfos = new QuestCharInfo[0],
                        Unknown20 = wire.Unknown20,
                        UnknownIdentities20 = new[] { character.Identity },
-                       Unknown21 = wire.Unknown21,
+                       RequiredCount = wire.RequiredCount,
                        Unknown22 = wire.Unknown22,
                        Unknown23 = Id(wire.Unknown23Type, wire.Unknown23Instance),
                        Unknown24 = 0,
@@ -196,7 +196,7 @@ namespace ZoneEngine.Core.MessageHandlers
                        Unknown14 = Id(source.Unknown14Type, source.Unknown14Instance),
                        Deadline = source.Deadline,
                        Unknown16 = source.Unknown16,
-                       Unknown17 = Id(source.TrackingType, trackingInstance),
+                       ActionTracking = Id(source.TrackingType, trackingInstance),
                        Playfield = Id(source.PlayfieldType, source.PlayfieldInstance),
                        Unknown18 = source.Unknown18,
                        Unknown19 = source.Unknown19,

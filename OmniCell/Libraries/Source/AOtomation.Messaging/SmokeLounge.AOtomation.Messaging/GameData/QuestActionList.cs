@@ -85,8 +85,12 @@ namespace SmokeLounge.AOtomation.Messaging.GameData
         public int Deadline { get; set; }
         [AoMember(17)]
         public int Unknown16 { get; set; }
+        /// <summary>
+        /// The identity the client tracks this action by: its type is quest-specific, its instance made
+        /// at runtime and repeated, masked, in QuestInfo.ActionTrackingInstances.
+        /// </summary>
         [AoMember(18)]
-        public Identity Unknown17 { get; set; }
+        public Identity ActionTracking { get; set; }
 
         /// <summary>
         /// The playfield half of the marker. First field of the

@@ -18,7 +18,10 @@ namespace OmniCell.Database.Entities
         public int Quality { get; set; }
         public int TimeLimit { get; set; }
         public int Unknown20 { get; set; }
-        public int Unknown21 { get; set; }
+        /// <summary>
+        /// QuestInfo.RequiredCount: how many the objective asks for, 0 when it is not a number of anything.
+        /// </summary>
+        public int RequiredCount { get; set; }
         public int Unknown22 { get; set; }
         public int Unknown23Type { get; set; }
         public int Unknown23Instance { get; set; }

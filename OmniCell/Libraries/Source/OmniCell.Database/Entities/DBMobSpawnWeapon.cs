@@ -105,16 +105,16 @@ namespace OmniCell.Database.Entities
         public int QualityLevel { get; set; }
 
         /// <summary>
-        /// Varies per weapon and is not understood. Carried through as captured
-        /// rather than zeroed, because a value the client reads and we do not
-        /// is exactly the kind of thing that makes a model render wrongly.
+        /// Stat 23, staticinstance, of the captured weapon: AreaExtract reads it from that stat and
+        /// WeaponItemFullUpdateMessageHandler writes it back as that stat. Varies per weapon.
         /// </summary>
-        public int Unknown6 { get; set; }
+        public int StaticInstance { get; set; }
 
         /// <summary>
-        /// As Unknown6. Zero in most captures.
+        /// Stat 412, multiplecount, of the captured weapon, read and written the same way. Zero in most
+        /// captures.
         /// </summary>
-        public int Unknown7 { get; set; }
+        public int MultipleCount { get; set; }
 
         /// <summary>
         /// Optional ItemDelay stat (294) from the captured weapon payload.

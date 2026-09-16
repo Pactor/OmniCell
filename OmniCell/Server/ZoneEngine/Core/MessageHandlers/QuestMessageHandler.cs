@@ -30,10 +30,10 @@ namespace ZoneEngine.Core.MessageHandlers
     /// updates, which is close enough to one each to read as "and this is the
     /// one that changed".
     ///
-    /// All four unnamed fields hold the same value in all 58: Unknown1 is 1 and
-    /// the rest are 0. With no sample showing anything else there is nothing to
-    /// say about what Unknown1 would mean at 2, so it is sent as seen and named
-    /// as a constant rather than dressed up as an action code it may not be.
+    /// The other fields hold the same value in all 58: Version is 1, and the two
+    /// still unnamed, Unknown2 and Unknown3, are 0. With no sample showing anything
+    /// else there is nothing to say about what they would mean otherwise, so they
+    /// are sent as seen rather than dressed up as an action code they may not be.
     /// </remarks>
     [MessageHandler(MessageHandlerDirection.OutboundOnly)]
     public class QuestMessageHandler : BaseMessageHandler<QuestMessage, QuestMessageHandler>

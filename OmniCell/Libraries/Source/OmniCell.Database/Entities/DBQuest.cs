@@ -68,7 +68,7 @@ namespace OmniCell.Database.Entities
         /// the one who hands it out.
         /// </summary>
         /// <remarks>
-        /// Taken from QuestInfo.Unknown5, which was assumed to be the giver when
+        /// Taken from QuestInfo.QuestGiver (once Unknown5), which was assumed to be the giver when
         /// the quests were imported. Loading them proved that wrong: 13 of the
         /// Arete Landing quests come back attributed to Rex Larsson, including
         /// "Talk to Marcus Stone" and "Report to Alex", which are plainly not

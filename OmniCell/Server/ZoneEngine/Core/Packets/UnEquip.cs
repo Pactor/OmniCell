@@ -65,7 +65,7 @@ namespace ZoneEngine.Core.Packets
                 var unequipMessage = new CharacterActionMessage
                                      {
                                          Identity = client.Controller.Character.Identity,
-                                         Action = CharacterActionType.Unknown3,
+                                         Action = CharacterActionType.UnequipWeapon,
                                          Parameter2 = slotNumber
                                      };
                 client.Controller.Character.Send(unequipMessage);
@@ -80,8 +80,8 @@ namespace ZoneEngine.Core.Packets
                                             ItemHighId = item.HighID,
                                             ItemLowId = item.LowID,
                                             Quality = item.Quality,
-                                            Unknown1 = 1,
-                                            Unknown2 = 7,
+                                            Amount = 1,
+                                            Action = 7,
                                             Placement = new Identity
                                                         {
                                                             Type = (IdentityType)page.Identity.Instance,

@@ -134,9 +134,16 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
         SitToggle = 0x00000057,
 
         /// <summary>
-        /// No exported name. From the older table.
+        /// No exported name. Retail sends it to take a weapon out of its slot, Parameter2 the slot, and
+        /// before equipping over an occupied one (Documentation/HANDOFF-2026-09-13.md).
         /// </summary>
-        Unknown3 = 0x00000061,
+        UnequipWeapon = 0x00000061,
+
+        /// <summary>
+        /// No exported name. The victim falls: sent with the killing blow, before experience and the
+        /// corpse, Parameter2 the death animation 500 to 503 (569 deaths in the retail recordings).
+        /// </summary>
+        Death = 0x00000063,
 
         /// <summary>
         /// No exported name. From the older table.

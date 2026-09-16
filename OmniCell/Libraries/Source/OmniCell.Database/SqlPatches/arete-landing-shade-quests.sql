@@ -36,7 +36,7 @@ INSERT INTO quests (Id, Name, Description, GiverId, IconId, CashReward, Experien
 -- Finished by DialogueAnswer Lady Sheila Black: "I need my DNA imprented in this Blank ICC ID Chip.."  [20260914-220505_s5/s5 #25414]
 INSERT INTO questobjectives (QuestId, Ordinal, ObjectiveType, Target, TargetLowId, TargetHighId, TargetQuality, Required) VALUES (1440331282, 0, 12, 'I need my DNA imprented in this Blank ICC ID Chip..', 0, 0, 0, 1);
 INSERT INTO questtransitions (FromQuest, ToQuest, Ordinal) VALUES (1440331282, 1440331284, 0);
-INSERT INTO questwire (QuestId, Source, GiverType, GiverInstance, QuestCode, UnknownHash, Quality, TimeLimit, Unknown20, Unknown21, Unknown22, Unknown23Type, Unknown23Instance, Unknown25, Unknown26) VALUES (1440331282, 'Captured', 50000, 2052536072, 1095714628, 0, 0, 0, 6, 0, 105159, 0, 0, 0, 7);
+INSERT INTO questwire (QuestId, Source, GiverType, GiverInstance, QuestCode, UnknownHash, Quality, TimeLimit, Unknown20, RequiredCount, Unknown22, Unknown23Type, Unknown23Instance, Unknown25, Unknown26) VALUES (1440331282, 'Captured', 50000, 2052536072, 1095714628, 0, 0, 0, 6, 0, 105159, 0, 0, 0, 7);
 INSERT INTO questwireactions (QuestId, Ordinal, Version, ActionType, ActionInstance, Unknown1Type, Unknown1Instance, Unknown2Type, Unknown2Instance, Unknown3Type, Unknown3Instance, Unknown4Type, Unknown4Instance, Unknown5, Unknown6, Unknown7, Unknown8, Unknown9Type, Unknown9Instance, Unknown10, Unknown11, Unknown12, Unknown13, Unknown14Type, Unknown14Instance, Deadline, Unknown16, TrackingType, PlayfieldType, PlayfieldInstance, Unknown18, Unknown19, X, Y, Z) VALUES (1440331282, 0, 24, 0, 0, 0, 0, 70099, 105159, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 54001, 40016, 6553, 100000, 100000, 3413, 0, 904);
 
 -- Give a Soul Capsule to Lady Sheila Black  [20260914-220505_s5/s5:1440331284]
@@ -49,9 +49,9 @@ INSERT INTO questobjectives (QuestId, Ordinal, ObjectiveType, Target, TargetLowI
 INSERT INTO questitemrewards (QuestId, ItemId, Quantity, GrantOnAccept) VALUES (1440331284, 297333, 1, 1);
 INSERT INTO questitemrewards (QuestId, ItemId, Quantity, GrantOnAccept) VALUES (1440331284, 295715, 1, 0);
 INSERT INTO questtransitions (FromQuest, ToQuest, Ordinal) VALUES (1440331284, 1440331285, 0);
-INSERT INTO questwire (QuestId, Source, GiverType, GiverInstance, QuestCode, UnknownHash, Quality, TimeLimit, Unknown20, Unknown21, Unknown22, Unknown23Type, Unknown23Instance, Unknown25, Unknown26) VALUES (1440331284, 'Captured', 50000, 2052536072, 1465080153, 1112880708, 10, 0, 6, 0, 105161, 0, 0, 0, 7);
+INSERT INTO questwire (QuestId, Source, GiverType, GiverInstance, QuestCode, UnknownHash, Quality, TimeLimit, Unknown20, RequiredCount, Unknown22, Unknown23Type, Unknown23Instance, Unknown25, Unknown26) VALUES (1440331284, 'Captured', 50000, 2052536072, 1465080153, 1112880708, 10, 0, 6, 0, 105161, 0, 0, 0, 7);
 INSERT INTO questwireactions (QuestId, Ordinal, Version, ActionType, ActionInstance, Unknown1Type, Unknown1Instance, Unknown2Type, Unknown2Instance, Unknown3Type, Unknown3Instance, Unknown4Type, Unknown4Instance, Unknown5, Unknown6, Unknown7, Unknown8, Unknown9Type, Unknown9Instance, Unknown10, Unknown11, Unknown12, Unknown13, Unknown14Type, Unknown14Instance, Deadline, Unknown16, TrackingType, PlayfieldType, PlayfieldInstance, Unknown18, Unknown19, X, Y, Z) VALUES (1440331284, 0, 24, 0, 0, 0, 0, 70099, 105161, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 54001, 40016, 6553, 100000, 100000, 3413, 0, 904);
-INSERT INTO questwirerewards (QuestId, Ordinal, LowId, HighId, Quality, Unknown1) VALUES (1440331284, 0, 295715, 295715, 10, 0);
+INSERT INTO questwirerewards (QuestId, Ordinal, LowId, HighId, Quality, Unused) VALUES (1440331284, 0, 295715, 295715, 10, 0);
 
 -- Become a Vessel for the Spirit  [20260914-220505_s5/s5:1440331285]
 -- Finishes when the spirit is worn, the same way "Install the implant" does for everyone else.
@@ -59,7 +59,7 @@ INSERT INTO quests (Id, Name, Description, GiverId, IconId, CashReward, Experien
 -- Finished by Equip item 295715 QL10  [20260914-220505_s5/s5 #27342]
 INSERT INTO questobjectives (QuestId, Ordinal, ObjectiveType, Target, TargetLowId, TargetHighId, TargetQuality, Required) VALUES (1440331285, 0, 6, '295715', 0, 0, 0, 1);
 INSERT INTO questtransitions (FromQuest, ToQuest, Ordinal) VALUES (1440331285, 1440331288, 0);
-INSERT INTO questwire (QuestId, Source, GiverType, GiverInstance, QuestCode, UnknownHash, Quality, TimeLimit, Unknown20, Unknown21, Unknown22, Unknown23Type, Unknown23Instance, Unknown25, Unknown26) VALUES (1440331285, 'Captured', 50000, 2052536072, 1363234609, 0, 0, 0, 6, 0, 105162, 0, 0, 0, 7);
+INSERT INTO questwire (QuestId, Source, GiverType, GiverInstance, QuestCode, UnknownHash, Quality, TimeLimit, Unknown20, RequiredCount, Unknown22, Unknown23Type, Unknown23Instance, Unknown25, Unknown26) VALUES (1440331285, 'Captured', 50000, 2052536072, 1363234609, 0, 0, 0, 6, 0, 105162, 0, 0, 0, 7);
 INSERT INTO questwireactions (QuestId, Ordinal, Version, ActionType, ActionInstance, Unknown1Type, Unknown1Instance, Unknown2Type, Unknown2Instance, Unknown3Type, Unknown3Instance, Unknown4Type, Unknown4Instance, Unknown5, Unknown6, Unknown7, Unknown8, Unknown9Type, Unknown9Instance, Unknown10, Unknown11, Unknown12, Unknown13, Unknown14Type, Unknown14Instance, Deadline, Unknown16, TrackingType, PlayfieldType, PlayfieldInstance, Unknown18, Unknown19, X, Y, Z) VALUES (1440331285, 0, 24, 0, 0, 0, 0, 70099, 105162, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 54001, 40016, 6553, 100000, 100000, 3437, 0, 803);
 
 -- Talk to Lady Sheila Black  [20260914-220505_s5/s5:1440331288]
@@ -69,9 +69,9 @@ INSERT INTO quests (Id, Name, Description, GiverId, IconId, CashReward, Experien
 -- Finished by TradeHandIn item 296575 QL1 (linked in the stage description) Lady Sheila Black  [20260914-220505_s5/s5 #27844]
 INSERT INTO questobjectives (QuestId, Ordinal, ObjectiveType, Target, TargetLowId, TargetHighId, TargetQuality, Required) VALUES (1440331288, 0, 7, '296575', 296575, 296575, 1, 1);
 INSERT INTO questitemrewards (QuestId, ItemId, Quantity, GrantOnAccept) VALUES (1440331288, 296576, 1, 0);
-INSERT INTO questwire (QuestId, Source, GiverType, GiverInstance, QuestCode, UnknownHash, Quality, TimeLimit, Unknown20, Unknown21, Unknown22, Unknown23Type, Unknown23Instance, Unknown25, Unknown26) VALUES (1440331288, 'Captured', 50000, 2052536072, 860764484, 1261521734, 10, 0, 6, 0, 105163, 0, 0, 0, 7);
+INSERT INTO questwire (QuestId, Source, GiverType, GiverInstance, QuestCode, UnknownHash, Quality, TimeLimit, Unknown20, RequiredCount, Unknown22, Unknown23Type, Unknown23Instance, Unknown25, Unknown26) VALUES (1440331288, 'Captured', 50000, 2052536072, 860764484, 1261521734, 10, 0, 6, 0, 105163, 0, 0, 0, 7);
 INSERT INTO questwireactions (QuestId, Ordinal, Version, ActionType, ActionInstance, Unknown1Type, Unknown1Instance, Unknown2Type, Unknown2Instance, Unknown3Type, Unknown3Instance, Unknown4Type, Unknown4Instance, Unknown5, Unknown6, Unknown7, Unknown8, Unknown9Type, Unknown9Instance, Unknown10, Unknown11, Unknown12, Unknown13, Unknown14Type, Unknown14Instance, Deadline, Unknown16, TrackingType, PlayfieldType, PlayfieldInstance, Unknown18, Unknown19, X, Y, Z) VALUES (1440331288, 0, 24, 0, 0, 0, 0, 70099, 105163, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 54001, 40016, 6553, 100000, 100000, 3413, 0, 904);
-INSERT INTO questwirerewards (QuestId, Ordinal, LowId, HighId, Quality, Unknown1) VALUES (1440331288, 0, 296576, 296576, 1, 0);
+INSERT INTO questwirerewards (QuestId, Ordinal, LowId, HighId, Quality, Unused) VALUES (1440331288, 0, 296576, 296576, 1, 0);
 
 -- The fork itself: "Return to Vernon Godfray" (1439635802) already leads to Dr. Mason for everyone
 -- else; a Shade goes to Sheila Black instead. Each stage is passed over for whoever it is not for.

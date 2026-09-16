@@ -364,7 +364,7 @@ internal static class AreaExtract
 
     private sealed class Weapon
     {
-        public int Owner, Type, Instance, InventoryId, BodyLocation, ItemFlags, LowId, HighId, Quality, Unknown6, Unknown7;
+        public int Owner, Type, Instance, InventoryId, BodyLocation, ItemFlags, LowId, HighId, Quality, StaticInstance, MultipleCount;
 
         public int? ItemDelay, RechargeDelay, Energy;
     }
@@ -429,7 +429,7 @@ internal static class AreaExtract
 
         // QuestInfo fields whose values vary by quest.
         public int WireGiverType, WireGiverInstance, QuestCode, UnknownHash, Quality;
-        public int TimeLimit, Unknown20, Unknown21, Unknown22, Unknown23Type, Unknown23Instance;
+        public int TimeLimit, Unknown20, RequiredCount, Unknown22, Unknown23Type, Unknown23Instance;
         public int Unknown25, Unknown26;
 
         // The captured quest action. Its tracking instance is allocated at
@@ -1127,8 +1127,8 @@ internal static class AreaExtract
                                 LowId = unchecked((int)Held(stats, StatAcgItemTemplateId)),
                                 HighId = unchecked((int)Held(stats, StatAcgItemTemplateId2)),
                                 Quality = unchecked((int)Held(stats, StatAcgItemLevel)),
-                                Unknown6 = unchecked((int)Held(stats, StatStaticInstance)),
-                                Unknown7 = unchecked((int)Held(stats, StatMultipleCount)),
+                                StaticInstance = unchecked((int)Held(stats, StatStaticInstance)),
+                                MultipleCount = unchecked((int)Held(stats, StatMultipleCount)),
                                 ItemDelay = Optional(stats, StatItemDelay),
                                 RechargeDelay = Optional(stats, StatRechargeDelay),
                                 Energy = Optional(stats, StatEnergy)
@@ -1959,7 +1959,7 @@ internal static class AreaExtract
                                 Seen = ++questsSeen,
                                 GiverId = Int(Get(Get(info, "QuestGiver"), "Instance")),
                                 GiverType = Int(Get(Get(info, "QuestGiver"), "Type")),
-                                Needs = Int(Get(info, "Unknown21")),
+                                Needs = Int(Get(info, "RequiredCount")),
                                 IconId = Int(Get(info, "MissionIconId")),
                                 CashReward = Int(Get(info, "CashReward")),
                                 ExperienceReward = Int(Get(info, "ExperienceReward")),
@@ -1970,7 +1970,7 @@ internal static class AreaExtract
                                 Quality = Int(Get(info, "Quality")),
                                 TimeLimit = Int(Get(info, "TimeLimit")),
                                 Unknown20 = Int(Get(info, "Unknown20")),
-                                Unknown21 = Int(Get(info, "Unknown21")),
+                                RequiredCount = Int(Get(info, "RequiredCount")),
                                 Unknown22 = Int(Get(info, "Unknown22")),
                                 Unknown23Type = Int(Get(Get(info, "Unknown23"), "Type")),
                                 Unknown23Instance = Int(Get(Get(info, "Unknown23"), "Instance")),
@@ -1984,7 +1984,7 @@ internal static class AreaExtract
                     new[]
                         {
                             Int(Get(reward, "LowId")), Int(Get(reward, "HighId")),
-                            Int(Get(reward, "Quality")), Int(Get(reward, "Unknown1"))
+                            Int(Get(reward, "Quality")), Int(Get(reward, "Unused"))
                         });
             }
 
@@ -2024,7 +2024,7 @@ internal static class AreaExtract
                 row.ActionUnknown14Instance = Int(Get(Get(action, "Unknown14"), "Instance"));
                 row.ActionDeadline = Int(Get(action, "Deadline"));
                 row.ActionUnknown16 = Int(Get(action, "Unknown16"));
-                row.ActionTrackingType = Int(Get(Get(action, "Unknown17"), "Type"));
+                row.ActionTrackingType = Int(Get(Get(action, "ActionTracking"), "Type"));
                 row.ActionPlayfieldType = Int(Get(Get(action, "Playfield"), "Type"));
                 row.ActionPlayfieldInstance = Int(Get(Get(action, "Playfield"), "Instance"));
                 row.ActionUnknown18 = Int(Get(action, "Unknown18"));
@@ -2084,10 +2084,10 @@ internal static class AreaExtract
         foreach (Quest q in questRows.Values.Where(q => selected.Contains(q.Id)).OrderBy(q => q.Id))
         {
             sql.Add(
-                "REPLACE INTO questwire (QuestId, Source, GiverType, GiverInstance, QuestCode, UnknownHash, Quality, TimeLimit, Unknown20, Unknown21, Unknown22, Unknown23Type, Unknown23Instance, Unknown25, Unknown26) VALUES ("
+                "REPLACE INTO questwire (QuestId, Source, GiverType, GiverInstance, QuestCode, UnknownHash, Quality, TimeLimit, Unknown20, RequiredCount, Unknown22, Unknown23Type, Unknown23Instance, Unknown25, Unknown26) VALUES ("
                 + JoinSql(
                     q.Id, "'Captured'", q.WireGiverType, q.WireGiverInstance, q.QuestCode, q.UnknownHash,
-                    q.Quality, q.TimeLimit, q.Unknown20, q.Unknown21, q.Unknown22, q.Unknown23Type,
+                    q.Quality, q.TimeLimit, q.Unknown20, q.RequiredCount, q.Unknown22, q.Unknown23Type,
                     q.Unknown23Instance, q.Unknown25, q.Unknown26)
                 + ");");
 
@@ -2110,7 +2110,7 @@ internal static class AreaExtract
             {
                 int[] reward = q.WireRewards[ordinal];
                 sql.Add(
-                    "REPLACE INTO questwirerewards (QuestId, Ordinal, LowId, HighId, Quality, Unknown1) VALUES ("
+                    "REPLACE INTO questwirerewards (QuestId, Ordinal, LowId, HighId, Quality, Unused) VALUES ("
                     + JoinSql(q.Id, ordinal, reward[0], reward[1], reward[2], reward[3]) + ");");
             }
 
@@ -2555,7 +2555,7 @@ internal static class AreaExtract
                         CultureInfo.InvariantCulture,
                         "INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance,"
                         + " InventoryId, BodyLocation, ItemFlags, ItemLowId, ItemHighId, QualityLevel,"
-                        + " Unknown6, Unknown7, ItemDelay, RechargeDelay, Energy)"
+                        + " StaticInstance, MultipleCount, ItemDelay, RechargeDelay, Energy)"
                         + " VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14});",
                         n.Instance,
                         writeAs,
@@ -2567,8 +2567,8 @@ internal static class AreaExtract
                         w.LowId,
                         w.HighId,
                         w.Quality,
-                        w.Unknown6,
-                        w.Unknown7,
+                        w.StaticInstance,
+                        w.MultipleCount,
                         SqlNullable(w.ItemDelay),
                         SqlNullable(w.RechargeDelay),
                         SqlNullable(w.Energy)));
@@ -3599,7 +3599,7 @@ internal static class AreaExtract
     /// </summary>
     /// <remarks>
     /// Second choice. The count is on the wire - QuestInfo carries it in the
-    /// field this still calls Unknown21, which is 5 on "Terminate 5
+    /// field RequiredCount (once called Unknown21), which is 5 on "Terminate 5
     /// Malfunctioning Cleaning Robots" and 5 on "Alien Invasion" and zero on
     /// every quest that is not a number of anything - so the sentence is only
     /// read when the record does not say.

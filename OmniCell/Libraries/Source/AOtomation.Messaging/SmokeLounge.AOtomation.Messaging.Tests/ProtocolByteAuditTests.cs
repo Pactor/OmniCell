@@ -1131,11 +1131,11 @@ namespace SmokeLounge.AOtomation.Messaging.Tests
                 ItemLowId = 292235,
                 ItemHighId = 292235,
                 Quality = 1,
-                Unknown1 = 1,
-                Unknown2 = 6,
+                Amount = 1,
+                Action = 6,
                 Placement = Id(IdentityType.ArmorPage, 18),
-                Unknown3 = 0,
-                Unknown4 = 0
+                TargetType = 0,
+                TargetInstance = 0
             };
 
             AssertRetailPacket(
@@ -1159,11 +1159,11 @@ namespace SmokeLounge.AOtomation.Messaging.Tests
                 ItemLowId = 291082,
                 ItemHighId = 291082,
                 Quality = 1,
-                Unknown1 = 1,
-                Unknown2 = 3,
+                Amount = 1,
+                Action = 3,
                 Placement = Id(IdentityType.Inventory, 64),
-                Unknown3 = (int)IdentityType.CanbeAffected,
-                Unknown4 = unchecked((int)0x0A0B0C01)
+                TargetType = (int)IdentityType.CanbeAffected,
+                TargetInstance = unchecked((int)0x0A0B0C01)
             };
 
             AssertRetailPacket(

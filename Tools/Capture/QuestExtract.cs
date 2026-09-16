@@ -1098,7 +1098,7 @@ internal static class QuestExtract
                     break;
 
                 case KnuBotAppendTextMessage text:
-                    this.Say(text.Target.Instance, text.Text, text.Unknown2);
+                    this.Say(text.Target.Instance, text.Text, text.PresentationMode);
                     break;
 
                 case KnuBotAnswerListMessage list:
@@ -1645,7 +1645,7 @@ internal static class QuestExtract
 
         private void TakeTemplate(TemplateActionMessage template, string evidence)
         {
-            var item = new ItemRef { LowId = template.ItemLowId, HighId = template.ItemHighId, Quality = template.Quality, Count = Math.Max(1, template.Unknown1) };
+            var item = new ItemRef { LowId = template.ItemLowId, HighId = template.ItemHighId, Quality = template.Quality, Count = Math.Max(1, template.Amount) };
             if (template.Placement.Type == IdentityType.OverflowWindow)
             {
                 if (item.LowId == this.tradeskillResult || item.HighId == this.tradeskillResult)
@@ -1661,10 +1661,10 @@ internal static class QuestExtract
                 return;
             }
 
-            // Putting an item on: the server confirms it with Unknown2 6 on the equipment page, and a
+            // Putting an item on: the server confirms it with Action 6 on the equipment page, and a
             // stage that wants it worn finishes right after (20260909-142713 s3 8042-8043 implant,
             // 20260914-220505 26820-26823 Shade spirit).
-            if (template.Identity.Instance == this.player && template.Unknown2 == 6
+            if (template.Identity.Instance == this.player && template.Action == 6
                 && (template.Placement.Type == IdentityType.ImplantPage || template.Placement.Type == IdentityType.ArmorPage
                     || template.Placement.Type == IdentityType.WeaponPage || template.Placement.Type == IdentityType.SocialPage))
             {
@@ -1681,9 +1681,9 @@ internal static class QuestExtract
             this.snapshotSlots.Remove(template.Placement.Instance);
 
             // An item used on a character: the target rides along in the last two fields.
-            if (template.Unknown3 == (int)IdentityType.CanbeAffected && template.Unknown4 != 0)
+            if (template.TargetType == (int)IdentityType.CanbeAffected && template.TargetInstance != 0)
             {
-                this.Act(new Trigger { Kind = "UseItemOnCharacter", Item = item, Name = this.NameOf(template.Unknown4) }, evidence);
+                this.Act(new Trigger { Kind = "UseItemOnCharacter", Item = item, Name = this.NameOf(template.TargetInstance) }, evidence);
             }
         }
 
@@ -2231,10 +2231,10 @@ internal static class QuestExtract
         private void WriteWire(Stage stage, int id, QuestInfo info)
         {
             this.Line(
-                "INSERT INTO questwire (QuestId, Source, GiverType, GiverInstance, QuestCode, UnknownHash, Quality, TimeLimit, Unknown20, Unknown21, Unknown22, Unknown23Type, Unknown23Instance, Unknown25, Unknown26) VALUES ("
+                "INSERT INTO questwire (QuestId, Source, GiverType, GiverInstance, QuestCode, UnknownHash, Quality, TimeLimit, Unknown20, RequiredCount, Unknown22, Unknown23Type, Unknown23Instance, Unknown25, Unknown26) VALUES ("
                 + Int(id) + ", 'Captured', " + Int((int)info.QuestGiver.Type) + ", " + Int(info.QuestGiver.Instance) + ", "
                 + Int(info.QuestCode ?? 0) + ", " + Int(info.UnknownHash ?? 0) + ", " + Int(info.Quality ?? 0) + ", " + Int(info.TimeLimit) + ", "
-                + Int(info.Unknown20 ?? 0) + ", " + Int(info.Unknown21 ?? 0) + ", " + Int(info.Unknown22 ?? 0) + ", "
+                + Int(info.Unknown20 ?? 0) + ", " + Int(info.RequiredCount ?? 0) + ", " + Int(info.Unknown22 ?? 0) + ", "
                 + Int(info.Unknown23.HasValue ? (int)info.Unknown23.Value.Type : 0) + ", " + Int(info.Unknown23.HasValue ? info.Unknown23.Value.Instance : 0) + ", "
                 + Int(info.Unknown25 ?? 0) + ", " + Int(info.Unknown26 ?? 0) + ");");
 
@@ -2246,7 +2246,7 @@ internal static class QuestExtract
                     + Int(id) + ", " + Int(ordinal++) + ", " + Int(a.Version) + ", " + Id(a.Action) + ", " + Id(a.Unknown1) + ", " + Id(a.Unknown2) + ", "
                     + Id(a.Unknown3) + ", " + Id(a.Unknown4) + ", " + Float(a.Unknown5) + ", " + Float(a.Unknown6) + ", " + Float(a.Unknown7) + ", "
                     + Float(a.Unknown8) + ", " + Id(a.Unknown9) + ", " + Float(a.Unknown10) + ", " + Float(a.Unknown11) + ", " + Float(a.Unknown12) + ", "
-                    + Float(a.Unknown13) + ", " + Id(a.Unknown14) + ", " + Int(a.Deadline) + ", " + Int(a.Unknown16) + ", " + Int((int)a.Unknown17.Type) + ", "
+                    + Float(a.Unknown13) + ", " + Id(a.Unknown14) + ", " + Int(a.Deadline) + ", " + Int(a.Unknown16) + ", " + Int((int)a.ActionTracking.Type) + ", "
                     + Id(a.Playfield) + ", " + Int(a.Unknown18) + ", " + Int(a.Unknown19) + ", " + Float(a.X) + ", " + Float(a.Y) + ", " + Float(a.Z) + ");");
             }
 
@@ -2254,8 +2254,8 @@ internal static class QuestExtract
             foreach (QuestItemShort reward in info.ItemRewards ?? new QuestItemShort[0])
             {
                 this.Line(
-                    "INSERT INTO questwirerewards (QuestId, Ordinal, LowId, HighId, Quality, Unknown1) VALUES (" + Int(id) + ", " + Int(ordinal++) + ", "
-                    + Int(reward.LowId) + ", " + Int(reward.HighId) + ", " + Int(reward.Quality) + ", " + Int(reward.Unknown1) + ");");
+                    "INSERT INTO questwirerewards (QuestId, Ordinal, LowId, HighId, Quality, Unused) VALUES (" + Int(id) + ", " + Int(ordinal++) + ", "
+                    + Int(reward.LowId) + ", " + Int(reward.HighId) + ", " + Int(reward.Quality) + ", " + Int(reward.Unused) + ");");
             }
         }
 

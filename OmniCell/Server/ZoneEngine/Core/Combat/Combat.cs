@@ -720,7 +720,7 @@ namespace ZoneEngine.Core.Combat
                 {
                     Identity = victim.Identity,
                     Unknown = 0,
-                    Action = (SmokeLounge.AOtomation.Messaging.Messages.N3Messages.CharacterActionType)99,
+                    Action = SmokeLounge.AOtomation.Messaging.Messages.N3Messages.CharacterActionType.Death,
                     Unknown1 = 0,
                     Target = Identity.None,
                     Parameter1 = 0,

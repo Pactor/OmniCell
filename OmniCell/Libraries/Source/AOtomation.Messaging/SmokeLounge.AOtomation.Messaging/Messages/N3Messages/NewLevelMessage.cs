@@ -22,7 +22,7 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
     /// never deserialised. Reconstructed from 7 captured across several 18.8.x
     /// sessions, all 61 bytes:
     ///
-    ///   Level  Unknown1  Experience  ThisLevel  NextLevel  U2  U3  U4
+    ///   Level  IP        Experience  ThisLevel  NextLevel  Title KillRange Award
     ///       2      4662        1450       1450       4050   0   4   145
     ///       3      6471        4310       4050       7150   0   4   520
     ///       3      6631        4050       4050       7150   0   4   260
@@ -37,9 +37,9 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
     /// fixes those two as the thresholds either side. Experience then falls
     /// within that band in all seven, which fixes it as the running total.
     ///
-    /// Unknown1, Unknown3 and Unknown4 are left unnamed. Unknown3 was 4 in all
-    /// seven and Unknown4 moved without tracking level or experience, so
-    /// neither can be called from this sample.
+    /// The other four were named later from the client's dispatcher: improvement
+    /// points (stat 53), title level (stat 37), experience kill range (stat 275) and
+    /// the experience award the level-up feedback quotes. See each property.
     /// </remarks>
     [AoContract((int)N3MessageType.NewLevel)]
     public class NewLevelMessage : N3Message
@@ -61,7 +61,6 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
         [AoMember(0)]
         public int Level { get; set; }
 
-        [AoMember(1)]
         /// <summary>
         /// The character's improvement point balance after the level.
         /// </summary>
@@ -73,6 +72,7 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
         /// player's IP, so a server that sends zero here zeroes their
         /// improvement points on every level.
         /// </remarks>
+        [AoMember(1)]
         public int ImprovementPoints { get; set; }
 
         /// <summary>
@@ -95,10 +95,6 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
         public int ExperienceNextLevel { get; set; }
 
         /// <summary>
-        /// 0 in every captured sample.
-        /// </summary>
-        [AoMember(5)]
-        /// <summary>
         /// The character's title level, written only when positive.
         /// </summary>
         /// <remarks>
@@ -107,22 +103,20 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
         /// unconditional stat writes, which is why it is not beside the others
         /// at 0x10075FA1 onward.
         /// </remarks>
+        [AoMember(5)]
         public int TitleLevel { get; set; }
 
-        /// <summary>
-        /// 4 in every captured sample.
-        /// </summary>
-        [AoMember(6)]
         /// <summary>
         /// The experience kill range.
         /// </summary>
         /// <remarks>
         /// The message's + 0x30, pushed at 0x10075FDB with stat 0x113 - 275,
-        /// xpkillrange. 4 in all seven captured messages.
+        /// xpkillrange. 4 to level 7 and 9 by level 31 across the retail
+        /// recordings; see ZoneEngine XML Data\Experience.xml.
         /// </remarks>
+        [AoMember(6)]
         public int ExperienceKillRange { get; set; }
 
-        [AoMember(7)]
         /// <summary>
         /// The experience the event that caused the level awarded.
         /// </summary>
@@ -134,6 +128,7 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
         /// agree arithmetically: previous total plus this equals the total in
         /// the same message.
         /// </remarks>
+        [AoMember(7)]
         public int ExperienceAward { get; set; }
 
         #endregion

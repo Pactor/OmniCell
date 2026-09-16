@@ -74,10 +74,10 @@ namespace ZoneEngine.Core.MessageHandlers
                 x.ItemLowId = item.LowID;
                 x.Quality = item.Quality;
                 x.Placement = new Identity() { Type = (IdentityType)container, Instance = placement };
-                x.Unknown1 = 1;
-                x.Unknown2 = 3;
-                x.Unknown3 = 50000;
-                x.Unknown4 = character.Identity.Instance;
+                x.Amount = 1;
+                x.Action = 3;
+                x.TargetType = 50000;
+                x.TargetInstance = character.Identity.Instance;
             };
         }
 
@@ -98,7 +98,7 @@ namespace ZoneEngine.Core.MessageHandlers
 
         /// <summary>
         /// An item arriving through the overflow window, as a package's contents
-        /// do: Unknown2 87, placement OverflowWindow:0, Unknown3 and Unknown4
+        /// do: Action 87, placement OverflowWindow:0, TargetType and TargetInstance
         /// zero, in every copy (20260911-171203_s12 seq 1590-1631, 20260909-141545
         /// seq 729 and 2848-2854).
         /// </summary>
@@ -114,11 +114,11 @@ namespace ZoneEngine.Core.MessageHandlers
                     x.ItemHighId = item.HighID;
                     x.Quality = item.Quality;
                     // The stack size: 50 for fifty of one item (20260914-124401 #5493).
-                    x.Unknown1 = System.Math.Max(1, item.MultipleCount);
-                    x.Unknown2 = 87;
+                    x.Amount = System.Math.Max(1, item.MultipleCount);
+                    x.Action = 87;
                     x.Placement = new Identity { Type = IdentityType.OverflowWindow, Instance = 0 };
-                    x.Unknown3 = 0;
-                    x.Unknown4 = 0;
+                    x.TargetType = 0;
+                    x.TargetInstance = 0;
                 });
         }
 

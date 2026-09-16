@@ -105,10 +105,16 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
         IsImmune = 0x00800000,
 
         // 0000 0001 0000 0000 0000 0000 0000 0000
-        UnknownFlag3 = 0x01000000,
+        /// <summary>
+        /// A second monster scale byte follows (SecondMonsterScale).
+        /// </summary>
+        HasSecondMonsterScale = 0x01000000,
 
         // 0000 0010 0000 0000 0000 0000 0000 0000
-        UnknownDataFlag = 0x02000000,
+        /// <summary>
+        /// The NPC's pet type (stat 512) is written as a byte rather than a short.
+        /// </summary>
+        HasSmallPetType = 0x02000000,
 
         // 0000 0100 0000 0000 0000 0000 0000 0000
         HasOrgName = 0x04000000,
@@ -120,7 +126,10 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
         UnknownFlag5 = 0x10000000,
 
         // 0010 0000 0000 0000 0000 0000 0000 0000
-        UnknownFlag4 = 0x20000000,
+        /// <summary>
+        /// A shadowbreed byte follows (ShadowBreed, stat 532).
+        /// </summary>
+        HasShadowBreed = 0x20000000,
 
         /// <summary>
         /// Gates a list of Identities at the very end of the message.
