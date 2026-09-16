@@ -105,7 +105,16 @@ namespace ZoneEngine.Core
                 return null;
             }
 
-            return FindNear(character.Playfield.Identity.Instance, character.Coordinates(), used.Type);
+            // The terminal the client named, through the playfield's statel runs; the nearest clinic
+            // only where a playfield has no runs to name it by.
+            int playfield = character.Playfield.Identity.Instance;
+            StatelData named = StatelRuns.Resolve(playfield, used);
+            if (named != null)
+            {
+                return ClinicTemplates.Contains(named.TemplateId) ? named : null;
+            }
+
+            return FindNear(playfield, character.Coordinates(), used.Type);
         }
 
         /// <summary>

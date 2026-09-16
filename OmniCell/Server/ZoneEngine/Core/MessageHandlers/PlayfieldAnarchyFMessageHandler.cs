@@ -131,16 +131,18 @@ namespace ZoneEngine.Core.MessageHandlers
 
                 if (instanced)
                 {
-                    // An empty run table. The client is told what the playfield
-                    // is filled with by the dynel updates that follow, not by
-                    // this; the object is here because the client reads it.
+                    // The runs name the playfield file's statels to the client: which
+                    // instance each terminal and door goes by. Sent empty, the client had
+                    // no ids for them that the server could look up, so nothing it used -
+                    // an exit, the shuttle door, the Surgery Clinic - was found. See
+                    // StatelRuns and playfieldstatelruns.
                     x.TemplateGenerator = new PlayfieldTemplateGeneratorData
                                           {
                                               Identity =
                                                   new Identity { Type = TemplateGenerator, Instance = 1 },
                                               Revision = 1,
                                               Version = 1,
-                                              Runs = new PlayfieldDynelRun[0]
+                                              Runs = StatelRuns.ToWire(playfield)
                                           };
                 }
 

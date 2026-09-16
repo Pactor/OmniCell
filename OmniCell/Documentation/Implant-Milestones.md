@@ -108,12 +108,21 @@ the `tradeskill` table).
 - [ ] **Refusal messages.** No capture shows what retail says when a swap is
       refused (no clinic window, wrong slot, a Shade trying an implant, not
       enough credits at the clinic). Everything refused is silent for now.
-- [ ] **Client statel ids.** The client names playfield-file statels by runtime
-      ids (the clinic is Terminal:1477021820) that the data does not carry - it
-      holds 0xC00E1999, index 14 of playfield 6553. The Surgery Clinic is found
-      by looking for the nearest clinic statel within 8 metres instead. Every
-      other client-owned statel (exits, shuttle doors) is unreachable for the
-      same reason.
+- [x] **Client statel ids.** In an instanced playfield the client calls the
+      playfield file's statels by ids the server hands out in PlayfieldAnarchyF:
+      a table of runs over the file's statel list (type, start position, count,
+      first instance). Retail sent Arete Landing five runs, the same in both
+      sessions; every captured id fits (Exit Arete Landing 1477021806 at
+      position 10, Strongbox 1477021817, Remains of Shop Thief 1477021818,
+      Surgery Clinic 1477021820). OmniCell sent the table empty, so nothing the
+      client used there was found. The runs now come from `playfieldstatelruns`
+      (seeded by `SqlPatches/arete-landing-statel-runs.sql` with retail's own
+      numbers, so the quest objectives that name those ids still match), are
+      sent in PlayfieldAnarchyF, and `StatelRuns.Resolve` maps a client id back
+      to its statel for every statel use. The Surgery Clinic now resolves the
+      same way and keeps the nearest-clinic search only as a fallback. The
+      VendingMachine run is not sent, because OmniCell spawns Arete Landing's
+      vendors itself at the same spots.
 - [ ] **A capture session** covering: taking an implant and a spirit out,
       cluster removal at a Disassembly Clinic, and each refusal above.
 

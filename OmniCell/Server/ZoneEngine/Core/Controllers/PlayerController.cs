@@ -558,9 +558,9 @@ namespace ZoneEngine.Core.Controllers
 
             if (PlayfieldLoader.PFData.ContainsKey(this.Character.Playfield.Identity.Instance))
             {
-                StatelData sd =
-                    PlayfieldLoader.PFData[this.Character.Playfield.Identity.Instance].Statels.FirstOrDefault(
-                        x => (x.Identity.Type == identity.Type) && (x.Identity.Instance == identity.Instance));
+                // In an instanced playfield the client calls a statel by the instance the
+                // PlayfieldAnarchyF runs gave it, not by the playfield file's own id.
+                StatelData sd = StatelRuns.Resolve(this.Character.Playfield.Identity.Instance, identity);
 
                 if (sd != null)
                 {

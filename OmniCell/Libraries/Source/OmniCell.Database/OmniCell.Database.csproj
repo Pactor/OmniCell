@@ -56,6 +56,7 @@
     <Content Include="SqlTables\instanceditems.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\itemnames.sql" CopyToOutputDirectory="PreserveNewest" Condition="Exists('SqlTables\itemnames.sql')" />
     <Content Include="SqlTables\knubotscript.sql" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="SqlTables\playfieldstatelruns.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\items.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\login.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\mobdroptable.sql" CopyToOutputDirectory="PreserveNewest" />
