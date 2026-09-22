@@ -47,7 +47,37 @@ internal static class PcapDecode
 
     private static string DescribeMessage(object body, byte[] packet)
     {
+        return DescribeMessage(body, packet, false);
+    }
+
+    /// <summary>
+    /// One line per message. With <paramref name="expandRecords"/> the nested
+    /// record properties are opened up as well, rather than printing their CLR
+    /// type name - SimpleCharFullUpdate hides a pet's type inside CharacterInfo
+    /// that way, and the whole point of asking for one message type is to see
+    /// everything it carries.
+    /// </summary>
+    private static string DescribeMessage(object body, byte[] packet, bool expandRecords)
+    {
         var sb = new StringBuilder(body == null ? "<null body>" : body.GetType().Name);
+        if (body != null && body.GetType().Name == "StatMessage")
+        {
+            var statsProp = body.GetType().GetProperty("Stats");
+            var arr = statsProp?.GetValue(body, null) as Array;
+            var idProp = body.GetType().GetProperty("Identity");
+            sb.Append(" Identity=").Append(idProp?.GetValue(body, null));
+            sb.Append(" Stats={");
+            if (arr != null)
+                foreach (var e in arr)
+                {
+                    var v1 = e.GetType().GetProperty("Value1")?.GetValue(e, null);
+                    var v2 = e.GetType().GetProperty("Value2")?.GetValue(e, null);
+                    sb.Append(' ').Append(v1).Append('=').Append(v2);
+                }
+            sb.Append(" }");
+            sb.Append(" raw=").Append(BitConverter.ToString(packet));
+            return sb.ToString();
+        }
         if (body != null)
         {
             foreach (PropertyInfo property in body.GetType().GetProperties())
@@ -69,12 +99,57 @@ internal static class PcapDecode
                 }
 
                 sb.Append(' ').Append(property.Name).Append('=');
-                sb.Append(DescribeValue(value));
+                sb.Append(expandRecords ? DescribeValueDeep(value) : DescribeValue(value));
             }
         }
 
         sb.Append(" raw=").Append(BitConverter.ToString(packet));
         return sb.ToString();
+    }
+
+    /// <summary>
+    /// As DescribeValue, but opens up any nested record one level instead of
+    /// printing its type name. Arrays still print their length: an inventory or
+    /// a stat block expanded inline would bury the fields being looked for.
+    /// </summary>
+    private static string DescribeValueDeep(object value)
+    {
+        if (value == null)
+        {
+            return string.Empty;
+        }
+
+        var array = value as Array;
+        if (array != null)
+        {
+            return "[" + array.Length + "]";
+        }
+
+        Type type = value.GetType();
+        if (type.IsPrimitive || type.IsEnum || value is string || value is decimal)
+        {
+            return Convert.ToString(value);
+        }
+
+        var fields = new List<string>();
+        foreach (PropertyInfo property in type.GetProperties())
+        {
+            if (!property.CanRead || property.GetIndexParameters().Length != 0)
+            {
+                continue;
+            }
+
+            try
+            {
+                fields.Add(property.Name + "=" + DescribeValue(property.GetValue(value, null)));
+            }
+            catch
+            {
+            }
+        }
+
+        // No readable properties: a value type whose own ToString is the useful one.
+        return fields.Count == 0 ? Convert.ToString(value) : "{" + string.Join(" ", fields) + "}";
     }
 
     /// <summary>
@@ -416,7 +491,12 @@ internal static class PcapDecode
     {
         if (args.Length < 1)
         {
-            Console.WriteLine("usage: PcapDecode <streams.txt> [messagesDll]");
+            Console.WriteLine("usage: PcapDecode <streams.txt> [messagesDll] [--ordered | --only=Type[,Type...]]");
+            Console.WriteLine();
+            Console.WriteLine("  --ordered          print every message in capture order");
+            Console.WriteLine("  --only=A,B         print only those message types, in capture order, with");
+            Console.WriteLine("                     their raw bytes and any nested character info - use this");
+            Console.WriteLine("                     to answer \"what does the server actually send for X\".");
             return;
         }
 
@@ -474,7 +554,21 @@ internal static class PcapDecode
         var messageTails = new Dictionary<string, Queue<string>>();
         var fullCharacters = new List<string>();
         var orderedPackets = new List<string>();
-        bool printOrdered = args.Length > 2 && args[2] == "--ordered";
+        // --ordered prints everything in capture order; --only=A,B narrows that to the named
+        // message types. Narrowing is what you want when chasing one question through a whole
+        // session - the full ordered dump of a zone stream is tens of thousands of lines.
+        bool printOrdered = args.Length > 2 && (args[2] == "--ordered" || args[2].StartsWith("--only="));
+        var onlyTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        if (args.Length > 2 && args[2].StartsWith("--only="))
+        {
+            foreach (string name in args[2].Substring("--only=".Length).Split(','))
+            {
+                if (name.Length != 0)
+                {
+                    onlyTypes.Add(name.EndsWith("Message") ? name : name + "Message");
+                }
+            }
+        }
 
         foreach (var entry in streams.OrderByDescending(s => s.Value.Count))
         {
@@ -552,11 +646,11 @@ internal static class PcapDecode
                     totals[name] = totals.ContainsKey(name) ? totals[name] + 1 : 1;
                     ok++;
 
-                    if (printOrdered)
+                    if (printOrdered && (onlyTypes.Count == 0 || onlyTypes.Contains(name)))
                     {
                         orderedPackets.Add(
                             entry.Key + " sequence=" + (ushort)BigEndianInt16(packet, 0)
-                            + " " + DescribeMessage(body, packet));
+                            + " " + DescribeMessage(body, packet, onlyTypes.Count != 0));
                     }
 
                     Queue<string> tail = messageTails[entry.Key];
@@ -588,6 +682,37 @@ internal static class PcapDecode
                             }
 
                             sb.Append('[').Append(array.Length).Append(']');
+                            if (property.Name == "Stats1" || property.Name == "Stats2"
+                                || property.Name == "Stats3" || property.Name == "Stats4"
+                                || property.Name == "Buffs")
+                            {
+                                foreach (object stat in array)
+                                {
+                                    PropertyInfo idProperty = stat.GetType().GetProperty("Value1");
+                                    PropertyInfo valueProperty = stat.GetType().GetProperty("Value2");
+                                    if (idProperty == null || valueProperty == null)
+                                    {
+                                        sb.Append(' ').Append(stat);
+                                        continue;
+                                    }
+
+                                    object statId = idProperty.GetValue(stat, null);
+                                    sb.Append(' ').Append(statId).Append('(')
+                                        .Append(Convert.ToInt32(statId)).Append(")=")
+                                        .Append(valueProperty.GetValue(stat, null));
+                                }
+                            }
+                            if (property.Name == "ResearchGoals" || property.Name == "PerkEntries"
+                                || property.Name == "SkillEntries" || property.Name == "NanoEntries")
+                            {
+                                foreach (object e in array)
+                                {
+                                    sb.AppendLine().Append("      entry {");
+                                    foreach (PropertyInfo ep in e.GetType().GetProperties())
+                                        sb.Append(' ').Append(ep.Name).Append('=').Append(ep.GetValue(e, null));
+                                    sb.Append(" }");
+                                }
+                            }
                             if (property.Name == "InventorySlots")
                             {
                                 foreach (object slot in array)
@@ -605,6 +730,27 @@ internal static class PcapDecode
                         }
 
                         fullCharacters.Add(sb.ToString());
+                    }
+
+                    if (name == "SimpleCharFullUpdateMessage")
+                    {
+                        try
+                        {
+                            object ci = body.GetType().GetProperty("CharacterInfo").GetValue(body, null);
+                            if (ci != null && ci.GetType().Name == "PlayerInfo")
+                            {
+                                var sb2 = new StringBuilder(entry.Key + "  SCFU-Player Identity="
+                                    + body.GetType().GetProperty("Identity").GetValue(body, null));
+                                foreach (var pn in new[] { "StrengthBase", "AgilityBase", "StaminaBase",
+                                    "IntelligenceBase", "SenseBase", "PsychicBase" })
+                                {
+                                    var pi = ci.GetType().GetProperty(pn);
+                                    if (pi != null) sb2.Append(' ').Append(pn).Append('=').Append(pi.GetValue(ci, null));
+                                }
+                                simpleItemPackets.Add(sb2.ToString());
+                            }
+                        }
+                        catch { }
                     }
 
                     if (name == "WeaponItemFullUpdateMessage")
