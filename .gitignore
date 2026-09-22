@@ -159,3 +159,8 @@ ResourceDatabase.*
 !/Tools/AssetDecoder/AssetDecoder/Rdb/ResourceDatabase.cs
 /OmniCell/Datafiles/*.dat
 /OmniCell/Datafiles/itemrelations.txt
+
+# Scratch output from research sessions - reports, spreadsheets, node_modules.
+# Not part of the server; a git add -A swept 7,783 files of it into a commit on
+# 2026-09-22 before this line existed.
+research-output/
