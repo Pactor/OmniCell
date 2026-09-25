@@ -546,6 +546,9 @@ internal static class PcapDecode
 
         var totals = new Dictionary<string, int>();
         var unknownTypes = new Dictionary<int, int>();
+        // The first copy of each id that would not read, kept so the report can
+        // show what actually arrived rather than only how often it did.
+        var unknownSamples = new Dictionary<int, string>();
         var perkPackets = new List<string>();
         var followPackets = new List<string>();
         var weaponPackets = new List<string>();
@@ -820,10 +823,16 @@ internal static class PcapDecode
                         perkPackets.Add(sb.ToString());
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     bad++;
                     unknownTypes[typeId] = unknownTypes.ContainsKey(typeId) ? unknownTypes[typeId] + 1 : 1;
+                    if (!unknownSamples.ContainsKey(typeId))
+                    {
+                        unknownSamples[typeId] = entry.Key + "  " + ex.GetType().Name + ": " + ex.Message
+                                                 + Environment.NewLine + "      "
+                                                 + BitConverter.ToString(packet);
+                    }
                 }
             }
 
@@ -845,6 +854,11 @@ internal static class PcapDecode
             foreach (var kv in unknownTypes.OrderByDescending(k => k.Value))
             {
                 Console.WriteLine(string.Format("  {0,6}  0x{1:x8}", kv.Value, kv.Key));
+                string sample;
+                if (unknownSamples.TryGetValue(kv.Key, out sample))
+                {
+                    Console.WriteLine("      " + sample);
+                }
             }
         }
 
