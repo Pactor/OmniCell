@@ -302,8 +302,8 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization.Serializers.Custom
         /// list.
         ///
         /// The 0x1000AA2D helper writes the global at 0x101BE3A8 - 100000 - and
-        /// then a second list, of 0x34 byte things, which is empty in the one
-        /// captured apartment. Nothing here can say what is in a non-empty one,
+        /// then a second list, of 0x34 byte things, which is empty in both
+        /// captured apartments. Nothing here can say what is in a non-empty one,
         /// so a non-empty one stops the read rather than being guessed past.
         /// </remarks>
         private static OwnedBuildingGeneratorData ReadOwnedBuildingGenerator(
@@ -318,7 +318,7 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization.Serializers.Custom
             data.Version = streamReader.ReadInt32();
             data.Unknown1 = streamReader.ReadInt32();
             data.Model = streamReader.ReadIdentity();
-            data.Unknown2 = streamReader.ReadInt32();
+            data.EntranceDoor = streamReader.ReadInt32();
             data.Position = new Vector3
                             {
                                 X = streamReader.ReadSingle(),
@@ -383,7 +383,7 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization.Serializers.Custom
             streamWriter.WriteInt32(data.Version);
             streamWriter.WriteInt32(data.Unknown1);
             streamWriter.WriteIdentity(data.Model);
-            streamWriter.WriteInt32(data.Unknown2);
+            streamWriter.WriteInt32(data.EntranceDoor);
             streamWriter.WriteSingle(data.Position.X);
             streamWriter.WriteSingle(data.Position.Y);
             streamWriter.WriteSingle(data.Position.Z);

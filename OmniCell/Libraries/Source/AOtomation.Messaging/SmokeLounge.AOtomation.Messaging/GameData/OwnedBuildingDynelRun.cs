@@ -26,11 +26,11 @@ namespace SmokeLounge.AOtomation.Messaging.GameData
     ///
     /// Worth knowing when reading the neighbouring PlayfieldDynelRun, which
     /// 51069 uses and which this project models as five flat int32s: every
-    /// placement list in the one captured apartment holds exactly one entry, so
-    /// a flat reading of five int32s produces identical bytes here. If 51069's
-    /// own writer turns out to nest the same way, its second field is a count
-    /// rather than the Unknown it is called, and no capture where every count is
-    /// one could tell the difference. That has not been checked.
+    /// placement list in both captured apartments holds exactly one entry, so a
+    /// flat reading of five int32s produces identical bytes here. If 51069's own
+    /// writer turns out to nest the same way, its second field is a count rather
+    /// than the Unknown it is called, and no capture where every count is one
+    /// could tell the difference. That has not been checked.
     /// </remarks>
     public class OwnedBuildingDynelRun
     {

@@ -2131,7 +2131,7 @@ namespace SmokeLounge.AOtomation.Messaging.Tests
                     Version = 4,
                     Unknown1 = 6001,
                     Model = Id((IdentityType)51100, 6002),
-                    Unknown2 = unchecked((int)0xC0001772),
+                    EntranceDoor = unchecked((int)0xC0001772),
                     Position = new Vector3 { X = 0f, Y = 0f, Z = 0f },
                     Marker = 100000,
                     Unknown3 = 0x0C6377B0,
@@ -2166,6 +2166,89 @@ namespace SmokeLounge.AOtomation.Messaging.Tests
                 0x0002,
                 0x00000E11,
                 unchecked((int)0x0D904336));
+        }
+
+        [TestMethod]
+        public void PlayfieldAnarchyFSecondApartmentMatchesRetailCaptureByteForByte()
+        {
+            // A second Sunrise Station apartment, from 20260925-141548 stream 19,
+            // taken by a different character through a different door. It is
+            // here because one copy of a record read off a disassembly is a
+            // reading and two are a shape: everything but the instances, the
+            // door and Unknown3 is identical to the first, including the 100000
+            // the client writes from a global and the empty second list.
+            //
+            // This capture is also what named EntranceDoor, and it records the
+            // whole of claiming an apartment. The player used his key on the
+            // door with a GenericCmd UseItemOnItem whose two targets are the key
+            // at inventory slot 69 and the door at 51016:0xC0021772 - and
+            // 0xC0021772 is what this apartment's generator carries. The server
+            // echoed it with Verification 1, put item 281570 into the overflow
+            // window with a TemplateAction 87 and a ContainerAddItem - the same
+            // pair a mission uses to hand over a reward, and the owner says this
+            // one is the gift for moving in, a vehicle nano the player then
+            // uploads - deleted inventory slot 69, and teleported. So the key is
+            // spent on the door, and claiming the apartment is what pays out.
+            var body = new PlayfieldAnarchyFMessage
+            {
+                Identity = Id(IdentityType.Playfield2, 112016),
+                Unknown = 0,
+                Version = 4,
+                CharacterCoordinates = new Vector3
+                {
+                    X = 500.012726f,
+                    Y = 51.7143097f,
+                    Z = 499.800079f
+                },
+                TokenMarker = 0x61,
+                ModelId = Id(IdentityType.Playfield, 522245),
+                Group = 0,
+                Subgroup = 0,
+                PlayfieldId = Id(IdentityType.Playfield2, 112016),
+                PlayfieldX = -1,
+                PlayfieldZ = -1,
+                OwnedBuildingGenerator = new OwnedBuildingGeneratorData
+                {
+                    Identity = Id((IdentityType)51067, 522245),
+                    Revision = 1,
+                    Version = 4,
+                    Unknown1 = 6001,
+                    Model = Id(IdentityType.Playfield1, 6002),
+                    EntranceDoor = unchecked((int)0xC0021772),
+                    Position = new Vector3 { X = 0f, Y = 0f, Z = 0f },
+                    Marker = 100000,
+                    Unknown3 = 0x6027A4C0,
+                    Unknown4 = 0,
+                    Unknown5 = 30,
+                    Runs = new[]
+                    {
+                            Run(51005, 0, 3, 250041994),
+                            Run(51059, 3, 1, 565284),
+                            Run(51005, 4, 1, 250041997),
+                            Run(51016, 5, 1, 46998435),
+                            Run(51005, 6, 2, 250041998)
+                    }
+                }
+            };
+
+            AssertRetailPacket(
+                "00 02 00 0A 00 01 00 F6 00 00 0E 1C 0D 90 43 18 5F 4B 1A 39 " +
+                "00 00 9C 50 00 01 B5 90 00 00 00 00 04 43 FA 01 A1 42 4E DB " +
+                "74 43 F9 E6 69 61 00 00 C7 9D 00 07 F8 05 00 00 00 00 00 00 " +
+                "00 00 00 00 9C 50 00 01 B5 90 00 00 C7 7B 00 07 F8 05 00 00 " +
+                "00 01 00 00 00 04 00 00 17 71 00 00 C7 9C 00 00 17 72 C0 02 " +
+                "17 72 00 00 00 00 00 00 00 00 00 00 00 00 00 01 86 A0 00 00 " +
+                "00 00 60 27 A4 C0 00 00 00 00 00 00 00 1E 00 00 00 05 00 00 " +
+                "C7 3D 00 00 00 01 00 00 00 00 00 00 00 03 0E E7 56 8A 00 00 " +
+                "C7 73 00 00 00 01 00 00 00 03 00 00 00 01 00 08 A0 24 00 00 " +
+                "C7 3D 00 00 00 01 00 00 00 04 00 00 00 01 0E E7 56 8D 00 00 " +
+                "C7 48 00 00 00 01 00 00 00 05 00 00 00 01 02 CD 23 A3 00 00 " +
+                "C7 3D 00 00 00 01 00 00 00 06 00 00 00 02 0E E7 56 8E FF FF " +
+                "FF FF FF FF FF FF",
+                body,
+                0x0002,
+                0x00000E1C,
+                unchecked((int)0x0D904318));
         }
 
         /// <summary>
