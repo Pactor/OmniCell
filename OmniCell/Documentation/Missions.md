@@ -128,6 +128,53 @@ Floors count up from the lowest, not from zero: Grey Caves numbers its floors 0,
 they were walked at y 133, 69 and 0, so the height of a floor is `pool y + (floor - lowest) *
 worldHeight`.
 
+### The pools are in the repository now
+
+`Datafiles/missionpools.ocp` - ten pools, 639 rooms, ten kilobytes. It is an ordinary content
+pack, the fourth kind, read by `MissionPoolLoader` the way items and playfields are read.
+
+Per room it carries the index the zone-in packet sends, the client's name for it, the
+footprint in ten metre slots, what the name says the room is for, and one bit per two metre
+cell saying whether there is a floor there. Nothing else: which tile id draws a cell is the
+client's business, and a server placing rooms does not need it.
+
+Two things were checked over all 639 rooms rather than assumed, and the extractor fails if
+either stops being true:
+
+- every room's tile grid is exactly the size its rectangle claims;
+- every side is five cells per slot plus one, the extra row and column being the cells shared
+  with the rooms beyond.
+
+A third was checked and is worth writing down because it decides how connectivity is
+computed. The shared row and column - a room's last - hold only two values anywhere in the ten
+pools: zero in 15,269 cells and 0x80 in 110. Every ordinary tile id is in the interior. So the
+shared cell is normally claimed by the *neighbour*, whose own first row or column carries a
+real tile, and the composition rule is the one AOBuddy10 arrived at: a cell is floor when any
+room covering it says so. Two placed rooms therefore connect wherever the composed grid has
+floor across their boundary, and the pool's undecoded door pairs are not needed for placement.
+
+Roles come off the room names and nothing else, which is all that says them: 41 entrances, 30
+start rooms, 27 boss rooms, 3 elevators, 6 ramps, and 532 rooms whose names say nothing. Seven
+pools name no elevator at all, and the Grey Caves missions walked on 2026-09-23 still had
+working lifts, so an absent elevator room does not mean an absent lift - the buttons are items
+the server spawns and they need not stand in a room named for them.
+
+The decode behind this is not ours. The client keeps the pools in a tilemap record in its
+resource database, and that record was cracked in the AOBuddy10 project, which exports a
+`rooms.json` per playfield; `Tools/Capture/PoolExtract.cs` reads that export and writes the
+pack. Pointing it at the client instead would mean a second implementation of a decode that is
+already checked against three walked missions. The pack is what the repository carries, the
+same arrangement as the item and playfield packs.
+
+    PoolExtract <nav directory> <output.ocp>
+
+It reads the pack back and compares it field by field before it reports success.
+
+What the pack does **not** carry, and would need before a room can be furnished: the heights,
+which matter for ramps and are in the same export; and the rooms' object records, which are
+decoded but unidentified - 44 bytes that look like a position, a rotation, a second point and
+a radius - so there is still no rule for where a lift button stands inside a room.
+
 ### Lifts
 
 The floor buttons are items of type 0xC73D, recognised by template id: 159863 `Button (down)`,
@@ -144,10 +191,10 @@ locks and releases every skill.
 
 1. **Choose the types.** The dimensions decide it and the function is unmapped. See the sweep
    above.
-2. **Lay out a building.** We can read a layout and we have the pools, but nothing says how
-   retail picks and connects rooms - how many floors, where the elevator and boss rooms go,
-   how connectivity is guaranteed. The shared-door-cell rule is known, so an algorithm of our
-   own is buildable; it will not be retail's.
+2. **Lay out a building.** The pieces are now in the repository - every room, its footprint
+   and its floor - but nothing says how retail picks and connects them: how many floors, where
+   the elevator and boss rooms go, how connectivity is guaranteed. An algorithm of our own is
+   buildable on the pack; it will not be retail's.
 3. **Fill the rooms.** Buttons, doors, chests and the objective are server-spawned dynels.
    The pool rooms carry an `objects` array whose 44-byte records are decoded but not
    identified - they look like door or blocker placements - so there is no rule for where a

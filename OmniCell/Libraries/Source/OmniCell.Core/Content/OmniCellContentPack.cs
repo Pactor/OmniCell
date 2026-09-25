@@ -12,6 +12,7 @@ namespace OmniCell.Core.Content
     using OmniCell.Core.Events;
     using OmniCell.Core.Functions;
     using OmniCell.Core.Items;
+    using OmniCell.Core.Missions;
     using OmniCell.Core.Nanos;
     using OmniCell.Core.Playfields;
     using OmniCell.Core.Requirements;
@@ -32,6 +33,11 @@ namespace OmniCell.Core.Content
     /// Version 3 adds functions stored directly in the record body. Older packs
     /// still load; version 1 Record fields are null and version 2 bare-function
     /// lists are empty.
+    ///
+    /// The mission pool kind was added without moving the format version, and
+    /// deliberately: it adds no field to any existing record, so a pack of any
+    /// other kind reads exactly as it did before. The kind byte is what
+    /// separates them, and it is checked on every read.
     /// </remarks>
     public static class OmniCellContentPack
     {
@@ -43,7 +49,8 @@ namespace OmniCell.Core.Content
         {
             Items = 1,
             Nanos = 2,
-            Playfields = 3
+            Playfields = 3,
+            MissionPools = 4
         }
 
         public static void WriteItems(string filename, IEnumerable<ItemTemplate> source)
@@ -293,6 +300,90 @@ namespace OmniCell.Core.Content
                     result.Add(playfield);
                 }
                 return result;
+            });
+        }
+
+        /// <summary>
+        /// Write the room pools missions are built out of.
+        /// </summary>
+        /// <remarks>
+        /// The floor mask is written as it is held - one bit per cell, row
+        /// major - rather than as a tile grid, because a generator needs to know
+        /// where the floor is and nothing here needs to know which tile it is.
+        /// Ten pools and 639 rooms come to roughly twenty kilobytes before the
+        /// pack is compressed.
+        /// </remarks>
+        public static void WriteMissionPools(string filename, IEnumerable<MissionPool> source)
+        {
+            List<MissionPool> records = source.OrderBy(x => x.Playfield).ToList();
+            WritePack(filename, ContentKind.MissionPools, records.Count, writer =>
+            {
+                foreach (MissionPool pool in records)
+                {
+                    writer.Write(pool.Playfield);
+                    writer.Write(pool.Name ?? string.Empty);
+                    writer.Write(pool.Rooms == null ? 0 : pool.Rooms.Count);
+                    if (pool.Rooms == null) continue;
+
+                    foreach (MissionPoolRoom room in pool.Rooms.OrderBy(x => x.Index))
+                    {
+                        writer.Write(room.Index);
+                        writer.Write(room.Name ?? string.Empty);
+                        writer.Write(room.SlotsWidth);
+                        writer.Write(room.SlotsHeight);
+                        writer.Write((byte)room.Role);
+                        writer.Write(room.Floor == null ? 0 : room.Floor.Length);
+                        if (room.Floor != null) writer.Write(room.Floor);
+                    }
+                }
+            });
+        }
+
+        /// <summary>
+        /// Read the room pools missions are built out of.
+        /// </summary>
+        public static List<MissionPool> ReadMissionPools(string filename)
+        {
+            return ReadPack(filename, ContentKind.MissionPools, (reader, count, version) =>
+            {
+                var pools = new List<MissionPool>(count);
+                for (int i = 0; i < count; i++)
+                {
+                    var pool = new MissionPool
+                    {
+                        Playfield = reader.ReadInt32(),
+                        Name = reader.ReadString()
+                    };
+
+                    int rooms = ReadCount(reader, "mission pool rooms");
+                    for (int r = 0; r < rooms; r++)
+                    {
+                        var room = new MissionPoolRoom
+                        {
+                            Index = reader.ReadInt32(),
+                            Name = reader.ReadString(),
+                            SlotsWidth = reader.ReadInt32(),
+                            SlotsHeight = reader.ReadInt32(),
+                            Role = (MissionRoomRole)reader.ReadByte()
+                        };
+
+                        int bytes = ReadCount(reader, "mission room floor bytes");
+                        room.Floor = bytes == 0 ? new byte[0] : reader.ReadBytes(bytes);
+                        if (room.Floor.Length != bytes)
+                        {
+                            throw new InvalidDataException(
+                                "Mission room " + room.Index + " in pool " + pool.Playfield
+                                + " is short: wanted " + bytes + " floor bytes, got "
+                                + room.Floor.Length + ".");
+                        }
+
+                        pool.Rooms.Add(room);
+                    }
+
+                    pools.Add(pool);
+                }
+
+                return pools;
             });
         }
 
