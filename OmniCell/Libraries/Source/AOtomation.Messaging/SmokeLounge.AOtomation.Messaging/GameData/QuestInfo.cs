@@ -510,6 +510,15 @@ namespace SmokeLounge.AOtomation.Messaging.GameData
         /// zero in all 193 records, which would have meant a client that never
         /// draws a quest icon. Six values across the captures: 244818, 158429,
         /// 11330, 11340, 11342 and 11335.
+        ///
+        /// On a mission a terminal generated, this is also the mission's type -
+        /// see <see cref="MissionType"/>, which names five of those values. That
+        /// was settled on 2026-09-25 by expanding the offers inside the captured
+        /// QuestAlternative rolls and setting each offer's icon against the
+        /// assignment text the same record carries; the wordings are formulaic
+        /// and they separate cleanly. 244818 and 158429 are the two authored
+        /// Arete quests in the corpus, so the field is an icon that happens to
+        /// be the type for generated missions rather than a type field.
         /// </remarks>
         [AoMember(25)]
         public int MissionIconId { get; set; }
