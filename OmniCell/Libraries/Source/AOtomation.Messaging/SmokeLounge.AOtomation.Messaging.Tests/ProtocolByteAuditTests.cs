@@ -2081,6 +2081,115 @@ namespace SmokeLounge.AOtomation.Messaging.Tests
         }
 
         [TestMethod]
+        public void PlayfieldAnarchyFApartmentMatchesRetailCaptureByteForByte()
+        {
+            // Entering a private Sunrise Station luxury apartment, from
+            // 20260925-134417 stream 11. The DbObject this one ends with is
+            // neither of the two the reader knew: identity type 51067, which the
+            // client registers beside 51069 at Gamecode 0x101521F0 and whose
+            // only plausible name among the three generator classes it ships is
+            // AVOwnedBuildingGeneratorData_t. An apartment is a building
+            // somebody owns.
+            //
+            // Until 2026-09-25 this packet could not be read at all. The reader
+            // refused it outright rather than mis-reading it, which is why the
+            // failure showed up as an exception and not as a wrong apartment.
+            //
+            // The five runs are what the apartment is furnished with, and they
+            // check out against what the player then did: a run of three from
+            // instance 250173593 covers the market terminal he opened and the
+            // bank terminal at 250173594 that has no record of its own, and
+            // 250173596 is the grid terminal he tried. The start indexes run
+            // 0, 3, 4, 5, 6 against counts 3, 1, 1, 1, 2 - each start the
+            // previous start plus the previous count, the same arithmetic that
+            // settled the 51069 table.
+            //
+            // PlayfieldX and PlayfieldZ are -1, as they are for a mission: an
+            // apartment is not anywhere on the world map either.
+            var body = new PlayfieldAnarchyFMessage
+            {
+                Identity = Id(IdentityType.Playfield2, 111972),
+                Unknown = 0,
+                Version = 4,
+                CharacterCoordinates = new Vector3
+                {
+                    X = 500.012726f,
+                    Y = 51.7143097f,
+                    Z = 499.800079f
+                },
+                TokenMarker = 0x61,
+                ModelId = Id((IdentityType)51101, 522244),
+                Group = 0,
+                Subgroup = 0,
+                PlayfieldId = Id(IdentityType.Playfield2, 111972),
+                PlayfieldX = -1,
+                PlayfieldZ = -1,
+                OwnedBuildingGenerator = new OwnedBuildingGeneratorData
+                {
+                    Identity = Id((IdentityType)51067, 522244),
+                    Revision = 1,
+                    Version = 4,
+                    Unknown1 = 6001,
+                    Model = Id((IdentityType)51100, 6002),
+                    Unknown2 = unchecked((int)0xC0001772),
+                    Position = new Vector3 { X = 0f, Y = 0f, Z = 0f },
+                    Marker = 100000,
+                    Unknown3 = 0x0C6377B0,
+                    Unknown4 = 0,
+                    Unknown5 = 30,
+                    Runs = new[]
+                    {
+                            Run(51005, 0, 3, 250173593),
+                            Run(51059, 3, 1, 557089),
+                            Run(51005, 4, 1, 250173596),
+                            Run(51016, 5, 1, 46978197),
+                            Run(51005, 6, 2, 250173597)
+                    }
+                }
+            };
+
+            AssertRetailPacket(
+                "00 02 00 0A 00 01 00 F6 00 00 0E 11 0D 90 43 36 5F 4B 1A 39 " +
+                "00 00 9C 50 00 01 B5 64 00 00 00 00 04 43 FA 01 A1 42 4E DB " +
+                "74 43 F9 E6 69 61 00 00 C7 9D 00 07 F8 04 00 00 00 00 00 00 " +
+                "00 00 00 00 9C 50 00 01 B5 64 00 00 C7 7B 00 07 F8 04 00 00 " +
+                "00 01 00 00 00 04 00 00 17 71 00 00 C7 9C 00 00 17 72 C0 00 " +
+                "17 72 00 00 00 00 00 00 00 00 00 00 00 00 00 01 86 A0 00 00 " +
+                "00 00 0C 63 77 B0 00 00 00 00 00 00 00 1E 00 00 00 05 00 00 " +
+                "C7 3D 00 00 00 01 00 00 00 00 00 00 00 03 0E E9 58 99 00 00 " +
+                "C7 73 00 00 00 01 00 00 00 03 00 00 00 01 00 08 80 21 00 00 " +
+                "C7 3D 00 00 00 01 00 00 00 04 00 00 00 01 0E E9 58 9C 00 00 " +
+                "C7 48 00 00 00 01 00 00 00 05 00 00 00 01 02 CC D4 95 00 00 " +
+                "C7 3D 00 00 00 01 00 00 00 06 00 00 00 02 0E E9 58 9D FF FF " +
+                "FF FF FF FF FF FF",
+                body,
+                0x0002,
+                0x00000E11,
+                unchecked((int)0x0D904336));
+        }
+
+        /// <summary>
+        /// One owned-building run holding a single placement, which is all any
+        /// captured apartment has held.
+        /// </summary>
+        private static OwnedBuildingDynelRun Run(int type, int start, int count, int firstInstance)
+        {
+            return new OwnedBuildingDynelRun
+                   {
+                       Type = (IdentityType)type,
+                       Placements = new[]
+                                    {
+                                        new OwnedBuildingPlacement
+                                        {
+                                            StartIndex = start,
+                                            Count = count,
+                                            FirstInstance = firstInstance
+                                        }
+                                    }
+                   };
+        }
+
+        [TestMethod]
         public void HealthDamageEnergyHitMatchesRetailCaptureByteForByte()
         {
             // A character taking 24 energy damage from itself - a reflect or a
