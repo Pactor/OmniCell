@@ -334,6 +334,17 @@ namespace OmniCell.Core.Content
                         writer.Write((byte)room.Role);
                         writer.Write(room.Floor == null ? 0 : room.Floor.Length);
                         if (room.Floor != null) writer.Write(room.Floor);
+
+                        writer.Write(room.Doors == null ? 0 : room.Doors.Count);
+                        if (room.Doors == null) continue;
+
+                        foreach (MissionDoorSocket door in room.Doors)
+                        {
+                            writer.Write(door.X);
+                            writer.Write(door.Z);
+                            writer.Write((byte)door.Side);
+                            writer.Write(door.AdjoiningRoom);
+                        }
                     }
                 }
             });
@@ -375,6 +386,18 @@ namespace OmniCell.Core.Content
                                 "Mission room " + room.Index + " in pool " + pool.Playfield
                                 + " is short: wanted " + bytes + " floor bytes, got "
                                 + room.Floor.Length + ".");
+                        }
+
+                        int doors = ReadCount(reader, "mission room door sockets");
+                        for (int s = 0; s < doors; s++)
+                        {
+                            room.Doors.Add(new MissionDoorSocket
+                            {
+                                X = reader.ReadInt32(),
+                                Z = reader.ReadInt32(),
+                                Side = (MissionDoorSide)reader.ReadByte(),
+                                AdjoiningRoom = reader.ReadInt32()
+                            });
                         }
 
                         pool.Rooms.Add(room);

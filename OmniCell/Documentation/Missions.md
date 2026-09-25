@@ -170,10 +170,55 @@ same arrangement as the item and playfield packs.
 
 It reads the pack back and compares it field by field before it reports success.
 
-What the pack does **not** carry, and would need before a room can be furnished: the heights,
-which matter for ramps and are in the same export; and the rooms' object records, which are
-decoded but unidentified - 44 bytes that look like a position, a rotation, a second point and
-a radius - so there is still no rule for where a lift button stands inside a room.
+What the pack does **not** carry: the per-cell heights, which matter for ramps and are in the
+same export.
+
+The rooms' 44-byte object records are not in it either, and they are not the fixture
+placements they were taken for. Only the cave pool has any - 52 records over 42 rooms, none at
+all in the other nine - while a mission in the Grey Caves sent seventeen doors. Each is a
+position, an identity rotation, a second point and a radius of one and a half to five metres,
+which is a capsule, and a capsule in a cave and nowhere else is a rock to walk round. They are
+blockers, not sockets.
+
+### Where a door can stand: solved
+
+The room record in the client's tilemap ends with a count and that many pairs of int16, and
+the second of each pair is:
+
+    value = 4 * (z * 5W + x) + side        side: 0 south, 1 east, 2 north, 3 west
+
+with W the room's width in slots and (x, z) a cell on the room's 5W by 5H **interior** grid -
+the floor mask less its shared last row and column. The door stands in the named wall of that
+cell. The first int16 is the room it opens onto, 0xFFFF where the template does not say, which
+is 1,851 of the 1,889.
+
+Two tests, and the extractor runs both every time the pack is built:
+
+- **Every one of the 1,889 records in the ten pools decodes to a cell inside its own room.**
+  None out of range. 589 north, 476 south, 425 east, 399 west.
+- **Placing pool 341's sockets through a captured mission's own room list reproduces every
+  door that mission's server sent.** Nineteen rooms and seventeen doors from
+  `20260923-201746` stream 12; all seventeen predicted, to the metre, out of 34 sockets
+  placed. The other seventeen are doors the capture does not contain - six of them belong to
+  rooms that sent no door at all, which is what the first four minutes of a mission looks like
+  with distant objects still streaming.
+
+A socket is not a door: which neighbour each one opens onto is the generator's business. But
+the *count* is not - the number of sockets in a template is the number of doors the room gets,
+which agreed room by room with that capture everywhere the capture was complete. 229 of the
+1,889 sit on an interior cell rather than the boundary, which is a door between parts of one
+room.
+
+Three more things the same capture settles about a door:
+
+- It sits at the **midpoint of a slot edge**, always. All seventeen, without exception: one
+  coordinate a multiple of ten and the other a multiple of ten plus five.
+- `DoorFullUpdate` carries `Room` and `AdjoiningRoom`, and they are **indexes into the
+  placement list the zone-in packet sent**, with -1 for the outside. The one door with
+  `Room = -1` is the way in.
+- `LockDifficulty` was 50 on thirteen of them and 184 on four, with no keyholders. A mission
+  therefore has ordinary doors and hard ones in the same building, which is the first hard
+  evidence for what the open/hidden dimension is buying.
 
 ### Lifts
 
@@ -195,10 +240,11 @@ locks and releases every skill.
    and its floor - but nothing says how retail picks and connects them: how many floors, where
    the elevator and boss rooms go, how connectivity is guaranteed. An algorithm of our own is
    buildable on the pack; it will not be retail's.
-3. **Fill the rooms.** Buttons, doors, chests and the objective are server-spawned dynels.
-   The pool rooms carry an `objects` array whose 44-byte records are decoded but not
-   identified - they look like door or blocker placements - so there is no rule for where a
-   button stands inside a room, only four observed positions.
+3. **Fill the rooms.** Doors are solved - the sockets are in the pack and the placement
+   reproduces a real mission exactly. What is left is everything else the server spawns:
+   chests, traps, lift buttons and the objective itself. The pool rooms say nothing about
+   those, and the only positions on record are the four buttons observed in the 2026-09-23
+   runs.
 4. **Populate it.** Which creatures a pool spawns at a given level, how many, and how the boss
    is chosen: no data at all. Nothing in any capture here addresses it.
 5. **Write the text.** The objective's name is inside server-composed prose and no template

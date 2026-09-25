@@ -125,6 +125,14 @@ namespace OmniCell.Tools.Capture
 
             Console.WriteLine();
             Console.WriteLine(
+                "{0} door sockets, {1} of them on an interior cell rather than the boundary",
+                pools.Sum(p => p.Rooms.Sum(r => r.Doors.Count)),
+                pools.Sum(p => p.Rooms.Sum(r => r.Doors.Count(
+                    s => s.X != 0 && s.Z != 0
+                         && s.X != (r.SlotsWidth * 5) - 1 && s.Z != (r.SlotsHeight * 5) - 1))));
+
+            Console.WriteLine();
+            Console.WriteLine(
                 "{0} pools, {1} rooms, {2} cells -> {3} ({4:N0} bytes)",
                 pools.Count,
                 totalRooms,
@@ -138,7 +146,104 @@ namespace OmniCell.Tools.Capture
             Verify(pools, reread);
             Console.WriteLine("round trip: " + reread.Sum(p => p.Rooms.Count) + " rooms read back identical");
 
-            return 0;
+            return CapturedMission(reread) ? 0 : 1;
+        }
+
+        /// <summary>
+        /// The 19 rooms a captured mission placed: pool 341 on a 30 by 30 grid,
+        /// from 20260923-201746 stream 12. Room index, grid x, grid z, rotation.
+        /// </summary>
+        private static readonly int[][] Placed =
+        {
+            new[] { 18, 29, 3, 1 }, new[] { 96, 26, 2, 3 }, new[] { 42, 25, 2, 3 },
+            new[] { 34, 27, 5, 0 }, new[] { 36, 24, 4, 1 }, new[] { 33, 23, 3, 1 },
+            new[] { 31, 27, 0, 0 }, new[] { 24, 24, 0, 1 }, new[] { 34, 22, 2, 3 },
+            new[] { 101, 25, 8, 0 }, new[] { 9, 26, 1, 0 }, new[] { 56, 25, 6, 2 },
+            new[] { 7, 23, 4, 2 }, new[] { 56, 23, 0, 3 }, new[] { 59, 21, 2, 3 },
+            new[] { 11, 24, 9, 3 }, new[] { 11, 27, 10, 1 }, new[] { 13, 26, 8, 0 },
+            new[] { 11, 26, 11, 2 }
+        };
+
+        /// <summary>
+        /// The 17 door positions that mission's server sent, as whole metres.
+        /// </summary>
+        private static readonly int[][] Sent =
+        {
+            new[] { 300, 265 }, new[] { 290, 265 }, new[] { 265, 270 }, new[] { 275, 250 },
+            new[] { 270, 255 }, new[] { 255, 270 }, new[] { 260, 265 }, new[] { 270, 275 },
+            new[] { 280, 275 }, new[] { 255, 280 }, new[] { 250, 275 }, new[] { 275, 220 },
+            new[] { 265, 280 }, new[] { 260, 285 }, new[] { 255, 240 }, new[] { 235, 260 },
+            new[] { 240, 255 }
+        };
+
+        /// <summary>
+        /// Place the pack's door sockets through a real mission's room list and
+        /// check they land where that mission's doors actually stood.
+        /// </summary>
+        /// <remarks>
+        /// This is the whole evidence for the socket encoding, so it runs every
+        /// time the pack is built rather than sitting in a note. A capture of the
+        /// first minutes of a mission does not contain every door - distant ones
+        /// stream in later - so the test is that every door that WAS sent is
+        /// predicted, not that nothing else is.
+        ///
+        /// The grid is 30 slots square and z counts from the far edge, which is
+        /// what puts the landing point inside the entrance room.
+        /// </remarks>
+        private static bool CapturedMission(List<MissionPool> pools)
+        {
+            const int Grid = 30;
+            MissionPool pool = pools.Single(p => p.Playfield == 341);
+            var predicted = new HashSet<(int X, int Z)>();
+
+            foreach (int[] p in Placed)
+            {
+                MissionPoolRoom room = pool.Rooms.Single(r => r.Index == p[0]);
+                int gx = p[1], gz = p[2], rot = p[3];
+
+                int slotsW = rot % 2 == 0 ? room.SlotsWidth : room.SlotsHeight;
+                int slotsH = rot % 2 == 0 ? room.SlotsHeight : room.SlotsWidth;
+                int x0 = gx * 10;
+                int z0 = (Grid - gz - slotsH) * 10;
+
+                foreach (MissionDoorSocket door in room.Doors)
+                {
+                    // The cell's centre, pushed half a cell into the wall the
+                    // door stands in. Cells are two metres.
+                    int px = (door.X * 2) + 1 + (door.Side == MissionDoorSide.East ? 1 : 0)
+                             - (door.Side == MissionDoorSide.West ? 1 : 0);
+                    int pz = (door.Z * 2) + 1 + (door.Side == MissionDoorSide.South ? 1 : 0)
+                             - (door.Side == MissionDoorSide.North ? 1 : 0);
+
+                    int width = room.SlotsWidth * 10;
+                    int depth = room.SlotsHeight * 10;
+                    for (int turn = 0; turn < rot % 4; turn++)
+                    {
+                        int nx = depth - pz;
+                        pz = px;
+                        px = nx;
+                        int swap = width;
+                        width = depth;
+                        depth = swap;
+                    }
+
+                    predicted.Add((x0 + px, z0 + pz));
+                }
+            }
+
+            var missing = Sent.Where(s => !predicted.Contains((s[0], s[1]))).ToList();
+            Console.WriteLine(
+                "captured mission: {0} of {1} sent doors predicted from the pack ({2} sockets placed)",
+                Sent.Length - missing.Count,
+                Sent.Length,
+                predicted.Count);
+
+            foreach (int[] s in missing)
+            {
+                Console.Error.WriteLine("  MISSED ({0},{1})", s[0], s[1]);
+            }
+
+            return missing.Count == 0;
         }
 
         private static MissionPool ReadPool(int playfield, string path)
@@ -224,6 +329,45 @@ namespace OmniCell.Tools.Capture
             }
 
             room.Floor = floor;
+
+            // The record's door pairs. The second of each is
+            //     4 * (z * 5W + x) + side
+            // over the room's 5W by 5H interior grid, and the first is the room
+            // it opens onto or 0xFFFF where the template does not say. The
+            // decode is checked rather than trusted: a cell outside the room
+            // would mean the encoding is wrong, and that has to stop the run
+            // rather than reach the pack.
+            JsonElement doors;
+            if (source.TryGetProperty("doors", out doors))
+            {
+                int row = room.SlotsWidth * 5;
+                foreach (JsonElement pair in doors.EnumerateArray())
+                {
+                    int[] values = pair.EnumerateArray().Select(v => v.GetInt32()).ToArray();
+                    int adjoining = values[0];
+                    int value = values[1];
+
+                    int cell = value >> 2;
+                    var socket = new MissionDoorSocket
+                    {
+                        X = cell % row,
+                        Z = cell / row,
+                        Side = (MissionDoorSide)(value & 3),
+                        AdjoiningRoom = adjoining == 0xFFFF ? -1 : adjoining
+                    };
+
+                    if (socket.X >= row || socket.Z >= room.SlotsHeight * 5)
+                    {
+                        throw new InvalidDataException(
+                            where + " door value " + value + " decodes to cell " + socket.X
+                            + "," + socket.Z + ", which is outside a room of "
+                            + row + " by " + (room.SlotsHeight * 5) + " interior cells.");
+                    }
+
+                    room.Doors.Add(socket);
+                }
+            }
+
             return room;
         }
 
@@ -270,7 +414,11 @@ namespace OmniCell.Tools.Capture
                     MissionPoolRoom y = b.Rooms[i];
                     if (x.Index != y.Index || x.Name != y.Name || x.SlotsWidth != y.SlotsWidth
                         || x.SlotsHeight != y.SlotsHeight || x.Role != y.Role
-                        || !x.Floor.SequenceEqual(y.Floor))
+                        || !x.Floor.SequenceEqual(y.Floor)
+                        || x.Doors.Count != y.Doors.Count
+                        || x.Doors.Where((s, n) => s.X != y.Doors[n].X || s.Z != y.Doors[n].Z
+                                                   || s.Side != y.Doors[n].Side
+                                                   || s.AdjoiningRoom != y.Doors[n].AdjoiningRoom).Any())
                     {
                         throw new InvalidDataException(
                             "pool " + a.Playfield + " room " + x.Index + " did not survive the round trip.");

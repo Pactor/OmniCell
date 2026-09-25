@@ -1,6 +1,7 @@
-namespace OmniCell.Core.Missions
+﻿namespace OmniCell.Core.Missions
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// One room a mission can be built out of.
@@ -65,6 +66,17 @@ namespace OmniCell.Core.Missions
         public byte[] Floor { get; set; }
 
         /// <summary>
+        /// Where a door can stand in this room.
+        /// </summary>
+        /// <remarks>
+        /// One per record in the template, and the count is the number of doors
+        /// the room gets. The cells are on the 5W by 5H interior grid, which is
+        /// the floor mask less its last row and column - see
+        /// <see cref="MissionDoorSocket"/>.
+        /// </remarks>
+        public List<MissionDoorSocket> Doors { get; set; }
+
+        /// <summary>
         /// The room's width in two metre cells.
         /// </summary>
         public int CellsWidth
@@ -78,6 +90,11 @@ namespace OmniCell.Core.Missions
         public int CellsHeight
         {
             get { return (this.SlotsHeight * 5) + 1; }
+        }
+
+        public MissionPoolRoom()
+        {
+            this.Doors = new List<MissionDoorSocket>();
         }
 
         /// <summary>
