@@ -276,6 +276,42 @@ Two gaps in the corpus to fill when convenient: 18 of the runs are find item and
 person, with no repair, kill or return item; and one single door out of 451 was locked, so
 nothing here bears on lock difficulty.
 
+## What a mission is furnished with
+
+The same recordings, read as packets rather than as their index. 101,574 server packets over
+the 28 runs, and the message model reads every one of them - nothing unparsed.
+
+Per building, counting each object once:
+
+| | per building | over 28 runs |
+|---|---|---|
+| doors | 7 to 27 | 481 |
+| chests | 1 to 22 | 255, over 20 templates |
+| world items | 0 to 7, usually 1 | 31, over 10 templates |
+| traps | none | none |
+
+- **The objective is an item on the floor and it is nearly always the same template.** 19 of
+  the 31 world items are template 100341, which is the `Urgent Sensitive Information` of the
+  2026-09-23 find-item capture, and 18 of the 28 runs were find item.
+- **Lift buttons show up as world items too** - 159863, 159867 and 159869 - and only six
+  times, because these buildings are nearly all one floor.
+- **50 is what a lock reads when there is no lock.** 476 of 481 doors and 220 of 255 chests
+  sit at exactly 50. The rest are real: five doors at 39, 45 and 46, and thirty five chests
+  spread over 77 to 95.
+
+### The first evidence for two of the dimensions
+
+Every one of these runs was rolled at open/hidden 0% and head-on/stealth 0%, and over 28
+buildings they produced **five locked doors out of 481, and not one trap**.
+
+Set that against the one mission sniffed at the other end - `20260923-201746`, hidden 100% and
+stealth 100% - which carried four locked doors out of seventeen at difficulty 184, and a trap.
+
+That is one-sided: it shows the low end of both dimensions buys almost nothing, not that the
+high end is what buys it, since that mission moved every slider at once. But it is the first
+measurement that touches either, and it agrees with what the community tables have always
+said - open/hidden is locks, head-on/stealth is traps.
+
 ## What a server still cannot do
 
 1. **Choose the types.** The dimensions decide it and the function is unmapped. See the sweep
@@ -285,10 +321,11 @@ nothing here bears on lock difficulty.
    the elevator and boss rooms go, how connectivity is guaranteed. An algorithm of our own is
    buildable on the pack; it will not be retail's.
 3. **Fill the rooms.** Doors are solved - the sockets are in the pack and the placement
-   reproduces a real mission exactly. What is left is everything else the server spawns:
-   chests, traps, lift buttons and the objective itself. The pool rooms say nothing about
-   those, and the only positions on record are the four buttons observed in the 2026-09-23
-   runs.
+   reproduces 451 real ones exactly. For the rest, the section above says how many of each a
+   building gets, which templates they are and what a lock reads; what it does not say is
+   where inside a room any of them stands. Every chest, trap, button and objective in the
+   recordings has a world position, so the rule is derivable from them - it has not been
+   looked for yet.
 4. **Populate it.** Narrowed, not closed - see the section above. The counts, the spacing,
    the floor and the level band are measured; what is not is the creature table itself (which
    names are eligible at a level, and how the shared ones divide from the per-pool ones) and
