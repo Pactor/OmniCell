@@ -345,6 +345,17 @@ namespace OmniCell.Core.Content
                             writer.Write((byte)door.Side);
                             writer.Write(door.AdjoiningRoom);
                         }
+
+                        writer.Write(room.Furniture == null ? 0 : room.Furniture.Count);
+                        if (room.Furniture == null) continue;
+
+                        foreach (MissionFurnitureSpot spot in room.Furniture)
+                        {
+                            writer.Write((byte)spot.Kind);
+                            writer.Write(spot.X);
+                            writer.Write(spot.Z);
+                            writer.Write(spot.Seen);
+                        }
                     }
                 }
             });
@@ -397,6 +408,18 @@ namespace OmniCell.Core.Content
                                 Z = reader.ReadInt32(),
                                 Side = (MissionDoorSide)reader.ReadByte(),
                                 AdjoiningRoom = reader.ReadInt32()
+                            });
+                        }
+
+                        int furniture = ReadCount(reader, "mission room furniture spots");
+                        for (int f = 0; f < furniture; f++)
+                        {
+                            room.Furniture.Add(new MissionFurnitureSpot
+                            {
+                                Kind = (MissionFurnitureKind)reader.ReadByte(),
+                                X = reader.ReadSingle(),
+                                Z = reader.ReadSingle(),
+                                Seen = reader.ReadInt32()
                             });
                         }
 

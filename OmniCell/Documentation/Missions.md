@@ -356,16 +356,17 @@ generator scattered things, those offsets would be all over the room. They are n
 - **`clan_stair`, twelve chests, two positions.** Seven and five.
 - **`clan_elevator`, fourteen chests, three positions.** Six, five and three.
 
-Over the whole corpus: 255 chests fall into 80 (pool, room) groups, **43 of which have exactly
-one position**, and on average 75% of a group's chests are on its commonest spot. The 25 world
-items are tighter still - 12 of 15 groups have one position, 90% concentration. Doors come out
-at 94 of 128 groups with one position, which is what sockets should look like and is a second
-check on the transform.
+Over the whole corpus - 2,983 objects, once the 1,937 single-object captures the bot saves
+beside its streams are read as well as the 28 full recordings - **612 spots over 230 of the 639
+rooms**. All but six of the 2,983 fell inside a placed room. 94 of the 249 room-and-kind groups
+have exactly one spot, and two thirds of a group's sightings are on its commonest. Doors come
+out at 94 of 128 groups with one position, which is what sockets should look like and is a
+second check on the transform.
 
 So furniture placement is **authored per room template and chosen from a short list**, not
-computed. A generator does not need a rule for it; it needs the list, and the list can be read
-straight off recordings like these. What is here covers 80 of the 639 rooms, because 28 runs
-only visit so many.
+computed. A generator does not need a rule for it; it needs the list. The list is now in the
+pack, alongside the sockets, and `Tools/Capture/MissionSpots.tsv` is the readable form it is
+built from - extend that file with more recorded runs and the other 409 rooms fill in.
 
 Two caveats on the reduction. 216 of the 767 objects sit inside more than one room's bounding
 box - pool rooms overlap, which is why the composition rule is "floor if any room covering the

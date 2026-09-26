@@ -77,6 +77,15 @@
         public List<MissionDoorSocket> Doors { get; set; }
 
         /// <summary>
+        /// Where a mission server has been seen to put furniture in this room.
+        /// </summary>
+        /// <remarks>
+        /// Empty for the 409 rooms nobody has walked into yet. See
+        /// <see cref="MissionFurnitureSpot"/>.
+        /// </remarks>
+        public List<MissionFurnitureSpot> Furniture { get; set; }
+
+        /// <summary>
         /// The room's width in two metre cells.
         /// </summary>
         public int CellsWidth
@@ -95,6 +104,7 @@
         public MissionPoolRoom()
         {
             this.Doors = new List<MissionDoorSocket>();
+            this.Furniture = new List<MissionFurnitureSpot>();
         }
 
         /// <summary>

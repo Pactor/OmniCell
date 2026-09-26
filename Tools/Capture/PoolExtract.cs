@@ -95,6 +95,16 @@ namespace OmniCell.Tools.Capture
             string navRoot = args[0];
             string output = args[1];
 
+            // Where the furniture goes is not in the client - it is what a
+            // mission server did, measured from recordings and kept beside
+            // this file. Without it the pack is still complete, just without
+            // anywhere to put a chest.
+            string spotsFile = Path.Combine(
+                Path.GetDirectoryName(Path.GetFullPath(typeof(PoolExtract).Assembly.Location)) ?? ".",
+                "..", "MissionSpots.tsv");
+            if (!File.Exists(spotsFile)) spotsFile = "MissionSpots.tsv";
+            Dictionary<(int, int), List<MissionFurnitureSpot>> spots = ReadSpots(spotsFile);
+
             var pools = new List<MissionPool>();
             int totalRooms = 0;
             int totalCells = 0;
@@ -109,6 +119,15 @@ namespace OmniCell.Tools.Capture
                 }
 
                 MissionPool pool = ReadPool(playfield, path);
+                foreach (MissionPoolRoom room in pool.Rooms)
+                {
+                    List<MissionFurnitureSpot> mine;
+                    if (spots.TryGetValue((playfield, room.Index), out mine))
+                    {
+                        room.Furniture.AddRange(mine);
+                    }
+                }
+
                 pools.Add(pool);
                 totalRooms += pool.Rooms.Count;
                 totalCells += pool.Rooms.Sum(r => r.CellsWidth * r.CellsHeight);
@@ -120,6 +139,13 @@ namespace OmniCell.Tools.Capture
                     pool.Rooms.Count,
                     Roles(pool));
             }
+
+            Console.WriteLine();
+            Console.WriteLine(
+                "{0} furniture spots over {1} rooms (from {2})",
+                pools.Sum(p => p.Rooms.Sum(r => r.Furniture.Count)),
+                pools.Sum(p => p.Rooms.Count(r => r.Furniture.Count > 0)),
+                spots.Count == 0 ? "nothing - MissionSpots.tsv not found" : spotsFile);
 
             OmniCellContentPack.WriteMissionPools(output, pools);
 
@@ -304,6 +330,48 @@ namespace OmniCell.Tools.Capture
             return missing.Count == 0;
         }
 
+        /// <summary>
+        /// The measured furniture spots, by pool and room.
+        /// </summary>
+        /// <remarks>
+        /// A plain tab separated file rather than anything cleverer, because it
+        /// is the output of reading recordings and wants to stay diffable when
+        /// more runs extend it.
+        /// </remarks>
+        private static Dictionary<(int, int), List<MissionFurnitureSpot>> ReadSpots(string path)
+        {
+            var spots = new Dictionary<(int, int), List<MissionFurnitureSpot>>();
+            if (!File.Exists(path)) return spots;
+
+            foreach (string line in File.ReadLines(path))
+            {
+                if (line.Length == 0 || line[0] == '#') continue;
+                string[] parts = line.Split('\t');
+                if (parts.Length < 6) continue;
+
+                var key = (int.Parse(parts[0], CultureInfo.InvariantCulture),
+                           int.Parse(parts[1], CultureInfo.InvariantCulture));
+                List<MissionFurnitureSpot> list;
+                if (!spots.TryGetValue(key, out list))
+                {
+                    list = new List<MissionFurnitureSpot>();
+                    spots[key] = list;
+                }
+
+                list.Add(new MissionFurnitureSpot
+                         {
+                             Kind = parts[2] == "item"
+                                        ? MissionFurnitureKind.Item
+                                        : MissionFurnitureKind.Chest,
+                             X = float.Parse(parts[3], CultureInfo.InvariantCulture),
+                             Z = float.Parse(parts[4], CultureInfo.InvariantCulture),
+                             Seen = int.Parse(parts[5], CultureInfo.InvariantCulture)
+                         });
+            }
+
+            return spots;
+        }
+
         private static MissionPool ReadPool(int playfield, string path)
         {
             using JsonDocument document = JsonDocument.Parse(File.ReadAllBytes(path));
@@ -473,6 +541,11 @@ namespace OmniCell.Tools.Capture
                     if (x.Index != y.Index || x.Name != y.Name || x.SlotsWidth != y.SlotsWidth
                         || x.SlotsHeight != y.SlotsHeight || x.Role != y.Role
                         || !x.Floor.SequenceEqual(y.Floor)
+                        || x.Furniture.Count != y.Furniture.Count
+                        || x.Furniture.Where((s, n) => s.Kind != y.Furniture[n].Kind
+                                                       || s.X != y.Furniture[n].X
+                                                       || s.Z != y.Furniture[n].Z
+                                                       || s.Seen != y.Furniture[n].Seen).Any()
                         || x.Doors.Count != y.Doors.Count
                         || x.Doors.Where((s, n) => s.X != y.Doors[n].X || s.Z != y.Doors[n].Z
                                                    || s.Side != y.Doors[n].Side
