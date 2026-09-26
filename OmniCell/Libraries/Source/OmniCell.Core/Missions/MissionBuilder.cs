@@ -47,6 +47,10 @@ namespace OmniCell.Core.Missions
         private readonly MissionPool pool;
         private readonly Random random;
 
+        /// <summary>
+        /// Every floored cell the building has taken, and the floor that took
+        /// it. Keyed without the floor: the floors compete for one footprint.
+        /// </summary>
         private readonly Dictionary<long, int> claimed = new Dictionary<long, int>();
         private readonly List<Open> open = new List<Open>();
         private readonly Dictionary<long, List<int>> meeting = new Dictionary<long, List<int>>();
@@ -128,7 +132,59 @@ namespace OmniCell.Core.Missions
                               WorldHeight = 64
                           };
 
-            if (!this.PlaceFirst()) return null;
+            if (floors <= 1)
+            {
+                if (!this.Floor(0, roomCount, true, true)) return null;
+                this.EmitDoors();
+                return this.layout;
+            }
+
+            // A team building. The floors run away from zero in one direction
+            // and the far one holds the boss room by itself.
+            int direction = this.random.Next(16) < 9 ? 1 : -1;
+            int walked = floors - 1;
+
+            // The boss room goes down first. Its place is fixed - the middle
+            // of the grid - and the floors share one footprint, so a floor
+            // allowed to grow over the middle first would leave it nowhere to
+            // stand.
+            if (!this.PlaceBoss(direction * walked)) return null;
+
+            for (int step = 0; step < walked; step++)
+            {
+                int floor = direction * step;
+
+                // 37 floors over the sixteen captured buildings run 4 to 16
+                // rooms, mean 9.9.
+                int want = 4 + this.random.Next(13);
+
+                // Not from the middle: that is the boss room's, and no
+                // captured team building puts a floor there.
+                if (!this.Floor(floor, want, step == 0, false) && step == 0) return null;
+            }
+
+            this.EmitDoors();
+            return this.layout;
+        }
+
+        /// <summary>
+        /// One floor, grown and closed.
+        /// </summary>
+        /// <param name="floor">Which floor.</param>
+        /// <param name="roomCount">How many rooms to aim for.</param>
+        /// <param name="wayIn">
+        /// Whether this floor carries the way into the building. Only floor
+        /// zero does: every captured building has exactly one socket nobody
+        /// meets and it is the entrance.
+        /// </param>
+        /// <param name="centre">
+        /// Whether to start from the middle of the grid, which only a building
+        /// of one floor does.
+        /// </param>
+        private bool Floor(int floor, int roomCount, bool wayIn, bool centre)
+        {
+            int before = this.layout.Rooms.Count;
+            if (!this.PlaceFirst(floor, wayIn, centre)) return false;
 
             // Grow. A socket is taken at random rather than in order, which is
             // what keeps a building from turning into a corridor.
@@ -136,7 +192,8 @@ namespace OmniCell.Core.Missions
             // The target counts the caps: every socket still open at the end
             // becomes a room of its own, so growing all the way to the target
             // and then capping overshoots it by half again.
-            while (this.layout.Rooms.Count + this.open.Count < roomCount && this.open.Count > 0)
+            while (this.layout.Rooms.Count - before + this.open.Count < roomCount
+                   && this.open.Count > 0)
             {
                 int pick = this.random.Next(this.open.Count);
                 Open socket = this.open[pick];
@@ -163,13 +220,59 @@ namespace OmniCell.Core.Missions
                 if (!this.Attach(socket, false)) this.Leave(socket);
             }
 
-            this.EmitDoors();
-            return this.layout;
+            return this.layout.Rooms.Count > before;
+        }
+
+        /// <summary>
+        /// The one room on a team building's far floor.
+        /// </summary>
+        /// <remarks>
+        /// All sixteen multi-floor buildings in the corpus end the same way:
+        /// the floor furthest from zero holds exactly one room, it is a boss
+        /// room, and it stands at grid 13, 13 - the middle of the thirty by
+        /// thirty. Nine of the sixteen count upwards from zero and seven
+        /// downwards, and none of them mixes the two.
+        /// </remarks>
+        private bool PlaceBoss(int floor)
+        {
+            List<MissionPoolRoom> bosses = this.pool.Rooms
+                .Where(r => r.Role == MissionRoomRole.BossRoom).ToList();
+            if (bosses.Count == 0) return false;
+
+            // Room by room until one fits, because the middle may be taken by
+            // a floor that grew into it.
+            bosses = bosses.OrderBy(x => this.random.Next()).ToList();
+
+            foreach (MissionPoolRoom room in bosses)
+            {
+                for (int rot = 0; rot < 4; rot++)
+                {
+                    if (!this.Put(room, floor, BossGridX, BossGridZ, rot)) continue;
+
+                    // Nothing hangs off it: it is the whole floor.
+                    this.open.Clear();
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         #region growing
 
-        private bool PlaceFirst()
+        /// <summary>
+        /// Where the single room on a team building's far floor stands, in
+        /// every one of the sixteen captured multi-floor buildings.
+        /// </summary>
+        private const int BossGridX = 13;
+
+        /// <summary>
+        /// Where the single room on a team building's far floor stands, in
+        /// every one of the sixteen captured multi-floor buildings.
+        /// </summary>
+        private const int BossGridZ = 13;
+
+        private bool PlaceFirst(int floor, bool wayIn, bool centre)
         {
             // An entrance if the pool names one, else anything with a socket.
             // Two sockets at least: one becomes the way in and the other has
@@ -188,16 +291,43 @@ namespace OmniCell.Core.Missions
             int w = rot % 2 == 0 ? room.SlotsWidth : room.SlotsHeight;
             int h = rot % 2 == 0 ? room.SlotsHeight : room.SlotsWidth;
 
-            // Near the middle, so it can grow in every direction.
+            // Near the middle for a building of one floor, so it can grow in
+            // every direction. A floor of a team building has to go somewhere
+            // no other floor has been, because no two floors of any captured
+            // building share a grid cell - so it is tried in the open until it
+            // lands, and the collision test does the keeping apart.
             int gx = (this.layout.GridWidth - w) / 2;
             int gz = (this.layout.GridHeight - h) / 2;
-            if (!this.Put(room, 0, gx, gz, rot)) return false;
+            if (centre)
+            {
+                if (!this.Put(room, floor, gx, gz, rot)) return false;
+            }
+            else
+            {
+                bool placed = false;
+                for (int attempt = 0; attempt < 200 && !placed; attempt++)
+                {
+                    rot = this.random.Next(4);
+                    w = rot % 2 == 0 ? room.SlotsWidth : room.SlotsHeight;
+                    h = rot % 2 == 0 ? room.SlotsHeight : room.SlotsWidth;
+                    gx = this.random.Next(this.layout.GridWidth - w + 1);
+                    gz = this.random.Next(this.layout.GridHeight - h + 1);
+                    placed = this.Put(room, floor, gx, gz, rot);
+                }
+
+                if (!placed) return false;
+            }
 
             // One socket is the way in and nothing may be hung on it. Without
             // this a quarter of the buildings came out sealed, and every
             // captured one has at least one socket nobody meets - the door
-            // whose Room is -1.
-            this.open.RemoveAt(this.random.Next(this.open.Count));
+            // whose Room is -1. Only the floor with the way in gives one up;
+            // the others are closed all round and reached by lift.
+            if (wayIn && this.open.Count > 0)
+            {
+                this.open.RemoveAt(this.random.Next(this.open.Count));
+            }
+
             return true;
         }
 
@@ -306,13 +436,19 @@ namespace OmniCell.Core.Missions
 
                     int wx = (originX + px) / CellMetres;
                     int wz = (originZ + pz) / CellMetres;
-                    long key = Key(floor, wx, wz);
+                    long key = FloorlessKey(wx, wz);
 
                     // Rooms do share cells - 3.5% of them in the captures, at
-                    // the seams where they meet - but only round their edges.
+                    // the seams where they meet - but only round their edges,
+                    // and only with a room on their own floor. Two floors of a
+                    // captured building never share a cell at all.
                     bool edge = cx == 0 || cz == 0
                                 || cx == room.CellsWidth - 1 || cz == room.CellsHeight - 1;
-                    if (this.claimed.ContainsKey(key) && !edge) return false;
+                    int owner;
+                    if (this.claimed.TryGetValue(key, out owner) && (!edge || owner != floor))
+                    {
+                        return false;
+                    }
 
                     cells.Add(key);
                 }
@@ -321,9 +457,7 @@ namespace OmniCell.Core.Missions
             int slot = this.layout.Rooms.Count;
             foreach (long key in cells)
             {
-                int n;
-                this.claimed.TryGetValue(key, out n);
-                this.claimed[key] = n + 1;
+                this.claimed[key] = floor;
             }
 
             this.layout.Rooms.Add(new BuildingRoomInfo
@@ -460,9 +594,29 @@ namespace OmniCell.Core.Missions
             return ((int)side + 2) % 4;
         }
 
+        /// <summary>
+        /// A cell, for the collision map and the socket map.
+        /// </summary>
+        /// <remarks>
+        /// The floor is in the key for sockets - two floors meeting at the
+        /// same coordinate are not a door - but the floors of a captured team
+        /// building never share a grid cell at all, over all sixteen of them
+        /// and every adjacent pair. Sixteen buildings of eight by nine slots
+        /// in a thirty by thirty grid do not miss each other forty times by
+        /// luck, so it is a rule, and <see cref="FloorlessKey"/> is what makes
+        /// the placement obey it.
+        /// </remarks>
         private static long Key(int floor, int x, int z)
         {
             return ((long)(floor + 8) << 40) | ((long)(x + 4096) << 20) | (uint)(z + 4096);
+        }
+
+        /// <summary>
+        /// The same cell on any floor, which is what the floors compete for.
+        /// </summary>
+        private static long FloorlessKey(int x, int z)
+        {
+            return Key(0, x, z);
         }
 
         private static void Unkey(long key, out int floor, out int x, out int z)

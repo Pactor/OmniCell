@@ -279,10 +279,11 @@ namespace OmniCell.Core.Missions
                             Terminal = terminal,
                             Team = team,
 
-                            // Three or four, and the captures hold both.
-                            Floors = team ? 3 + random.Next(2) : 1,
+                            // Eleven of the sixteen captured team buildings
+                            // have three floors and five have four.
+                            Floors = team ? (random.Next(16) < 11 ? 3 : 4) : 1,
                             Playfield = playfield,
-                            Pool = Pool(random),
+                            Pool = Pool(random, team),
                             PlayfieldName = string.IsNullOrEmpty(playfieldName)
                                                 ? "this area"
                                                 : playfieldName,
@@ -308,9 +309,15 @@ namespace OmniCell.Core.Missions
         /// as seven different pools - so the dimensions do not pick it, and
         /// nothing measured says what does.
         /// </remarks>
-        private static int Pool(Random random)
+        private static int Pool(Random random, bool team)
         {
-            List<int> pools = MissionPoolLoader.Pools.Keys.ToList();
+            // A team building ends in a boss room on a floor of its own, and
+            // one of the ten pools has no boss room in it at all - so a team
+            // mission cannot be built there.
+            List<int> pools = MissionPoolLoader.Pools
+                .Where(p => !team || p.Value.Rooms.Any(r => r.Role == MissionRoomRole.BossRoom))
+                .Select(p => p.Key)
+                .ToList();
             return pools.Count == 0 ? 0 : pools[random.Next(pools.Count)];
         }
 

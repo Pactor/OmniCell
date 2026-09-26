@@ -75,6 +75,7 @@ namespace OmniCell.Tools.Capture
                 "text:  {0}",
                 File.Exists(text) ? MissionText.Load(text) + " lines" : "not found at " + text);
             if (playfields != null) Terminals(playfields);
+            Centres();
             Console.WriteLine();
 
             var serializer = new MessageSerializer();
@@ -85,6 +86,8 @@ namespace OmniCell.Tools.Capture
             var types = new Dictionary<MissionType, int>();
             var shapes = new Dictionary<string, int>();
             var qualities = new List<int>();
+            var rooms = new List<int>();
+            var floors = new List<int>();
 
             for (int roll = 0; roll < rolls; roll++)
             {
@@ -123,6 +126,23 @@ namespace OmniCell.Tools.Capture
 
                 for (int i = 0; i < offers.Count; i++) offers[i].Instance = (roll * 16) + i;
 
+                // Taking one builds the building, and the building has to
+                // survive the same wire the offer does.
+                MissionOffer taken = offers[random.Next(offers.Count)];
+                taken.Built = MissionBuilding.Build(taken);
+                string trouble = Built(serializer, taken);
+                if (trouble != null)
+                {
+                    bad++;
+                    if (bad <= 3) Console.WriteLine("  roll {0}: {1}", roll, trouble);
+                }
+                else
+                {
+                    rooms.Add(taken.Built.Layout.Rooms.Count);
+                    floors.Add(taken.Built.Layout.Rooms.Max(r => r.Floor)
+                               - taken.Built.Layout.Rooms.Min(r => r.Floor) + 1);
+                }
+
                 string why = Check(serializer, offers, difficulty, answered, out QuestAlternativeMessage back);
                 if (why != null)
                 {
@@ -157,11 +177,130 @@ namespace OmniCell.Tools.Capture
             Console.WriteLine("  types          {0}",
                 string.Join("  ", types.OrderByDescending(x => x.Value).Select(x => x.Key + " " + x.Value)));
             Console.WriteLine("  quality range  {0} to {1}", qualities.Min(), qualities.Max());
+            Console.WriteLine(
+                "  rooms          {0:F1} mean, {1} to {2}",
+                rooms.Average(), rooms.Min(), rooms.Max());
+            Console.WriteLine(
+                "  floors         {0}",
+                string.Join("  ", floors.GroupBy(f => f).OrderBy(g => g.Key)
+                    .Select(g => g.Key + " floor" + (g.Key == 1 ? string.Empty : "s") + " x" + g.Count())));
             Console.WriteLine();
             Console.WriteLine("retail: 1,053 of 1,059 logged rolls are 3+1+1, and the quality is the");
             Console.WriteLine("character's level times 0.688 at difficulty 1 and 1.767 at 11.");
 
             return bad == 0 ? 0 : 1;
+        }
+
+        /// <summary>
+        /// The building a taken mission is run in, and the zone-in packet that
+        /// carries it.
+        /// </summary>
+        /// <remarks>
+        /// The generator rides on PlayfieldAnarchyF as a DbObject that reads
+        /// its own body, which is the part of the message most likely to go
+        /// wrong quietly: a length read short leaves the client building a
+        /// world out of the wrong bytes. So the whole message is written and
+        /// read back and every placement compared.
+        /// </remarks>
+        private static string Built(MessageSerializer serializer, MissionOffer offer)
+        {
+            if (offer.Built == null) return "no building";
+            if (offer.Built.Layout.Rooms.Count == 0) return "a building with no rooms";
+
+            // Floors run away from zero in either direction: the captured
+            // sets are (0,1,2), (0,1,2,3), (-2,-1,0) and (-3,-2,-1,0).
+            int stacked = offer.Built.Layout.Rooms.Max(r => r.Floor)
+                          - offer.Built.Layout.Rooms.Min(r => r.Floor) + 1;
+            if (offer.Team ? stacked < 2 : stacked != 1)
+            {
+                return "a " + (offer.Team ? "team" : "solo") + " building on " + stacked + " floors";
+            }
+
+            BuildingGeneratorData generator = MissionBuilding.Generator(offer.Built, 2224708);
+            var body = new PlayfieldAnarchyFMessage
+                       {
+                           Identity = new Identity
+                                      {
+                                          Type = IdentityType.Playfield2, Instance = 112085
+                                      },
+                           Unknown = 0,
+                           Version = 4,
+                           CharacterCoordinates = new Vector3 { X = 298.2f, Y = 5.01f, Z = 145.01f },
+                           TokenMarker = 97,
+                           ModelId = generator.Identity,
+                           Group = 0,
+                           Subgroup = 0,
+                           PlayfieldId = new Identity
+                                         {
+                                             Type = IdentityType.Playfield2, Instance = 112085
+                                         },
+                           Generator = generator,
+                           PlayfieldX = -1,
+                           PlayfieldZ = -1
+                       };
+
+            PlayfieldAnarchyFMessage back;
+            try
+            {
+                byte[] bytes;
+                using (var stream = new MemoryStream())
+                {
+                    serializer.Serialize(stream, new Message { Body = body, Header = Header(body) });
+                    bytes = stream.ToArray();
+                }
+
+                using (var stream = new MemoryStream(bytes))
+                {
+                    back = serializer.Deserialize(stream).Body as PlayfieldAnarchyFMessage;
+                }
+            }
+            catch (Exception exception)
+            {
+                return "the zone-in packet would not go on the wire: " + exception.Message;
+            }
+
+            if (back == null || back.Generator == null) return "the generator did not read back";
+            if (back.Generator.Rooms.Length != generator.Rooms.Length)
+            {
+                return "wrote " + generator.Rooms.Length + " rooms and read back "
+                       + back.Generator.Rooms.Length;
+            }
+
+            for (int i = 0; i < generator.Rooms.Length; i++)
+            {
+                BuildingRoomInfo wrote = generator.Rooms[i];
+                BuildingRoomInfo read = back.Generator.Rooms[i];
+                if (read.Room != wrote.Room || read.Floor != wrote.Floor || read.X != wrote.X
+                    || read.Z != wrote.Z || read.Rotation != wrote.Rotation)
+                {
+                    return "placement " + i + " did not survive the wire";
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// What the single room on a team building's far floor is.
+        /// </summary>
+        private static void Centres()
+        {
+            var seen = new[]
+                       {
+                           new[] { 320, 71 }, new[] { 320, 72 }, new[] { 321, 60 },
+                           new[] { 324, 45 }, new[] { 324, 46 }, new[] { 341, 93 },
+                           new[] { 341, 94 }, new[] { 346, 60 }, new[] { 351, 63 }
+                       };
+            Console.WriteLine("  the room on a team building's far floor, at grid 13,13:");
+            foreach (int[] one in seen)
+            {
+                MissionPoolRoom room = MissionPoolLoader.Room(one[0], one[1]);
+                Console.WriteLine(
+                    "    pool {0} room {1,-3} {2,-12} {3}",
+                    one[0], one[1],
+                    room == null ? "?" : room.Role.ToString(),
+                    room == null ? string.Empty : room.Name);
+            }
         }
 
         /// <summary>

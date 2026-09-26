@@ -59,7 +59,7 @@ namespace OmniCell.Tools.Capture
             Console.WriteLine("{0} pools, {1} buildings each", pools.Count, each);
             Console.WriteLine();
 
-            int built = 0, failed = 0, bad = 0;
+            int built = 0, failed = 0, bad = 0, teamBuilt = 0;
             var rooms = new List<int>();
             var extents = new List<(int W, int H)>();
             var strays = new List<int>();
@@ -77,8 +77,13 @@ namespace OmniCell.Tools.Capture
                     // The whole thing, not just the shell: a mission is the
                     // building plus what stands in it, and the contents are
                     // measured against the recordings too.
+                    // One building in four is a team one, which is three or
+                    // four floors rather than a flat one.
                     var factory = new MissionFactory(pool, (pool.Playfield * 100003) + i);
-                    Mission mission = factory.Build(38, MissionType.FindItem);
+                    bool team = i % 4 == 3
+                                && pool.Rooms.Any(r => r.Role == MissionRoomRole.BossRoom);
+                    Mission mission = factory.Build(
+                        38, MissionType.FindItem, team ? (i % 8 == 3 ? 3 : 4) : 1);
                     MissionLayout layout = mission?.Layout;
                     if (layout == null || layout.Rooms.Count == 0)
                     {
@@ -104,7 +109,8 @@ namespace OmniCell.Tools.Capture
                     extents.Add((layout.Rooms.Max(r => (int)r.X) - xs + 1,
                                  layout.Rooms.Max(r => (int)r.Z) - zs + 1));
 
-                    string why = Check(pool, layout, out int stray);
+                    string why = Check(pool, layout, out int stray) ?? Stacked(layout, team);
+                    if (team && why == null) teamBuilt++;
                     strays.Add(stray);
                     poolStray += stray;
                     if (why != null)
@@ -125,7 +131,9 @@ namespace OmniCell.Tools.Capture
             }
 
             Console.WriteLine();
-            Console.WriteLine("built {0}, could not start {1}, invalid {2}", built, failed, bad);
+            Console.WriteLine(
+                "built {0} ({1} of them team buildings), could not start {2}, invalid {3}",
+                built, teamBuilt, failed, bad);
             Console.WriteLine();
 
             Console.WriteLine("                        ours          retail (276 captured)");
@@ -143,6 +151,58 @@ namespace OmniCell.Tools.Capture
                 objectives / (double)built);
 
             return bad == 0 ? 0 : 1;
+        }
+
+        /// <summary>
+        /// What the sixteen captured multi-floor buildings all do.
+        /// </summary>
+        /// <remarks>
+        /// Read off the bot's own recorded zone-in packets, 325 of them, of
+        /// which sixteen are not flat:
+        ///
+        ///   * three or four floors, never two;
+        ///   * contiguous, and all on one side of zero - (0,1,2), (0,1,2,3),
+        ///     (-2,-1,0), (-3,-2,-1,0) are the four sets that occur;
+        ///   * the floor furthest from zero holds exactly one room, it is a
+        ///     boss room, and it stands at grid 13, 13;
+        ///   * no two floors share a grid cell, in any of the sixteen and any
+        ///     adjacent pair - so the floors compete for one footprint rather
+        ///     than being stacked on top of each other.
+        /// </remarks>
+        private static string Stacked(MissionLayout layout, bool team)
+        {
+            List<int> floors = layout.Rooms.Select(r => (int)r.Floor).Distinct().OrderBy(f => f).ToList();
+            if (!team)
+            {
+                return floors.Count == 1 && floors[0] == 0
+                           ? null
+                           : "a solo building on floors " + string.Join(", ", floors);
+            }
+
+            if (floors.Count < 3 || floors.Count > 4)
+            {
+                return "a team building on " + floors.Count + " floors";
+            }
+
+            for (int i = 1; i < floors.Count; i++)
+            {
+                if (floors[i] != floors[i - 1] + 1) return "floors are not contiguous";
+            }
+
+            if (floors[0] != 0 && floors[floors.Count - 1] != 0)
+            {
+                return "no floor zero: " + string.Join(", ", floors);
+            }
+
+            int far = floors[0] == 0 ? floors[floors.Count - 1] : floors[0];
+            List<BuildingRoomInfo> top = layout.Rooms.Where(r => r.Floor == far).ToList();
+            if (top.Count != 1) return "the far floor has " + top.Count + " rooms";
+            if (top[0].X != 13 || top[0].Z != 13)
+            {
+                return "the far floor's room is at " + top[0].X + ", " + top[0].Z;
+            }
+
+            return null;
         }
 
         /// <summary>

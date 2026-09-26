@@ -175,5 +175,27 @@ namespace OmniCell.Core.Missions
         /// 0 while the mission is still on offer.
         /// </summary>
         public int KeyInstance { get; set; }
+
+        /// <summary>
+        /// The building and everything in it, once somebody has taken this on.
+        /// Null while it is only an offer.
+        /// </summary>
+        /// <remarks>
+        /// Made from the offer and nothing else, so the same mission always
+        /// builds the same building - which is what lets a second character
+        /// holding a duplicated key walk into the one the first is standing in.
+        /// </remarks>
+        public Mission Built { get; set; }
+
+        /// <summary>
+        /// The instance the building goes by, which the zone-in packet names
+        /// as identity type 51103.
+        /// </summary>
+        public int BuildingInstance { get; set; }
+
+        /// <summary>
+        /// The instance the mission's playfield goes by.
+        /// </summary>
+        public int PlayfieldInstance { get; set; }
     }
 }

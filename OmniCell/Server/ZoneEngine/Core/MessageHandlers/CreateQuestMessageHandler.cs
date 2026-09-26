@@ -96,13 +96,30 @@ namespace ZoneEngine.Core.MessageHandlers
                 return;
             }
 
+            // The accepted mission is a different quest from the offer.
+            offer.Instance = Pool.Instance.GetFreeInstance<CreateQuestMessage>(1, IdentityType.Quest);
+
+            // The building is made now rather than when the door is used, so
+            // that a mission that cannot be built is refused here - where the
+            // player is standing at the terminal and can take another one -
+            // rather than at a door that does nothing.
+            offer.Built = MissionBuilding.Build(offer);
+            if (offer.Built == null)
+            {
+                Tell(character, "That mission could not be prepared. Try another.");
+                return;
+            }
+
+            offer.BuildingInstance = Pool.Instance.GetFreeInstance<CreateQuestMessage>(
+                1, MissionBuilding.BuildingType);
+            offer.PlayfieldInstance = Pool.Instance.GetFreeInstance<CreateQuestMessage>(
+                1, IdentityType.Playfield2);
+
             if (!this.GiveKey(character, offer))
             {
                 return;
             }
 
-            // The accepted mission is a different quest from the offer.
-            offer.Instance = Pool.Instance.GetFreeInstance<CreateQuestMessage>(1, IdentityType.Quest);
             MissionBook.Take(character, offer);
 
             QuestFullUpdateMessageHandler.Default.SendMissions(
