@@ -372,14 +372,69 @@ box - pool rooms overlap, which is why the composition rule is "floor if any roo
 cell says so" - and the smallest covering room was taken, so a few assignments may be to the
 wrong room. And six objects fell inside no room box at all.
 
+## How retail lays a building out
+
+276 distinct mission zone-in packets, which is 276 finished buildings with every room's
+index, floor, cell and rotation. Enough to say what their generator does.
+
+**The frame never varies.** Every one of the 276 is a 30 by 30 slot grid with a world height
+of 64. Those are constants, not parameters.
+
+**A building is 7 to 42 rooms, mean 17.5**, in a single hump peaked between 11 and 19. It
+occupies about 8 by 9 slots of the 30 by 30, so the grid is far larger than anything put in
+it.
+
+**It is nearly always one floor.** 260 of 276 are flat. Of the sixteen that are not, none has
+two floors: they have three or four, and always contiguous - (0,1,2), (-2,-1,0),
+(-3,-2,-1,0), (0,1,2,3). So a building is flat or it is a tower, never a mezzanine.
+
+**Rotation is near enough uniform**, 1086 / 1389 / 1052 / 1316 over 4,843 placed rooms, with a
+mild lean toward the quarter turns - which is what happens when oblong rooms get turned to
+fit.
+
+### It grows by matching door sockets
+
+This is the part worth having, and the sockets prove it. Taking every placed room's sockets to
+world coordinates across all 276 buildings:
+
+- **93.0% of socket positions have exactly two rooms meeting there.** 4,797 of 5,156.
+- **243 of the 276 buildings have exactly one socket left unpaired**, and that is the way in -
+  the door whose `Room` is -1.
+
+So a building is not rooms scattered on a grid and then joined. It is grown: take a free
+socket, choose a room that has a socket able to land on it, rotate it so the two coincide,
+place it if it fits, and strike both sockets off. The one you never fill is the front door.
+
+The room usage confirms it from the other side. **66.3% of all 4,843 placements are rooms with
+exactly one socket** - though such rooms are only 70 of the 434 in these pools. Each is placed
+47 times on average against about 5 for everything else. A growth algorithm that must leave no
+socket open needs caps, and dead ends are what it spends most of its rooms on:
+`militaryot_endblock_one`, `office_endblock_one_bigger`, `clan_endblock_one_bigger`,
+`Mine_Endblock_One_Small_07`.
+
+### What a generator of ours needs, then
+
+Nothing that is not already in `missionpools.ocp`:
+
+1. Pick a pool, and a room count from the distribution above.
+2. Place an entrance room. Keep a list of its free sockets.
+3. While under the room count: pop a free socket, pick a room and a rotation whose socket
+   lands on it, reject the placement if its floor cells collide with something already placed
+   that is not the shared cell, otherwise place it and add its other sockets to the list.
+4. When the count is reached, close every socket still open with a single-socket room.
+5. Emit one door per distinct socket position, and `Room`/`AdjoiningRoom` are the indexes of
+   the two rooms that meet there, with -1 for the entrance.
+
+The one thing the recordings do not say is how it chooses *which* room for a socket. The usage
+counts give a workable weighting, and nothing about the format requires retail's exact choice.
+
 ## What a server still cannot do
 
 1. **Choose the types.** The dimensions decide it and the function is unmapped. See the sweep
    above.
-2. **Lay out a building.** The pieces are now in the repository - every room, its footprint
-   and its floor - but nothing says how retail picks and connects them: how many floors, where
-   the elevator and boss rooms go, how connectivity is guaranteed. An algorithm of our own is
-   buildable on the pack; it will not be retail's.
+2. **Lay out a building.** No longer a blank - see the section above, which reconstructs the
+   algorithm from 276 real layouts. What is left is writing it, and one open choice inside it:
+   which room to pick for a given socket. Nothing here is waiting on data.
 3. **Fill the rooms.** Doors are solved - the sockets are in the pack and the placement
    reproduces 451 real ones exactly. For the rest, the section above says how many of each a
    building gets, which templates they are and what a lock reads. Where inside a room they
