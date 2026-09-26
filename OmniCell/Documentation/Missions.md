@@ -294,10 +294,22 @@ What they settle:
   only; 8 appear in three or four - `A-500 soldier`, `A-500 elite`, `Rhinoman Smasher`,
   `Hellhound`, the `Claw-C22` pair. So a generator needs a shared pool of creatures plus
   per-pool ones, not one table per pool.
-- **Level tracks the mission, tightly.** 366 monsters between 29 and 40, and the split is
-  clean: every difficulty 3 run came out 29 to 33 and every difficulty 4 run 34 to 40.
-  Whether that is the difficulty or the character's own level is not separable here - he was
-  levelling through the same window - but one of the two sets it, and it is not the pool.
+- **Level follows the mission's QL, and the QL follows the character and the difficulty
+  together.** The bot keeps a `qlmap.json` of level and difficulty against the QL the missions
+  came back at, which is what separates the two:
+
+  | character level | difficulty | mission QL | QL / level |
+  |---|---|---|---|
+  | 40, 41, 42 | 3 | 32, 32, 33 | 0.78 - 0.80 |
+  | 44, 45, 46, 47 | 4 | 37, 38, 39, 39 | 0.83 - 0.85 |
+  | 40 | 5 | 36 | 0.90 |
+  | 39 | 6 | 39 | 1.00 |
+
+  So the difficulty is a multiplier on the character's level, rising by roughly a twentieth a
+  step. And the monsters sit on the QL, not on the player: the difficulty 3 runs averaged
+  **31.3** against a QL of 32 while the character was 40 to 42, and the difficulty 4 runs
+  **37.2** against a QL of 37 to 39 while he was 44 to 47. Spread is about three either way -
+  74 and 438 monsters respectively.
 
 And one negative result worth as much: **the dimensions do not pick the pool.** All 28 runs
 were rolled at the same setting - difficulty 3 or 4, and 0%, 100%, 0%, 0%, 0%, 0% across the
@@ -473,10 +485,11 @@ captured copy may still be a slot.
    stand turns out to be a short authored list per room template rather than a rule, so what
    is missing is the list itself for the other 559 rooms - which is more recorded runs, not
    more analysis.
-4. **Populate it.** Narrowed, not closed - see the section above. The counts, the spacing,
-   the floor and the level band are measured; what is not is the creature table itself (which
-   names are eligible at a level, and how the shared ones divide from the per-pool ones) and
-   how the boss is chosen.
+4. **Populate it.** Narrowed to one thing. Counts, spacing, floor and level are all
+   measured, and level is now pinned to the mission QL rather than confounded with the
+   character's. What is left is the creature table - which names are eligible at a QL, and how
+   the shared ones divide from the per-pool ones - and that wants more recorded runs rather
+   than more analysis, because creature names only exist in the full packet recordings.
 5. **Write the text.** Done to the extent 105 captured offers allow - see the section above.
    What is missing is coverage: more bodies exist, especially for the types the captures are
    thin on.
