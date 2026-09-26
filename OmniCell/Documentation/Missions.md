@@ -1,9 +1,33 @@
 # Missions - what is settled, and what a server still cannot do
 
-Nothing in OmniCell answers a mission roll today: there is no QuestAlternative handler, and
-a terminal here offers nothing. This page is the standing account of what would be needed
-and which parts of it are already evidence rather than intention. Every claim names where it
-came from. Where something is not known it says so rather than filling the gap.
+OmniCell answers a mission roll as of 2026-09-26. A player can walk to a terminal, click it,
+read five assignments, take one and find the key in their inventory; the building the mission
+is run in is generated at that moment, floors and all. What they cannot do yet is walk into
+it - see **What a server still cannot do** at the end, which is now one item rather than six.
+
+This page is the standing account: what is evidence, what is written, and what is neither.
+Every claim names where it came from. Where something is not known it says so rather than
+filling the gap.
+
+## What the server does today
+
+| | where |
+|---|---|
+| answers a roll with five missions | `QuestAlternativeMessageHandler` |
+| draws the dimensions when the panel is untouched, and says which it drew | `MissionRoller.Roll` |
+| writes the assignment out of the captured openers and bodies | `MissionText`, `Datafiles/missiontext.tsv` |
+| hands over the mission and the key when one is taken | `CreateQuestMessageHandler` |
+| generates the building, floors and all | `MissionBuilder`, `MissionBuilding` |
+| furnishes and populates it | `MissionFactory` |
+| gives one up | `QuestMessageHandler`, inbound |
+
+`Tools/Capture/MissionOffers.exe` is the check on all of it: it rolls, takes, builds, and puts
+both packets through the real serializer against everything the client refuses a roll for.
+`MissionGen.exe` builds 3,000 buildings and asserts what 325 recorded ones satisfy.
+
+Two things are held only in memory, and a restart loses them: which missions a terminal
+offered, and which a character is on. Missions are generated, so there is nothing to reload
+them from; a table is the fix and there is not one yet.
 
 Two bodies of work feed it. The captures in `E:\Funcom\sniffs` and `E:\Funcom\captures`,
 decoded with `Tools/Capture/bin/PcapDecode.exe`; and the client-data extraction done in the
@@ -557,6 +581,35 @@ it.
 two floors: they have three or four, and always contiguous - (0,1,2), (-2,-1,0),
 (-3,-2,-1,0), (0,1,2,3). So a building is flat or it is a tower, never a mezzanine.
 
+### A team building, in four rules
+
+The sixteen that are not flat are the team missions, and read together they leave no room for
+invention. Nine of them count upwards from floor zero and seven downwards, and none mixes the
+two. Then:
+
+- **The floor furthest from zero holds exactly one room.** All sixteen. It is at grid 13, 13 -
+  the middle of the thirty by thirty - in all sixteen, and it is a **boss room** in all
+  sixteen: 320 rooms 71 and 72, 321 room 60, 324 rooms 45 and 46, 341 rooms 93 and 94, 346
+  room 60, 351 room 63, and the pack has every one of those down as `BossRoom` from the client
+  data, which is a different source agreeing.
+- **No two floors share a grid cell.** Not one pair of the forty adjacent pairs. A floor
+  occupies about eight by nine slots of a thirty by thirty grid, so two of them miss each
+  other by luck perhaps half the time; forty in a row is not luck. The floors compete for one
+  footprint, which is what the builder's collision map does by dropping the floor from its
+  key.
+- **The other floors are ordinary buildings.** 4 to 16 rooms each, mean 9.9 over 37 of them,
+  grown and capped exactly like a flat one.
+- **Only floor zero has a way in.** Every captured building has exactly one socket nobody
+  meets; the floors above and below are closed all round and reached by lift.
+
+A mission is a team one when the originator is even - 1 is a solo booth and 2 its team
+version, per `IsTeamOriginator` - and one of the ten pools has no boss room in it at all, so
+no team mission can be built there.
+
+The floor a room is on is the third field of the room record, and reading the record one place
+over is what made this look shapeless at first: every floor's z came out between 0 and 3,
+because it was the rotation being read. The record is room, floor, x, z, rotation.
+
 **Rotation is near enough uniform**, 1086 / 1389 / 1052 / 1316 over 4,843 placed rooms, with a
 mild lean toward the quarter turns - which is what happens when oblong rooms get turned to
 fit.
@@ -601,8 +654,9 @@ counts give a workable weighting, and nothing about the format requires retail's
 
 An offer is an **opener bolted onto a body**, and sometimes a closer. The openers are
 interchangeable - the same ones turn up on every kind of mission - and the body is chosen by
-the type. `Tools/Capture/MissionText.tsv` has them, taken out of 105 captured offers:
-sixteen openers, three closers, and two or three bodies for each of the five types.
+the type. `Datafiles/missiontext.tsv` has them, taken out of 105 captured offers: sixteen
+openers, three closers, and two or three bodies for each of the five types. The server reads
+that file and writes its offers out of it.
 
 The slots are few and obvious once the texts are aligned: `{item}`, `{name}`, `{place}`,
 `{playfield}`, `{fixture}`, `{credits}`, `{xp}`. A find item reads
@@ -665,11 +719,26 @@ a guess. The flag stops being set as more runs fill the table in.
 
 ## What a server still cannot do
 
+**The one that stops a player walking in.** A mission is an instanced playfield, and OmniCell
+cannot serve one. `Playfield` is constructed from `PlayfieldLoader.PFData[instance]`, which is
+the playfield file's own statels, and a mission's playfield has no file - it is a pool and a
+list of placements. Instancing is also switched off for the only instanced playfield the
+server does have: Arete Landing's entry in `Playfields.xml` says why, that the client would
+not leave the loading screen when it was told an instance the login half had never mentioned.
+Until that is solved the mission entrance cannot be made to lead anywhere, and the 2,235
+mission entrance statels already in the playfield pack have nothing to open onto.
+
+Everything behind that door is built and checked: the layout, the doors, the chests, the
+monsters and the objective. What is missing is the playfield to put them in.
+
+The rest, in the order they would be wanted:
+
 1. **Choose the types.** The dimensions decide it and the function is unmapped. What changed
    on 2026-09-26 is the price of the evidence: a terminal rolled with the sliders untouched
    sends six zero bytes, and the server then picks the six dimensions itself and tells you
    which it picked. So every such roll is a labelled sample, and a capture of a few hundred
-   of them is the whole dataset. `MissionRolls.exe` reads them out.
+   of them is the whole dataset. `MissionRolls.exe` reads them out. Until then the roller
+   answers the ten measured settings from a table and draws at random elsewhere.
 2. **Lay out a building.** No longer a blank - see the section above, which reconstructs the
    algorithm from 276 real layouts. What is left is writing it, and one open choice inside it:
    which room to pick for a given socket. Nothing here is waiting on data.
@@ -699,5 +768,19 @@ a guess. The flag stops being set as more runs fill the table in.
    entrance door actually checks - the wire shows a character holding a duplicate walking in,
    so it is not ownership, but nothing captured shows the check failing.
 
+7. **Say what the reward is worth.** 25 captured offers at four qualities are all there is,
+   and credits scatter from 2,500 to 13,300 with no shape - which is what a slider trading
+   credits against experience would do. Experience is interpolated between the measured
+   qualities and credits are a spread around the measured mean. Neither is a formula anyone
+   has read out of the client, and a mission above QL 53 is extrapolated past the evidence.
+
+8. **Name a person.** A find person mission names a human NPC and nothing here has a list of
+   them. The four out of the captures are crossed to make sixteen, which is a placeholder and
+   the only content on the roll path not read from data. Retail's list is in the client's own
+   resource database.
+
 There is also a smaller one: seventeen of `QuestInfo`'s forty members are still unnamed, and
-a server emitting an offer has to put something in all of them.
+a server emitting an offer has to put something in all of them. The offers settle several of
+them - `UnknownHash` is the four characters "MSRE" in all 25, `Unknown20` is 6, `Unknown26` is
+1, and the quest action's version is the mission's type: 16 find person, 15 find item, 8
+return item and repair, 1 kill person.
