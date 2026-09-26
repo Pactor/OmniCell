@@ -494,11 +494,13 @@ socket position.
 Two things are still off, and both are known rather than mysterious.
 
 **Ways out, 2.50 against 1.3.** These are sockets the capping pass could not fill, so they
-stay doors onto nothing - retail has 0.3 a building and we have 1.5. It is not that the pool
-lacks a dead end of the right offset: a filter that refused any placement opening a socket no
-dead end could serve changed the figure by nothing at all. The cause is collision - the cap
-would fit but the space is taken - and fixing it means backtracking rather than a better
-choice of room.
+stay doors onto nothing - retail has 0.3 a building and we have 1.5. Two attempts at it have failed and both are
+worth knowing. Refusing any placement that opens a socket no dead end in the pool could serve
+changed the figure by nothing at all, because every socket passes that test. Refusing any
+placement that opens a socket no dead end could be hung on *as things stand* - the same test
+with the collision included - made it worse, 2.89, because a placement refused is a growth
+step that caps instead. So the cause is collision, and the fix is backtracking: undoing the
+room that stranded the socket rather than being cleverer about which room to try next.
 
 **Chests in rooms nobody has walked into.** 230 of the 639 rooms have a recorded spot. Using
 only those gave a building 2.3 chests where retail gives it nine, so a room with no record
