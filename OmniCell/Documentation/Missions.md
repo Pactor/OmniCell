@@ -429,6 +429,37 @@ Nothing that is not already in `missionpools.ocp`:
 The one thing the recordings do not say is how it chooses *which* room for a socket. The usage
 counts give a workable weighting, and nothing about the format requires retail's exact choice.
 
+## The prose a terminal writes
+
+An offer is an **opener bolted onto a body**, and sometimes a closer. The openers are
+interchangeable - the same ones turn up on every kind of mission - and the body is chosen by
+the type. `Tools/Capture/MissionText.tsv` has them, taken out of 105 captured offers:
+sixteen openers, three closers, and two or three bodies for each of the five types.
+
+The slots are few and obvious once the texts are aligned: `{item}`, `{name}`, `{place}`,
+`{playfield}`, `{fixture}`, `{credits}`, `{xp}`. A find item reads
+
+> We have gained knowledge of a serious threat to the environment. According to our sources,
+> a **{item}** found in **{place}** in **{playfield}** is leaking heavily. If you go there and
+> pick it up, your sub-space containment field (in your inventory) should hold it long enough
+> for you to destroy it.
+
+and a repair
+
+> Every year mutants crawl out of their hideout in **{playfield}**. Someone had grown tired of
+> the situation and would like you to go to **{place}** and take care of the problem. Add some
+> good old **{item}** to the **{fixture}** to make them docile enough through this breeding
+> season, and get out of there as soon as possible before 48 hours.
+
+Worth knowing while reading it: the objective's name is **in the prose and nowhere else** for
+a team member. The quest record a mission holder gets names the target outright, but the copy
+sent to the rest of the team carries the type and the building and no target, so a client
+that wants to know what to kill has to read the sentence. That is how the bot does it.
+
+This is what 105 offers contain and no more. Other bodies certainly exist - only seven repair
+offers were captured, against fifty return item - and a slot filled the same way in every
+captured copy may still be a slot.
+
 ## What a server still cannot do
 
 1. **Choose the types.** The dimensions decide it and the function is unmapped. See the sweep
@@ -446,8 +477,9 @@ counts give a workable weighting, and nothing about the format requires retail's
    the floor and the level band are measured; what is not is the creature table itself (which
    names are eligible at a level, and how the shared ones divide from the per-pool ones) and
    how the boss is chosen.
-5. **Write the text.** The objective's name is inside server-composed prose and no template
-   grammar has been captured. The wordings are formulaic enough to reconstruct by hand.
+5. **Write the text.** Done to the extent 105 captured offers allow - see the section above.
+   What is missing is coverage: more bodies exist, especially for the types the captures are
+   thin on.
 
 There is also a smaller one: seventeen of `QuestInfo`'s forty members are still unnamed, and
 a server emitting an offer has to put something in all of them.
