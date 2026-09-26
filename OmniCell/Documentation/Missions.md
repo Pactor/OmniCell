@@ -472,6 +472,39 @@ This is what 105 offers contain and no more. Other bodies certainly exist - only
 offers were captured, against fifty return item - and a slot filled the same way in every
 captured copy may still be a slot.
 
+## Building one
+
+`MissionFactory` puts it together: `MissionBuilder` lays the rooms out and the factory
+furnishes and populates them, all from the same pack. `MissionGen` builds 3,000 - 300 a pool -
+and measures them against the 276 recorded ones.
+
+| | ours | retail |
+|---|---|---|
+| rooms per building | 17.0 | 17.5 |
+| bounding box, slots | 6.6 x 6.8 | about 8 x 9 |
+| chests per building | 9.4 | about 9.5, range 1 to 22 |
+| monsters per building | 16.9 | 11 to 69 |
+| monster level against the QL | -4 to +3 | -4 to +3 |
+| ways out per building | 2.50 | 1.3 |
+
+All 3,000 pass the checks every captured building satisfies: no two rooms flooring the same
+cell away from their edges, never three rooms at one socket, nothing off the grid, a door per
+socket position.
+
+Two things are still off, and both are known rather than mysterious.
+
+**Ways out, 2.50 against 1.3.** These are sockets the capping pass could not fill, so they
+stay doors onto nothing - retail has 0.3 a building and we have 1.5. It is not that the pool
+lacks a dead end of the right offset: a filter that refused any placement opening a socket no
+dead end could serve changed the figure by nothing at all. The cause is collision - the cap
+would fit but the space is taken - and fixing it means backtracking rather than a better
+choice of room.
+
+**Chests in rooms nobody has walked into.** 230 of the 639 rooms have a recorded spot. Using
+only those gave a building 2.3 chests where retail gives it nine, so a room with no record
+gets one on a floor cell instead - and that furniture is flagged `Approximate`, because it is
+a guess. The flag stops being set as more runs fill the table in.
+
 ## What a server still cannot do
 
 1. **Choose the types.** The dimensions decide it and the function is unmapped. See the sweep

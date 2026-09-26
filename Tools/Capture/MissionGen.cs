@@ -1,4 +1,4 @@
-// --------------------------------------------------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="MissionGen.cs" company="OmniCell">
 //   Copyright © 2026 OmniCell contributors.
 // </copyright>
@@ -63,6 +63,10 @@ namespace OmniCell.Tools.Capture
             var rooms = new List<int>();
             var extents = new List<(int W, int H)>();
             var strays = new List<int>();
+            var chests = new List<int>();
+            var monsters = new List<int>();
+            var levels = new List<int>();
+            int objectives = 0;
 
             foreach (MissionPool pool in pools.OrderBy(p => p.Playfield))
             {
@@ -70,12 +74,25 @@ namespace OmniCell.Tools.Capture
 
                 for (int i = 0; i < each; i++)
                 {
-                    var builder = new MissionBuilder(pool, (pool.Playfield * 100003) + i);
-                    MissionLayout layout = builder.Build(builder.RollRoomCount(), 1);
+                    // The whole thing, not just the shell: a mission is the
+                    // building plus what stands in it, and the contents are
+                    // measured against the recordings too.
+                    var factory = new MissionFactory(pool, (pool.Playfield * 100003) + i);
+                    Mission mission = factory.Build(38, MissionType.FindItem);
+                    MissionLayout layout = mission?.Layout;
                     if (layout == null || layout.Rooms.Count == 0)
                     {
                         failed++;
                         continue;
+                    }
+
+                    chests.Add(mission.Furniture.Count(f => f.Kind == MissionFurnitureKind.Chest));
+                    monsters.Add(mission.Monsters.Count);
+                    if (mission.Objective != null) objectives++;
+                    if (mission.Monsters.Count > 0)
+                    {
+                        levels.Add(mission.Monsters.Min(m => m.Level) - 38);
+                        levels.Add(mission.Monsters.Max(m => m.Level) - 38);
                     }
 
                     built++;
@@ -118,6 +135,12 @@ namespace OmniCell.Tools.Capture
             Console.WriteLine("  bounding box slots    {0,4:F1} x {1:F1}    about 8 x 9",
                 extents.Average(e => e.W), extents.Average(e => e.H));
             Console.WriteLine("  ways out per building {0,4:F2}          1.3", strays.Average());
+            Console.WriteLine("  chests per building   {0,4:F1}          1 to 22", chests.Average());
+            Console.WriteLine("  monsters per building {0,4:F1}          11 to 69", monsters.Average());
+            Console.WriteLine("  monster level vs QL   {0,3} to {1,-3}     -4 to +3",
+                levels.Count == 0 ? 0 : levels.Min(), levels.Count == 0 ? 0 : levels.Max());
+            Console.WriteLine("  objective placed      {0,4:P0}         every find item",
+                objectives / (double)built);
 
             return bad == 0 ? 0 : 1;
         }
