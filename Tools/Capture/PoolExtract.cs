@@ -185,8 +185,47 @@ namespace OmniCell.Tools.Capture
 
             bool ok = CapturedMission(reread, 341, Placed, Sent, "Grey Caves 20260923-201746");
             ok &= CapturedMission(reread, 321, HiTechPlaced, HiTechSent, "HiTech 2224626");
+            ok &= CapturedMission(reread, 321, ReturnPlaced, ReturnSent, "HiTech 2224708");
             return ok ? 0 : 1;
         }
+
+        /// <summary>
+        /// The 23 rooms of a HiTech mission, instance 2224708 - the return item
+        /// mission of 2026-09-26, capture 20260926-135805 stream 10. Room
+        /// index, grid x, grid z, rotation.
+        /// </summary>
+        /// <remarks>
+        /// The first building taken from a packet capture rather than from the
+        /// bot's own recordings, and the largest of the three: 23 rooms and 24
+        /// doors against 18 and 21. Its first room is 50 at (29, 15) turned
+        /// twice, which is the other HiTech case's first room as well - the
+        /// entrance room and its placement are fixed for a pool.
+        /// </remarks>
+        private static readonly int[][] ReturnPlaced =
+        {
+            new[] { 50, 29, 15, 2 }, new[] { 66, 23, 12, 3 }, new[] { 3, 22, 15, 2 },
+            new[] { 47, 21, 10, 1 }, new[] { 19, 25, 14, 1 }, new[] { 32, 22, 14, 3 },
+            new[] { 34, 26, 14, 3 }, new[] { 24, 24, 12, 3 }, new[] { 2, 28, 12, 1 },
+            new[] { 9, 23, 17, 2 }, new[] { 34, 22, 17, 2 }, new[] { 31, 23, 9, 0 },
+            new[] { 53, 22, 9, 2 }, new[] { 2, 22, 13, 2 }, new[] { 58, 21, 9, 2 },
+            new[] { 15, 21, 13, 2 }, new[] { 2, 20, 10, 3 }, new[] { 58, 24, 11, 3 },
+            new[] { 31, 20, 11, 3 }, new[] { 31, 20, 12, 3 }, new[] { 58, 25, 16, 0 },
+            new[] { 34, 24, 14, 3 }, new[] { 9, 24, 15, 3 }
+        };
+
+        /// <summary>
+        /// The 24 door positions that mission's server sent, as whole metres,
+        /// from its DoorFullUpdate messages.
+        /// </summary>
+        private static readonly int[][] ReturnSent =
+        {
+            new[] { 210, 175 }, new[] { 210, 185 }, new[] { 210, 195 }, new[] { 215, 170 },
+            new[] { 215, 200 }, new[] { 225, 130 }, new[] { 225, 150 }, new[] { 225, 170 },
+            new[] { 225, 200 }, new[] { 230, 155 }, new[] { 235, 130 }, new[] { 235, 150 },
+            new[] { 235, 170 }, new[] { 235, 200 }, new[] { 240, 185 }, new[] { 250, 145 },
+            new[] { 250, 155 }, new[] { 250, 175 }, new[] { 255, 140 }, new[] { 255, 160 },
+            new[] { 270, 155 }, new[] { 280, 175 }, new[] { 290, 145 }, new[] { 300, 145 }
+        };
 
         /// <summary>
         /// The 18 rooms of a HiTech mission, instance 2224626, recorded by the

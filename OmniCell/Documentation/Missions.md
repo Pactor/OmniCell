@@ -60,16 +60,46 @@ the same mix wherever the dimensions match. 954 rolls of it.
 
 **With every dimension at 50 the draw is random.** The last row differs from the one above it
 in one byte, the credits/experience dimension, and it goes from one mix in 39 rolls to
-nineteen in 25. So the dimensions are weights on a draw rather than a lookup: push any one off
-centre and one type dominates, leave them all centred and the five come up at random. That is
-also why the earlier note called this deterministic - every capture and every setting it saw
-had something pushed.
+nineteen in 25. Every dimension at 50% is every wire byte zero, and the section below says
+what that turns out to mean.
 
 **One dimension moved on its own, once.** The two 50/50/50/50/50 rows differ only in
 credits/experience, 0% against 50%, and that alone is the difference between "three find
 person, every time" and a random draw. The 0/100/0 rows differ from them in three dimensions
 at once and dominate with find item instead, so which of those three did it is not separable
 yet. It is the first read on any dimension from rolls rather than from the community tables.
+
+### With all six bytes zero the server draws the dimensions itself
+
+The reply carries six dimension bytes of its own, and they are **not always the ones that
+were asked for**. Nine rolls have now been read out of captures with both halves paired up,
+by `Tools/Capture/MissionRolls.exe`, and the answer echoed the request in one of them.
+
+| asked | rolls | answered |
+|---|---|---|
+| all six bytes zero (every slider at 50%) | 4 | six unrelated values, different every roll |
+| anything else | 5 | the request, byte for byte |
+
+The four that came back changed are the `20260910-200346` rolls, and their answers are the
+four capture rows in the table further down - 55/85/50/33/96/49, 76/83/7/9/53/2 and the rest.
+Those are not percentages a player can dial. The slider moves in notches and 96%, 7% and 2%
+are not among them, which is the plainest sign that the server made them up rather than
+receiving them. The rows are still right and are still the values the draw ran on; what was
+wrong was reading them as the setting the player chose.
+
+That also settles what the 50% row in the bot's table means. `50/50/50/50/50/0` is
+`00 00 00 00 00 9C` - five zero bytes and one not - and it gives one mix in 39 rolls.
+`50/50/50/50/50/50` is six zero bytes, and it gives nineteen mixes in 25. So it is not each
+zero byte being replaced: it is all six at once or none, and only the untouched slider panel
+sends all six.
+
+**What this is worth.** The sweep this page has been asking for does not need a player to
+dial anything. An untouched terminal rolled over and over hands out a random point in the six
+dimensional space *and* the answer at that point, one pair per roll, and `MissionRolls.exe
+--tsv` accumulates them across captures. Twenty five such rolls already produced nineteen
+different mixes, so the points are well spread. A few hundred of them, recorded in one
+sitting, is the dataset the type function needs - and it is cheaper than the 729 roll grid
+this page proposed, because the server is doing the sampling.
 
 ### The type is the mission's icon
 
@@ -93,37 +123,49 @@ An authored quest carries an ordinary icon in the same field - 244818 and 158429
 Arete ones in the corpus - so this is an icon that happens to be the type for a generated
 mission, not a type field.
 
-### The six settings measured from captures
+### The seven settings measured from captures
 
-These came first, from `20260910-200346_s2` and `20260923-201746_s8`, and are kept because
-they are the only ones with dimensions at intermediate values. Percentages, not wire bytes;
-the bold entry is the triple.
+Percentages, not wire bytes; the bold entry is the triple. The first four are the values the
+**server answered with** after being asked at all six zero, so they are points it chose; the
+rest are what the player asked for and got back unchanged.
 
 | capture | difficulty | Bad | Chaos | Hidden | Myst | Stealth | XP | offered |
 |---|---|---|---|---|---|---|---|---|
-| 0910 #1 | 6 | 55 | 85 | 50 | 33 | 96 | 49 | **3 find item**, return item, kill |
-| 0910 #2 | 6 | 76 | 83 | 7 | 9 | 53 | 2 | **3 kill**, find person, repair |
-| 0910 #3 | 11 | 71 | 62 | 81 | 89 | 77 | 11 | **3 repair**, find person, return item |
-| 0910 #4 | 9 | 37 | 47 | 43 | 26 | 80 | 88 | **3 repair**, kill, return item |
+| 0910 #1 (server's) | 6 | 55 | 85 | 50 | 33 | 96 | 49 | **3 find item**, return item, kill |
+| 0910 #2 (server's) | 6 | 76 | 83 | 7 | 9 | 53 | 2 | **3 kill**, find person, repair |
+| 0910 #3 (server's) | 11 | 71 | 62 | 81 | 89 | 77 | 11 | **3 repair**, find person, return item |
+| 0910 #4 (server's) | 9 | 37 | 47 | 43 | 26 | 80 | 88 | **3 repair**, kill, return item |
 | 0923 A (2 rolls) | 6 | 100 | 0 | 0 | 100 | 0 | 0 | **3 kill**, find person, return item |
 | 0923 B (15 rolls) | 11 and 1 | 0 | 100 | 100 | 0 | 100 | 100 | **3 return item**, find item, find person |
+| 0926 | 1 | 100 | 0 | 0 | 0 | 0 | 0 | **3 find person**, kill, return item |
+
+The last row is new and is the only one with good/bad pushed alone. It answers with three
+find person - the same triple the bot's `50/50/50/50/50/0` row gives - so good/bad at either
+end is not what picks find person, and that dimension is still unread.
 
 Which dimension chooses which type is still **not settled**. Nine settings between the log and
 these, against six dimensions, and only one pair differs in a single dimension. The community
 tables are not separable as written either - their "three repair" and "three find person"
 sections both sit at Good 0%, Order 0%, Hidden 100%.
 
-What would settle it is a sweep: five dimensions pinned at 50% and the sixth walked across 0,
-25, 50, 75 and 100 is thirty rolls for the one-at-a-time effects, and a three-level grid over
-all six is 729 for the interactions. The bot already logs everything such a sweep would need,
-so it is a matter of rolling at settings nobody has rolled at yet - and at a biased setting one
-roll per point is enough, because only the all-centred setting draws at random.
+What would settle it is a spread of points with their answers, and the section above says
+where to get one cheaply: roll at an untouched terminal, inside a capture, as many times as
+patience allows. Each roll is a free random point. `MissionRolls.exe <streams.csv> --tsv
+MissionRolls.tsv` reads them out and appends them to `Tools/Capture/MissionRolls.tsv`, which
+is where they accumulate; the nine known so far are in it.
+
+A deliberate sweep still has a place for the one-at-a-time effects - five dimensions pinned
+off centre and the sixth walked across - because a random point never isolates a dimension.
+But it is no longer the only way in, and it costs a trip to a terminal per point where the
+untouched roll costs a click.
 
 ## Accepting, and finishing
 
 - **Accept**: `CreateQuestMessage` with the identity from the list. The server answers
   `QuestFullUpdateMessage` with `AnnounceAsNew` set and a *new* identity - in the capture the
-  list id ending C9CB came back as C9D0.
+  list id ending C9CB came back as C9D0, and on 2026-09-26 the five offers were instances
+  ...3380 to ...3384, the one accepted was ...3383 and the quest granted was ...3385. So the
+  new identity is not the offer's and is not derived from it; a server has to allocate one.
 - **Abandon**: `QuestMessage` version 1 with that identity.
 - **Finish**: the reward goes to the overflow window (`TemplateAction 87` then
   `ContainerAddItem`), then `FeedbackMessage 108871108`, then `CharacterAction MissionChanged`
@@ -139,6 +181,112 @@ Objective completion, per type, as captured:
   item stays on the floor.
 - **repair** - `GenericCmdMessage` UseItemOnItem with two targets, the inventory item first
   and the fixture second.
+- **return item** - captured for the first time on 2026-09-26; it has three parts and they
+  are below.
+
+### Return item, end to end
+
+From `20260926-135805`, streams 4, 10 and 12: a QL 33 HiTech mission for a prototype pair of
+Basic Martial Artist Suit Boots, rolled in Borealis, walked, and handed back.
+
+**The objective lies on the floor**, as a `SimpleItemFullUpdate` of identity type 51022 - not
+in a chest, and not something a monster drops:
+
+```
+Identity      51022:1046659
+Coordinate    231.1  5.1  177.7          the room it was placed in
+Playfield     112085                     the mission's playfield instance
+BodyLocation  111
+Stats         Flags(0)=3221225475  StaticInstance(23)=85639
+              ACGItemLevel(701)=33       the mission's QL
+              ACGItemTemplateID(702)=85639  ACGItemTemplateID2(703)=22124
+              MultipleCount(412)=1       QuestInstance(491)=1
+```
+
+`QuestInstance = 1` is what marks it as the objective, and `ACGItemLevel` is the mission's
+quality rather than the item's own. It despawns and respawns as the player walks out of and
+back into range, like any dynel.
+
+**Picking it up** is four messages, and unlike find item the thing is actually taken:
+
+```
+client  LookAtMessage        Target=51022:1046659
+client  GenericCmdMessage    Action=Use  Target=[51022:1046659]
+client  ClientGetItemMessage Item=51022:1046659
+server  ContainerAddItemMessage SourceContainer=51022:1046659 Target=None:0 TargetPlacement=0
+```
+
+It keeps its world identity in the inventory - the same 51022:1046659 is what the hand-in
+names later.
+
+**Handing it in** is the inventory item used on the terminal, which is what the client's own
+hint describes as holding it on the cursor and right clicking the terminal:
+
+```
+client  GenericCmdMessage Action=UseItemOnItem Target=[Inventory:71, 56001:0xC0000320]
+server  FormatFeedbackMessage                            the reward line
+server  StatMessage       Cash=194381                    the new balance, not the payment
+server  TemplateActionMessage ItemLowId=121650 ItemHighId=121651 Quality=33 Amount=1
+                              Action=87 Placement=OverflowWindow:0
+server  ContainerAddItemMessage SourceContainer=OverflowWindow:0
+                                Target=OverflowWindow:<player> TargetPlacement=111
+server  FeedbackMessage   CategoryId=110 MessageId=108871108
+server  CharacterActionMessage Action=MissionChanged Target=Quest:281817989
+server  QuestMessage      QuestIdentity=Quest:281817989   the mission is gone
+server  StatMessage       SocialStatus=3
+server  CharacterActionMessage Action=47 Target=51053:2681454   the key
+server  CharacterActionMessage Action=47 Target=51022:1046659   the objective
+server  DespawnMessage    51053:2681454
+server  DespawnMessage    51022:1046659
+```
+
+The reward path - `TemplateAction 87` into the overflow window, then `ContainerAddItem`, then
+`FeedbackMessage 108871108` - is the same one every other mission type and the apartment
+move-in gift use. What is new here is the tail: **finishing a mission destroys the key and
+the objective**, each by `CharacterAction 47` followed by a despawn.
+
+### The mission key, and the duplicator
+
+Accepting delivers a key into the inventory alongside the quest:
+
+```
+SimpleItemFullUpdate  Identity=51053:2681454  InventoryId=113  BodyLocation=111
+                      StaticInstance/Template 28577   ACGItemLevel 1
+                      Name="Mission key to A building in Borealis"
+```
+
+Identity type **51053** is the key, template **28577**, quality 1 whatever the mission's QL
+is, and the name names the building rather than the mission.
+
+The **Mission Key Duplicator** is identity type **51054**, template **28564**, also quality
+1. Using it is the ordinary two-target form, both targets inventory slots:
+
+```
+client  GenericCmdMessage Action=UseItemOnItem Target=[Inventory:68, Inventory:69]
+server  SimpleItemFullUpdate  Identity=51053:2681455  ... same template, same name
+```
+
+Three things the capture settles about it. The copy is **a new instance of the same
+template** - nothing on it distinguishes it from the original except `TimeExist`. The
+duplicator is **not consumed**: it is still in slot 68 two zones later. And the copy is an
+ordinary item, so it trades - `TradeMessage` None, AddItem `Container=Inventory:70`, action
+3, End - and the character who receives it can enter a mission that is not theirs.
+
+**Entering** needs no use of the key at all. Walking into the `MissionEntrance` door -
+identity type 56006, here instance 0xC0020320 - is answered with the pair every zone change
+uses:
+
+```
+server  N3TeleportMessage  Destination=638.555 73.025 507.109
+                           Playfield=51103:2224708          the building
+                           ChangePlayfield=Playfield2:112085 the playfield instance
+                           Playfield2=100002:1
+server  ZoneRedirectionMessage 37.18.193.20:7512
+```
+
+The second character, holding only the duplicate, got the same building instance 2224708 and
+the same playfield 112085. So the check is on the key being held, and the key names a
+building rather than a player.
 
 ## The building
 
@@ -240,6 +388,14 @@ seventeen doors of the Grey Caves mission it was written against - and 362 of th
 Anticlockwise gives 451 of 451. Grey Caves could not separate them because its rooms are
 nearly all square; the extractor now also checks a HiTech building, which scores 21 of 21 one
 way and 8 of 21 the other.
+
+A third building was added on 2026-09-26 and it is the first from a packet capture rather
+than from the bot: the return item mission, HiTech instance 2224708, 23 rooms and 24 doors.
+**24 of 24 predicted.** It matters because the pcap and the bot's recordings share no code at
+all - different reader, different reassembly, different machine - so the encoding is not
+being confirmed by the thing that produced it. Its first room is 50 at (29, 15) turned twice,
+which is the other HiTech building's first room and placement as well; the entrance room of a
+pool looks to be fixed.
 
 A socket is not a door: which neighbour each one opens onto is the generator's business. But
 the *count* is not - the number of sockets in a template is the number of doors the room gets,
@@ -509,8 +665,11 @@ a guess. The flag stops being set as more runs fill the table in.
 
 ## What a server still cannot do
 
-1. **Choose the types.** The dimensions decide it and the function is unmapped. See the sweep
-   above.
+1. **Choose the types.** The dimensions decide it and the function is unmapped. What changed
+   on 2026-09-26 is the price of the evidence: a terminal rolled with the sliders untouched
+   sends six zero bytes, and the server then picks the six dimensions itself and tells you
+   which it picked. So every such roll is a labelled sample, and a capture of a few hundred
+   of them is the whole dataset. `MissionRolls.exe` reads them out.
 2. **Lay out a building.** No longer a blank - see the section above, which reconstructs the
    algorithm from 276 real layouts. What is left is writing it, and one open choice inside it:
    which room to pick for a given socket. Nothing here is waiting on data.
@@ -533,6 +692,12 @@ a guess. The flag stops being set as more runs fill the table in.
 5. **Write the text.** Done to the extent 105 captured offers allow - see the section above.
    What is missing is coverage: more bodies exist, especially for the types the captures are
    thin on.
+
+6. **Hand out and honour the key.** New on 2026-09-26 and mostly settled: accepting gives an
+   identity type 51053 item naming the building, entering is the plain teleport pair with no
+   use of the key on the door, and finishing destroys the key. What is not known is what the
+   entrance door actually checks - the wire shows a character holding a duplicate walking in,
+   so it is not ownership, but nothing captured shows the check failing.
 
 There is also a smaller one: seventeen of `QuestInfo`'s forty members are still unnamed, and
 a server emitting an offer has to put something in all of them.
