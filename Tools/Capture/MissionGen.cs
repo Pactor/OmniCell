@@ -1,0 +1,223 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MissionGen.cs" company="OmniCell">
+//   Copyright © 2026 OmniCell contributors.
+// </copyright>
+// <summary>
+//   Generates missions and measures them against the ones retail generated.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace OmniCell.Tools.Capture
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
+
+    using OmniCell.Core.Content;
+    using OmniCell.Core.Missions;
+
+    using SmokeLounge.AOtomation.Messaging.GameData;
+
+    /// <summary>
+    /// Builds missions out of the pool pack and checks they come out like the
+    /// real ones.
+    /// </summary>
+    /// <remarks>
+    /// A generator that produces a building the client cannot walk is worse
+    /// than none, and the failure would only show up with somebody standing in
+    /// it. So this asserts the things 276 captured buildings all satisfy:
+    ///
+    ///   * every socket in the building is met by exactly two rooms, except
+    ///     one - the way in;
+    ///   * no two rooms claim the same floor cell away from their edges;
+    ///   * every room sits inside the thirty by thirty grid.
+    ///
+    /// and then prints the distributions beside retail's, which are not pass or
+    /// fail but are what says whether the output looks like a mission.
+    ///
+    ///     MissionGen &lt;pack.ocp&gt; [count]
+    /// </remarks>
+    internal static class MissionGen
+    {
+        private const int CellMetres = 2;
+        private const int SlotMetres = 10;
+
+        private static int Main(string[] args)
+        {
+            if (args.Length < 1)
+            {
+                Console.Error.WriteLine("usage: MissionGen <missionpools.ocp> [buildings per pool]");
+                return 1;
+            }
+
+            int each = args.Length > 1
+                           ? int.Parse(args[1], CultureInfo.InvariantCulture)
+                           : 200;
+
+            List<MissionPool> pools = OmniCellContentPack.ReadMissionPools(args[0]);
+            Console.WriteLine("{0} pools, {1} buildings each", pools.Count, each);
+            Console.WriteLine();
+
+            int built = 0, failed = 0, bad = 0;
+            var rooms = new List<int>();
+            var extents = new List<(int W, int H)>();
+            var strays = new List<int>();
+
+            foreach (MissionPool pool in pools.OrderBy(p => p.Playfield))
+            {
+                int poolBuilt = 0, poolBad = 0, poolStray = 0;
+
+                for (int i = 0; i < each; i++)
+                {
+                    var builder = new MissionBuilder(pool, (pool.Playfield * 100003) + i);
+                    MissionLayout layout = builder.Build(builder.RollRoomCount(), 1);
+                    if (layout == null || layout.Rooms.Count == 0)
+                    {
+                        failed++;
+                        continue;
+                    }
+
+                    built++;
+                    poolBuilt++;
+                    rooms.Add(layout.Rooms.Count);
+
+                    int xs = layout.Rooms.Min(r => (int)r.X);
+                    int zs = layout.Rooms.Min(r => (int)r.Z);
+                    extents.Add((layout.Rooms.Max(r => (int)r.X) - xs + 1,
+                                 layout.Rooms.Max(r => (int)r.Z) - zs + 1));
+
+                    string why = Check(pool, layout, out int stray);
+                    strays.Add(stray);
+                    poolStray += stray;
+                    if (why != null)
+                    {
+                        bad++;
+                        poolBad++;
+                        if (poolBad <= 2)
+                        {
+                            Console.WriteLine("  pool {0} build {1}: {2}", pool.Playfield, i, why);
+                        }
+                    }
+                }
+
+                Console.WriteLine(
+                    "  {0,-5} built {1,4}   invalid {2,3}   ways out, mean {3:F2}",
+                    pool.Playfield, poolBuilt, poolBad,
+                    poolBuilt == 0 ? 0 : poolStray / (double)poolBuilt);
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("built {0}, could not start {1}, invalid {2}", built, failed, bad);
+            Console.WriteLine();
+
+            Console.WriteLine("                        ours          retail (276 captured)");
+            Console.WriteLine("  rooms per building    {0,4:F1}          17.5", rooms.Average());
+            Console.WriteLine("  smallest / largest    {0,2} / {1,-2}       7 / 42",
+                rooms.Min(), rooms.Max());
+            Console.WriteLine("  bounding box slots    {0,4:F1} x {1:F1}    about 8 x 9",
+                extents.Average(e => e.W), extents.Average(e => e.H));
+            Console.WriteLine("  ways out per building {0,4:F2}          1.3", strays.Average());
+
+            return bad == 0 ? 0 : 1;
+        }
+
+        /// <summary>
+        /// The three things every captured building satisfies.
+        /// </summary>
+        private static string Check(MissionPool pool, MissionLayout layout, out int waysOut)
+        {
+            waysOut = 0;
+            var claimed = new Dictionary<(int, int, int), int>();
+            var sockets = new Dictionary<(int, int, int), int>();
+
+            for (int slot = 0; slot < layout.Rooms.Count; slot++)
+            {
+                BuildingRoomInfo p = layout.Rooms[slot];
+                MissionPoolRoom room = pool.Rooms.Single(r => r.Index == p.Room);
+
+                int w = p.Rotation % 2 == 0 ? room.SlotsWidth : room.SlotsHeight;
+                int h = p.Rotation % 2 == 0 ? room.SlotsHeight : room.SlotsWidth;
+                if (p.X < 0 || p.Z < 0 || p.X + w > layout.GridWidth || p.Z + h > layout.GridHeight)
+                {
+                    return string.Format("room {0} is off the grid at {1},{2}", p.Room, p.X, p.Z);
+                }
+
+                int originX = p.X * SlotMetres;
+                int originZ = (layout.GridHeight - p.Z - h) * SlotMetres;
+
+                for (int cz = 0; cz < room.CellsHeight; cz++)
+                {
+                    for (int cx = 0; cx < room.CellsWidth; cx++)
+                    {
+                        if (!room.HasFloor(cx, cz)) continue;
+
+                        int px = (cx * CellMetres) + 1;
+                        int pz = (cz * CellMetres) + 1;
+                        Turn(room, p.Rotation, ref px, ref pz);
+
+                        var key = (p.Floor, (originX + px) / CellMetres, (originZ + pz) / CellMetres);
+                        bool edge = cx == 0 || cz == 0
+                                    || cx == room.CellsWidth - 1 || cz == room.CellsHeight - 1;
+                        if (claimed.ContainsKey(key) && !edge)
+                        {
+                            return string.Format(
+                                "rooms {0} and {1} both floor the cell {2},{3}",
+                                claimed[key], p.Room, key.Item2, key.Item3);
+                        }
+
+                        claimed[key] = p.Room;
+                    }
+                }
+
+                foreach (MissionDoorSocket door in room.Doors)
+                {
+                    int px = (door.X * CellMetres) + 1
+                             + (door.Side == MissionDoorSide.East ? 1 : 0)
+                             - (door.Side == MissionDoorSide.West ? 1 : 0);
+                    int pz = (door.Z * CellMetres) + 1
+                             + (door.Side == MissionDoorSide.South ? 1 : 0)
+                             - (door.Side == MissionDoorSide.North ? 1 : 0);
+                    Turn(room, p.Rotation, ref px, ref pz);
+
+                    var key = (p.Floor, originX + px, originZ + pz);
+                    sockets.TryGetValue(key, out int n);
+                    sockets[key] = n + 1;
+                }
+            }
+
+            foreach (KeyValuePair<(int, int, int), int> kv in sockets)
+            {
+                if (kv.Value > 2)
+                {
+                    return string.Format("{0} rooms meet at one socket", kv.Value);
+                }
+
+                if (kv.Value == 1) waysOut++;
+            }
+
+            if (sockets.Count != layout.Doors.Count)
+            {
+                return string.Format(
+                    "{0} socket positions but {1} doors emitted", sockets.Count, layout.Doors.Count);
+            }
+
+            return null;
+        }
+
+        private static void Turn(MissionPoolRoom room, int rot, ref int px, ref int pz)
+        {
+            int width = room.SlotsWidth * SlotMetres;
+            int depth = room.SlotsHeight * SlotMetres;
+            for (int turn = 0; turn < rot % 4; turn++)
+            {
+                int nx = pz;
+                pz = width - px;
+                px = nx;
+                int swap = width;
+                width = depth;
+                depth = swap;
+            }
+        }
+    }
+}

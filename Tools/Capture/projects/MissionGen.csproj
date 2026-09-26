@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The rest is set in Directory.Build.props. Writes a content pack, so it compiles against
+       OmniCell.Core's own pack writer and mission models rather than a second copy of them. -->
+  <ItemGroup>
+    <Reference Include="OmniCell.Core"><HintPath>$(CaptureBin)OmniCell.Core.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="OmniCell.Enums"><HintPath>$(CaptureBin)OmniCell.Enums.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="OmniCell.Interfaces"><HintPath>$(CaptureBin)OmniCell.Interfaces.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="SmokeLounge.AOtomation.Messaging"><HintPath>$(CaptureBin)SmokeLounge.AOtomation.Messaging.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Utility"><HintPath>$(CaptureBin)Utility.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="MsgPack"><HintPath>$(CaptureBin)MsgPack.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+</Project>
