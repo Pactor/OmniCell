@@ -47,13 +47,18 @@ namespace OmniCell.Core.Missions
     ///
     /// Two things say it is right. Every one of the 1,889 records in the ten
     /// pools decodes to a cell inside its own room, none out of range. And
-    /// taking the 19 room placements out of a captured mission's zone-in packet
-    /// - pool 341, from 20260923-201746 stream 12 - and placing these sockets
-    /// through them reproduces all seventeen door positions that mission's
-    /// server sent, to the metre. Nineteen further sockets come out that the
-    /// capture does not contain, and six of those belong to rooms that sent no
-    /// door at all, which is what a capture of the first four minutes of a
-    /// mission looks like when distant objects stream in later.
+    /// placing these sockets through the room lists of twenty six recorded
+    /// missions - six pools, 451 doors, from the AOBuddy10 bot's own run
+    /// recordings - reproduces every one of those 451 door positions, to the
+    /// metre.
+    ///
+    /// Getting there corrected the placement rotation. The first version of
+    /// this, checked against a single Grey Caves mission, turned a rotated room
+    /// clockwise and reproduced all seventeen of that mission's doors; over the
+    /// 451 it managed 362. Grey Caves could not tell the difference because its
+    /// rooms are nearly all square. Anticlockwise gives 451 of 451, and the
+    /// extractor now checks a HiTech building as well, which scores 21 of 21
+    /// one way and 8 of 21 the other.
     ///
     /// A socket is not a door. The count of sockets in a template is the number
     /// of doors that room gets - checked room by room against the same capture,

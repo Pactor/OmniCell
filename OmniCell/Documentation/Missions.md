@@ -196,12 +196,17 @@ Two tests, and the extractor runs both every time the pack is built:
 
 - **Every one of the 1,889 records in the ten pools decodes to a cell inside its own room.**
   None out of range. 589 north, 476 south, 425 east, 399 west.
-- **Placing pool 341's sockets through a captured mission's own room list reproduces every
-  door that mission's server sent.** Nineteen rooms and seventeen doors from
-  `20260923-201746` stream 12; all seventeen predicted, to the metre, out of 34 sockets
-  placed. The other seventeen are doors the capture does not contain - six of them belong to
-  rooms that sent no door at all, which is what the first four minutes of a mission looks like
-  with distant objects still streaming.
+- **Placing the sockets through the room lists of twenty six recorded missions reproduces
+  every door those servers sent.** Six pools, 451 doors, from the AOBuddy10 bot's own run
+  recordings, which pair each mission's zone-in packet with the doors it then received. All
+  451, to the metre.
+
+That second test began as one mission and had to be widened, which is worth recording because
+the narrow version passed while being wrong. Rotating a placed room clockwise reproduces all
+seventeen doors of the Grey Caves mission it was written against - and 362 of the 451.
+Anticlockwise gives 451 of 451. Grey Caves could not separate them because its rooms are
+nearly all square; the extractor now also checks a HiTech building, which scores 21 of 21 one
+way and 8 of 21 the other.
 
 A socket is not a door: which neighbour each one opens onto is the generator's business. But
 the *count* is not - the number of sockets in a template is the number of doors the room gets,
@@ -209,16 +214,21 @@ which agreed room by room with that capture everywhere the capture was complete.
 1,889 sit on an interior cell rather than the boundary, which is a door between parts of one
 room.
 
-Three more things the same capture settles about a door:
+Two more things the same capture settles about a door:
 
-- It sits at the **midpoint of a slot edge**, always. All seventeen, without exception: one
-  coordinate a multiple of ten and the other a multiple of ten plus five.
 - `DoorFullUpdate` carries `Room` and `AdjoiningRoom`, and they are **indexes into the
   placement list the zone-in packet sent**, with -1 for the outside. The one door with
   `Room = -1` is the way in.
 - `LockDifficulty` was 50 on thirteen of them and 184 on four, with no keyholders. A mission
-  therefore has ordinary doors and hard ones in the same building, which is the first hard
-  evidence for what the open/hidden dimension is buying.
+  therefore has ordinary doors and hard ones in the same building. The bot's 451 doors are
+  almost all unlocked - one of them - so whatever sets the difficulty, those runs barely
+  touch it.
+
+A third thing it appeared to settle, it did not. Every one of those seventeen doors sits at
+the midpoint of a slot edge, one coordinate a multiple of ten and the other a multiple of ten
+plus five, which read like a rule. It is only true of a socket on a room's boundary. The
+HiTech building has a door at (241, 176), which is on no ten metre line at all, and it comes
+from one of the 229 sockets that sit on an interior cell.
 
 ### Lifts
 

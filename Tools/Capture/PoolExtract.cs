@@ -146,8 +146,50 @@ namespace OmniCell.Tools.Capture
             Verify(pools, reread);
             Console.WriteLine("round trip: " + reread.Sum(p => p.Rooms.Count) + " rooms read back identical");
 
-            return CapturedMission(reread) ? 0 : 1;
+            bool ok = CapturedMission(reread, 341, Placed, Sent, "Grey Caves 20260923-201746");
+            ok &= CapturedMission(reread, 321, HiTechPlaced, HiTechSent, "HiTech 2224626");
+            return ok ? 0 : 1;
         }
+
+        /// <summary>
+        /// The 18 rooms of a HiTech mission, instance 2224626, recorded by the
+        /// bot on 2026-09-25. Room index, grid x, grid z, rotation.
+        /// </summary>
+        /// <remarks>
+        /// This case is here because the Grey Caves one below could not tell a
+        /// clockwise placement rotation from a counter-clockwise one - its rooms
+        /// are nearly all square, so both give the same answer. This one does
+        /// not: 21 of 21 the right way round and 8 of 21 the wrong way. The
+        /// first version of this test used the wrong way and passed.
+        /// </remarks>
+        private static readonly int[][] HiTechPlaced =
+        {
+            new[] { 50, 29, 15, 2 }, new[] { 65, 23, 13, 3 }, new[] { 39, 23, 11, 1 },
+            new[] { 67, 22, 17, 3 }, new[] { 17, 26, 13, 2 }, new[] { 33, 27, 13, 1 },
+            new[] { 9, 23, 16, 3 }, new[] { 37, 23, 14, 3 }, new[] { 1, 25, 14, 3 },
+            new[] { 15, 22, 13, 3 }, new[] { 16, 25, 12, 1 }, new[] { 2, 23, 17, 0 },
+            new[] { 53, 26, 21, 1 }, new[] { 2, 21, 20, 3 }, new[] { 34, 24, 20, 1 },
+            new[] { 16, 22, 19, 3 }, new[] { 9, 28, 19, 1 }, new[] { 37, 26, 12, 0 }
+        };
+
+        /// <summary>
+        /// The 21 door positions that mission's server sent.
+        /// </summary>
+        /// <remarks>
+        /// Note (241, 176), which is on no ten metre line at all: it comes from
+        /// a socket on an interior cell rather than the room's boundary, so a
+        /// door is not always at the midpoint of a slot edge. All seventeen in
+        /// the Grey Caves case are, which is what made that look like a rule.
+        /// </remarks>
+        private static readonly int[][] HiTechSent =
+        {
+            new[] { 220, 95 }, new[] { 230, 105 }, new[] { 230, 165 }, new[] { 235, 120 },
+            new[] { 240, 95 }, new[] { 240, 135 }, new[] { 240, 155 }, new[] { 241, 176 },
+            new[] { 245, 170 }, new[] { 250, 155 }, new[] { 250, 175 }, new[] { 255, 130 },
+            new[] { 260, 155 }, new[] { 265, 150 }, new[] { 265, 170 }, new[] { 270, 85 },
+            new[] { 270, 165 }, new[] { 275, 160 }, new[] { 280, 105 }, new[] { 290, 145 },
+            new[] { 300, 145 }
+        };
 
         /// <summary>
         /// The 19 rooms a captured mission placed: pool 341 on a 30 by 30 grid,
@@ -187,16 +229,28 @@ namespace OmniCell.Tools.Capture
         /// stream in later - so the test is that every door that WAS sent is
         /// predicted, not that nothing else is.
         ///
+        /// Two buildings are checked because one was not enough. The AOBuddy10
+        /// bot records every mission it runs, and putting the pack through all
+        /// twenty six of those recordings - 451 doors over six pools - is what
+        /// showed the placement rotation had been going the wrong way: 362 of
+        /// 451 the old way and 451 of 451 the new one. Both cases here pass
+        /// either way except the HiTech one, which is the point of it.
+        ///
         /// The grid is 30 slots square and z counts from the far edge, which is
         /// what puts the landing point inside the entrance room.
         /// </remarks>
-        private static bool CapturedMission(List<MissionPool> pools)
+        private static bool CapturedMission(
+            List<MissionPool> pools,
+            int playfield,
+            int[][] placed,
+            int[][] sent,
+            string label)
         {
             const int Grid = 30;
-            MissionPool pool = pools.Single(p => p.Playfield == 341);
+            MissionPool pool = pools.Single(p => p.Playfield == playfield);
             var predicted = new HashSet<(int X, int Z)>();
 
-            foreach (int[] p in Placed)
+            foreach (int[] p in placed)
             {
                 MissionPoolRoom room = pool.Rooms.Single(r => r.Index == p[0]);
                 int gx = p[1], gz = p[2], rot = p[3];
@@ -219,8 +273,11 @@ namespace OmniCell.Tools.Capture
                     int depth = room.SlotsHeight * 10;
                     for (int turn = 0; turn < rot % 4; turn++)
                     {
-                        int nx = depth - pz;
-                        pz = px;
+                        // A quarter turn anticlockwise. Which way round it goes
+                        // was settled by scoring both against 451 doors; see the
+                        // remarks on HiTechPlaced.
+                        int nx = pz;
+                        pz = width - px;
                         px = nx;
                         int swap = width;
                         width = depth;
@@ -231,11 +288,12 @@ namespace OmniCell.Tools.Capture
                 }
             }
 
-            var missing = Sent.Where(s => !predicted.Contains((s[0], s[1]))).ToList();
+            var missing = sent.Where(s => !predicted.Contains((s[0], s[1]))).ToList();
             Console.WriteLine(
-                "captured mission: {0} of {1} sent doors predicted from the pack ({2} sockets placed)",
-                Sent.Length - missing.Count,
-                Sent.Length,
+                "{0}: {1} of {2} sent doors predicted from the pack ({3} sockets placed)",
+                label,
+                sent.Length - missing.Count,
+                sent.Length,
                 predicted.Count);
 
             foreach (int[] s in missing)
