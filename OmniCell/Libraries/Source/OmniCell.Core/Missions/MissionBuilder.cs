@@ -70,9 +70,35 @@ namespace OmniCell.Core.Missions
         /// </remarks>
         public int RollRoomCount()
         {
+            int roll = this.random.Next(Counts[Counts.Length - 1]);
+            for (int i = 0; i < Counts.Length; i++)
+            {
+                if (roll < Counts[i]) return i + 7;
+            }
+
+            return 42;
+        }
+
+        /// <summary>
+        /// The room counts of the 276 captured buildings, as a running total
+        /// from seven upward, so a draw against it has their distribution
+        /// rather than a shape invented to look like it.
+        /// </summary>
+        private static readonly int[] Counts = Running(
+            1, 3, 8, 10, 19, 17, 22, 20, 14, 23, 16, 23, 19, 15, 12, 9, 7, 4, 7, 5,
+            1, 3, 0, 3, 2, 1, 5, 2, 0, 2, 0, 0, 0, 1, 0, 2);
+
+        private static int[] Running(params int[] histogram)
+        {
+            var running = new int[histogram.Length];
             int total = 0;
-            for (int i = 0; i < 3; i++) total += this.random.Next(7, 43);
-            return Math.Max(7, Math.Min(42, (int)Math.Round(total / 3.0)));
+            for (int i = 0; i < histogram.Length; i++)
+            {
+                total += histogram[i];
+                running[i] = total;
+            }
+
+            return running;
         }
 
         /// <summary>
@@ -146,11 +172,13 @@ namespace OmniCell.Core.Missions
         private bool PlaceFirst()
         {
             // An entrance if the pool names one, else anything with a socket.
+            // Two sockets at least: one becomes the way in and the other has
+            // to carry the rest of the building.
             List<MissionPoolRoom> starts = this.pool.Rooms
-                .Where(r => r.Role == MissionRoomRole.Entrance && r.Doors.Count > 0).ToList();
+                .Where(r => r.Role == MissionRoomRole.Entrance && r.Doors.Count > 1).ToList();
             if (starts.Count == 0)
             {
-                starts = this.pool.Rooms.Where(r => r.Doors.Count > 0).ToList();
+                starts = this.pool.Rooms.Where(r => r.Doors.Count > 1).ToList();
             }
 
             if (starts.Count == 0) return false;
@@ -163,7 +191,14 @@ namespace OmniCell.Core.Missions
             // Near the middle, so it can grow in every direction.
             int gx = (this.layout.GridWidth - w) / 2;
             int gz = (this.layout.GridHeight - h) / 2;
-            return this.Put(room, 0, gx, gz, rot);
+            if (!this.Put(room, 0, gx, gz, rot)) return false;
+
+            // One socket is the way in and nothing may be hung on it. Without
+            // this a quarter of the buildings came out sealed, and every
+            // captured one has at least one socket nobody meets - the door
+            // whose Room is -1.
+            this.open.RemoveAt(this.random.Next(this.open.Count));
+            return true;
         }
 
         /// <summary>
@@ -228,9 +263,27 @@ namespace OmniCell.Core.Missions
             IEnumerable<MissionPoolRoom> source = this.pool.Rooms.Where(
                 r => capOnly ? r.Doors.Count == 1 : r.Doors.Count >= 2);
 
-            return capOnly
-                       ? source.OrderBy(r => this.random.Next()).ToList()
-                       : source.OrderBy(r => r.Doors.Count + this.random.Next(3)).ToList();
+            if (capOnly)
+            {
+                return source.OrderBy(r => this.random.Next()).ToList();
+            }
+
+            // Size matters as much as socket count. 73.6% of retail's 4,863
+            // placements are one slot square and the mean is 3.07 slots, which
+            // is what makes their buildings about seven slots across; choosing
+            // uniformly made ours half again as wide.
+            //
+            // And when the frontier is down to a single socket, a room that
+            // closes more than it opens ends the building there - which had a
+            // third of them finishing at three rooms. Three sockets is the
+            // right amount of widening; reaching for the ten socket halls
+            // instead leaves a frontier the capping pass cannot close.
+            bool widen = this.open.Count < 2;
+            return source
+                .OrderBy(r => (r.SlotsWidth * r.SlotsHeight)
+                              + (widen ? 2 * Math.Abs(r.Doors.Count - 3) : r.Doors.Count)
+                              + this.random.Next(4))
+                .ToList();
         }
 
         private bool Put(MissionPoolRoom room, int floor, int gx, int gz, int rot, Open filled = null)
