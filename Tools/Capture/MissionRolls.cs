@@ -14,6 +14,7 @@ namespace OmniCell.Tools.Capture
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Text;
 
     using ICSharpCode.SharpZipLib.Zip.Compression;
@@ -54,6 +55,11 @@ namespace OmniCell.Tools.Capture
     {
         private const int HeaderLength = 16;
 
+        /// <summary>
+        /// Print every member of every offered mission, not just the summary.
+        /// </summary>
+        private static bool detail;
+
         private const int SizeOffset = 6;
 
         private static int Main(string[] args)
@@ -62,7 +68,11 @@ namespace OmniCell.Tools.Capture
             string tsv = null;
             for (int i = 0; i < args.Length; i++)
             {
-                if (args[i] == "--tsv" && i + 1 < args.Length)
+                if (args[i] == "--detail")
+                {
+                    detail = true;
+                }
+                else if (args[i] == "--tsv" && i + 1 < args.Length)
                 {
                     tsv = args[++i];
                 }
@@ -74,7 +84,8 @@ namespace OmniCell.Tools.Capture
 
             if (captures.Count == 0)
             {
-                Console.Error.WriteLine("usage: MissionRolls <streams.csv> [...] [--tsv rolls.tsv]");
+                Console.Error.WriteLine(
+                    "usage: MissionRolls <streams.csv> [...] [--tsv rolls.tsv] [--detail]");
                 return 1;
             }
 
@@ -297,6 +308,11 @@ namespace OmniCell.Tools.Capture
                             continue;
                         }
 
+                        if (detail)
+                        {
+                            Dump(info);
+                        }
+
                         roll.Offers.Add(new Offer
                                         {
                                             Icon = info.MissionIconId,
@@ -358,6 +374,60 @@ namespace OmniCell.Tools.Capture
             }
 
             return sb.ToString().Trim();
+        }
+
+        /// <summary>
+        /// Every member of one offered mission, arrays opened up.
+        /// </summary>
+        private static void Dump(QuestInfo info)
+        {
+            Console.WriteLine("--- offer " + info.QuestIdentity);
+            foreach (PropertyInfo property in info.GetType().GetProperties())
+            {
+                object value;
+                try
+                {
+                    value = property.GetValue(info, null);
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
+
+                Console.WriteLine("    {0,-24} {1}", property.Name, Describe(value));
+            }
+
+            Console.WriteLine();
+        }
+
+        private static string Describe(object value)
+        {
+            if (value == null) return "<null>";
+
+            var array = value as Array;
+            if (array == null)
+            {
+                Type type = value.GetType();
+                if (type.IsPrimitive || type.IsEnum || value is string) return Convert.ToString(value);
+
+                var parts = new List<string>();
+                foreach (PropertyInfo p in type.GetProperties())
+                {
+                    try
+                    {
+                        parts.Add(p.Name + "=" + Describe(p.GetValue(value, null)));
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+
+                return parts.Count == 0 ? Convert.ToString(value) : "{ " + string.Join(" ", parts) + " }";
+            }
+
+            var items = new List<string>();
+            foreach (object item in array) items.Add(Describe(item));
+            return "[" + array.Length + "]" + (items.Count == 0 ? string.Empty : " " + string.Join(", ", items));
         }
 
         #endregion

@@ -23,6 +23,8 @@ namespace ZoneEngine.Core.MessageHandlers
     using SmokeLounge.AOtomation.Messaging.GameData;
     using SmokeLounge.AOtomation.Messaging.Messages.N3Messages;
 
+    using OmniCell.Core.Missions;
+
     #endregion
 
     /// <summary>
@@ -88,6 +90,28 @@ namespace ZoneEngine.Core.MessageHandlers
         }
 
         /// <summary>
+        /// Sends the window when only the missions have changed.
+        /// </summary>
+        /// <remarks>
+        /// There is one window and one message for it, so a mission cannot be
+        /// shown without the authored quests going with it - sending only the
+        /// missions would clear the rest out of the client's list. The authored
+        /// half comes from the same place the quest path takes it from.
+        /// </remarks>
+        public void SendMissions(
+            ICharacter character,
+            IEnumerable<MissionOffer> missions,
+            bool announceAsNew)
+        {
+            if (character == null)
+            {
+                return;
+            }
+
+            this.Send(character, this.FillData(character, null, announceAsNew), false);
+        }
+
+        /// <summary>
         /// Materializes the quest-window message without putting it on a socket.
         /// This is public so the exact production packet can pass the headless
         /// protocol gates before it is ever sent to a client.
@@ -106,9 +130,19 @@ namespace ZoneEngine.Core.MessageHandlers
             {
                 message.Identity = character == null ? Identity.None : character.Identity;
                 message.Unknown = 0;
-                message.QuestInfos = character == null
-                                         ? new QuestInfo[0]
-                                         : safeQuests.Select(q => Info(character, q)).ToArray();
+                // Authored quests and generated missions share the window, and
+                // the client is given one list. A mission is told from a quest
+                // on the wire by Flags, which is 0 on all 25 captured offers
+                // and 2 on all 218 authored records.
+                var all = new List<QuestInfo>();
+                if (character != null)
+                {
+                    all.AddRange(safeQuests.Select(q => Info(character, q)));
+                    all.AddRange(
+                        MissionBook.Active(character).Select(m => MissionWire.Info(m, character.Identity)));
+                }
+
+                message.QuestInfos = all.ToArray();
                 message.AnnounceAsNew = announceAsNew ? (byte)1 : (byte)0;
             };
         }

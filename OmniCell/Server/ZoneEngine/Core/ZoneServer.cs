@@ -46,6 +46,7 @@ namespace ZoneEngine.Core
     using OmniCell.Communication.Messages;
     using OmniCell.Core.Components;
     using OmniCell.Core.Entities;
+    using OmniCell.Core.Missions;
     using Utility;
     using OmniCell.Core.Playfields;
     using OmniCell.ObjectManager;
@@ -455,6 +456,10 @@ namespace ZoneEngine.Core
                     {
                         character.Controller.Client = null;
                     }
+
+                    // Missions live in memory and nowhere else, so the only
+                    // thing that clears them is the player leaving.
+                    MissionBook.Forget(character.Identity);
 
                     character.Dispose();
                 }

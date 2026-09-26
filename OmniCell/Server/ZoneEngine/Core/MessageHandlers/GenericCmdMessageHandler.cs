@@ -217,6 +217,20 @@ namespace ZoneEngine.Core.MessageHandlers
                                 break;
                             }
 
+                            // A mission terminal opens its own window, and the
+                            // acknowledgement is what opens it: retail answers
+                            // the use and the client then asks for a roll of
+                            // its own accord (20260926-135805 s4, client #7
+                            // acknowledged as server #77, client #9 the roll).
+                            // There is nothing to run here - the terminal has
+                            // no statel behaviour and the work starts when
+                            // QuestAlternative arrives.
+                            if (message.Target[0].Type == IdentityType.MissionTerminal)
+                            {
+                                this.Acknowledge(client.Controller.Character, message);
+                                break;
+                            }
+
                             client.Controller.UseStatel(message.Target[0]);
                         }
                     }
