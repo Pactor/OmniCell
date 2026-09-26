@@ -312,6 +312,33 @@ high end is what buys it, since that mission moved every slider at once. But it 
 measurement that touches either, and it agrees with what the community tables have always
 said - open/hidden is locks, head-on/stealth is traps.
 
+### Where in a room they stand: a table, not a rule
+
+Taking every spawned object back through the placement transform - the same one the door
+sockets go out through, run backwards - puts it in its room template's own frame. If the
+generator scattered things, those offsets would be all over the room. They are not.
+
+- **`clan_wc`, fifteen chests over fifteen buildings, two positions.** Nine at (3.35, 4.30)
+  and six at (0.70, 3.40), in cells from the template's origin, repeating to the centimetre.
+- **`clan_stair`, twelve chests, two positions.** Seven and five.
+- **`clan_elevator`, fourteen chests, three positions.** Six, five and three.
+
+Over the whole corpus: 255 chests fall into 80 (pool, room) groups, **43 of which have exactly
+one position**, and on average 75% of a group's chests are on its commonest spot. The 25 world
+items are tighter still - 12 of 15 groups have one position, 90% concentration. Doors come out
+at 94 of 128 groups with one position, which is what sockets should look like and is a second
+check on the transform.
+
+So furniture placement is **authored per room template and chosen from a short list**, not
+computed. A generator does not need a rule for it; it needs the list, and the list can be read
+straight off recordings like these. What is here covers 80 of the 639 rooms, because 28 runs
+only visit so many.
+
+Two caveats on the reduction. 216 of the 767 objects sit inside more than one room's bounding
+box - pool rooms overlap, which is why the composition rule is "floor if any room covering the
+cell says so" - and the smallest covering room was taken, so a few assignments may be to the
+wrong room. And six objects fell inside no room box at all.
+
 ## What a server still cannot do
 
 1. **Choose the types.** The dimensions decide it and the function is unmapped. See the sweep
@@ -322,10 +349,10 @@ said - open/hidden is locks, head-on/stealth is traps.
    buildable on the pack; it will not be retail's.
 3. **Fill the rooms.** Doors are solved - the sockets are in the pack and the placement
    reproduces 451 real ones exactly. For the rest, the section above says how many of each a
-   building gets, which templates they are and what a lock reads; what it does not say is
-   where inside a room any of them stands. Every chest, trap, button and objective in the
-   recordings has a world position, so the rule is derivable from them - it has not been
-   looked for yet.
+   building gets, which templates they are and what a lock reads. Where inside a room they
+   stand turns out to be a short authored list per room template rather than a rule, so what
+   is missing is the list itself for the other 559 rooms - which is more recorded runs, not
+   more analysis.
 4. **Populate it.** Narrowed, not closed - see the section above. The counts, the spacing,
    the floor and the level band are measured; what is not is the creature table itself (which
    names are eligible at a level, and how the shared ones divide from the per-pool ones) and
