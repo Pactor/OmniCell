@@ -34,9 +34,19 @@ namespace OmniCell.Core.Missions
         /// </summary>
         public List<MissionPoolRoom> Rooms { get; set; }
 
+        /// <summary>
+        /// The creatures missions from this pool have been seen to spawn.
+        /// </summary>
+        /// <remarks>
+        /// Empty for the four pools nobody has run. See
+        /// <see cref="MissionCreature"/>.
+        /// </remarks>
+        public List<MissionCreature> Creatures { get; set; }
+
         public MissionPool()
         {
             this.Rooms = new List<MissionPoolRoom>();
+            this.Creatures = new List<MissionCreature>();
         }
     }
 }

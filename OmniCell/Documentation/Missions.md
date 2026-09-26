@@ -485,11 +485,16 @@ captured copy may still be a slot.
    stand turns out to be a short authored list per room template rather than a rule, so what
    is missing is the list itself for the other 559 rooms - which is more recorded runs, not
    more analysis.
-4. **Populate it.** Narrowed to one thing. Counts, spacing, floor and level are all
-   measured, and level is now pinned to the mission QL rather than confounded with the
-   character's. What is left is the creature table - which names are eligible at a QL, and how
-   the shared ones divide from the per-pool ones - and that wants more recorded runs rather
-   than more analysis, because creature names only exist in the full packet recordings.
+4. **Populate it.** Counts, spacing, floor, level and now the creature table itself are all
+   measured, and the table is in the pack: 113 creatures over 38 bodies and the six pools the
+   bot has run, each with the levels it appeared at relative to the mission QL - the whole
+   table spans -4 to +3. `Tools/Capture/MissionMobs.tsv` is the readable form. What is missing
+   is the four pools nobody has run, and how the boss is chosen, and both want runs rather
+   than analysis.
+
+   One trap worth knowing if you extend it: a recording starts at the *previous* zone-in, so
+   the creatures walked past on the way are in the stream. Testing each against the building's
+   own room list cuts them - 208 of them, and with them every absurd level.
 5. **Write the text.** Done to the extent 105 captured offers allow - see the section above.
    What is missing is coverage: more bodies exist, especially for the types the captures are
    thin on.

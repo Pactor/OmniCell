@@ -105,6 +105,9 @@ namespace OmniCell.Tools.Capture
             if (!File.Exists(spotsFile)) spotsFile = "MissionSpots.tsv";
             Dictionary<(int, int), List<MissionFurnitureSpot>> spots = ReadSpots(spotsFile);
 
+            string mobsFile = Path.Combine(Path.GetDirectoryName(spotsFile) ?? ".", "MissionMobs.tsv");
+            Dictionary<int, List<MissionCreature>> mobs = ReadMobs(mobsFile);
+
             var pools = new List<MissionPool>();
             int totalRooms = 0;
             int totalCells = 0;
@@ -119,6 +122,9 @@ namespace OmniCell.Tools.Capture
                 }
 
                 MissionPool pool = ReadPool(playfield, path);
+                List<MissionCreature> herd;
+                if (mobs.TryGetValue(playfield, out herd)) pool.Creatures.AddRange(herd);
+
                 foreach (MissionPoolRoom room in pool.Rooms)
                 {
                     List<MissionFurnitureSpot> mine;
@@ -146,6 +152,11 @@ namespace OmniCell.Tools.Capture
                 pools.Sum(p => p.Rooms.Sum(r => r.Furniture.Count)),
                 pools.Sum(p => p.Rooms.Count(r => r.Furniture.Count > 0)),
                 spots.Count == 0 ? "nothing - MissionSpots.tsv not found" : spotsFile);
+
+            Console.WriteLine(
+                "{0} creatures over {1} pools",
+                pools.Sum(p => p.Creatures.Count),
+                pools.Count(p => p.Creatures.Count > 0));
 
             OmniCellContentPack.WriteMissionPools(output, pools);
 
@@ -372,6 +383,41 @@ namespace OmniCell.Tools.Capture
             return spots;
         }
 
+        /// <summary>
+        /// The measured creature table, by pool.
+        /// </summary>
+        private static Dictionary<int, List<MissionCreature>> ReadMobs(string path)
+        {
+            var mobs = new Dictionary<int, List<MissionCreature>>();
+            if (!File.Exists(path)) return mobs;
+
+            foreach (string line in File.ReadLines(path))
+            {
+                if (line.Length == 0 || line[0] == '#') continue;
+                string[] parts = line.Split('\t');
+                if (parts.Length < 6) continue;
+
+                int pool = int.Parse(parts[0], CultureInfo.InvariantCulture);
+                List<MissionCreature> list;
+                if (!mobs.TryGetValue(pool, out list))
+                {
+                    list = new List<MissionCreature>();
+                    mobs[pool] = list;
+                }
+
+                list.Add(new MissionCreature
+                         {
+                             Monster = int.Parse(parts[1], CultureInfo.InvariantCulture),
+                             Name = parts[2],
+                             Seen = int.Parse(parts[3], CultureInfo.InvariantCulture),
+                             MinLevelOffset = int.Parse(parts[4], CultureInfo.InvariantCulture),
+                             MaxLevelOffset = int.Parse(parts[5], CultureInfo.InvariantCulture)
+                         });
+            }
+
+            return mobs;
+        }
+
         private static MissionPool ReadPool(int playfield, string path)
         {
             using JsonDocument document = JsonDocument.Parse(File.ReadAllBytes(path));
@@ -528,6 +574,15 @@ namespace OmniCell.Tools.Capture
             foreach (MissionPool a in written)
             {
                 MissionPool b = read.Single(x => x.Playfield == a.Playfield);
+                if (a.Creatures.Count != b.Creatures.Count
+                    || a.Creatures.Where((c, n) => c.Monster != b.Creatures[n].Monster
+                                                   || c.Name != b.Creatures[n].Name
+                                                   || c.Seen != b.Creatures[n].Seen).Any())
+                {
+                    throw new InvalidDataException(
+                        "pool " + a.Playfield + "'s creatures did not survive the round trip.");
+                }
+
                 if (a.Rooms.Count != b.Rooms.Count)
                 {
                     throw new InvalidDataException(

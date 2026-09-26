@@ -322,6 +322,19 @@ namespace OmniCell.Core.Content
                 {
                     writer.Write(pool.Playfield);
                     writer.Write(pool.Name ?? string.Empty);
+                    writer.Write(pool.Creatures == null ? 0 : pool.Creatures.Count);
+                    if (pool.Creatures != null)
+                    {
+                        foreach (MissionCreature c in pool.Creatures)
+                        {
+                            writer.Write(c.Monster);
+                            writer.Write(c.Name ?? string.Empty);
+                            writer.Write(c.Seen);
+                            writer.Write(c.MinLevelOffset);
+                            writer.Write(c.MaxLevelOffset);
+                        }
+                    }
+
                     writer.Write(pool.Rooms == null ? 0 : pool.Rooms.Count);
                     if (pool.Rooms == null) continue;
 
@@ -376,6 +389,19 @@ namespace OmniCell.Core.Content
                         Playfield = reader.ReadInt32(),
                         Name = reader.ReadString()
                     };
+
+                    int creatures = ReadCount(reader, "mission pool creatures");
+                    for (int c = 0; c < creatures; c++)
+                    {
+                        pool.Creatures.Add(new MissionCreature
+                        {
+                            Monster = reader.ReadInt32(),
+                            Name = reader.ReadString(),
+                            Seen = reader.ReadInt32(),
+                            MinLevelOffset = reader.ReadInt32(),
+                            MaxLevelOffset = reader.ReadInt32()
+                        });
+                    }
 
                     int rooms = ReadCount(reader, "mission pool rooms");
                     for (int r = 0; r < rooms; r++)
