@@ -25,23 +25,51 @@ between rolls; a reroll that sends the same bytes is normal and eight of them in
 in one capture. Originator 1 is a solo booth and 2 its team version, and `IsTeamOriginator`
 at GameData.dll 0x10002D23 pairs the even values with the odd ones all the way up.
 
-### The answer is always three of one type and one each of two others
+### The answer is three of one type and one each of two others, nearly always
 
-Twenty one rolls, expanded through this project's serializer on 2026-09-25:
-`20260910-200346_s2` (four rolls, four different settings) and `20260923-201746_s8`
-(seventeen rolls, three settings, the owner deliberately reversing every slider between
-sets). Every single one is 3 + 1 + 1, with the three at indices 0 to 2. That is the shape
-the community slider guides have always described, and it is now measured.
+1,053 of 1,059 logged rolls are 3 + 1 + 1, with the three at indices 0 to 2 - the shape the
+community slider guides have always described. The other six are 2 + 1 + 1 + 1, and they are
+the same draw with one of the three replaced: `2 find item, kill person, find person, repair`
+where the setting's usual answer is `3 find item, kill person, find person`. So the three is
+a strong tendency of the draw and not a rule of the format.
 
-### Type selection is deterministic in the dimensions
+### The mix is a weighted draw, and the dimensions set the weights
 
-Fifteen consecutive rolls at one setting returned the same three types every time, with seeds
-from 180,241,537 to 2,141,450,657. Six of those fifteen were sent at difficulty 11 and nine
-at difficulty 1. So neither the seed nor the difficulty takes any part in choosing the types -
-the dimensions alone do.
+The AOBuddy10 bot logs every roll it sends - the difficulty, all six dimension bytes, the
+seed - and then all five missions the server offers. Its log holds **1,059 complete rolls**
+over nine settings, which is what this section rests on; the handful measured from captures
+came first and were not enough to see the shape.
 
-This matters more than it looks. It means the function can be mapped exactly with one roll
-per setting, with no repeats needed to average anything out.
+At a setting with any dimension pushed off centre, the mix is fixed:
+
+| difficulty | bad | chaos | hidden | myst | stealth | xp | rolls | offered |
+|---|---|---|---|---|---|---|---|---|
+| 3 | 0 | 100 | 0 | 0 | 0 | 0 | 147 | 3 find item, kill person, find person |
+| 4 | 0 | 100 | 0 | 0 | 0 | 0 | 76 | the same, 75 of 76 |
+| 5 | 0 | 100 | 0 | 50 | 50 | 0 | 218 | the same, 217 of 218 |
+| 6 | 0 | 100 | 0 | 50 | 50 | 0 | 488 | the same, all 488 |
+| 8 | 0 | 100 | 0 | 50 | 50 | 0 | 21 | the same, all 21 |
+| 1 | 50 | 50 | 50 | 50 | 50 | 0 | 30 | 3 find person, return item, find item |
+| 6 | 50 | 50 | 50 | 50 | 50 | 0 | 39 | the same, all 39 |
+| 6 | 50 | 50 | 50 | 50 | 50 | **50** | 25 | **19 different mixes** |
+
+Three things fall out of that.
+
+**Difficulty has nothing to do with it.** Six difficulty values - 1, 3, 4, 5, 6 and 8 - give
+the same mix wherever the dimensions match. 954 rolls of it.
+
+**With every dimension at 50 the draw is random.** The last row differs from the one above it
+in one byte, the credits/experience dimension, and it goes from one mix in 39 rolls to
+nineteen in 25. So the dimensions are weights on a draw rather than a lookup: push any one off
+centre and one type dominates, leave them all centred and the five come up at random. That is
+also why the earlier note called this deterministic - every capture and every setting it saw
+had something pushed.
+
+**One dimension moved on its own, once.** The two 50/50/50/50/50 rows differ only in
+credits/experience, 0% against 50%, and that alone is the difference between "three find
+person, every time" and a random draw. The 0/100/0 rows differ from them in three dimensions
+at once and dominate with find item instead, so which of those three did it is not separable
+yet. It is the first read on any dimension from rolls rather than from the community tables.
 
 ### The type is the mission's icon
 
@@ -65,9 +93,11 @@ An authored quest carries an ordinary icon in the same field - 244818 and 158429
 Arete ones in the corpus - so this is an icon that happens to be the type for a generated
 mission, not a type field.
 
-### The six settings measured
+### The six settings measured from captures
 
-Percentages, not wire bytes. The bold entry is the triple.
+These came first, from `20260910-200346_s2` and `20260923-201746_s8`, and are kept because
+they are the only ones with dimensions at intermediate values. Percentages, not wire bytes;
+the bold entry is the triple.
 
 | capture | difficulty | Bad | Chaos | Hidden | Myst | Stealth | XP | offered |
 |---|---|---|---|---|---|---|---|---|
@@ -78,13 +108,16 @@ Percentages, not wire bytes. The bold entry is the triple.
 | 0923 A (2 rolls) | 6 | 100 | 0 | 0 | 100 | 0 | 0 | **3 kill**, find person, return item |
 | 0923 B (15 rolls) | 11 and 1 | 0 | 100 | 100 | 0 | 100 | 100 | **3 return item**, find item, find person |
 
-Which dimension chooses which type is **not settled**, and is not guessed here. Six settings
-against six dimensions does not determine it, and the community tables are not separable as
-written either - their "three repair" and "three find person" sections both sit at Good 0%,
-Order 0%, Hidden 100%. What would settle it is a sweep: five dimensions pinned at 50% and the
-sixth walked across 0, 25, 50, 75 and 100 is thirty rolls and gives the one-at-a-time effects;
-a three-level grid over all six is 729 and gives the interactions as well. One roll per point,
-because the answer is deterministic.
+Which dimension chooses which type is still **not settled**. Nine settings between the log and
+these, against six dimensions, and only one pair differs in a single dimension. The community
+tables are not separable as written either - their "three repair" and "three find person"
+sections both sit at Good 0%, Order 0%, Hidden 100%.
+
+What would settle it is a sweep: five dimensions pinned at 50% and the sixth walked across 0,
+25, 50, 75 and 100 is thirty rolls for the one-at-a-time effects, and a three-level grid over
+all six is 729 for the interactions. The bot already logs everything such a sweep would need,
+so it is a matter of rolling at settings nobody has rolled at yet - and at a biased setting one
+roll per point is enough, because only the all-centred setting draws at random.
 
 ## Accepting, and finishing
 
