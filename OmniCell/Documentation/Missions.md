@@ -242,6 +242,40 @@ Riding one is four messages. The client sends `GenericCmd Use`; the server echoe
 floor. `CharacterAction 164` with p2 54 releases it ten seconds later. The same 170/164 pair
 locks and releases every skill.
 
+## What lives in a mission: what 28 recorded runs say
+
+The AOBuddy10 bot records every mission it runs, gated on `MissionRecord`. Each run leaves a
+`.pkt` of every packet since the zone-in and a `.json` index: the roll, the pool, the mission
+type, the server's clear percentage, and per-mob and per-door lists. Twenty eight runs,
+12.3 MB, 135,877 packets, in that project's `Plugins/AOBuddy/missions/records`.
+
+What they settle:
+
+- **A building holds roughly 11 to 69 monsters.** The clear percentage the server sends is
+  against the building's full count, so seen ÷ clear% recovers it: 11, 12, 13, 14, 15, 16,
+  17, 17, 17, 18, 18, 20, 21, 30, 40, 44, 69 over the runs that reached a clean reading.
+- **They stand one or two to a room.** 102 rooms held one, 98 held two, 13 three, 6 four, one
+  five. Nothing holds a crowd.
+- **They are on the entrance floor.** 356 of 366 on floor 0, 10 on floor 1.
+- **The creature set is mostly but not only per pool.** Of 55 names, 39 appear in one pool
+  only; 8 appear in three or four - `A-500 soldier`, `A-500 elite`, `Rhinoman Smasher`,
+  `Hellhound`, the `Claw-C22` pair. So a generator needs a shared pool of creatures plus
+  per-pool ones, not one table per pool.
+- **Level tracks the mission, tightly.** 366 monsters between 29 and 40, and the split is
+  clean: every difficulty 3 run came out 29 to 33 and every difficulty 4 run 34 to 40.
+  Whether that is the difficulty or the character's own level is not separable here - he was
+  levelling through the same window - but one of the two sets it, and it is not the pool.
+
+And one negative result worth as much: **the dimensions do not pick the pool.** All 28 runs
+were rolled at the same setting - difficulty 3 or 4, and 0%, 100%, 0%, 0%, 0%, 0% across the
+six - and came back as seven different pools and two different mission types. The bot rolls
+one configuration, so this corpus says nothing else about the dimensions; the sweep is still
+the sweep.
+
+Two gaps in the corpus to fill when convenient: 18 of the runs are find item and 8 find
+person, with no repair, kill or return item; and one single door out of 451 was locked, so
+nothing here bears on lock difficulty.
+
 ## What a server still cannot do
 
 1. **Choose the types.** The dimensions decide it and the function is unmapped. See the sweep
@@ -255,8 +289,10 @@ locks and releases every skill.
    chests, traps, lift buttons and the objective itself. The pool rooms say nothing about
    those, and the only positions on record are the four buttons observed in the 2026-09-23
    runs.
-4. **Populate it.** Which creatures a pool spawns at a given level, how many, and how the boss
-   is chosen: no data at all. Nothing in any capture here addresses it.
+4. **Populate it.** Narrowed, not closed - see the section above. The counts, the spacing,
+   the floor and the level band are measured; what is not is the creature table itself (which
+   names are eligible at a level, and how the shared ones divide from the per-pool ones) and
+   how the boss is chosen.
 5. **Write the text.** The objective's name is inside server-composed prose and no template
    grammar has been captured. The wordings are formulaic enough to reconstruct by hand.
 
