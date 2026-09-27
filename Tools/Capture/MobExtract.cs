@@ -57,6 +57,44 @@ namespace OmniCell.Tools.Capture
     /// The recording the bot is writing right now is opened shared and read as
     /// far as it goes; a half-written frame at the end just ends the walk.
     /// </remarks>
+    /// <summary>
+    /// The health ramp, kept the same as OmniCell.Core's MissionCreature.
+    /// </summary>
+    /// <remarks>
+    /// The tools link the message models only, not the server libraries, so
+    /// the ramp is written twice. The "how close the health model lands"
+    /// section of every run is what catches the two drifting apart: it checks
+    /// what this predicts against every health on the wire.
+    /// </remarks>
+    internal static class MissionCreatureHealth
+    {
+        private const int Knee = 25;
+
+        private const double LowSlope = 33.0;
+
+        private const double LowBase = 101.0;
+
+        private const double HighSlope = 185.0 / 3.0;
+
+        private const double HighBase = 2452.0 / 3.0;
+
+        public static double Ramp(int level)
+        {
+            level = Math.Max(1, level);
+            return level <= Knee ? (LowSlope * level) - LowBase : (HighSlope * level) - HighBase;
+        }
+
+        public static int Health(double scale, int level)
+        {
+            if (scale <= 0)
+            {
+                scale = 1.0;
+            }
+
+            return Math.Max(1, (int)Math.Round(scale * Ramp(level), MidpointRounding.AwayFromZero));
+        }
+    }
+
     internal static class MobExtract
     {
         /// <summary>
@@ -76,9 +114,16 @@ namespace OmniCell.Tools.Capture
 
             public int MaxOffset = int.MinValue;
 
-            public double HealthPerLevel;
+            public double HealthScale;
 
             public int HealthSeen;
+
+            /// <summary>
+            /// Every level and health this creature was seen at, so the run
+            /// can say how far the model is off.
+            /// </summary>
+            public readonly List<KeyValuePair<int, int>> Health =
+                new List<KeyValuePair<int, int>>();
         }
 
         /// <summary>
@@ -218,6 +263,35 @@ namespace OmniCell.Tools.Capture
             // The reward item is the same parse and is worth saying out loud:
             // nothing else we hold records what a mission server picked to pay
             // with, and the offers OmniCell generates carry no item at all.
+            Console.WriteLine();
+            Console.WriteLine("=== how close the health model lands");
+            var misses = new List<int>();
+            int exact = 0;
+            foreach (Creature creature in table.Values)
+            {
+                double scale = creature.HealthSeen == 0
+                                   ? 0.0
+                                   : creature.HealthScale / creature.HealthSeen;
+                foreach (KeyValuePair<int, int> point in creature.Health)
+                {
+                    int want = MissionCreatureHealth.Health(scale, point.Key);
+                    int off = Math.Abs(want - point.Value);
+                    if (off == 0)
+                    {
+                        exact++;
+                    }
+
+                    misses.Add(off);
+                }
+            }
+
+            Console.WriteLine(
+                "  {0} sightings: {1} exact, {2} within one point, worst {3}",
+                misses.Count,
+                exact,
+                misses.Count(m => m <= 1),
+                misses.Count == 0 ? 0 : misses.Max());
+
             Console.WriteLine();
             Console.WriteLine("=== reward items the server picked");
             Run[] paid = runs.Where(r => r.Reward != null && r.Reward.LowId != 0).ToArray();
@@ -393,8 +467,16 @@ namespace OmniCell.Tools.Capture
 
                 if (character.Health > 0)
                 {
-                    creature.HealthPerLevel += character.Health / (double)character.Level;
+                    // Health is a ramp in level times a number belonging to
+                    // the creature, and that number is what the pack carries.
+                    // Not health over level: the ramp does not pass through
+                    // the origin, so that ratio only holds at the level it was
+                    // measured at.
+                    creature.HealthScale += character.Health
+                                            / MissionCreatureHealth.Ramp(character.Level);
                     creature.HealthSeen++;
+                    creature.Health.Add(
+                        new KeyValuePair<int, int>(character.Level, (int)character.Health));
                 }
             }
 
@@ -479,8 +561,10 @@ namespace OmniCell.Tools.Capture
             text.AppendLine("# variants of one creature: 17649 is both \"34 - Automatic\" and \"34-V worker\".");
             text.AppendLine("# Level is given against the mission QL, because that is what it tracks, not the");
             text.AppendLine("# player's. Only the pools the bot has run appear.");
+            text.AppendLine("# healthScale is what this creature's maximum health is a multiple of - see");
+            text.AppendLine("# MissionCreature.Health, which holds the ramp the scale multiplies.");
             // Commented, because that is how PoolExtract skips it.
-            text.AppendLine("# pool\tmonster\tname\tseen\tminLevelOffset\tmaxLevelOffset\thealthPerLevel");
+            text.AppendLine("# pool\tmonster\tname\tseen\tminLevelOffset\tmaxLevelOffset\thealthScale");
 
             foreach (Creature creature in creatures
                 .OrderBy(c => c.Pool)
@@ -498,8 +582,8 @@ namespace OmniCell.Tools.Capture
                         creature.MaxOffset.ToString(CultureInfo.InvariantCulture),
                         (creature.HealthSeen == 0
                              ? 0.0
-                             : creature.HealthPerLevel / creature.HealthSeen).ToString(
-                                 "0.0",
+                             : creature.HealthScale / creature.HealthSeen).ToString(
+                                 "0.0000",
                                  CultureInfo.InvariantCulture)));
             }
 

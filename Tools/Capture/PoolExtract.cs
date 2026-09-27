@@ -451,9 +451,9 @@ namespace OmniCell.Tools.Capture
                              Seen = int.Parse(parts[3], CultureInfo.InvariantCulture),
                              MinLevelOffset = int.Parse(parts[4], CultureInfo.InvariantCulture),
                              MaxLevelOffset = int.Parse(parts[5], CultureInfo.InvariantCulture),
-                             HealthPerLevel = parts.Length > 6
-                                                  ? double.Parse(parts[6], CultureInfo.InvariantCulture)
-                                                  : 0
+                             HealthScale = parts.Length > 6
+                                               ? double.Parse(parts[6], CultureInfo.InvariantCulture)
+                                               : 0
                          });
             }
 

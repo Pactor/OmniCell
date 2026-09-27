@@ -188,15 +188,12 @@ namespace OmniCell.Core.Missions
         /// How much health a creature of this kind has at this level.
         /// </summary>
         /// <remarks>
-        /// Health per level is the creature's own, measured over 889 recorded
-        /// monsters. A creature nobody has seen the health of gets the middle
-        /// of the range rather than nothing, because a monster with no health
-        /// cannot be fought at all.
+        /// See <see cref="MissionCreature.Health"/>: one measured ramp in
+        /// level, times the creature's own scale.
         /// </remarks>
         private static int Health(MissionCreature creature, int level)
         {
-            double perLevel = creature.HealthPerLevel > 0 ? creature.HealthPerLevel : 40;
-            return Math.Max(1, (int)Math.Round(perLevel * Math.Max(1, level)));
+            return MissionCreature.Health(creature.HealthScale, level);
         }
 
         private void PlaceObjective(Mission mission)

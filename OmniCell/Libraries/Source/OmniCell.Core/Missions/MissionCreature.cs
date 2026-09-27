@@ -1,5 +1,7 @@
 namespace OmniCell.Core.Missions
 {
+    using System;
+
     /// <summary>
     /// A creature a mission in this pool has been seen to spawn.
     /// </summary>
@@ -67,14 +69,72 @@ namespace OmniCell.Core.Missions
         public int MaxLevelOffset { get; set; }
 
         /// <summary>
-        /// How much health this creature has for each level it is.
+        /// What this creature's maximum health is a multiple of.
         /// </summary>
         /// <remarks>
-        /// The median of every sighting in the bot's recordings, and it is a
-        /// property of the creature rather than of the level: 889 monsters
-        /// over fifteen levels run from 7.5 health a level to 80.3, in two
-        /// clear bands, so nothing about the level alone predicts it.
+        /// Maximum health is <see cref="Health"/>: one ramp in level that
+        /// every creature shares, times a number that belongs to the creature.
+        /// This is that number. It came out near 0.185, 0.8, 1.0, 1.2, 1.4 or
+        /// 2.0 for almost every creature measured, which reads like a handful
+        /// of classes, but it is stored as measured rather than snapped to
+        /// them because three creatures sit between.
+        ///
+        /// It replaced a health-per-level, which was wrong in a way worth
+        /// remembering: the ramp does not pass through the origin, so dividing
+        /// health by level gives a number that only holds at the level it was
+        /// measured at. A Hellhound at level 20 has 1,117 health and the old
+        /// table's 78.8 a level predicted 1,576.
         /// </remarks>
-        public double HealthPerLevel { get; set; }
+        public double HealthScale { get; set; }
+
+        /// <summary>
+        /// The maximum health of a creature of this kind at this level.
+        /// </summary>
+        /// <remarks>
+        /// Measured over 559 distinct level-and-health pairs in the bot's run
+        /// recordings, covering levels 19 to 44 and 138 creatures. Health is
+        /// piecewise linear in level with a knee at exactly 25 - the two lines
+        /// meet there to within a tenth of a point - and every creature's
+        /// health is the same ramp times its own <see cref="HealthScale"/>.
+        ///
+        /// It reproduces 539 of the 559 exactly and every one of them to
+        /// within a single point, the remainder being where the server rounds
+        /// differently than this does.
+        ///
+        /// Nothing was recorded below 19 or above 44, so both ends are the
+        /// measured lines carried on. The lower one reaching zero at level 3
+        /// is where it stops meaning anything; a creature is never given less
+        /// than one point of health.
+        /// </remarks>
+        public static int Health(double scale, int level)
+        {
+            if (scale <= 0)
+            {
+                // Seen, but never while its health was on the wire. The middle
+                // of the measured range, because a creature with no health
+                // cannot be fought at all.
+                scale = 1.0;
+            }
+
+            level = Math.Max(1, level);
+            double ramp = level <= Knee
+                              ? (LowSlope * level) - LowBase
+                              : (HighSlope * level) - HighBase;
+
+            return Math.Max(1, (int)Math.Round(scale * ramp, MidpointRounding.AwayFromZero));
+        }
+
+        /// <summary>
+        /// The level the two halves of the ramp meet at.
+        /// </summary>
+        private const int Knee = 25;
+
+        private const double LowSlope = 33.0;
+
+        private const double LowBase = 101.0;
+
+        private const double HighSlope = 185.0 / 3.0;
+
+        private const double HighBase = 2452.0 / 3.0;
     }
 }
