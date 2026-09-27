@@ -77,6 +77,7 @@
     <Content Include="SqlTables\quests.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\questobjectives.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\questitemrewards.sql" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="SqlTables\queststatrewards.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\questwire.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\questwireactions.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\questwirerewards.sql" CopyToOutputDirectory="PreserveNewest" />

@@ -54,6 +54,8 @@ namespace OmniCell.Tools.Capture
             string find = null;
             int function = 0;
             bool missing = false;
+            int item = 0;
+            string items = null;
             float nearX = 0, nearZ = 0, nearR = 0;
             for (int i = 2; i < args.Length; i++)
             {
@@ -66,6 +68,11 @@ namespace OmniCell.Tools.Capture
                     nearR = float.Parse(args[++i], CultureInfo.InvariantCulture);
                 }
                 else if (args[i] == "--missing") missing = true;
+                else if (args[i] == "--item" && i + 2 < args.Length)
+                {
+                    items = args[++i];
+                    item = int.Parse(args[++i], CultureInfo.InvariantCulture);
+                }
                 else if (args[i] == "--function" && i + 1 < args.Length)
                 {
                     function = int.Parse(args[++i], CultureInfo.InvariantCulture);
@@ -73,6 +80,11 @@ namespace OmniCell.Tools.Capture
             }
 
             List<PlayfieldData> all = OmniCellContentPack.ReadPlayfields(pack);
+
+            if (item != 0)
+            {
+                return Item(items, item, names == null ? null : ItemNames(names));
+            }
 
             if (missing)
             {
@@ -192,6 +204,65 @@ namespace OmniCell.Tools.Capture
                             ", ",
                             ev.Functions.Select(f => Describe((FunctionType)f.FunctionType, f))));
                 }
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// One item template: what it does and what it changes.
+        /// </summary>
+        /// <remarks>
+        /// The same question as a statel's, asked of the item pack. An item
+        /// that grants something does it with a function on one of its events,
+        /// and an item that changes a stat by being worn does it with a stat
+        /// on the template.
+        /// </remarks>
+        private static int Item(string pack, int id, Dictionary<int, string> named)
+        {
+            if (!File.Exists(pack))
+            {
+                Console.Error.WriteLine("no item pack at " + pack);
+                return 1;
+            }
+
+            Core.Items.ItemLoader.CacheAllItems(pack);
+            Core.Items.ItemTemplate template;
+            if (!Core.Items.ItemLoader.ItemList.TryGetValue(id, out template))
+            {
+                Console.Error.WriteLine("no item {0} in {1}.", id, pack);
+                return 1;
+            }
+
+            Console.WriteLine(
+                "item {0} \"{1}\"  quality {2}  type {3}  flags {4}",
+                id, named == null ? "?" : Name(named, id), template.Quality,
+                template.ItemType, template.Flags);
+
+            Console.WriteLine();
+            Console.WriteLine("  stats it carries:");
+            foreach (KeyValuePair<int, int> stat in template.Stats.OrderBy(s => s.Key))
+            {
+                Console.WriteLine(
+                    "    {0,-28} {1}",
+                    Enum.IsDefined(typeof(StatIds), stat.Key)
+                        ? ((StatIds)stat.Key).ToString()
+                        : "stat " + stat.Key,
+                    stat.Value);
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("  what it does:");
+            foreach (Core.Events.Event ev in template.Events)
+            {
+                Console.WriteLine(
+                    "    {0}: {1}",
+                    ev.EventType,
+                    ev.Functions.Count == 0
+                        ? "nothing"
+                        : string.Join(
+                            ", ",
+                            ev.Functions.Select(f => Describe((FunctionType)f.FunctionType, f))));
             }
 
             return 0;

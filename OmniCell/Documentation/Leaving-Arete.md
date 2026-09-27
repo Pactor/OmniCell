@@ -53,18 +53,40 @@ loudly - it just never held. It asks whether a nano is running on the character 
 uploaded. 315 more requirements across the pack use the negative of it, `HasNotRunningNano`,
 which is still unimplemented.
 
-## What is still in the way
+## The card is what the quests are for
 
-**Nothing sets stat 685 bit 16384.** It is the ID card and something in the tutorial hands it
-out; what, has not been found. A character who has it can walk the chain above; one who has
-not is told to find an ID card, which is the right message and a dead end.
+Every stage of the Arete chain says so in its own description - "In order to leave Arete
+Landing and become a citizen of Rubi-Ka, you need an identity. Your mission is to create a
+fake ID Card so you can leave this place" - and the parts are handed over one at a time:
+an Unprogrammed Identification Chip, Biological Survey Nanobots, a Blank ICC ID Chip, a
+Personalized ICC ID Chip, and at last item 296692, the Identification Card itself. The last
+stage is "Talk to Vaughn Hammond", whose text is "Your ID card is finally complete! Talk to
+Vaughn Hammond about leaving Arete Landing."
 
-Until that is found, a GM can hand it over:
+Three things were missing between that and the door.
+
+**Stat 685 did not exist.** Not a gap in the data - the server had no such stat, and reading
+a stat it does not have throws. `CheckRequirement` catches and returns false, so every
+behaviour that asks about 685 quietly refused, and Arete's exit asks three times. It is on
+the character now, as `ProgressFlags`, and persists like any other.
+
+**A quest could not change a stat.** Cash, experience and items were all a quest could give.
+`queststatrewards` is a new table - quest, stat, value, whether the value is bits to set or
+the whole value, and whether it lands on accept or on completion - and `QuestManager` applies
+it at both points. Bits rather than a write is the usual case, because 685 is a flag word: a
+character out on Rubi-Ka carries eleven more bits in it and overwriting would take them away.
+
+**Nothing granted the bit.** `SqlPatches/arete-landing-z-id-card.sql` now does, on finishing
+1439635506, the last quest of the chain. That placement is **OmniCell-defined**: no capture
+shows the moment retail grants it, because every capture we hold is of a character who had
+already left. What the captures do agree on is the value - one recorded inside an Arete
+instance reads 685 = 16384 exactly, and characters out on Rubi-Ka read 28668, which contains
+it. Granting it one quest earlier, with the card item, would let the last stage be skipped.
+
+A GM can still hand it over directly, which is the quick way to test the door without walking
+the chain:
 
     /set 685 16384
-
-The captures agree that is what a character who may leave carries: one recorded in an Arete
-instance reads exactly 16384, and characters out on Rubi-Ka read 28668, which contains it.
 
 ## What else the world asks for and does not get
 
