@@ -459,7 +459,10 @@ namespace ZoneEngine.Core
 
                     // Missions live in memory and nowhere else, so the only
                     // thing that clears them is the player leaving.
-                    MissionBook.Forget(character.Identity);
+                    foreach (MissionOffer mission in MissionBook.Forget(character.Identity))
+                    {
+                        ZoneEngine.Core.Missions.MissionPlayfields.Close(mission);
+                    }
 
                     character.Dispose();
                 }

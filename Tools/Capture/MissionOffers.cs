@@ -216,6 +216,37 @@ namespace OmniCell.Tools.Capture
                 return "a " + (offer.Team ? "team" : "solo") + " building on " + stacked + " floors";
             }
 
+            // Where a character walking in through the door ends up has to be
+            // inside the building: a landing point in the wall is a character
+            // stuck in the geometry with no way to tell from out here.
+            float lx, ly, lz;
+            MissionBuilding.Landing(offer.Built, out lx, out ly, out lz);
+            if (offer.Built.Layout.EntranceX == 0 && offer.Built.Layout.EntranceZ == 0)
+            {
+                return "no way in was recorded";
+            }
+
+            if (!Inside(offer.Built, lx, lz))
+            {
+                var boxes = new List<string>();
+                foreach (BuildingRoomInfo pl in offer.Built.Layout.Rooms.Where(r => r.Floor == 0).Take(4))
+                {
+                    MissionPoolRoom rm = MissionPoolLoader.Room(offer.Built.Layout.Playfield, pl.Room);
+                    int hh = pl.Rotation % 2 == 0 ? rm.SlotsHeight : rm.SlotsWidth;
+                    int ww = pl.Rotation % 2 == 0 ? rm.SlotsWidth : rm.SlotsHeight;
+                    boxes.Add(string.Format(
+                        "room {0} grid {1},{2} rot {3} -> x {4}-{5} z {6}-{7}",
+                        pl.Room, pl.X, pl.Z, pl.Rotation, pl.X * 10, (pl.X * 10) + (ww * 10),
+                        (offer.Built.Layout.GridHeight - pl.Z - hh) * 10,
+                        ((offer.Built.Layout.GridHeight - pl.Z - hh) * 10) + (hh * 10)));
+                }
+
+                return "the landing point " + lx + ", " + lz + " is not on the building's floor"
+                       + " (door " + offer.Built.Layout.EntranceX + ","
+                       + offer.Built.Layout.EntranceZ + " side " + offer.Built.Layout.EntranceSide
+                       + "; " + string.Join(" | ", boxes) + ")";
+            }
+
             BuildingGeneratorData generator = MissionBuilding.Generator(offer.Built, 2224708);
             var body = new PlayfieldAnarchyFMessage
                        {
@@ -278,6 +309,28 @@ namespace OmniCell.Tools.Capture
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Whether a world point stands on one of floor zero's own cells.
+        /// </summary>
+        private static bool Inside(Mission mission, float x, float z)
+        {
+            foreach (BuildingRoomInfo placed in mission.Layout.Rooms)
+            {
+                if (placed.Floor != 0) continue;
+
+                MissionPoolRoom room = MissionPoolLoader.Room(mission.Layout.Playfield, placed.Room);
+                if (room == null) continue;
+
+                int h = placed.Rotation % 2 == 0 ? room.SlotsHeight : room.SlotsWidth;
+                int w = placed.Rotation % 2 == 0 ? room.SlotsWidth : room.SlotsHeight;
+                int x0 = placed.X * 10;
+                int z0 = (mission.Layout.GridHeight - placed.Z - h) * 10;
+                if (x >= x0 && x <= x0 + (w * 10) && z >= z0 && z <= z0 + (h * 10)) return true;
+            }
+
+            return false;
         }
 
         /// <summary>

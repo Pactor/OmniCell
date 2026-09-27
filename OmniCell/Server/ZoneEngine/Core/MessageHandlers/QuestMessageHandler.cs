@@ -83,8 +83,10 @@ namespace ZoneEngine.Core.MessageHandlers
             ICharacter character = client.Controller.Character;
             int quest = message.QuestIdentity.Instance;
 
-            if (MissionBook.Drop(character, quest))
+            MissionOffer dropped = MissionBook.Drop(character, quest);
+            if (dropped != null)
             {
+                ZoneEngine.Core.Missions.MissionPlayfields.Close(dropped);
                 this.Send(character, quest);
                 QuestFullUpdateMessageHandler.Default.SendMissions(
                     character, MissionBook.Active(character), false);

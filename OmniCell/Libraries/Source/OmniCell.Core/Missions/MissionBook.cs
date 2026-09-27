@@ -141,11 +141,15 @@ namespace OmniCell.Core.Missions
         /// <summary>
         /// Give one up, or finish it.
         /// </summary>
-        public static bool Drop(ICharacter character, int instance)
+        /// <returns>
+        /// The mission dropped, so its playfield can be closed, or null when
+        /// they were not on it.
+        /// </returns>
+        public static MissionOffer Drop(ICharacter character, int instance)
         {
             if (character == null)
             {
-                return false;
+                return null;
             }
 
             lock (Gate)
@@ -153,23 +157,32 @@ namespace OmniCell.Core.Missions
                 List<MissionOffer> list;
                 if (!Taken.TryGetValue(character.Identity, out list))
                 {
-                    return false;
+                    return null;
                 }
 
-                int removed = list.RemoveAll(x => x.Instance == instance);
-                return removed > 0;
+                MissionOffer dropped = list.FirstOrDefault(x => x.Instance == instance);
+                if (dropped != null) list.Remove(dropped);
+                return dropped;
             }
         }
 
         /// <summary>
         /// Forget a character who has left.
         /// </summary>
-        public static void Forget(Identity character)
+        /// <returns>
+        /// The missions they were on, so their playfields can be closed. A
+        /// mission's playfield exists only while somebody is on the mission.
+        /// </returns>
+        public static List<MissionOffer> Forget(Identity character)
         {
             lock (Gate)
             {
+                List<MissionOffer> was;
+                if (!Taken.TryGetValue(character, out was)) was = new List<MissionOffer>();
+
                 Offered.Remove(character);
                 Taken.Remove(character);
+                return was;
             }
         }
     }

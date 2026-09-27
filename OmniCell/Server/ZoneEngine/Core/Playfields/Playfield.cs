@@ -43,7 +43,9 @@ namespace OmniCell.Core.Playfields
     using OmniCell.Core.Entities;
     using OmniCell.Core.Events;
     using OmniCell.Core.Functions;
+    using OmniCell.Core.Inventory;
     using OmniCell.Core.Items;
+    using OmniCell.Core.Missions;
     using OmniCell.Core.Network;
     using OmniCell.Core.NPCHandler;
     using OmniCell.Core.Statels;
@@ -70,6 +72,7 @@ namespace OmniCell.Core.Playfields
     using ZoneEngine.Core.InternalMessages;
     using ZoneEngine.Core.KnuBot;
     using ZoneEngine.Core.Loot;
+    using ZoneEngine.Core.Missions;
     using ZoneEngine.Core.MessageHandlers;
     using ZoneEngine.Core.Quests;
     using ZoneEngine.Core.Packets;
@@ -154,13 +157,30 @@ namespace OmniCell.Core.Playfields
             this.memBusDisposeContainer.Add(this.playfieldBus.Subscribe<IMExecuteFunction>(this.ExecuteFunction));
             this.heartBeat = new Timer(this.HeartBeatTimer, null, HeartBeatMilliseconds, 0);
 
-            this.statels = PlayfieldLoader.PFData[this.Identity.Instance].Statels;
-            this.LoadMobSpawnWeapons(playfieldIdentity);
-            this.LoadMobSpawnMeshes(playfieldIdentity);
-            this.LoadMobSpawns(playfieldIdentity);
-            this.LoadVendors(playfieldIdentity);
-            this.LoadStaticDynels(playfieldIdentity);
+            // A mission's playfield is not in the content pack and never
+            // will be: it is a pool of rooms and a list of placements, made
+            // when somebody took the mission. Everything below reads the pack
+            // or the database by playfield number, and for a mission there is
+            // nothing in either - so it starts empty and the mission fills it.
+            PlayfieldData data;
+            this.Generated = !PlayfieldLoader.PFData.TryGetValue(this.Identity.Instance, out data);
+            this.statels = this.Generated ? new List<StatelData>() : data.Statels;
+
+            if (!this.Generated)
+            {
+                this.LoadMobSpawnWeapons(playfieldIdentity);
+                this.LoadMobSpawnMeshes(playfieldIdentity);
+                this.LoadMobSpawns(playfieldIdentity);
+                this.LoadVendors(playfieldIdentity);
+                this.LoadStaticDynels(playfieldIdentity);
+            }
         }
+
+        /// <summary>
+        /// Whether this playfield was made at run time rather than read out of
+        /// the content pack - which today means it is a mission's.
+        /// </summary>
+        public bool Generated { get; private set; }
 
         /// <summary>
         /// Weapons held by the characters spawned in this playfield, by spawn id.
@@ -1992,6 +2012,139 @@ namespace OmniCell.Core.Playfields
         }
 
         /// <summary>
+        /// How close a character has to get to a mission door for it to take
+        /// them, in metres.
+        /// </summary>
+        /// <remarks>
+        /// The same two metres a statel's own collision events use. A mission
+        /// is entered by walking into the door rather than by clicking it -
+        /// the 2026-09-26 capture has no Use on the entrance at all, just the
+        /// teleport - so something has to notice the walking.
+        /// </remarks>
+        private const float MissionDoorReach = 2.0f;
+
+        /// <summary>
+        /// A character at a mission door, going in or coming out.
+        /// </summary>
+        /// <remarks>
+        /// Outside, the doors are the playfield's own MissionEntrance statels
+        /// - 2,235 of them across the pack - and which mission one leads to
+        /// depends on the key in the character's pocket rather than on the
+        /// door. Inside, there is one door, the socket the building was left
+        /// open on, and it leads back to wherever they came in from.
+        /// </remarks>
+        private void CheckMissionDoor(ICharacter dynel)
+        {
+            var body = dynel as Dynel;
+            if (body == null || body.IsTeleporting || body.DoNotDoTimers)
+            {
+                return;
+            }
+
+            if (this.Generated)
+            {
+                this.CheckMissionExit(dynel);
+                return;
+            }
+
+            MissionOffer mission = null;
+            foreach (StatelData sd in this.statels)
+            {
+                if (sd.Identity.Type != IdentityType.MissionEntrance) continue;
+                if (sd.Coord().Distance3D(dynel.Coordinates()) >= MissionDoorReach) continue;
+
+                mission = MissionPlayfields.OpenedBy(MissionKeysHeldBy(dynel));
+                break;
+            }
+
+            if (mission == null || mission.Built == null)
+            {
+                return;
+            }
+
+            Coordinate here = dynel.Coordinates();
+            MissionPlayfields.Remember(
+                dynel.Identity, this.Identity.Instance, here.x, here.y, here.z);
+
+            float x, y, z;
+            MissionBuilding.Landing(mission.Built, out x, out y, out z);
+            this.Teleport(
+                (Dynel)dynel,
+                new Coordinate(x, y, z),
+                dynel.RawHeading,
+                new Identity
+                {
+                    Type = IdentityType.Playfield,
+                    Instance = mission.PlayfieldInstance
+                });
+        }
+
+        /// <summary>
+        /// The way out of a mission is the door it was entered by.
+        /// </summary>
+        private void CheckMissionExit(ICharacter dynel)
+        {
+            MissionOffer mission = MissionPlayfields.Of(this.Identity.Instance);
+            if (mission == null || mission.Built == null)
+            {
+                return;
+            }
+
+            Coordinate here = dynel.Coordinates();
+            var door = new Coordinate(
+                mission.Built.Layout.EntranceX,
+                MissionBuilding.GroundHeight,
+                mission.Built.Layout.EntranceZ);
+            if (door.Distance3D(here) >= MissionDoorReach)
+            {
+                return;
+            }
+
+            int playfield;
+            float x, y, z;
+            if (!MissionPlayfields.Recall(dynel.Identity, out playfield, out x, out y, out z))
+            {
+                // Nothing remembered - a relog inside, most likely. Out is
+                // better than stuck, so they go to the escape playfield at
+                // whatever the client last had them at.
+                x = here.x;
+                y = here.y;
+                z = here.z;
+            }
+
+            this.Teleport(
+                (Dynel)dynel,
+                new Coordinate(x, y, z),
+                dynel.RawHeading,
+                new Identity { Type = IdentityType.Playfield, Instance = playfield });
+        }
+
+        /// <summary>
+        /// The instances of the mission keys a character is carrying.
+        /// </summary>
+        private static IEnumerable<int> MissionKeysHeldBy(ICharacter dynel)
+        {
+            var keys = new List<int>();
+            if (dynel.BaseInventory == null)
+            {
+                return keys;
+            }
+
+            foreach (var page in dynel.BaseInventory.Pages)
+            {
+                foreach (var slot in page.Value.List())
+                {
+                    if (slot.Value != null && slot.Value.LowID == MissionKeys.Template)
+                    {
+                        keys.Add(slot.Value.Identity.Instance);
+                    }
+                }
+            }
+
+            return keys;
+        }
+
+        /// <summary>
         /// </summary>
         /// <param name="dynel">
         /// </param>
@@ -2170,6 +2323,7 @@ namespace OmniCell.Core.Playfields
                         this.Keepalive(dynel);
                         this.CheckWallCollision(dynel);
                         this.CheckStatelCollision(dynel);
+                        this.CheckMissionDoor(dynel);
                     }
                 }
                 catch (Exception exception)

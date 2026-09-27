@@ -85,5 +85,27 @@ namespace OmniCell.Core.Missions
         /// only one room reaches is the way in.
         /// </summary>
         public List<MissionLayoutDoor> Doors { get; set; }
+
+        /// <summary>
+        /// The way in, in world metres.
+        /// </summary>
+        /// <remarks>
+        /// One socket of the first room placed is left with nothing hung on
+        /// it, and that is the door from outside - the one whose Room is -1 in
+        /// the captures. Capping can leave others, so which one it is has to
+        /// be remembered rather than looked for afterwards.
+        /// </remarks>
+        public int EntranceX { get; set; }
+
+        /// <summary>
+        /// The way in, in world metres.
+        /// </summary>
+        public int EntranceZ { get; set; }
+
+        /// <summary>
+        /// Which side of its room the way in is on, so a character can be put
+        /// down inside rather than in the wall.
+        /// </summary>
+        public MissionDoorSide EntranceSide { get; set; }
     }
 }

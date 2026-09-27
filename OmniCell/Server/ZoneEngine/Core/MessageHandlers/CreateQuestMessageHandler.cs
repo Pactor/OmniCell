@@ -30,6 +30,8 @@ namespace ZoneEngine.Core.MessageHandlers
 
     using OmniCell.Core.Missions;
 
+    using ZoneEngine.Core.Missions;
+
     #endregion
 
     /// <summary>
@@ -121,6 +123,8 @@ namespace ZoneEngine.Core.MessageHandlers
             }
 
             MissionBook.Take(character, offer);
+            MissionPlayfields.Open(offer);
+            MissionPlayfields.Cut(offer.KeyInstance, offer);
 
             QuestFullUpdateMessageHandler.Default.SendMissions(
                 character, MissionBook.Active(character), true);

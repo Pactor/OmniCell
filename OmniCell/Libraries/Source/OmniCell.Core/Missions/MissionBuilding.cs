@@ -56,6 +56,67 @@ namespace OmniCell.Core.Missions
         public const IdentityType BuildingType = (IdentityType)51103;
 
         /// <summary>
+        /// How far apart the floors are, in metres.
+        /// </summary>
+        /// <remarks>
+        /// 64, which is the generator's own WorldHeight. A four floor mission
+        /// recorded on 2026-09-25 put every monster on floor 0 at y 5.01 and
+        /// every monster on floor 1 at 69.01, and the difference is exactly
+        /// the WorldHeight every captured building carries. So that field is
+        /// the gap between floors rather than a ceiling height.
+        /// </remarks>
+        public const float FloorHeight = 64f;
+
+        /// <summary>
+        /// The height the floor of a room stands at, on floor zero.
+        /// </summary>
+        /// <remarks>
+        /// 5.01 in the captures, and a monster or a chest stands on it. Rooms
+        /// with a ramp or a step in them run from about 3.4 to 10, so this is
+        /// the usual height rather than the only one.
+        /// </remarks>
+        public const float GroundHeight = 5.01f;
+
+        /// <summary>
+        /// Where a character walking in through the door ends up.
+        /// </summary>
+        /// <remarks>
+        /// Just inside the way in. The captured mission's entrance door stood
+        /// at 300, 145 and the character landed at 299.9, 5.01, 145.4 - half a
+        /// metre inside it, on the floor.
+        /// </remarks>
+        public static void Landing(Mission mission, out float x, out float y, out float z)
+        {
+            x = mission.Layout.EntranceX;
+            z = mission.Layout.EntranceZ;
+            y = GroundHeight;
+
+            // A step inwards, away from the side of the room the door is on.
+            // Which way that is: world z runs the other way from the grid's,
+            // because a room's world origin is (grid height - z - depth) * 10,
+            // so the north side of a room is its low z edge and stepping in
+            // from it raises z. East and west are not turned over: the
+            // captured entrance stood on its room's high x edge and the
+            // character landed a tenth of a metre below it.
+            const float Step = 0.5f;
+            switch (mission.Layout.EntranceSide)
+            {
+                case MissionDoorSide.North: z += Step; break;
+                case MissionDoorSide.South: z -= Step; break;
+                case MissionDoorSide.East: x -= Step; break;
+                case MissionDoorSide.West: x += Step; break;
+            }
+        }
+
+        /// <summary>
+        /// How high a floor stands.
+        /// </summary>
+        public static float HeightOf(int floor)
+        {
+            return GroundHeight + (floor * FloorHeight);
+        }
+
+        /// <summary>
         /// Build the mission this offer describes.
         /// </summary>
         /// <remarks>

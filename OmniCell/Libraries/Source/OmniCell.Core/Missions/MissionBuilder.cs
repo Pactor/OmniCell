@@ -325,7 +325,13 @@ namespace OmniCell.Core.Missions
             // the others are closed all round and reached by lift.
             if (wayIn && this.open.Count > 0)
             {
-                this.open.RemoveAt(this.random.Next(this.open.Count));
+                int pick = this.random.Next(this.open.Count);
+                Open door = this.open[pick];
+                this.open.RemoveAt(pick);
+
+                this.layout.EntranceX = door.X;
+                this.layout.EntranceZ = door.Z;
+                this.layout.EntranceSide = door.Side;
             }
 
             return true;
