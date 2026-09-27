@@ -101,10 +101,14 @@ namespace OmniCell.Core.Missions
         /// within a single point, the remainder being where the server rounds
         /// differently than this does.
         ///
-        /// Nothing was recorded below 19 or above 44, so both ends are the
-        /// measured lines carried on. The lower one reaching zero at level 3
-        /// is where it stops meaning anything; a creature is never given less
-        /// than one point of health.
+        /// **It is measured over levels 19 to 44 and nowhere else**, which is
+        /// the range a mission puts creatures in, and it should not be trusted
+        /// outside that. Two things go wrong if it is. The low line reaches
+        /// zero at level 3.06, so below that it returns nothing; and fitting a
+        /// scale to a creature outside the range divides by that, which is how
+        /// a level 3 dockworker came out with a scale of -17.5. Anything
+        /// wanting health across the whole world wants measured health, not
+        /// this - see Tools/Capture/WorldMobs, which carries the points.
         /// </remarks>
         public static int Health(double scale, int level)
         {
