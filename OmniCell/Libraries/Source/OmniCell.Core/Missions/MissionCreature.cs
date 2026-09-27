@@ -51,5 +51,16 @@ namespace OmniCell.Core.Missions
         /// Its level against the mission's QL, at the high end.
         /// </summary>
         public int MaxLevelOffset { get; set; }
+
+        /// <summary>
+        /// How much health this creature has for each level it is.
+        /// </summary>
+        /// <remarks>
+        /// The median of every sighting in the bot's recordings, and it is a
+        /// property of the creature rather than of the level: 889 monsters
+        /// over fifteen levels run from 7.5 health a level to 80.3, in two
+        /// clear bands, so nothing about the level alone predicts it.
+        /// </remarks>
+        public double HealthPerLevel { get; set; }
     }
 }

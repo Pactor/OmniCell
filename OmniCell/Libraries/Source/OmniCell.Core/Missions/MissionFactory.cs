@@ -112,6 +112,23 @@ namespace OmniCell.Core.Missions
         }
 
         /// <summary>
+        /// The creatures of every pool that has any.
+        /// </summary>
+        /// <remarks>
+        /// Four of the ten pools have nobody on record, and an empty building
+        /// is further from a mission than one holding a creature from the
+        /// wrong pool. The corpus supports the borrowing too: of 38 bodies,
+        /// eight turn up in three or four different pools, so the creature
+        /// list is largely shared with some pool-specific entries rather than
+        /// one table per pool. It stops being needed when those four pools get
+        /// run.
+        /// </remarks>
+        private static List<MissionCreature> Elsewhere()
+        {
+            return MissionPoolLoader.Pools.Values.SelectMany(p => p.Creatures).ToList();
+        }
+
+        /// <summary>
         /// 220 of 255 captured chests read 50, which is no lock at all. The
         /// rest are spread over 77 to 95.
         /// </summary>
@@ -122,7 +139,10 @@ namespace OmniCell.Core.Missions
 
         private void Populate(Mission mission)
         {
-            if (this.pool.Creatures.Count == 0) return;
+            List<MissionCreature> creatures = this.pool.Creatures.Count > 0
+                                                  ? this.pool.Creatures
+                                                  : Elsewhere();
+            if (creatures.Count == 0) return;
 
             List<Placed> rooms = this.Placements(mission).Where(p => p.Floor == 0).ToList();
             if (rooms.Count == 0) return;
@@ -139,7 +159,7 @@ namespace OmniCell.Core.Missions
                 {
                     if (placed >= wanted) break;
 
-                    MissionCreature c = Weighted(this.pool.Creatures, x => x.Seen, this.random);
+                    MissionCreature c = Weighted(creatures, x => x.Seen, this.random);
                     int spread = c.MaxLevelOffset - c.MinLevelOffset;
                     int level = mission.Quality + c.MinLevelOffset
                                 + (spread > 0 ? this.random.Next(spread + 1) : 0);
@@ -156,11 +176,27 @@ namespace OmniCell.Core.Missions
                                              Z = z,
                                              Monster = c.Monster,
                                              Name = c.Name,
-                                             Level = Math.Max(1, level)
+                                             Level = Math.Max(1, level),
+                                             Health = Health(c, level)
                                          });
                     placed++;
                 }
             }
+        }
+
+        /// <summary>
+        /// How much health a creature of this kind has at this level.
+        /// </summary>
+        /// <remarks>
+        /// Health per level is the creature's own, measured over 889 recorded
+        /// monsters. A creature nobody has seen the health of gets the middle
+        /// of the range rather than nothing, because a monster with no health
+        /// cannot be fought at all.
+        /// </remarks>
+        private static int Health(MissionCreature creature, int level)
+        {
+            double perLevel = creature.HealthPerLevel > 0 ? creature.HealthPerLevel : 40;
+            return Math.Max(1, (int)Math.Round(perLevel * Math.Max(1, level)));
         }
 
         private void PlaceObjective(Mission mission)

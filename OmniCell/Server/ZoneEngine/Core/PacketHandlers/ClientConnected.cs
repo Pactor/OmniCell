@@ -46,9 +46,15 @@ namespace ZoneEngine.Core.PacketHandlers
     using Utility;
 
     using SmokeLounge.AOtomation.Messaging.GameData;
+    using SmokeLounge.AOtomation.Messaging.Messages;
     using SmokeLounge.AOtomation.Messaging.Messages.N3Messages;
 
     using ZoneEngine.Core.InternalMessages;
+    using System.Collections.Generic;
+
+    using OmniCell.Core.Missions;
+
+    using ZoneEngine.Core.Missions;
     using ZoneEngine.Core.Playfields;
     using ZoneEngine.Core.MessageHandlers;
     using ZoneEngine.Core.Quests;
@@ -163,6 +169,25 @@ client.Controller.Character.Playfield.Identity,
             foreach (Identity door in ((Playfield)client.Playfield).Doors())
             {
                 DoorStatusUpdateMessageHandler.Default.Send(client.Controller.Character, door);
+            }
+
+            // A mission's doors, chests and objective. The client has no
+            // playfield file to draw them from, so every one goes on the wire.
+            MissionOffer mission = MissionPlayfields.Of(
+                client.Controller.Character.Playfield.Identity.Instance);
+            if (mission != null)
+            {
+                List<MessageBody> contents = MissionContents.Messages(mission);
+                foreach (MessageBody body in contents)
+                {
+                    client.SendCompressed(body);
+                }
+
+                Log.Info(
+                    "ENTRY character={0} mission playfield={1} contents={2}",
+                    client.Controller.Character.Identity.Instance,
+                    mission.PlayfieldInstance,
+                    contents.Count);
             }
 
             var sendSCFUs = new IMSendPlayerSCFUs { toClient = client };

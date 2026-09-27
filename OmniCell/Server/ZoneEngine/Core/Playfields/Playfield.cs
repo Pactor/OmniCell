@@ -174,6 +174,17 @@ namespace OmniCell.Core.Playfields
                 this.LoadVendors(playfieldIdentity);
                 this.LoadStaticDynels(playfieldIdentity);
             }
+            else
+            {
+                MissionOffer mission = MissionPlayfields.Of(this.Identity.Instance);
+                if (mission != null)
+                {
+                    LogUtil.Debug(
+                        DebugInfoDetail.Engine,
+                        "Mission playfield " + this.Identity.Instance + " spawned "
+                        + MissionSpawner.Fill(this, mission) + " monsters.");
+                }
+            }
         }
 
         /// <summary>
@@ -181,6 +192,20 @@ namespace OmniCell.Core.Playfields
         /// the content pack - which today means it is a mission's.
         /// </summary>
         public bool Generated { get; private set; }
+
+        /// <summary>
+        /// Where a character spawned here belongs, so it can be put back.
+        /// </summary>
+        /// <remarks>
+        /// The spawn point map is private and filled while the playfield loads
+        /// from the database. A mission's monsters are made after that and by
+        /// somebody else, so they need a way in.
+        /// </remarks>
+        public void RememberSpawn(Identity character, Coordinate where, Quaternion heading)
+        {
+            this.spawnPoint[character] = where;
+            this.spawnHeading[character] = heading;
+        }
 
         /// <summary>
         /// Weapons held by the characters spawned in this playfield, by spawn id.

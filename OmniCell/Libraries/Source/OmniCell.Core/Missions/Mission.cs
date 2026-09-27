@@ -70,6 +70,11 @@ namespace OmniCell.Core.Missions
         public string Name { get; set; }
 
         public int Level { get; set; }
+
+        /// <summary>
+        /// How much health it has.
+        /// </summary>
+        public int Health { get; set; }
     }
 
     /// <summary>

@@ -332,6 +332,7 @@ namespace OmniCell.Core.Content
                             writer.Write(c.Seen);
                             writer.Write(c.MinLevelOffset);
                             writer.Write(c.MaxLevelOffset);
+                            writer.Write(c.HealthPerLevel);
                         }
                     }
 
@@ -399,7 +400,8 @@ namespace OmniCell.Core.Content
                             Name = reader.ReadString(),
                             Seen = reader.ReadInt32(),
                             MinLevelOffset = reader.ReadInt32(),
-                            MaxLevelOffset = reader.ReadInt32()
+                            MaxLevelOffset = reader.ReadInt32(),
+                            HealthPerLevel = reader.ReadDouble()
                         });
                     }
 

@@ -88,6 +88,8 @@ namespace OmniCell.Tools.Capture
             var qualities = new List<int>();
             var rooms = new List<int>();
             var floors = new List<int>();
+            var contents = new List<int>();
+            var monsters = new List<int>();
 
             for (int roll = 0; roll < rolls; roll++)
             {
@@ -139,6 +141,8 @@ namespace OmniCell.Tools.Capture
                 else
                 {
                     rooms.Add(taken.Built.Layout.Rooms.Count);
+                    contents.Add(MissionContents.Messages(taken).Count);
+                    monsters.Add(taken.Built.Monsters.Count);
                     floors.Add(taken.Built.Layout.Rooms.Max(r => r.Floor)
                                - taken.Built.Layout.Rooms.Min(r => r.Floor) + 1);
                 }
@@ -180,6 +184,12 @@ namespace OmniCell.Tools.Capture
             Console.WriteLine(
                 "  rooms          {0:F1} mean, {1} to {2}",
                 rooms.Average(), rooms.Min(), rooms.Max());
+            Console.WriteLine(
+                "  doors, chests  {0:F1} sent per mission, {1} to {2}",
+                contents.Average(), contents.Min(), contents.Max());
+            Console.WriteLine(
+                "  monsters       {0:F1} per mission, {1} to {2}",
+                monsters.Average(), monsters.Min(), monsters.Max());
             Console.WriteLine(
                 "  floors         {0}",
                 string.Join("  ", floors.GroupBy(f => f).OrderBy(g => g.Key)
@@ -291,6 +301,40 @@ namespace OmniCell.Tools.Capture
             }
 
             if (back == null || back.Generator == null) return "the generator did not read back";
+
+            // The doors, the chests and the objective. The client has no
+            // playfield file for a mission, so every one of these goes on the
+            // wire, and one the serializer cannot write is a hole in the
+            // building that nothing would report.
+            offer.PlayfieldInstance = 112085;
+            List<MessageBody> contents = MissionContents.Messages(offer);
+            if (contents.Count < offer.Built.Layout.Doors.Count)
+            {
+                return "only " + contents.Count + " contents for "
+                       + offer.Built.Layout.Doors.Count + " doors";
+            }
+
+            foreach (MessageBody content in contents)
+            {
+                try
+                {
+                    using (var stream = new MemoryStream())
+                    {
+                        serializer.Serialize(
+                            stream, new Message { Body = content, Header = Header(content) });
+                        stream.Position = 0;
+                        if (serializer.Deserialize(stream) == null)
+                        {
+                            return content.GetType().Name + " read back as nothing";
+                        }
+                    }
+                }
+                catch (Exception exception)
+                {
+                    return content.GetType().Name + " would not go on the wire: " + exception.Message;
+                }
+            }
+
             if (back.Generator.Rooms.Length != generator.Rooms.Length)
             {
                 return "wrote " + generator.Rooms.Length + " rooms and read back "
