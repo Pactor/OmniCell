@@ -1,122 +1,250 @@
 # The creatures a mission server spawns, from the bot's packet recordings.
-# Only creatures standing inside the generated building: a recording starts at the
-# previous zone-in, so the outdoor ones on the way there are in the stream too and
-# are cut by testing each against the building's own room list.
+# Written by Tools/Capture/MobExtract - do not edit by hand, re-run it.
+#
+# Only creatures inside the generated building: a recording starts at the
+# previous zone-in, so the outdoor ones on the way there are in the stream too
+# and are cut by the playfield each one says it is in.
 # monster is SimpleCharFullUpdate.MonsterData - the body, shared by the rank
 # variants of one creature: 17649 is both "34 - Automatic" and "34-V worker".
 # Level is given against the mission QL, because that is what it tracks, not the
 # player's. Only the pools the bot has run appear.
 # pool	monster	name	seen	minLevelOffset	maxLevelOffset	healthPerLevel
-320	17687	Tormented Rollerrat	11	0	3	32.6
-320	17697	A-500 Elite	1	1	1	57.0
-320	17697	A-500 elite	5	0	2	56.2
-320	17697	A-500 soldier	1	-1	-1	55.4
-320	17720	Hellhound	21	-2	3	80.3
-320	26092	Novice Clan Sharpshooter	1	2	2	41.2
-320	26137	Soft Clan Techwrecker	1	3	3	41.7
-320	26159	Novice Clan Techno-Architect	2	-1	0	40.2
-320	30375	Mantis	2	-3	0	56.2
-320	30375	Sylvan Mantis Drone	2	1	2	57.7
-320	40063	Rollerrat Matriarch	11	-1	3	40.7
-320	210237	Security Camera	1	1	1	48.8
-320	210238	Alarm Sentry	1	-2	-2	41.8
-321	17649	34 - Automatic	25	-3	2	39.6
-321	17664	Rhinoman Smasher	10	-4	-1	56.2
-321	17693	Borer Scorpiod	10	0	0	40.2
-321	17693	Piercer Scorpiod	5	-3	-1	39.6
-321	17693	Stabber Scorpiod	2	-4	-2	39.0
-321	17697	A-500 Elite	5	0	0	57.0
-321	17697	A-500 Soldier	1	-3	-3	55.4
-321	17697	A-500 elite	5	0	2	56.2
-321	17697	A-500 soldier	3	-1	-1	55.4
-321	17720	Hellhound	26	-3	2	80.3
-321	20614	Probe - X	11	-3	1	29.5
-321	22794	Infected  Lizard	2	0	2	33.0
-321	26088	Novice Techdabbler	3	-2	-2	39.0
+320	17687	Epidemic Rollerrat	8	-2	-1	22.3
+320	17687	Plague Rollerrat	7	0	1	22.7
+320	17687	Tormented Rollerrat	7	-1	2	32.7
+320	17697	A-1000 Soldier	1	0	0	58.4
+320	17697	A-500 Elite	3	-3	0	57.0
+320	17697	A-500 elite	7	-3	1	56.8
+320	17697	A-500 soldier	3	-4	-2	55.4
+320	17720	Hellhound	28	-3	2	80.8
+320	20614	Probe 5000-1	5	-4	-4	32.1
+320	20614	Probe 5000-2	1	-4	-4	32.1
+320	20614	Probe 5000-3	1	-4	-4	32.1
+320	26092	Novice Clan Sharpshooter	2	1	1	41.2
+320	26103	Carmen Svancara	1	0	0	28.2
+320	26137	Soft Clan Techwrecker	2	2	2	41.7
+320	26159	Novice Clan Techno-Architect	4	-2	-1	40.0
+320	30352	Hyena	1	-2	-2	27.7
+320	30375	Mantis	2	-4	-1	54.9
+320	30375	Sylvan Mantis Drone	3	-1	1	57.5
+320	38387	Claw-C22 Escapee	4	1	1	39.8
+320	38387	Claw-C22 Runaway	2	-1	0	39.3
+320	40063	Rollerrat Matriarch	8	-2	2	40.3
+320	45874	Buzzsaw Technoscavenger	2	1	1	39.8
+320	45874	Buzzsaw tech-scavenger	2	0	1	39.6
+320	45874	Buzzsaw technoscavenger	2	0	0	39.5
+320	210237	Security Camera	1	0	0	48.8
+320	210238	Alarm Sentry	1	-3	-3	41.8
+321	17649	34 - Automatic	23	-4	1	37.9
+321	17657	Filthy Flea	2	-2	-2	27.7
+321	17664	Rhinoman Smasher	6	-3	0	54.1
+321	17687	Epidemic Rollerrat	11	-2	-1	22.2
+321	17687	Plague Rollerrat	7	0	1	22.6
+321	17687	Tormented Rollerrat	6	-3	0	33.5
+321	17693	Borer Scorpiod	5	1	1	40.2
+321	17693	Piercer Scorpiod	3	-2	0	39.2
+321	17693	Stabber Scorpiod	2	-3	-1	38.3
+321	17697	A-1000 Soldier	4	-1	1	58.8
+321	17697	A-500 Elite	4	-3	-1	56.4
+321	17697	A-500 Soldier	1	-4	-4	53.7
+321	17697	A-500 elite	5	-4	1	56.5
+321	17697	A-500 soldier	3	-2	-2	55.4
+321	17720	Hellhound	31	-4	1	73.2
+321	20614	Probe - X	13	-3	1	26.7
+321	20614	Probe 5000-1	3	-3	-2	31.8
+321	20614	Probe 5000-2	3	-3	-2	31.8
+321	20614	Probe 5000-3	1	-2	-2	32.1
+321	22794	Infected  Lizard	2	-1	1	32.6
+321	26076	Rookie Clan Huntsman	2	-3	-3	39.6
+321	26088	Novice Techdabbler	2	-3	-2	36.7
 321	26092	Novice Botrunner	1	-2	-2	29.4
+321	26092	Novice Clan Sharpshooter	1	1	1	41.7
+321	26092	Rookie Clan Meta-Physicist	1	-1	-1	40.7
 321	26101	Novice Rebooter	1	-1	-1	35.3
 321	26103	Chang Meloche	1	0	0	36.1
-321	26103	Chester Galanga	2	-1	-1	39.6
-321	26103	Dion Giscombe	1	1	1	40.7
-321	26125	Novice Contract Killer	1	2	2	41.2
+321	26103	Chester Galanga	1	0	0	39.6
+321	26103	Chong Matt	1	0	0	42.2
+321	26103	Dion Giscombe	1	0	0	40.7
+321	26103	Emery Ratti	1	0	0	28.2
+321	26103	Garry Tapanes	1	0	0	28.2
+321	26103	Levi McDannold	1	0	0	41.3
+321	26125	Novice Contract Killer	1	1	1	41.3
 321	26133	Novice Programthief	1	-3	-3	36.2
-321	26133	Rookie Clan Saboteur	1	1	1	40.7
-321	26147	Rookie Clan Exterminator	1	-1	-1	31.7
-321	30352	Hyena	34	-3	2	39.6
-321	32419	Hunting Pet Snake	5	2	2	33.0
-321	32419	Lost Pet Snake	2	-2	1	39.6
-321	40075	Steady Blubbag	14	-3	1	39.6
-324	17649	34 - Automatic	63	-3	2	39.6
-324	17649	34-V Worker	18	-4	0	36.1
-324	17649	34-V worker	18	-4	1	36.9
-324	17653	Eye-Q93 Outlaw	14	-4	-3	37.6
-324	17653	Eye-Q93 Public Enemy	18	-1	0	40.2
-324	17664	Rhinoman Smasher	34	-3	2	56.2
-324	17687	Tormented Rollerrat	12	-4	2	32.6
-324	17695	Tac-V85 Fugitive	1	-2	-2	34.4
-324	17695	Tac-V85 Outlaw	13	-1	1	36.9
-324	17697	A-500 Elite	7	0	2	57.0
-324	17697	A-500 Soldier	6	-3	-1	55.4
-324	17697	A-500 elite	8	0	1	56.2
-324	17697	A-500 soldier	15	-3	-1	55.4
-324	17720	Hellhound	15	-2	2	80.3
-324	20614	Probe - X	3	-4	-4	29.5
-324	20614	Probe 5000-1	2	-2	-2	32.1
-324	20614	Probe 5000-2	5	-3	0	31.7
-324	20614	Probe 5000-3	2	-3	0	32.1
-324	26076	Rookie Clan Huntsman	2	-3	1	39.6
-324	26082	Blazing Clan Contract Killer	4	-1	3	40.7
-324	26082	Novice Bothacker	7	-2	-2	31.2
-324	26082	Novice Clan Contract Killer	4	-2	0	36.1
-324	26090	Rookie Clan Gridcourier	6	-3	0	34.4
-324	26092	Novice Laseraim	6	0	2	41.2
-324	26092	Rookie Clan Meta-Physicist	1	1	1	40.7
-324	26092	Rookie Clan Techhunter	4	-2	-1	35.3
-324	26103	Marvin McKechnie	1	1	1	40.7
-324	26103	Ned Fadri	1	1	1	40.7
-324	26103	Sol McCullors	4	1	1	40.7
-324	26125	Novice Contract Killer	3	1	3	41.2
-324	26125	Novice Sharpshooter	2	1	2	40.7
-324	26133	Rookie Clan Saboteur	3	1	1	40.7
-324	26143	Rookie Clan Hired Killer	4	-3	-2	40.2
-324	26147	Rookie Clan Exterminator	6	-2	1	31.7
-324	26151	Rookie Clan Lookout	6	-2	-1	35.3
-324	26155	Novice Techno-Architect	3	-2	-2	39.0
-324	26159	Novice Clan Techno-Architect	10	-2	0	40.2
-324	30258	Bio-X39 Outlaw	5	-3	-3	38.3
-324	30258	Bio-X39 Public Enemy	9	-2	2	40.7
-324	30352	Hyena	24	-4	2	39.6
-324	40063	Rollerrat Matriarch	13	0	2	40.7
-324	40075	Steady Blubbag	7	-3	2	39.6
-324	96194	Deranged Mindreaver	1	1	1	7.5
-341	17664	Rhinoman Smasher	3	0	2	56.2
-341	17687	Tormented Rollerrat	5	-3	-1	32.6
-341	17720	Bioarranged Beast - Model 666	1	1	1	40.2
+321	26133	Rookie Clan Saboteur	2	-1	0	40.7
+321	26137	Soft Clan Techwrecker	3	1	2	41.9
+321	26143	Rookie Clan Hired Killer	2	-2	-1	40.4
+321	26147	Rookie Clan Exterminator	5	-3	-2	31.7
+321	26155	Rookie Clan Functionary	1	1	1	22.7
+321	26159	Novice Clan Techno-Architect	2	-3	-2	39.9
+321	26159	Novice Virusbuilder	2	-2	0	27.9
+321	30258	Bio-X Terminator	5	1	2	41.8
+321	30258	Bio-X39 Public Enemy	5	-3	0	40.6
+321	30352	Hyena	20	-3	1	37.0
+321	30352	Young Scab Hyena	2	-1	0	42.0
+321	30369	Aquaan	2	0	2	58.4
+321	32419	Hunting Pet Snake	4	1	1	33.0
+321	32419	Lost Pet Snake	2	-3	0	39.8
+321	38387	Claw-C22 Escapee	11	1	1	39.8
+321	38387	Claw-C22 Runaway	7	-2	0	39.2
+321	40063	Rollerrat Matriarch	7	-4	-1	40.8
+321	40063	Rollerrat Queen	5	1	1	42.7
+321	40075	Steady Blubbag	11	-4	0	39.8
+321	44143	Breed-B37 Public Enemy	7	-3	1	40.1
+321	44143	Failed - B40	7	2	2	41.7
+321	96194	Deranged Mindreaver	2	-1	-1	7.5
+321	209712	Guard Turret	1	0	0	48.8
+324	17649	34 - Automatic	61	-4	1	36.6
+324	17649	34-V Worker	11	-4	0	36.3
+324	17649	34-V worker	12	-4	0	36.5
+324	17653	Eye-Q93 Outlaw	8	-4	-3	37.8
+324	17653	Eye-Q93 Public Enemy	6	-4	0	40.3
+324	17653	Eye-Q97 Mobster	1	1	1	42.7
+324	17664	Rhinoman Smasher	26	-4	2	56.0
+324	17687	Tormented Rollerrat	11	-4	1	31.3
+324	17693	Borer Scorpiod	3	-3	-2	40.5
+324	17693	Piercer Scorpiod	5	-4	-2	39.9
+324	17693	Slitter Scorpiod	4	0	0	41.7
+324	17695	Fleeing Tac-V88	10	2	2	41.7
+324	17695	Tac-V85 Fugitive	1	-3	-3	34.4
+324	17695	Tac-V85 Outlaw	6	-2	0	36.3
+324	17695	Tac-V85 Public Enemy	10	-3	1	40.3
+324	17697	A-1000 Soldier	2	-1	0	58.8
+324	17697	A-500 Elite	7	-1	1	56.8
+324	17697	A-500 Soldier	4	-4	-2	54.8
+324	17697	A-500 elite	9	-4	0	56.7
+324	17697	A-500 soldier	6	-4	-2	54.7
+324	17720	Bioarranged Beast - Model 666	3	-3	-1	39.8
+324	17720	Hellhound	52	-4	1	80.7
+324	20614	Probe - X	3	-3	-3	30.1
+324	20614	Probe 5000-1	3	-3	-1	31.2
+324	20614	Probe 5000-2	4	-2	1	31.3
+324	20614	Probe 5000-3	4	-3	1	31.5
+324	26074	Rookie Swindler	1	1	1	41.3
+324	26076	Rookie Clan Huntsman	9	-4	1	39.2
+324	26082	Blazing Clan Contract Killer	3	-2	2	40.7
+324	26082	Novice Bothacker	4	-3	-3	31.2
+324	26082	Novice Clan Contract Killer	3	-3	0	37.1
+324	26082	Soft Outlaw	1	2	2	41.7
+324	26088	Novice Techdabbler	3	-3	-3	39.0
+324	26090	Rookie Clan Gridcourier	3	-3	0	34.7
+324	26090	Soft Techwrecker	1	-3	-3	39.0
+324	26092	Novice Laseraim	3	-3	1	40.1
+324	26092	Rookie Clan Meta-Physicist	8	-3	1	41.1
+324	26092	Rookie Clan Techhunter	4	-2	-1	34.9
+324	26092	Soft Nanoplaguer	5	-3	-1	39.3
+324	26103	Carey Wyles	1	0	0	41.7
+324	26103	Emil Bunke	1	0	0	40.7
+324	26103	Franklyn Age	1	0	0	40.7
+324	26103	Malcom Thompon	1	0	0	40.7
+324	26103	Marvin McKechnie	1	0	0	40.7
+324	26103	Ned Fadri	1	0	0	40.7
+324	26103	Sol McCullors	1	0	0	40.7
+324	26123	Rookie Thief	1	-3	-3	39.0
+324	26125	Novice Contract Killer	6	0	2	41.2
+324	26125	Novice Sharpshooter	4	0	1	40.9
+324	26133	Rookie Clan Saboteur	3	0	1	40.7
+324	26139	Important Techrejecter	2	-2	-1	39.9
+324	26143	Rookie Clan Hired Killer	5	-3	-2	38.6
+324	26147	Rookie Clan Exterminator	10	-4	1	31.0
+324	26151	Rookie Clan Lookout	2	-2	-1	34.9
+324	26155	Novice Techno-Architect	5	-3	-2	39.2
+324	26155	Rookie Clan Functionary	1	1	1	22.7
+324	26159	Novice Clan Techno-Architect	2	-3	-1	39.6
+324	30252	Emerald Viper	3	-4	-2	40.3
+324	30252	Fallout Taipan	5	-1	2	41.7
+324	30252	Pollution Taipan	7	-1	2	42.1
+324	30258	Bio-X39 Outlaw	5	-4	-4	38.3
+324	30258	Bio-X39 Public Enemy	6	-3	1	40.2
+324	30352	Hyena	23	-4	1	39.6
+324	30352	Young Scab Hyena	4	2	2	41.7
+324	30369	Aquaan	50	-4	1	57.2
+324	30375	Mantis	3	-2	1	58.4
+324	30375	Sylvan Mantis Drone	6	-1	1	58.2
+324	30464	Shade-Y42 Ganker	2	0	0	41.7
+324	30464	Shade-Y42 Public Enemy	3	-2	-1	32.7
+324	32419	Hunting Pet Snake	3	-2	1	33.1
+324	32419	Lost Pet Snake	6	-4	-2	40.1
+324	38387	Claw-C22 Public Enemy	2	0	0	57.0
+324	38387	Swift Claw	25	1	2	58.1
+324	40063	Rollerrat Matriarch	8	-1	1	40.7
+324	40075	Steady Blubbag	6	-4	1	39.6
+324	44143	Breed-B37 Public Enemy	1	-2	-2	40.7
+324	44143	Failed - B40	3	0	1	42.1
+324	96194	Deranged Mindreaver	1	0	0	7.5
+324	96194	Distracting Sphere	6	-1	-1	5.2
+341	17649	34 - Automatic	6	-3	1	37.1
+341	17660	Adult Malle	7	-1	1	28.2
+341	17660	Mutated Malle	7	-2	1	28.0
+341	17664	Rhinoman Basher	2	1	1	60.3
+341	17664	Rhinoman Smasher	7	-4	1	58.0
+341	17687	Tormented Rollerrat	11	-4	0	32.4
+341	17720	Bioarranged Beast - Model 666	1	0	0	40.7
+341	26103	Bret Boothby	1	0	0	28.2
 341	26103	Cedrick Gaviglia	1	0	0	40.2
-341	26103	Felix Swicord	1	1	1	40.7
-341	30369	Aquaan	4	-3	1	57.0
-341	38387	Claw-C22 Outlaw	3	-4	-3	52.7
-341	38387	Claw-C22 Public Enemy	5	-2	1	56.2
-341	40063	Rollerrat Matriarch	4	-1	2	40.7
-346	30252	Emerald Viper	1	-2	-2	39.6
+341	26103	Felix Swicord	1	0	0	40.7
+341	26103	Millard Alsaqri	1	0	0	42.2
+341	26103	Percy Houston	2	0	0	42.2
+341	26103	Quinn Woolley	1	0	0	28.2
+341	30258	Bio-X Terminator	4	-1	1	42.4
+341	30258	Bio-X39 Escapee	2	1	1	28.4
+341	30258	Bio-X39 Public Enemy	3	-2	-2	41.3
+341	30258	Bio-X39 Runaway	3	-2	-2	27.7
+341	30352	Hyena	11	-4	-2	40.9
+341	30352	Young Scab Hyena	11	-2	1	42.5
+341	30369	Aquaan	4	-4	0	55.2
+341	30379	Speckled Bloodcreeper	3	-3	-3	39.6
+341	30379	Young Nightcrawler	2	2	2	42.2
+341	38387	Claw-C22 Outlaw	3	-4	-3	53.0
+341	38387	Claw-C22 Public Enemy	5	-2	1	56.0
+341	40063	Rollerrat Matriarch	14	-4	1	41.0
+341	40063	Rollerrat Queen	9	0	1	42.8
+341	44143	Breed-B37 Public Enemy	12	-4	-1	40.7
+341	44143	Failed - B40	10	-2	2	42.2
+346	17649	34 - Automatic	2	1	1	28.4
+346	26074	Rookie Swindler	1	2	2	42.2
+346	26088	Rookie Nanorobber	2	-3	-3	39.6
+346	26092	Novice Laseraim	2	0	0	41.2
+346	26097	Rookie Thug	2	-3	-1	56.2
+346	26103	Sonny Strimple	1	0	0	28.2
+346	26125	Novice Contract Killer	3	0	1	41.4
+346	26125	Novice Sharpshooter	2	-1	1	41.2
+346	26151	Rookie Exterminator	1	2	2	33.8
+346	26159	Rookie Saboteur	1	-3	-3	39.6
+346	30252	Concrete Adder	3	-2	-2	27.7
+346	30252	Emerald Viper	4	-4	-2	40.3
+346	30252	Fallout Taipan	3	-3	0	41.7
 346	30252	Notum Viper	1	-4	-4	37.6
-346	38387	Claw-C22 Outlaw	5	-4	-3	52.7
-346	38387	Claw-C22 Public Enemy	7	-2	0	56.2
+346	30252	Pollution Taipan	2	-2	1	42.4
+346	30252	Steel Adder	2	0	0	28.2
+346	38387	Claw-C22 Outlaw	5	-4	-3	53.1
+346	38387	Claw-C22 Public Enemy	4	-2	0	55.4
 346	209712	Guard Turret	1	0	0	48.2
-351	17695	Tac-V85 Outlaw	6	-4	-3	36.9
-351	17695	Tac-V85 Public Enemy	3	-1	1	40.7
-351	17697	A-500 Soldier	9	-2	-1	55.4
-351	17697	A-500 elite	9	0	1	56.2
-351	17697	A-500 soldier	3	-3	-1	55.4
-351	17720	Bioarranged Beast - Model 666	6	-3	1	40.2
-351	17720	Hellhound	3	-3	-1	80.3
-351	26103	Jake Carnalla	2	1	1	40.7
-351	26103	Malcom Thompon	1	1	1	40.7
-351	30258	Bio-X39 Outlaw	1	-3	-3	38.3
-351	30258	Bio-X39 Public Enemy	7	-2	-1	40.7
-351	30375	Mantis	14	-3	1	56.2
-351	30375	Sylvan Mantis Drone	6	1	2	57.7
-351	38387	Claw-C22 Outlaw	9	-4	-3	52.7
-351	38387	Claw-C22 Public Enemy	8	-2	0	56.2
-351	40075	Steady Blubbag	4	-3	-3	39.6
+351	17655	Killer Leet	5	-2	1	28.0
+351	17655	Phear Leet	7	-2	-2	22.2
+351	17660	Mutated Malle	6	-3	1	42.2
+351	17693	Tickler Scorpiod	5	-1	1	28.1
+351	17693	Tingler Scorpiod	3	1	1	28.4
+351	17695	Fleeing Tac-V88	7	0	1	42.1
+351	17695	Tac-V85 Escapee	1	1	1	28.4
+351	17695	Tac-V85 Outlaw	4	-4	-3	38.1
+351	17695	Tac-V85 Public Enemy	14	-4	1	40.4
+351	17695	Tac-V85 Runaway	5	-2	0	27.9
+351	17697	A-1000 Soldier	2	0	1	58.8
+351	17697	A-500 Elite	6	-2	-1	57.4
+351	17697	A-500 Soldier	5	-4	-2	55.2
+351	17697	A-500 elite	5	-3	0	56.8
+351	17697	A-500 soldier	4	-4	-2	54.8
+351	17720	Bioarranged Beast - Model 666	5	-4	0	39.4
+351	17720	Hellhound	3	-4	-2	77.5
+351	26103	Jake Carnalla	1	0	0	40.7
+351	26103	Jeffery Joor	1	0	0	42.7
+351	26103	Malcom Thompon	1	0	0	40.7
+351	30258	Bio-X Terminator	19	-2	2	42.1
+351	30258	Bio-X39 Outlaw	1	-4	-4	38.3
+351	30258	Bio-X39 Public Enemy	19	-3	0	40.4
+351	30375	Mantis	10	-4	0	55.5
+351	30375	Sylvan Mantis Drone	6	0	1	57.1
+351	38387	Claw-C22 Outlaw	6	-4	-3	52.8
+351	38387	Claw-C22 Public Enemy	5	-2	0	55.6
+351	40075	Steady Blubbag	1	-4	-4	38.3
 351	209712	Guard Turret	1	0	0	48.2

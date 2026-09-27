@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The rest is set in Directory.Build.props. Reads the message models directly, because it works on
+       the zone-in, the quest and the character updates by type. -->
+  <ItemGroup>
+    <Reference Include="SmokeLounge.AOtomation.Messaging"><HintPath>$(CaptureBin)SmokeLounge.AOtomation.Messaging.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+</Project>
