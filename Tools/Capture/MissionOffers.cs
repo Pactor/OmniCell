@@ -478,6 +478,12 @@ namespace OmniCell.Tools.Capture
             {
                 Console.WriteLine("    playfield {0,-6} {1}", one.Key, one.Value);
             }
+
+            foreach (int ask in new[] { 6553, 800, 655 })
+            {
+                KeyValuePair<int, int> one = found.FirstOrDefault(f => f.Key == ask);
+                Console.WriteLine("    playfield {0,-6} {1}", ask, one.Key == ask ? one.Value : 0);
+            }
         }
 
         /// <summary>

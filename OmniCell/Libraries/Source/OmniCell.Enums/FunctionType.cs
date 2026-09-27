@@ -533,6 +533,17 @@ namespace OmniCell.Enums
 
         /// <summary>
         /// </summary>
+        /// <summary>
+        /// Teleport to another playfield.
+        /// </summary>
+        /// <remarks>
+        /// Named here from what it is called with rather than from a client
+        /// string - it was a gap in this enum until 2026-09-27, and being a
+        /// gap is what kept anybody from leaving Arete Landing. See
+        /// ZoneEngine's teleporttoplayfield for the evidence.
+        /// </remarks>
+        TeleportToPlayfield = 53142,
+
         NpcTeleportToSpawnPoint = 53143,
 
         /// <summary>

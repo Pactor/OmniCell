@@ -34,6 +34,7 @@ namespace OmniCell.Core.Requirements
     #region Usings ...
 
     using System;
+    using System.Linq;
     using System.Linq.Expressions;
 
     using OmniCell.Core.Entities;
@@ -102,6 +103,20 @@ namespace OmniCell.Core.Requirements
                 case Operator.HasNotFormula:
 
                     return k => ((Character)GetTarget(t).Compile().Invoke(k)).HasNano(statValue);
+                case Operator.HasRunningNano:
+
+                    // Whether the nano is running on them now, which is not
+                    // the same question as HasNotFormula's - that one asks
+                    // whether they have ever uploaded it.
+                    //
+                    // Unimplemented until 2026-09-27, and it threw rather than
+                    // failing, so anything carrying this requirement broke
+                    // rather than refusing. Arete Landing's exit door is one:
+                    // it wants nano 295602, which the Exit Arete Landing
+                    // console casts on you, and the throw is part of why
+                    // nobody could leave.
+                    return k => ((Character)GetTarget(t).Compile().Invoke(k))
+                                    .ActiveNanos.Values.Any(n => n != null && n.ID == statValue);
                 case Operator.FlyingAllowed:
                     return k => true;
                 default:
