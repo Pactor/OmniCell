@@ -197,5 +197,15 @@ namespace OmniCell.Core.Missions
         /// The instance the mission's playfield goes by.
         /// </summary>
         public int PlayfieldInstance { get; set; }
+
+        /// <summary>
+        /// The objective, once it has been picked up, as the instance of the
+        /// item in the inventory. 0 while it is still on the floor.
+        /// </summary>
+        /// <remarks>
+        /// Only a return item mission has one: a find item objective is looked
+        /// at and left where it is.
+        /// </remarks>
+        public int Carried { get; set; }
     }
 }

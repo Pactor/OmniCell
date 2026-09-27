@@ -122,19 +122,18 @@ namespace OmniCell.Core.Missions
             }
 
             int playfield = mission.PlayfieldInstance;
-            int instance = 1;
 
             foreach (MissionLayoutDoor door in mission.Built.Layout.Doors)
             {
-                messages.Add(Door(door, playfield, instance++));
+                messages.Add(Door(door, playfield, door.Instance));
             }
 
             foreach (MissionFurniture thing in mission.Built.Furniture)
             {
                 messages.Add(
                     thing.Kind == MissionFurnitureKind.Chest
-                        ? (MessageBody)Chest(thing, playfield, instance++)
-                        : Objective(thing, mission, playfield, instance++));
+                        ? (MessageBody)Chest(thing, playfield, thing.Instance)
+                        : Objective(thing, mission, playfield, thing.Instance));
             }
 
             return messages;

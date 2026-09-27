@@ -125,9 +125,15 @@ namespace OmniCell.Core.Missions
         /// takes the mission, and from a seed the offer's own identity gives,
         /// which means the same mission always builds the same building.
         /// </remarks>
-        public static Mission Build(MissionOffer offer)
+        /// <param name="instances">
+        /// Where the instances the client will know each door, chest and
+        /// monster by come from. The server allocates them out of its object
+        /// pool; a tool can count.
+        /// </param>
+        public static Mission Build(MissionOffer offer, Func<int> instances)
         {
             if (offer == null) throw new ArgumentNullException("offer");
+            if (instances == null) throw new ArgumentNullException("instances");
 
             MissionPool pool;
             if (!MissionPoolLoader.Pools.TryGetValue(offer.Pool, out pool))
@@ -136,7 +142,51 @@ namespace OmniCell.Core.Missions
             }
 
             var factory = new MissionFactory(pool, offer.Instance);
-            return factory.Build(offer.Quality, offer.Type, Math.Max(1, offer.Floors));
+            Mission mission = factory.Build(offer.Quality, offer.Type, Math.Max(1, offer.Floors));
+            if (mission == null)
+            {
+                return null;
+            }
+
+            foreach (MissionLayoutDoor door in mission.Layout.Doors) door.Instance = instances();
+            foreach (MissionFurniture thing in mission.Furniture) thing.Instance = instances();
+            foreach (MissionMonster monster in mission.Monsters) monster.Instance = instances();
+
+            Target(mission, offer);
+            return mission;
+        }
+
+        /// <summary>
+        /// The one the mission is about, for the types that name a creature.
+        /// </summary>
+        /// <remarks>
+        /// A kill person mission names something and the player has to kill
+        /// that, not any of them - the assignment says "the big boss-man of
+        /// the hole is Quinn Buhlig". So one of the monsters is given the name
+        /// the offer used, and it is the one furthest into the building, which
+        /// is where a boss stands.
+        ///
+        /// Which monster retail picks is not known; that it is one of them is,
+        /// because the name in the assignment is a creature's.
+        /// </remarks>
+        private static void Target(Mission mission, MissionOffer offer)
+        {
+            if (offer.Type != MissionType.KillPerson || string.IsNullOrEmpty(offer.Objective))
+            {
+                return;
+            }
+
+            MissionMonster boss = mission.Monsters
+                .OrderByDescending(m => Math.Abs(m.Floor))
+                .ThenByDescending(m => m.Room)
+                .FirstOrDefault();
+            if (boss == null)
+            {
+                return;
+            }
+
+            boss.Name = offer.Objective;
+            boss.IsObjective = true;
         }
 
         /// <summary>

@@ -111,8 +111,14 @@ namespace ZoneEngine.Core.Missions
         {
             try
             {
-                int instance = Pool.Instance.GetFreeInstance<Character>(
-                    playfield.Identity.Instance, IdentityType.CanbeAffected);
+                // The instance was handed out when the mission was built, so
+                // the same monster is the same monster to everybody in the
+                // building - and so the one a kill mission named can be
+                // recognised when it dies.
+                int instance = monster.Instance != 0
+                                   ? monster.Instance
+                                   : Pool.Instance.GetFreeInstance<Character>(
+                                       playfield.Identity.Instance, IdentityType.CanbeAffected);
 
                 float y = MissionBuilding.HeightOf(monster.Floor);
                 var spawn = new DBMobSpawn

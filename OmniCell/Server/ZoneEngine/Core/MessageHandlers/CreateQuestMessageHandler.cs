@@ -105,7 +105,9 @@ namespace ZoneEngine.Core.MessageHandlers
             // that a mission that cannot be built is refused here - where the
             // player is standing at the terminal and can take another one -
             // rather than at a door that does nothing.
-            offer.Built = MissionBuilding.Build(offer);
+            offer.Built = MissionBuilding.Build(
+                offer,
+                () => Pool.Instance.GetFreeInstance<CreateQuestMessage>(1, IdentityType.Door));
             if (offer.Built == null)
             {
                 Tell(character, "That mission could not be prepared. Try another.");

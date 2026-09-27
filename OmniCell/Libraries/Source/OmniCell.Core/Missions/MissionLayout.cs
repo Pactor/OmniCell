@@ -37,6 +37,11 @@ namespace OmniCell.Core.Missions
         /// The other side, likewise.
         /// </summary>
         public int AdjoiningRoom { get; set; }
+
+        /// <summary>
+        /// The instance the client knows this door by.
+        /// </summary>
+        public int Instance { get; set; }
     }
 
     /// <summary>

@@ -29,6 +29,7 @@ namespace ZoneEngine.Core.Combat
     using ZoneEngine.Core.Controllers;
     using ZoneEngine.Core.Loot;
     using ZoneEngine.Core.MessageHandlers;
+    using ZoneEngine.Core.Missions;
     using ZoneEngine.Core.Quests;
 
     #endregion
@@ -639,6 +640,10 @@ namespace ZoneEngine.Core.Combat
             try
             {
                 QuestManager.OnKill(attacker, victim);
+
+                // And a kill person mission, which names the thing it wants
+                // by the name the creature carries.
+                MissionCompletion.OnKill(attacker, victim);
             }
             catch (System.Exception e)
             {

@@ -28,6 +28,17 @@ namespace OmniCell.Core.Missions
         /// The floor, counting up from the lowest.
         /// </summary>
         public int Floor { get; set; }
+
+        /// <summary>
+        /// The instance the client knows this one by.
+        /// </summary>
+        /// <remarks>
+        /// Handed out when the mission is built rather than when a client is
+        /// told about it, because two players in the same building have to be
+        /// shown the same chest, and because the server has to recognise the
+        /// thing when somebody picks it up.
+        /// </remarks>
+        public int Instance { get; set; }
     }
 
     /// <summary>
@@ -75,6 +86,11 @@ namespace OmniCell.Core.Missions
         /// How much health it has.
         /// </summary>
         public int Health { get; set; }
+
+        /// <summary>
+        /// Whether this is the one the mission is about.
+        /// </summary>
+        public bool IsObjective { get; set; }
     }
 
     /// <summary>

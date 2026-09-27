@@ -51,6 +51,7 @@ namespace ZoneEngine.Core.MessageHandlers
     using SmokeLounge.AOtomation.Messaging.Messages.N3Messages;
 
     using ZoneEngine.Core.Loot;
+    using ZoneEngine.Core.Missions;
     using ZoneEngine.Core.Quests;
 
     #endregion
@@ -79,6 +80,15 @@ namespace ZoneEngine.Core.MessageHandlers
                 case GenericCmdAction.Drop:
                     break;
                 case GenericCmdAction.Use:
+                    // A mission's objective lies on the floor and is not one
+                    // of the playfield's own fixtures, so it is answered here
+                    // before anything is looked up.
+                    if (MissionCompletion.OnTake(client.Controller.Character, message.Target[0]))
+                    {
+                        this.Acknowledge(client.Controller.Character, message);
+                        break;
+                    }
+
                     if (message.Target[0].Type == IdentityType.Inventory)
                     {
                         client.Controller.UseItem(message.Target[0]);
@@ -237,6 +247,17 @@ namespace ZoneEngine.Core.MessageHandlers
 
                     break;
                 case GenericCmdAction.UseItemOnItem:
+                    // The objective used on a mission terminal is how a return
+                    // item mission is handed in - the inventory slot first and
+                    // the terminal second, which is what the capture shows.
+                    if (message.Target.Length > 1
+                        && MissionCompletion.OnHandIn(
+                            client.Controller.Character, message.Target[1]))
+                    {
+                        this.Acknowledge(client.Controller.Character, message);
+                        break;
+                    }
+
                     IItem item =
                         Pool.Instance.GetObject<IInventoryPage>(
                             new Identity()

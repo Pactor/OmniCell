@@ -131,7 +131,8 @@ namespace OmniCell.Tools.Capture
                 // Taking one builds the building, and the building has to
                 // survive the same wire the offer does.
                 MissionOffer taken = offers[random.Next(offers.Count)];
-                taken.Built = MissionBuilding.Build(taken);
+                int next = 1;
+                taken.Built = MissionBuilding.Build(taken, () => next++);
                 string trouble = Built(serializer, taken);
                 if (trouble != null)
                 {
@@ -255,6 +256,39 @@ namespace OmniCell.Tools.Capture
                        + " (door " + offer.Built.Layout.EntranceX + ","
                        + offer.Built.Layout.EntranceZ + " side " + offer.Built.Layout.EntranceSide
                        + "; " + string.Join(" | ", boxes) + ")";
+            }
+
+            // Whatever finishes this mission has to be findable when it
+            // happens, and everything in the building is told apart by its
+            // instance, so a repeated one is two things the server cannot
+            // distinguish.
+            var instances = new List<int>();
+            instances.AddRange(offer.Built.Layout.Doors.Select(d => d.Instance));
+            instances.AddRange(offer.Built.Furniture.Select(f => f.Instance));
+            instances.AddRange(offer.Built.Monsters.Select(m => m.Instance));
+            if (instances.Any(i => i == 0)) return "something in the building has no instance";
+            if (instances.Distinct().Count() != instances.Count)
+            {
+                return "two things in the building share an instance";
+            }
+
+            int named = offer.Built.Monsters.Count(m => m.IsObjective);
+            if (offer.Type == MissionType.KillPerson && offer.Built.Monsters.Count > 0 && named != 1)
+            {
+                return "a kill mission with " + named + " named targets";
+            }
+
+            if (offer.Type != MissionType.KillPerson && named != 0)
+            {
+                return "a " + offer.Type + " mission named a monster";
+            }
+
+            bool wantsObject = offer.Type == MissionType.FindItem
+                               || offer.Type == MissionType.ReturnItem
+                               || offer.Type == MissionType.Repair;
+            if (wantsObject && offer.Built.Objective == null)
+            {
+                return "a " + offer.Type + " mission with nothing to fetch";
             }
 
             BuildingGeneratorData generator = MissionBuilding.Generator(offer.Built, 2224708);
