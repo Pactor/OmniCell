@@ -258,6 +258,16 @@ namespace ZoneEngine.Core.MessageHandlers
                         break;
                     }
 
+                    // The Mission Key Duplicator on a mission key, which is
+                    // two inventory slots and nothing in the playfield.
+                    if (message.Target.Length > 1
+                        && MissionCompletion.OnDuplicate(
+                            client.Controller.Character, message.Target[0], message.Target[1]))
+                    {
+                        this.Acknowledge(client.Controller.Character, message);
+                        break;
+                    }
+
                     IItem item =
                         Pool.Instance.GetObject<IInventoryPage>(
                             new Identity()

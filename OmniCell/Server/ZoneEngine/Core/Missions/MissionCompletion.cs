@@ -158,6 +158,104 @@ namespace ZoneEngine.Core.Missions
         }
 
         /// <summary>
+        /// The Mission Key Duplicator, used on a mission key.
+        /// </summary>
+        /// <remarks>
+        /// Captured on 2026-09-26: the duplicator is template 28564 and the
+        /// key 28577, both quality 1, and using one on the other answers with
+        /// a second key of the same template at a new instance. The
+        /// duplicator is not consumed - it is still in its slot two zones
+        /// later - and the copy is an ordinary item, so it trades, and the
+        /// character who receives it walks into the building the original
+        /// opens.
+        /// </remarks>
+        /// <returns>Whether this was a duplication.</returns>
+        public static bool OnDuplicate(ICharacter character, Identity first, Identity second)
+        {
+            if (character == null)
+            {
+                return false;
+            }
+
+            IItem tool = Held(character, first);
+            IItem key = Held(character, second);
+
+            // Either way round: the client sends the slots in the order they
+            // were clicked and nothing says which is which.
+            if (tool != null && key != null && tool.LowID == MissionKeys.Template
+                && key.LowID == MissionKeys.DuplicatorTemplate)
+            {
+                IItem swap = tool;
+                tool = key;
+                key = swap;
+            }
+
+            if (tool == null || key == null
+                || tool.LowID != MissionKeys.DuplicatorTemplate
+                || key.LowID != MissionKeys.Template)
+            {
+                return false;
+            }
+
+            MissionOffer opens = MissionPlayfields.OpenedBy(new[] { key.Identity.Instance });
+            if (opens == null)
+            {
+                Tell(character, "That key opens nothing any more.");
+                return true;
+            }
+
+            try
+            {
+                IInventoryPage page = character.BaseInventory[character.BaseInventory.StandardPage];
+                int slot = page.FindFreeSlot();
+                if (slot < 0)
+                {
+                    Tell(character, "Make room in your inventory for the copy.");
+                    return true;
+                }
+
+                var copy = new Item(MissionKeys.Quality, MissionKeys.Template, MissionKeys.Template);
+                if (page.Add(slot, copy) != InventoryError.OK)
+                {
+                    Tell(character, "The key could not be copied.");
+                    return true;
+                }
+
+                MissionPlayfields.Cut(copy.Identity.Instance, opens);
+                TemplateActionMessageHandler.Default.SendToOverflow(character, copy);
+                ContainerAddItemMessageHandler.Default.SendFromOverflow(character);
+                Tell(character, "A copy of the " + MissionKeys.Name(opens) + ".");
+            }
+            catch (Exception exception)
+            {
+                LogUtil.ErrorException(exception);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// The item in one of a character's own inventory slots, or null.
+        /// </summary>
+        private static IItem Held(ICharacter character, Identity slot)
+        {
+            if (slot.Type != IdentityType.Inventory || character.BaseInventory == null)
+            {
+                return null;
+            }
+
+            foreach (KeyValuePair<int, IInventoryPage> page in character.BaseInventory.Pages)
+            {
+                foreach (KeyValuePair<int, IItem> held in page.Value.List())
+                {
+                    if (held.Key == slot.Instance) return held.Value;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Something died. A kill person mission wants the one it named.
         /// </summary>
         public static void OnKill(ICharacter killer, ICharacter victim)

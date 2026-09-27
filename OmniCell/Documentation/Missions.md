@@ -1,9 +1,14 @@
 # Missions - what is settled, and what a server still cannot do
 
-OmniCell answers a mission roll as of 2026-09-26. A player can walk to a terminal, click it,
-read five assignments, take one and find the key in their inventory; the building the mission
-is run in is generated at that moment, floors and all. What they cannot do yet is walk into
-it - see **What a server still cannot do** at the end, which is now one item rather than six.
+OmniCell runs a mission end to end as of 2026-09-26. A player walks to a terminal, clicks it,
+reads five assignments, takes one and is handed the key; walks to a mission entrance and in;
+fights the monsters; finds, fetches or kills what the assignment named; and is paid. The
+building, its floors, its doors and everything standing in them are generated when the
+mission is taken.
+
+What is not there is listed at the end, and the largest of it is that none of this has been
+in front of a client yet - it is checked by putting every packet through the serializer, not
+by playing it.
 
 This page is the standing account: what is evidence, what is written, and what is neither.
 Every claim names where it came from. Where something is not known it says so rather than
@@ -20,6 +25,13 @@ filling the gap.
 | generates the building, floors and all | `MissionBuilder`, `MissionBuilding` |
 | furnishes and populates it | `MissionFactory` |
 | gives one up | `QuestMessageHandler`, inbound |
+| serves the mission's playfield | `MissionPlayfields`, `Playfield.Generated` |
+| lets a key open a door, and a copy do the same | `MissionPlayfields.Cut`, `MissionCompletion.OnDuplicate` |
+| walks a character in and back out | `Playfield.CheckMissionDoor` |
+| sends the building on zone-in | `PlayfieldAnarchyFMessageHandler.Mission` |
+| spawns the monsters | `MissionSpawner` |
+| sends the doors, chests and objective | `MissionContents` |
+| finishes it and pays | `MissionCompletion` |
 
 `Tools/Capture/MissionOffers.exe` is the check on all of it: it rolls, takes, builds, and puts
 both packets through the real serializer against everything the client refuses a roll for.
@@ -27,7 +39,40 @@ both packets through the real serializer against everything the client refuses a
 
 Two things are held only in memory, and a restart loses them: which missions a terminal
 offered, and which a character is on. Missions are generated, so there is nothing to reload
-them from; a table is the fix and there is not one yet.
+them from; a table is the fix and there is not one yet. A character who logs out inside a
+mission is put at Borealis when they come back, rather than into a playfield that no longer
+exists.
+
+### Entering one
+
+The doors work by walking rather than clicking, which is what the capture shows - there is no
+`Use` on the entrance at all, only the teleport. Outside, the doors are the playfield pack's
+own 2,235 `MissionEntrance` statels and the key in the character's pocket decides which
+mission one leads to; inside, there is one door, the socket the building was left open on,
+and it leads back to where they came in.
+
+The landing point is half a metre inside that door, on the floor - the captured entrance
+stood at 300, 145 and the character landed at 299.9, 5.01, 145.4. Every generated mission is
+checked for it, because a landing point in the wall is a character stuck in the geometry.
+
+A floor stands at 5.01 plus 64 metres per floor, and the 64 is the generator's own
+`WorldHeight`. A four floor mission recorded on 2026-09-25 put every monster on floor 0 at
+5.01 and every one on floor 1 at 69.01.
+
+### Finishing one
+
+| type | what does it | wired |
+|---|---|---|
+| find item | a `LookAt` on the objective; it is not picked up | yes |
+| return item | picked up with `Use`, then used on a mission terminal | yes |
+| kill person | killing the one the assignment named | yes |
+| find person | `CharacterAction InfoRequest` and a `LookAt` on the NPC | no |
+| repair | the part used on the fixture | no |
+
+Paying out is one sequence whatever finished it: the credits and the experience, the reward
+item through the overflow window, `FeedbackMessage 108871108`, `MissionChanged`, the
+`QuestMessage` that takes it off the list, and then the key and whatever was carried back
+destroyed.
 
 Two bodies of work feed it. The captures in `E:\Funcom\sniffs` and `E:\Funcom\captures`,
 decoded with `Tools/Capture/bin/PcapDecode.exe`; and the client-data extraction done in the
@@ -719,17 +764,18 @@ a guess. The flag stops being set as more runs fill the table in.
 
 ## What a server still cannot do
 
-**The one that stops a player walking in.** A mission is an instanced playfield, and OmniCell
-cannot serve one. `Playfield` is constructed from `PlayfieldLoader.PFData[instance]`, which is
-the playfield file's own statels, and a mission's playfield has no file - it is a pool and a
-list of placements. Instancing is also switched off for the only instanced playfield the
-server does have: Arete Landing's entry in `Playfields.xml` says why, that the client would
-not leave the loading screen when it was told an instance the login half had never mentioned.
-Until that is solved the mission entrance cannot be made to lead anywhere, and the 2,235
-mission entrance statels already in the playfield pack have nothing to open onto.
+**The one that has not been tried.** None of this has been in front of a client. Every packet
+is built by the server's own code and put through the real serializer, which catches a
+message that cannot be written - but not a message the client does not like. The one thing
+that could stop the whole path is the same thing that stopped Arete Landing being instanced:
+its entry in `Playfields.xml` says the client would not leave the loading screen when it was
+told an instance the login half had never mentioned, and a mission is always such an
+instance. Retail plainly does it, so it is a question of what else the login half has to say,
+and finding out wants a client rather than more reading.
 
-Everything behind that door is built and checked: the layout, the doors, the chests, the
-monsters and the objective. What is missing is the playfield to put them in.
+**Chests do not open and the objective of a repair mission does nothing.** They are sent so
+the building looks like a building. A chest with loot in it is the loot system's shape rather
+than the mission system's.
 
 The rest, in the order they would be wanted:
 
@@ -768,13 +814,18 @@ The rest, in the order they would be wanted:
    entrance door actually checks - the wire shows a character holding a duplicate walking in,
    so it is not ownership, but nothing captured shows the check failing.
 
-7. **Say what the reward is worth.** 25 captured offers at four qualities are all there is,
+7. **Hand out a reward item.** Every captured offer carries one - a template pair at the
+   mission's quality - and ours carries none, because nothing says how retail picks it and an
+   item picked at random out of the pack would be a door as often as a weapon. Credits and
+   experience are paid.
+
+8. **Say what the reward is worth.** 25 captured offers at four qualities are all there is,
    and credits scatter from 2,500 to 13,300 with no shape - which is what a slider trading
    credits against experience would do. Experience is interpolated between the measured
    qualities and credits are a spread around the measured mean. Neither is a formula anyone
    has read out of the client, and a mission above QL 53 is extrapolated past the evidence.
 
-8. **Name a person.** A find person mission names a human NPC and nothing here has a list of
+9. **Name a person.** A find person mission names a human NPC and nothing here has a list of
    them. The four out of the captures are crossed to make sixteen, which is a placeholder and
    the only content on the roll path not read from data. Retail's list is in the client's own
    resource database.
