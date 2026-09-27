@@ -94,6 +94,17 @@ namespace OmniCell.Tools.Capture
             /// </summary>
             public bool InBand = true;
 
+            /// <summary>
+            /// Whether this was ever somebody's pet.
+            /// </summary>
+            /// <remarks>
+            /// Kept rather than dropped, because the name is what lets the
+            /// world spawn list throw the bot's own pets out: the bot records
+            /// every NPC it sees and its three follow it everywhere, so they
+            /// smear across the places it has walked.
+            /// </remarks>
+            public bool Pet;
+
             public readonly HashSet<int> Playfields = new HashSet<int>();
 
             public readonly List<KeyValuePair<int, int>> Health = new List<KeyValuePair<int, int>>();
@@ -141,16 +152,15 @@ namespace OmniCell.Tools.Capture
                                 continue;
                             }
 
-                            if (character.PetMaster != null)
-                            {
-                                pets++;
-                                continue;
-                            }
-
                             if (character.MonsterData == 0)
                             {
                                 players++;
                                 continue;
+                            }
+
+                            if (character.PetMaster != null)
+                            {
+                                pets++;
                             }
 
                             updates++;
@@ -169,8 +179,11 @@ namespace OmniCell.Tools.Capture
             Write(output, table.Values);
 
             Console.WriteLine(
-                "{0} capture files: {1} creature updates, {2} skipped as players, {3} as pets",
+                "{0} capture files: {1} creature updates, {2} skipped as players, {3} of them pets",
                 files, updates, players, pets);
+            Console.WriteLine(
+                "  pet names: {0}",
+                string.Join(", ", table.Values.Where(c => c.Pet).Select(c => c.Name).OrderBy(n => n)));
             Console.WriteLine(
                 "{0} named creatures over {1} bodies and {2} playfields",
                 table.Count,
@@ -255,6 +268,11 @@ namespace OmniCell.Tools.Capture
             }
 
             creature.Seen++;
+            if (character.PetMaster != null)
+            {
+                creature.Pet = true;
+            }
+
             creature.Monster = character.MonsterData;
             creature.HeadMesh = character.HeadMesh.HasValue ? (int)character.HeadMesh.Value : 0;
             creature.Scale = character.MonsterScale;
@@ -310,11 +328,12 @@ namespace OmniCell.Tools.Capture
             text.AppendLine("# the rest rather than fitted where it would mean nothing.");
             text.AppendLine("# health is every level and maximum health this creature was actually seen with,");
             text.AppendLine("# as level:health. That is the measurement; the scale is a summary of it.");
-            text.AppendLine("# Players and pets are not here: a player wears MonsterData zero, and a pet carries");
-            text.AppendLine("# its owner in PetMaster.");
+            text.AppendLine("# Players are not here - a person wears MonsterData zero. Pets are, with pet=1:");
+            text.AppendLine("# a pet carries its owner in PetMaster, and knowing the names is what lets a world");
+            text.AppendLine("# spawn list throw out the ones that only followed somebody around.");
             text.AppendLine(
                 "# name\tmonster\theadmesh\tscale\tvisual\trunspeed\tseen\tminLevel\tmaxLevel"
-                + "\thealthScale\thealth\tplayfields");
+                + "\thealthScale\thealth\tpet\tplayfields");
 
             foreach (Creature creature in creatures.OrderBy(c => c.Name, StringComparer.OrdinalIgnoreCase))
             {
@@ -337,6 +356,7 @@ namespace OmniCell.Tools.Capture
                             .OrderBy(h => h.Key)
                             .Select(h => h.Key.ToString(CultureInfo.InvariantCulture) + ":"
                                          + h.Value.ToString(CultureInfo.InvariantCulture))),
+                    creature.Pet ? "1" : "0",
                     string.Join(
                         " ",
                         creature.Playfields.OrderBy(p => p)

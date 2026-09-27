@@ -169,6 +169,7 @@ namespace OmniCell.Tools.Capture
             string output = args[0];
             var serializer = new MessageSerializer();
             var table = new Dictionary<string, Creature>();
+            var pets = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
             var runs = new List<Run>();
             int files = 0, unreadable = 0, noMission = 0, noQuality = 0;
 
@@ -183,7 +184,7 @@ namespace OmniCell.Tools.Capture
                 foreach (string path in Directory.GetFiles(directory, "rec-*.pkt").OrderBy(p => p))
                 {
                     files++;
-                    Run run = Walk(serializer, path, table, ref unreadable);
+                    Run run = Walk(serializer, path, table, pets, ref unreadable);
                     if (run == null)
                     {
                         noMission++;
@@ -206,7 +207,7 @@ namespace OmniCell.Tools.Capture
                 return 1;
             }
 
-            Write(output, table.Values);
+            Write(output, table.Values, pets);
 
             Console.WriteLine(
                 "{0} recordings, {1} usable, {2} with no mission zone-in, {3} with no QL, {4} unreadable packets",
@@ -216,10 +217,12 @@ namespace OmniCell.Tools.Capture
                 noQuality,
                 unreadable);
             Console.WriteLine(
-                "{0} creatures kept, {1} cut as outside the mission playfield, {2} as pets",
+                "{0} creatures kept, {1} cut as outside the mission playfield, {2} as pets ({3} names)",
                 runs.Sum(r => r.Kept),
                 runs.Sum(r => r.Cut),
-                runs.Sum(r => r.Pets));
+                runs.Sum(r => r.Pets),
+                pets.Count);
+            Console.WriteLine("  pet names: " + string.Join(", ", pets));
             int many = runs.Count(r => r.Quests > 1);
             if (many > 0)
             {
@@ -326,6 +329,7 @@ namespace OmniCell.Tools.Capture
             MessageSerializer serializer,
             string path,
             Dictionary<string, Creature> table,
+            SortedSet<string> pets,
             ref int unreadable)
         {
             byte[] all;
@@ -421,6 +425,14 @@ namespace OmniCell.Tools.Capture
                 // so filtering on it throws away most of the table.
                 if (character.MonsterData == 0 || character.PetMaster != null)
                 {
+                    if (character.PetMaster != null)
+                    {
+                        // Worth writing down, not just skipping: these names
+                        // are how a world spawn list keeps somebody's pets out
+                        // of it, and nothing else records them.
+                        pets.Add(character.Name);
+                    }
+
                     run.Pets++;
                     continue;
                 }
@@ -548,7 +560,7 @@ namespace OmniCell.Tools.Capture
         /// <summary>
         /// Writes the table in the shape <see cref="PoolExtract"/> reads.
         /// </summary>
-        private static void Write(string output, IEnumerable<Creature> creatures)
+        private static void Write(string output, IEnumerable<Creature> creatures, IEnumerable<string> pets)
         {
             var text = new StringBuilder();
             text.AppendLine("# The creatures a mission server spawns, from the bot's packet recordings.");
@@ -563,8 +575,12 @@ namespace OmniCell.Tools.Capture
             text.AppendLine("# player's. Only the pools the bot has run appear.");
             text.AppendLine("# healthScale is what this creature's maximum health is a multiple of - see");
             text.AppendLine("# MissionCreature.Health, which holds the ramp the scale multiplies.");
+            text.AppendLine("# A row with pet=1 and pool 0 is not a mission creature at all: it is a name that");
+            text.AppendLine("# was somebody's pet, kept because that is what lets a world spawn list leave");
+            text.AppendLine("# them out. PoolExtract only ever asks for the ten real pools, so it never sees");
+            text.AppendLine("# them.");
             // Commented, because that is how PoolExtract skips it.
-            text.AppendLine("# pool\tmonster\tname\tseen\tminLevelOffset\tmaxLevelOffset\thealthScale");
+            text.AppendLine("# pool\tmonster\tname\tseen\tminLevelOffset\tmaxLevelOffset\thealthScale\tpet");
 
             foreach (Creature creature in creatures
                 .OrderBy(c => c.Pool)
@@ -584,7 +600,13 @@ namespace OmniCell.Tools.Capture
                              ? 0.0
                              : creature.HealthScale / creature.HealthSeen).ToString(
                                  "0.0000",
-                                 CultureInfo.InvariantCulture)));
+                                 CultureInfo.InvariantCulture),
+                        "0"));
+            }
+
+            foreach (string pet in pets)
+            {
+                text.AppendLine(string.Join("\t", "0", "0", pet.Replace('\t', ' '), "0", "0", "0", "0", "1"));
             }
 
             File.WriteAllText(output, text.ToString());

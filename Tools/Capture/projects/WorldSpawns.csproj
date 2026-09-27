@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The rest is set in Directory.Build.props. Packs waypoints with the server's own
+       MessagePackZip over its own MobSpawnWaypoint, rather than writing the blob by hand. -->
+  <ItemGroup>
+    <Reference Include="OmniCell.Database"><HintPath>$(CaptureBin)OmniCell.Database.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Utility"><HintPath>$(CaptureBin)Utility.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="MsgPack"><HintPath>$(CaptureBin)MsgPack.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+</Project>
