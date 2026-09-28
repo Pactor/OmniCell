@@ -168,6 +168,25 @@ namespace OmniCell.Tools.Capture
             public bool Watched;
 
             public List<double[]> Path;
+
+            /// <summary>
+            /// The body this one was wearing, when the bot wrote it down.
+            /// </summary>
+            /// <remarks>
+            /// The bot records MonsterData per sighting now, so a spawn no
+            /// longer has to borrow a body from another creature of the same
+            /// name. Zero means it was seen before that landed.
+            /// </remarks>
+            public int Monster;
+
+            public int Mesh;
+
+            public int Scale;
+
+            /// <summary>
+            /// The way it faces, in degrees from +Z toward +X, or NaN.
+            /// </summary>
+            public double Heading = double.NaN;
         }
 
         private static int Main(string[] args)
@@ -244,7 +263,31 @@ namespace OmniCell.Tools.Capture
 
             Write(output, all, creatures);
 
-            int bodied = all.Count(s => Known(creatures, s.Name).Monster != 0);
+            // A body the bot logged for this very spawn, or failing that one
+            // borrowed from another creature of the same name.
+            var logged = new Dictionary<string, Spawn>(StringComparer.OrdinalIgnoreCase);
+            foreach (Spawn s in all.Where(s => s.Monster > 0))
+            {
+                if (!logged.ContainsKey(s.Name)) logged[s.Name] = s;
+            }
+
+            int borrowed = 0;
+            foreach (Spawn s in all.Where(s => s.Monster == 0))
+            {
+                Spawn like;
+                if (!logged.TryGetValue(s.Name, out like)) continue;
+                s.Monster = like.Monster;
+                s.Mesh = like.Mesh;
+                s.Scale = like.Scale;
+                borrowed++;
+            }
+
+            Console.WriteLine(
+                "{0} spawns wear a body the bot logged, {1} more borrowed one from the same name",
+                all.Count(s => s.Monster > 0) - borrowed,
+                borrowed);
+
+            int bodied = all.Count(s => s.Monster > 0 || Known(creatures, s.Name).Monster != 0);
             int pathed = all.Count(s => s.Path != null);
             Console.WriteLine();
             Console.WriteLine(
@@ -263,6 +306,7 @@ namespace OmniCell.Tools.Capture
             Console.WriteLine(
                 "  {0} waypoints packed and read back identical with the server's own codec",
                 RoundTripped);
+            Console.WriteLine("  {0} spawns face a measured direction, the rest face north", Headed);
 
             Console.WriteLine();
             Console.WriteLine("=== the fullest playfields");
@@ -466,6 +510,10 @@ namespace OmniCell.Tools.Capture
                                     Side = (int)Json.Number(line, "side"),
                                     Watched = true,
                                     Path = walked,
+                                    Monster = (int)Json.Number(line, "monsterData"),
+                                    Mesh = (int)Json.Number(line, "headMesh"),
+                                    Scale = (int)Json.Number(line, "monsterScale"),
+                                    Heading = Facing(line),
                                 };
 
                     Spawn near = here.FirstOrDefault(
@@ -488,6 +536,18 @@ namespace OmniCell.Tools.Capture
                     if (near.Path == null || (spawn.Path != null && spawn.Path.Count > near.Path.Count))
                     {
                         near.Path = spawn.Path;
+                    }
+
+                    if (near.Monster == 0 && spawn.Monster > 0)
+                    {
+                        near.Monster = spawn.Monster;
+                        near.Mesh = spawn.Mesh;
+                        near.Scale = spawn.Scale;
+                    }
+
+                    if (double.IsNaN(near.Heading))
+                    {
+                        near.Heading = spawn.Heading;
                     }
                 }
 
@@ -561,6 +621,8 @@ namespace OmniCell.Tools.Capture
                                     Y = Json.Number(entry, "Y"),
                                     Z = Json.Number(entry, "Z"),
                                     Level = level,
+                                    Monster = (int)Json.Number(entry, "MonsterData"),
+                                    Mesh = (int)Json.Number(entry, "Mesh"),
                                 };
 
                     if (here.Any(s => string.Equals(s.Name, name, StringComparison.OrdinalIgnoreCase)
@@ -633,6 +695,66 @@ namespace OmniCell.Tools.Capture
 
             return given;
         }
+
+        /// <summary>
+        /// The way a creature was facing when the bot first saw it.
+        /// </summary>
+        /// <remarks>
+        /// The bot writes every track point as [secs, x, y, z, heading], the
+        /// heading in degrees from +Z toward +X - atan2 of the forward
+        /// vector's x over its z. The first point is the one that goes with
+        /// the first position, which is where the spawn is put.
+        /// </remarks>
+        private static double Facing(string line)
+        {
+            double[][] track = Json.Rows(line, "track");
+            if (track == null || track.Length == 0 || track[0].Length < 5)
+            {
+                return double.NaN;
+            }
+
+            return track[0][4];
+        }
+
+        /// <summary>
+        /// A heading in degrees as the quaternion the spawn table holds.
+        /// </summary>
+        /// <remarks>
+        /// Yaw only, which is what every captured spawn in Arete carries: its
+        /// heading reads (0, y, 0, w) and nothing else. For a yaw of theta the
+        /// forward vector is (sin theta, 0, cos theta), which is the atan2 the
+        /// bot took, so the way back is halving the angle.
+        /// </remarks>
+        private static string Quaternion(double degrees)
+        {
+            if (double.IsNaN(degrees))
+            {
+                return "0,0,0,1";
+            }
+
+            double half = degrees * Math.PI / 360.0;
+            double y = Math.Sin(half);
+            double w = Math.Cos(half);
+
+            // Prove the round trip rather than trust it: the forward vector of
+            // this quaternion has to point back at the angle we were given.
+            double back = Math.Atan2(2.0 * y * w, 1.0 - (2.0 * y * y)) * 180.0 / Math.PI;
+            double want = degrees % 360.0;
+            if (want > 180.0) want -= 360.0;
+            if (want < -180.0) want += 360.0;
+            if (Math.Abs(back - want) > 0.01)
+            {
+                throw new InvalidOperationException(
+                    "heading " + degrees + " came back as " + back);
+            }
+
+            Headed++;
+            return string.Format(
+                CultureInfo.InvariantCulture, "0,{0:0.#####},0,{1:0.#####}", y, w);
+        }
+
+        /// <summary>How many spawns were given a measured facing.</summary>
+        private static int Headed;
 
         private static double Apart(Spawn a, Spawn b)
         {
@@ -740,12 +862,13 @@ namespace OmniCell.Tools.Capture
 
                 rows.Add(string.Format(
                     CultureInfo.InvariantCulture,
-                    "({0},{1},{2:0.###},{3:0.###},{4:0.###},0,0,0,1,'{5}',0,0,0,0,0,{6})",
+                    "({0},{1},{2:0.###},{3:0.###},{4:0.###},{5},'{6}',0,0,0,0,0,{7})",
                     id,
                     spawn.Playfield,
                     spawn.X,
                     spawn.Y,
                     spawn.Z,
+                    Quaternion(spawn.Heading),
                     spawn.Name.Replace("'", "''"),
                     Waypoints(id, spawn)));
 
@@ -757,13 +880,25 @@ namespace OmniCell.Tools.Capture
                 Add(stats, id, spawn.Playfield, 47, 1);
                 Add(stats, id, spawn.Playfield, 54, spawn.Level);
                 Add(stats, id, spawn.Playfield, 59, 2);
-                Add(stats, id, spawn.Playfield, 64, creature.HeadMesh > 0 ? creature.HeadMesh : 40137);
+                Add(
+                    stats,
+                    id,
+                    spawn.Playfield,
+                    64,
+                    spawn.Mesh > 0 ? spawn.Mesh : creature.HeadMesh > 0 ? creature.HeadMesh : 40137);
                 Add(stats, id, spawn.Playfield, 89, 1);
                 Add(stats, id, spawn.Playfield, 156, creature.RunSpeed > 0 ? creature.RunSpeed : 110);
                 Add(stats, id, spawn.Playfield, 285, Math.Max(2, spawn.Level * 2));
                 Add(stats, id, spawn.Playfield, 286, Math.Max(1, spawn.Level));
-                Add(stats, id, spawn.Playfield, 359, creature.Monster);
-                Add(stats, id, spawn.Playfield, 360, creature.Scale > 0 ? creature.Scale : 100);
+                // The bot's own record of what this one wore beats a body
+                // borrowed from another creature that shares its name.
+                Add(stats, id, spawn.Playfield, 359, spawn.Monster > 0 ? spawn.Monster : creature.Monster);
+                Add(
+                    stats,
+                    id,
+                    spawn.Playfield,
+                    360,
+                    spawn.Scale > 0 ? spawn.Scale : creature.Scale > 0 ? creature.Scale : 100);
                 Add(stats, id, spawn.Playfield, 455, 113);
                 Add(stats, id, spawn.Playfield, 673, creature.Visual > 0 ? creature.Visual : 31);
                 id++;
