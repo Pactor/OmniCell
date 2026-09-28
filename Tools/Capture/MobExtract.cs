@@ -207,6 +207,13 @@ namespace OmniCell.Tools.Capture
                 return 1;
             }
 
+            // What gets written is what should be counted: a name seen once
+            // wearing a master is a pet in every recording, including the ones
+            // where its master was not in the frame.
+            var known = new HashSet<string>(pets, StringComparer.OrdinalIgnoreCase);
+            List<Creature> kept = table.Values.Where(c => !known.Contains(c.Name)).ToList();
+            int dropped = table.Count - kept.Count;
+
             Write(output, table.Values, pets);
 
             Console.WriteLine(
@@ -241,7 +248,13 @@ namespace OmniCell.Tools.Capture
             Console.WriteLine();
 
             Console.WriteLine("=== pools");
-            foreach (var g in table.Values.GroupBy(c => c.Pool).OrderBy(g => g.Key))
+            if (dropped > 0)
+            {
+                Console.WriteLine(
+                    "{0} rows dropped: a name that was somebody's pet in another recording", dropped);
+            }
+
+            foreach (var g in kept.GroupBy(c => c.Pool).OrderBy(g => g.Key))
             {
                 Run[] mine = runs.Where(r => r.Pool == g.Key).ToArray();
                 Console.WriteLine(
@@ -256,7 +269,7 @@ namespace OmniCell.Tools.Capture
 
             Console.WriteLine();
             Console.WriteLine("=== level offsets from the mission QL, over every row");
-            foreach (var g in table.Values
+            foreach (var g in kept
                 .GroupBy(c => c.MinOffset)
                 .OrderBy(g => g.Key))
             {
@@ -270,7 +283,7 @@ namespace OmniCell.Tools.Capture
             Console.WriteLine("=== how close the health model lands");
             var misses = new List<int>();
             int exact = 0;
-            foreach (Creature creature in table.Values)
+            foreach (Creature creature in kept)
             {
                 double scale = creature.HealthSeen == 0
                                    ? 0.0
@@ -582,7 +595,13 @@ namespace OmniCell.Tools.Capture
             // Commented, because that is how PoolExtract skips it.
             text.AppendLine("# pool\tmonster\tname\tseen\tminLevelOffset\tmaxLevelOffset\thealthScale\tpet");
 
+            // A pet that arrived once without its PetMaster - a partial update,
+            // or the first frame before the owner was known - would otherwise
+            // be a mission creature. One sighting wearing a master is enough
+            // to say what a name is, so the name is thrown out everywhere.
+            var known = new HashSet<string>(pets, StringComparer.OrdinalIgnoreCase);
             foreach (Creature creature in creatures
+                .Where(c => !known.Contains(c.Name))
                 .OrderBy(c => c.Pool)
                 .ThenBy(c => c.Monster)
                 .ThenBy(c => c.Name, StringComparer.Ordinal))
