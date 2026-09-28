@@ -35,6 +35,8 @@ namespace ZoneEngine.Core.MessageHandlers
 
     using OmniCell.Core.Components;
     using OmniCell.Core.Entities;
+
+    using ZoneEngine.Core.Combat;
     using OmniCell.Core.Items;
     using OmniCell.Core.Network;
     using OmniCell.Database.Dao;
@@ -98,6 +100,16 @@ namespace ZoneEngine.Core.MessageHandlers
                     break;
 
                     /* this is here to prevent server crash that is caused by search action if server doesn't reply if something is found or not */
+                case CharacterActionType.UsePerk:
+
+                    // Parameter1 is the perk's short id plus ten thousand and
+                    // Parameter2 the four letter code. Target is ignored on
+                    // purpose: it was the player itself in all 142 presses of
+                    // the recording, and the perk applies to the last LookAt.
+                    Perks.Press(
+                        client.Controller.Character, message.Parameter1, message.Parameter2);
+                    break;
+
                 case CharacterActionType.Search:
 
                     // If action == search

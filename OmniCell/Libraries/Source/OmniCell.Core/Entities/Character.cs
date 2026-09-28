@@ -113,6 +113,7 @@ namespace OmniCell.Core.Entities
             this.ActiveNanos = new Dictionary<int, IActiveNano>();
 
             this.UploadedNanos = new List<IUploadedNanos>();
+            this.Perks = new HashSet<int>();
 
             this.BaseInventory = new PlayerInventory(this);
 
@@ -193,6 +194,18 @@ namespace OmniCell.Core.Entities
         /// <summary>
         /// </summary>
         public List<IUploadedNanos> UploadedNanos { get; private set; }
+
+        /// <summary>
+        /// The perks this character has trained, by short id.
+        /// </summary>
+        /// <remarks>
+        /// The short id is the number a perk action item asks for with
+        /// HasPerk, the number the client sends back plus ten thousand when
+        /// the perk is pressed, and the Id of the character's entries in
+        /// FullCharacter.ResearchGoals. All three are the same number - see
+        /// Documentation/Perks-And-Looting.md.
+        /// </remarks>
+        public HashSet<int> Perks { get; private set; }
 
         /// <summary>
         /// </summary>
@@ -370,6 +383,12 @@ namespace OmniCell.Core.Entities
                 this.UploadedNanos.Add(new UploadedNano() { NanoId = nano });
             }
 
+            foreach (DBCharacterPerk perk in
+                CharacterPerkDao.Instance.GetWhere(new { CharacterId = this.Identity.Instance }))
+            {
+                this.Perks.Add(perk.PerkId);
+            }
+
             this.BaseInventory.Read();
             base.Read();
 
@@ -531,6 +550,28 @@ namespace OmniCell.Core.Entities
         public bool HasNano(int nanoId)
         {
             return this.UploadedNanos.Any(x => x.NanoId == nanoId);
+        }
+
+        /// <summary>
+        /// Whether this character has trained that perk.
+        /// </summary>
+        public bool HasPerk(int perkId)
+        {
+            return this.Perks.Contains(perkId);
+        }
+
+        /// <summary>
+        /// Trains a perk and writes it down.
+        /// </summary>
+        public void GivePerk(int perkId)
+        {
+            if (!this.Perks.Add(perkId))
+            {
+                return;
+            }
+
+            CharacterPerkDao.Instance.Add(
+                new DBCharacterPerk { CharacterId = this.Identity.Instance, PerkId = perkId });
         }
 
         #endregion

@@ -103,6 +103,13 @@ namespace OmniCell.Core.Requirements
                 case Operator.HasNotFormula:
 
                     return k => ((Character)GetTarget(t).Compile().Invoke(k)).HasNano(statValue);
+                case Operator.HasPerk:
+
+                    // Every perk action item is locked behind the perk it
+                    // belongs to, which is how the pack says which item runs
+                    // which perk. Without this a press finds its item and then
+                    // refuses, with nothing to say why.
+                    return k => ((Character)GetTarget(t).Compile().Invoke(k)).HasPerk(statValue);
                 case Operator.HasRunningNano:
 
                     // Whether the nano is running on them now, which is not

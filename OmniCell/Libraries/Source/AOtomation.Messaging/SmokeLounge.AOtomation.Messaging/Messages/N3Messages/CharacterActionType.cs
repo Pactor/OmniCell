@@ -37,6 +37,34 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
     {
         CastNanoSpell = 0x00000013,
 
+        /// <summary>
+        /// A perk has been pressed and will go off shortly. P1 is always 2 and
+        /// P2 is the wait in hundredths of a second, which is the perk item's
+        /// own AttackDelay. Measured over 142 presses; see
+        /// Documentation/Perks-And-Looting.md.
+        /// </summary>
+        QueuePerk = 0x00000050,
+
+        /// <summary>
+        /// The client pressing a perk. Parameter1 is the perk's short id plus
+        /// ten thousand, Parameter2 the four letter perk code packed into an
+        /// int. Target is always the player - the perk applies to the last
+        /// LookAt target, not to this field.
+        /// </summary>
+        UsePerk = 0x000000B3,
+
+        /// <summary>
+        /// A perk has finished cooling down. P1 is 0, P2 the perk's short id.
+        /// </summary>
+        PerkAvailable = 0x000000CE,
+
+        /// <summary>
+        /// A perk has just run and is now cooling down. P1 is the perk's short
+        /// id, P2 the wait in seconds. No stat carries this - the pair of
+        /// messages is the whole of how availability is told.
+        /// </summary>
+        PerkUnavailable = 0x000000CF,
+
         KickTeamMember = 0x00000016,
 
         /// <summary>

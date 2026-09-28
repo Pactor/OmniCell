@@ -2343,6 +2343,11 @@ namespace OmniCell.Core.Playfields
                     // same reason: nothing else notices when it changes.
                     Leveling.Tick(dynel);
 
+                    // A pressed perk goes off a beat or two later and its
+                    // cooldown ends later still, and the client says nothing
+                    // in between either time.
+                    Perks.Tick(dynel);
+
                     if (dynel.Controller is PlayerController)
                     {
                         this.Keepalive(dynel);
