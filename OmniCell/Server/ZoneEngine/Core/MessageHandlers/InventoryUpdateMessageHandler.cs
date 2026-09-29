@@ -65,8 +65,26 @@ namespace ZoneEngine.Core.MessageHandlers
             this.Send(character, this.FillCorpseData(character, corpse, virtualSlot));
         }
 
+        /// <summary>
+        /// A mission chest is not quite a corpse.
+        /// </summary>
+        /// <remarks>
+        /// Same message and same slot count, two fields apart. The chests
+        /// opened in the 2026-09-28 recording carry Access CanAdd and
+        /// CanRemove where a corpse carries CanRemove only - you can put
+        /// something back in a box - and their entries read Flags 33 against
+        /// a corpse's 161.
+        /// </remarks>
+        private const short ChestItemFlags = 0x0021;
+
+        /// <summary>
+        /// The identity type a mission chest is sent as.
+        /// </summary>
+        private const int MissionChestType = 51017;
+
         public MessageDataFiller FillCorpseData(ICharacter character, CorpseLoot corpse, int virtualSlot)
         {
+            bool chest = (int)corpse.Identity.Type == MissionChestType;
             return x =>
                 {
                     IInventoryPage page = corpse.BaseInventory[corpse.BaseInventory.StandardPage];
@@ -85,7 +103,7 @@ namespace ZoneEngine.Core.MessageHandlers
                                     Quality = kv.Value.Quality,
                                     HighId = kv.Value.HighID,
                                     LowId = kv.Value.LowID,
-                                    Flags = unchecked((short)0x00A1),
+                                    Flags = chest ? ChestItemFlags : unchecked((short)0x00A1),
                                     Count = (short)kv.Value.MultipleCount,
                                     Unused = 0
                                 });
@@ -93,7 +111,9 @@ namespace ZoneEngine.Core.MessageHandlers
 
                     x.Entries = entries.ToArray();
                     x.Open = 1;
-                    x.Access = InventoryAccess.CanRemove;
+                    x.Access = chest
+                                   ? InventoryAccess.CanAdd | InventoryAccess.CanRemove
+                                   : InventoryAccess.CanRemove;
                     x.Identity = character.Identity;
                     x.Unknown = 1;
                 };

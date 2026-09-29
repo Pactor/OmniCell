@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2026, OmniCell contributors
 //
@@ -124,10 +124,7 @@ namespace ZoneEngine.Core.MessageHandlers
                 return;
             }
 
-            if (!this.GivePart(character, offer))
-            {
-                return;
-            }
+            this.GivePart(character, offer);
 
             MissionBook.Take(character, offer);
             MissionPlayfields.Open(offer);
@@ -159,11 +156,11 @@ namespace ZoneEngine.Core.MessageHandlers
         /// would leave the player holding a key to a mission that is no
         /// longer theirs. They are told instead.
         /// </remarks>
-        private bool GivePart(ICharacter character, MissionOffer offer)
+        private void GivePart(ICharacter character, MissionOffer offer)
         {
             if (offer.Type != MissionType.Repair || offer.ComponentLowId == 0)
             {
-                return true;
+                return;
             }
 
             try
@@ -173,7 +170,7 @@ namespace ZoneEngine.Core.MessageHandlers
                 if (slot < 0)
                 {
                     Tell(character, "No room for the repair part - make space and take another.");
-                    return true;
+                    return;
                 }
 
                 var part = new Item(
@@ -181,7 +178,7 @@ namespace ZoneEngine.Core.MessageHandlers
                 if (page.Add(slot, part) != InventoryError.OK)
                 {
                     Tell(character, "The repair part could not be handed over.");
-                    return true;
+                    return;
                 }
 
                 offer.ComponentInstance = part.Identity.Instance;
@@ -192,8 +189,6 @@ namespace ZoneEngine.Core.MessageHandlers
             {
                 LogUtil.ErrorException(exception);
             }
-
-            return true;
         }
 
         private bool GiveKey(ICharacter character, MissionOffer offer)
