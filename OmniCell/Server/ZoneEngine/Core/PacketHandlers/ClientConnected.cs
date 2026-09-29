@@ -262,6 +262,10 @@ client.Controller.Character.Playfield.Identity,
             /* inventory, items and all that */
             FullCharacterMessageHandler.Default.Send(client.Controller.Character);
 
+            // Straight after FullCharacter: one CharacterAction 180 per perk
+            // action, or the Perk Actions menu never appears.
+            ZoneEngine.Core.Combat.Perks.AnnounceActions(client.Controller.Character);
+
             // The tower and city lists, empty here - 10 of each across the
             // captured sessions, all empty, because the newbie area and the
             // subway have neither. Sending them empty is what the client is

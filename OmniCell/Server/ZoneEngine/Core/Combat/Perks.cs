@@ -603,6 +603,148 @@ namespace ZoneEngine.Core.Combat
                 });
         }
 
+        /// <summary>
+        /// What the client needs to put each of the character's perk actions in
+        /// the Perk Actions menu. Without it the menu never appears.
+        /// </summary>
+        /// <remarks>
+        /// Straight after FullCharacter, one CharacterAction 180 per perk
+        /// action: Target 0:&lt;action item&gt;, Parameter1 the action id,
+        /// Parameter2 the four byte code. For a Keeper with Blessing 1 that is
+        /// Target 0:215791 (Lay On Hands), 10190, bytes 4E 4F 41 4C.
+        ///
+        /// The numbers are the perk item's own AddAction (53182) arguments in
+        /// the client database - Blessing 1, item 211702: 10190, the code, 1,
+        /// 215791 - so they are read from the item pack rather than listed here.
+        /// </remarks>
+        public static void AnnounceActions(ICharacter character)
+        {
+            var owner = character as Character;
+            if (owner == null)
+            {
+                return;
+            }
+
+            var sent = new HashSet<int>();
+            foreach (int perk in owner.Perks)
+            {
+                ItemTemplate item;
+                if (!Actions.TryGetValue(perk, out item) || !sent.Add(item.ID))
+                {
+                    continue;
+                }
+
+                AddAction added;
+                if (!Added.TryGetValue(item.ID, out added))
+                {
+                    LogUtil.Debug(DebugInfoDetail.Engine, "Perks: no AddAction names item " + item.ID + ".");
+                    continue;
+                }
+
+                Send(
+                    character,
+                    new CharacterActionMessage
+                    {
+                        Identity = character.Identity,
+                        Action = (CharacterActionType)180,
+                        Target = new Identity { Type = 0, Instance = item.ID },
+                        Parameter1 = added.Action,
+                        Parameter2 = added.Code,
+                        Unknown = 0,
+                    });
+            }
+        }
+
+        private struct AddAction
+        {
+            public int Action;
+
+            public int Code;
+        }
+
+        private static Dictionary<int, AddAction> added;
+
+        /// <summary>
+        /// AddAction arguments by the perk action item they name.
+        /// </summary>
+        private static Dictionary<int, AddAction> Added
+        {
+            get
+            {
+                lock (Gate)
+                {
+                    if (added != null)
+                    {
+                        return added;
+                    }
+
+                    added = new Dictionary<int, AddAction>();
+                    foreach (ItemTemplate item in ItemLoader.ItemList.Values)
+                    {
+                        if (item.Events == null)
+                        {
+                            continue;
+                        }
+
+                        foreach (Event ev in item.Events)
+                        {
+                            if (ev.Functions == null)
+                            {
+                                continue;
+                            }
+
+                            foreach (Function function in ev.Functions)
+                            {
+                                if (function.FunctionType != (int)FunctionType.AddAction
+                                    || function.Arguments == null || function.Arguments.Values == null
+                                    || function.Arguments.Values.Count < 4)
+                                {
+                                    continue;
+                                }
+
+                                var values = function.Arguments.Values;
+                                int actionItem = values[3].AsInt32();
+                                if (!added.ContainsKey(actionItem))
+                                {
+                                    added[actionItem] = new AddAction
+                                    {
+                                        Action = values[0].AsInt32(),
+                                        Code = WireCode(values[1]),
+                                    };
+                                }
+                            }
+                        }
+                    }
+
+                    LogUtil.Debug(DebugInfoDetail.Engine, "Perks: " + added.Count + " AddAction entries in the item pack.");
+                    return added;
+                }
+            }
+        }
+
+        /// <summary>
+        /// The code as the message carries it. The client database stores the
+        /// four bytes little-endian (4E 4F 41 4C read as 0x4C414F4E) and the wire
+        /// sends them in the same order, which the big-endian writer needs as
+        /// 0x4E4F414C. A string is taken byte for byte.
+        /// </summary>
+        private static int WireCode(MsgPack.MessagePackObject value)
+        {
+            if (value.IsTypeOf<string>() == true)
+            {
+                string s = value.AsString();
+                int code = 0;
+                for (int i = 0; i < 4 && i < s.Length; i++)
+                {
+                    code |= (s[i] & 0xFF) << ((3 - i) * 8);
+                }
+
+                return code;
+            }
+
+            return System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(value.AsInt32());
+        }
+
         private static void Send(ICharacter character, MessageBody message)
         {
             if (character.Controller != null && character.Controller.Client != null)
