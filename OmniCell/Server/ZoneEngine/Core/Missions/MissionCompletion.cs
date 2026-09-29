@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2026, OmniCell contributors
 //
@@ -318,12 +318,12 @@ namespace ZoneEngine.Core.Missions
         /// the same shape a return item hand-in uses, so this is tried after
         /// it and only answers for the fixture of a repair.
         ///
-        /// What is **not** checked is which inventory item was used, because
-        /// nothing recorded says which one a repair mission hands out. When
-        /// that is known this should refuse anything else.
+        /// The part is the one the mission handed over on accept, and only
+        /// it will do - the assignment is written around a named item and
+        /// says to use that one. Anything else is refused and said so.
         /// </remarks>
         /// <returns>Whether the thing used on was a repair objective.</returns>
-        public static bool OnRepair(ICharacter character, Identity fixture)
+        public static bool OnRepair(ICharacter character, Identity used, Identity fixture)
         {
             MissionOffer mission = Owning(character, fixture);
             if (mission == null || mission.Type != MissionType.Repair)
@@ -331,8 +331,31 @@ namespace ZoneEngine.Core.Missions
                 return false;
             }
 
+            IItem part = Held(character, used);
+            bool right = part != null
+                         && (mission.ComponentInstance == 0
+                             || part.Identity.Instance == mission.ComponentInstance
+                             || part.LowID == mission.ComponentLowId);
+            if (!right)
+            {
+                Say(character, "That is not what this needs fixing with.");
+                return true;
+            }
+
             Finish(character, mission);
             return true;
+        }
+
+        /// <summary>
+        /// A line to the player, in their own window.
+        /// </summary>
+        private static void Say(ICharacter character, string text)
+        {
+            if (character != null && character.Playfield != null)
+            {
+                character.Playfield.Publish(
+                    ZoneEngine.Core.MessageHandlers.ChatTextMessageHandler.Default.CreateIM(character, text));
+            }
         }
 
         private static MissionOffer Owning(ICharacter character, Identity target)

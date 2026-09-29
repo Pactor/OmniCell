@@ -124,6 +124,11 @@ namespace ZoneEngine.Core.MessageHandlers
                 return;
             }
 
+            if (!this.GivePart(character, offer))
+            {
+                return;
+            }
+
             MissionBook.Take(character, offer);
             MissionPlayfields.Open(offer);
             MissionPlayfields.Cut(offer.KeyInstance, offer);
@@ -142,6 +147,55 @@ namespace ZoneEngine.Core.MessageHandlers
         /// arrive - so the key goes that way and the player sees it land. The
         /// difference is cosmetic and is written down rather than hidden.
         /// </remarks>
+        /// <summary>
+        /// The part a repair mission is done with.
+        /// </summary>
+        /// <remarks>
+        /// "For the repair task, use this component." Only a repair mission
+        /// has one; everything else returns true having done nothing.
+        ///
+        /// A mission whose part could not be handed over is still taken - the
+        /// building is made and the key is given - because refusing it here
+        /// would leave the player holding a key to a mission that is no
+        /// longer theirs. They are told instead.
+        /// </remarks>
+        private bool GivePart(ICharacter character, MissionOffer offer)
+        {
+            if (offer.Type != MissionType.Repair || offer.ComponentLowId == 0)
+            {
+                return true;
+            }
+
+            try
+            {
+                IInventoryPage page = character.BaseInventory[character.BaseInventory.StandardPage];
+                int slot = page.FindFreeSlot();
+                if (slot < 0)
+                {
+                    Tell(character, "No room for the repair part - make space and take another.");
+                    return true;
+                }
+
+                var part = new Item(
+                    Math.Max(1, offer.Quality), offer.ComponentLowId, offer.ComponentLowId);
+                if (page.Add(slot, part) != InventoryError.OK)
+                {
+                    Tell(character, "The repair part could not be handed over.");
+                    return true;
+                }
+
+                offer.ComponentInstance = part.Identity.Instance;
+                TemplateActionMessageHandler.Default.SendToOverflow(character, part);
+                ContainerAddItemMessageHandler.Default.SendFromOverflow(character);
+            }
+            catch (Exception exception)
+            {
+                LogUtil.ErrorException(exception);
+            }
+
+            return true;
+        }
+
         private bool GiveKey(ICharacter character, MissionOffer offer)
         {
             try

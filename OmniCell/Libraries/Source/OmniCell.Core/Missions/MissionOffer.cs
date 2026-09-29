@@ -160,6 +160,23 @@ namespace OmniCell.Core.Missions
         public int RewardHighId { get; set; }
 
         /// <summary>
+        /// The part a repair mission hands over, which is the only thing that
+        /// mends its fixture.
+        /// </summary>
+        /// <remarks>
+        /// The assignment names it - "Add some Spiked Food Sacks to the Theft
+        /// Secure Food Dispenser" - and says to use it: "For the repair task,
+        /// use this component." Which item retail picks is not recorded, so
+        /// this is the one the assignment was written around.
+        /// </remarks>
+        public int ComponentLowId { get; set; }
+
+        /// <summary>
+        /// The instance of the part once it is in the player's inventory.
+        /// </summary>
+        public int ComponentInstance { get; set; }
+
+        /// <summary>
         /// The quality the reward item is offered at.
         /// </summary>
         /// <remarks>

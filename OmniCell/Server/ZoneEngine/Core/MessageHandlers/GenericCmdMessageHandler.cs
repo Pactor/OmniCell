@@ -269,7 +269,7 @@ namespace ZoneEngine.Core.MessageHandlers
                     // repair mission wants mending rather than a terminal.
                     if (message.Target.Length > 1
                         && MissionCompletion.OnRepair(
-                            client.Controller.Character, message.Target[1]))
+                            client.Controller.Character, message.Target[0], message.Target[1]))
                     {
                         this.Acknowledge(client.Controller.Character, message);
                         break;

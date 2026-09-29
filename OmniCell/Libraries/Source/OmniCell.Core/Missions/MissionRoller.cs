@@ -17,6 +17,8 @@ namespace OmniCell.Core.Missions
     using System.Linq;
 
 
+    using OmniCell.Database.Entities;
+
     using SmokeLounge.AOtomation.Messaging.GameData;
 
     #endregion
@@ -370,6 +372,19 @@ namespace OmniCell.Core.Missions
             double jitter = 0.8 + (random.NextDouble() * 0.4);
             offer.ExperienceReward = Math.Max(1, (int)Math.Round(xp * jitter));
             offer.CashReward = Math.Max(1, (int)Math.Round(cash * (0.8 + (random.NextDouble() * 0.4))));
+
+            // A repair mission is the only one that hands something over.
+            // The assignment is written around a named item, so that is the
+            // item: the player is given it and uses it on the fixture.
+            if (offer.Type == MissionType.Repair)
+            {
+                DBItemName part = MissionObjectives.Pick(random);
+                if (part != null)
+                {
+                    offer.ComponentLowId = part.Id;
+                    offer.Objective = part.Name;
+                }
+            }
 
             // Every captured offer carries an item - all 25 of them - and an
             // offer without one is not displayed at all. Which item retail

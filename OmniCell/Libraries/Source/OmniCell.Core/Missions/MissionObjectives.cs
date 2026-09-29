@@ -132,8 +132,22 @@ namespace OmniCell.Core.Missions
 
         private static string Item(Random random)
         {
+            DBItemName picked = Pick(random);
+            return picked == null ? null : picked.Name;
+        }
+
+        /// <summary>
+        /// An item the assignment can send somebody after, name and id both.
+        /// </summary>
+        /// <remarks>
+        /// A repair mission needs the identity as well as the name, because
+        /// the part it hands over has to be a real item the player can then
+        /// use on the fixture.
+        /// </remarks>
+        public static DBItemName Pick(Random random)
+        {
             List<DBItemName> all = Items();
-            return all.Count == 0 ? null : all[random.Next(all.Count)].Name;
+            return all.Count == 0 ? null : all[random.Next(all.Count)];
         }
 
         /// <summary>
