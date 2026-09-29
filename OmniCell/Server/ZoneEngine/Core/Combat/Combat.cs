@@ -25,6 +25,7 @@ namespace ZoneEngine.Core.Combat
     using OmniCell.Stats;
 
     using SmokeLounge.AOtomation.Messaging.GameData;
+    using SmokeLounge.AOtomation.Messaging.Messages.N3Messages;
 
     using ZoneEngine.Core.Controllers;
     using ZoneEngine.Core.Loot;
@@ -103,11 +104,98 @@ namespace ZoneEngine.Core.Combat
             // visible attack state time to begin before damage can kill a
             // low-health target.
             var fight = new Fight(target) { NextSwing = DateTime.UtcNow + AttackDelay(attacker) };
+            Fight previous;
+            bool wasFighting = Fights.TryGetValue(attacker.Identity, out previous);
             Fights[attacker.Identity] = fight;
             attacker.Controller.State = CharacterState.Fighting;
-            SpecialAttackWeaponMessageHandler.Default.AnnounceCombatStart(attacker);
+
+            // PRK (2026-09-29_17-19, tok028 248-251), where the client shows
+            // "Attacking You!": a creature turning on a player is StopFight for
+            // the creature, then Attack, then SpecialAttackWeapon - Attack first.
+            if (attacker.Controller is NPCController && !(victim.Controller is NPCController))
+            {
+                StopFightMessageHandler.Default.Announce(attacker);
+                victim.Send(AttackingYou(attacker), false);
+            }
+
             AttackMessageHandler.Default.Send(attacker, target);
+            SpecialAttackWeaponMessageHandler.Default.AnnounceCombatStart(attacker);
+
+            // IsFightingMe (410) on a player counts the fights they are in,
+            // both ways - up on each start, down on each stop (same capture:
+            // 1, 2, 1, 0 over one lizard).
+            if (wasFighting)
+            {
+                FightingMe(attacker.Playfield.FindByIdentity<ICharacter>(previous.Target), -1);
+                FightingMe(attacker, -1);
+            }
+
+            FightingMe(attacker, 1);
+            FightingMe(victim, 1);
             return true;
+        }
+
+        /// <summary>
+        /// The "Attacking You!" over a creature's head. It is not drawn by the
+        /// client on its own: the server sends it as a SpellList on the creature
+        /// with one HeadText (53057) effect, to the player being attacked only.
+        /// </summary>
+        /// <remarks>
+        /// Copied field for field from PRK (2026-09-29_17-19, tok028 line 249):
+        /// nano 117610, On Target, spell list 9, arguments "Attacking You!" and
+        /// 12, Source and Character both the creature. What the 12 is and why
+        /// nano 117610 is not known - they go out as they were seen.
+        /// </remarks>
+        private static SpellListMessage AttackingYou(ICharacter creature)
+        {
+            byte[] text = System.Text.Encoding.ASCII.GetBytes("Attacking You!\0");
+            var arguments = new List<byte> { 0, 0, 0, (byte)text.Length };
+            arguments.AddRange(text);
+            arguments.AddRange(new byte[] { 0, 0, 0, 12 });
+
+            return new SpellListMessage
+            {
+                Identity = creature.Identity,
+                NanoEffects = new[]
+                {
+                    new NanoEffect
+                    {
+                        Effect = new Identity { Type = (IdentityType)53057, Instance = 117610 },
+                        Version = 4,
+                        CriterionCount = 0,
+                        Criteria = new NanoCriterion[0],
+                        Hits = 1,
+                        Amount = 0,
+                        Target = NanoEffectTarget.Target,
+                        SpellList = 9,
+                        Arguments = arguments.ToArray()
+                    }
+                },
+                Source = creature.Identity,
+                Character = creature.Identity,
+                SetSpellFlag = 0,
+                Name = string.Empty,
+                HasNano = 0,
+                Nano = Identity.None,
+                UnreadFlag = 0,
+                ApplyScope = 0
+            };
+        }
+
+        /// <summary>
+        /// Moves a player's IsFightingMe by <paramref name="delta"/>, never below
+        /// zero, and sends it. Creatures are left alone.
+        /// </summary>
+        private static void FightingMe(ICharacter character, int delta)
+        {
+            if (character == null || character.Controller == null || character.Controller is NPCController)
+            {
+                return;
+            }
+
+            int now = StatValue.OrZero(character.Stats[StatIds.isfightingme].Value);
+            character.Stats[StatIds.isfightingme].Value = Math.Max(0, now + delta);
+            character.Controller.SendChangedStats();
         }
 
         /// <summary>
@@ -120,11 +208,21 @@ namespace ZoneEngine.Core.Combat
                 return;
             }
 
-            Fight ignored;
-            if (Fights.TryRemove(attacker.Identity, out ignored) && attacker.Controller != null
-                && attacker.Controller.State == CharacterState.Fighting)
+            Fight ended;
+            if (!Fights.TryRemove(attacker.Identity, out ended))
+            {
+                return;
+            }
+
+            if (attacker.Controller != null && attacker.Controller.State == CharacterState.Fighting)
             {
                 attacker.Controller.State = CharacterState.Idle;
+            }
+
+            FightingMe(attacker, -1);
+            if (attacker.Playfield != null)
+            {
+                FightingMe(attacker.Playfield.FindByIdentity<ICharacter>(ended.Target), -1);
             }
         }
 
