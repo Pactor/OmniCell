@@ -1,16 +1,17 @@
 # Items a mission terminal has been seen to offer as a reward.
 #
-# The pool is measured: every id here was recorded by the AOBuddy10 bot as
-# actually offered, 1876 of them over 813 rolls (offered.json). What decides
-# whether an item is rollable at all is not derived from anything - it is the
-# list of what was seen.
+# The pool is measured: every band here is the band an item the AOBuddy10 bot
+# was actually offered belongs to - 1876 items over 813 rolls (offered.json).
+# Only that band, not the rest of its family: expanding a family invented
+# high-quality bands nobody was ever offered, which is how QL 250 rewards got
+# in. Shadowlands items are dropped outright - only Rubi-Ka rolls - which took
+# out 3 more bands.
 #
-# A band is one (low, high) template pair of an item family, which the pack
-# gives as Relations sorted by quality and taken two at a time. The reward is
-# offered at the mission QL clamped into the band, which is why a QL 39 mission
-# can hand out a QL 30 nano crystal or a QL 1 Trenchcoat: those are families of
-# one template and have only the quality they have. Checked against all 25
-# rewards in the captures - band and quality both, 25 of 25.
+# A band is one (low, high) template pair, from the pack's Relations sorted by
+# quality and taken two at a time. The reward is offered at the mission QL
+# clamped into the band, which is why a QL 39 mission can hand out a QL 30 nano
+# crystal or a QL 1 Trenchcoat: those are families of one template. Checked
+# against all 25 rewards in the captures - band and quality both.
 # lowId	highId	lowQl	highQl	seen	name
 23314	23316	1	200	3	Simple First-Aid Kit
 25812	25811	1	200	3	Treatment Laboratory
@@ -77,7 +78,6 @@
 31531	31531	1	1	8	Green Cloak Hood
 31532	31532	1	1	4	Brown Cloak Hood
 31533	31533	1	1	8	Blue Cloak Hood
-31534	225459	1	175	6	Black Cloak Hood
 32073	32073	33	33	4	Nano Crystal (False Profession: Bureaucrat)
 32074	32074	30	30	4	Nano Crystal (False Profession: Doctor)
 32077	32077	37	37	5	Nano Crystal (False Profession: Meta-Physicist)
@@ -86,11 +86,9 @@
 32081	32081	27	27	1	Nano Crystal (False Profession: Trader)
 32100	32100	40	40	5	Nano Crystal (Ruse of Taren - Phase 1)
 32105	32105	43	43	2	Nano Crystal (Sniper's Bliss)
-36777	36785	40	80	3	Belt Component Platform 300X
+36777	36785	40	80	2	Belt Component Platform 300X
 36779	36778	1	20	1	2 - 3 NCU Memory
-36781	95520	120	200	1	32 - 63 NCU Memory
 36783	36782	1	20	3	Belt Component Platform Ti-100X
-36784	36787	120	200	3	Belt Component Platform 5000
 36786	36780	40	50	1	8 - 15 NCU Memory
 38531	38531	24	24	1	Nano Crystal (Team Terrain Knowledge)
 42420	42420	40	40	9	Nano Crystal (Team Healing)
@@ -1412,1465 +1410,291 @@
 121511	121511	27	27	2	Nano Crystal (Practiced Health Haggler)
 121520	121520	34	34	1	Nano Crystal (Capable Health Haggler)
 121574	121575	24	46	2	Rusty Tripler
-121576	121577	47	69	2	Second-Hand Tripler
 121593	121594	24	46	2	Setting-Moon Edge
 121612	121613	24	46	2	Training Bladestaff
 121650	121651	24	46	2	Long-Axe Hyper 200x
 121667	121668	24	46	3	Second-Hand Thagh Whings
 121684	121685	1	23	1	Cracked  Bolter 42mm
 121686	121687	24	46	1	Rusty Bolter 42mm
-121703	121704	1	20	2	Dull Whings
 121705	121706	21	40	2	Edge-Less Whings
-121707	121708	41	60	2	Loose Whings
-121709	121710	61	80	2	Blunt Whings
-121711	121712	81	100	2	Chipped Whings
-121713	121714	101	120	2	Quality Whings
-121715	121716	121	140	2	Sharp Whings
-121717	121718	141	160	2	Senior Whings
-121719	121720	161	199	2	Professional Whings
-121721	121721	200	200	2	Premium Whings
-121722	121723	1	20	4	Dull Haxor 9922
 121724	121725	21	40	4	Edge-Less Haxor 9922
-121726	121727	41	60	4	Loose Haxor 9922
-121728	121729	61	80	4	Blunt Haxor 9922
-121730	121731	81	100	4	Chipped Haxor 9922
-121732	121733	101	120	4	Quality Haxor 9922
-121734	121735	121	140	4	Sharp Haxor 9922
-121736	121737	141	160	4	Senior Haxor 9922
-121738	121739	161	199	4	Professional Haxor 9922
-121740	121740	200	200	4	Premium Haxor 9922
-121741	121742	1	20	3	Unbalanced Right Slice
 121743	121744	21	40	3	Cast-Off Right Slice
-121745	121746	41	60	3	Loose Right Slice
-121747	121748	61	80	3	Blunt Right Slice
-121749	121750	81	100	3	Chipped Right Slice
-121751	121752	101	120	3	Quality Right Slice
-121753	121754	121	140	3	Layered Right Slice
-121755	121756	141	160	3	Senior Right Slice
-121757	121758	161	199	3	Composite Right Slice
-121759	121759	200	200	3	Premium Right Slice
-121760	121761	1	20	6	Unbalanced Mini Axe
 121762	121763	21	40	6	Cast-Off Mini Axe
-121764	121765	41	60	6	Loose Mini Axe
-121766	121767	61	80	6	Blunt Mini Axe
-121768	121769	81	100	6	Chipped Mini Axe
-121770	121771	101	120	6	Quality Mini Axe
-121772	121773	121	140	6	Layered Mini Axe
-121774	121775	141	160	6	Senior Mini Axe
-121776	121777	161	199	6	Composite Mini Axe
-121778	121778	200	200	6	Premium Mini Axe
-121779	121780	1	20	2	Ill-Treated Subturbine
 121781	121782	21	40	2	Cast-Off Subturbine
-121783	121784	41	60	2	Over-Tuned Subturbine
-121785	121786	61	80	2	Second-Hand Subturbine
-121787	121788	81	100	2	Subturbine
-121789	121790	101	120	2	Quality Subturbine
-121791	121792	121	140	2	Balanced Subturbine
-121793	121794	141	160	2	Fine-Tuned Subturbine
-121795	121796	161	199	2	Deluxe Subturbine
-121797	121797	200	200	2	Premium Subturbine
-121798	121799	1	20	5	Ill-Treated Disaffiliation Sniper
 121800	121801	21	40	5	Cast-Off Disaffiliation Sniper
-121802	121803	41	60	5	Over-Tuned Disaffiliation Sniper
-121804	121805	61	80	5	Second-Hand Disaffiliation Sniper
-121806	121807	81	100	5	Disaffiliation Sniper
-121808	121809	101	120	5	Quality Disaffiliation Sniper
-121810	121811	121	140	5	Balanced Disaffiliation Sniper
-121812	121813	141	160	5	Fine-Tuned Disaffiliation Sniper
-121814	121815	161	199	5	Deluxe Disaffiliation Sniper
-121816	121816	200	200	5	Premium Disaffiliation Sniper
-121817	121818	1	20	1	Irreparable Sleekblaster Minor
+121802	121803	41	60	1	Over-Tuned Disaffiliation Sniper
 121819	121820	21	40	1	Cast-Off Sleekblaster Minor
 121821	121822	41	60	1	Over-Tuned Sleekblaster Minor
-121823	121824	61	80	1	Second-Hand Sleekblaster Minor
-121825	121826	81	100	1	Worn Sleekblaster Minor
-121827	121828	101	120	1	Quality Sleekblaster Minor
-121829	121830	121	140	1	Balanced Sleekblaster Minor
-121831	121832	141	160	1	Senior Sleekblaster Minor
-121833	121834	161	199	1	First-Rate Sleekblaster Minor
-121835	121835	200	200	1	Premium Sleekblaster Minor
-121836	121837	1	20	2	Irreparable Sleekblaster
 121838	121839	21	40	2	Cast-Off Sleekblaster
-121840	121841	41	60	2	Over-Tuned Sleekblaster
-121842	121843	61	80	2	Second-Hand Sleekblaster
-121844	121845	81	100	2	Worn Sleekblaster
-121846	121847	101	120	2	Quality Sleekblaster
-121848	121849	121	140	2	Balanced Sleekblaster
-121850	121851	141	160	2	Senior Sleekblaster
-121852	121853	161	199	2	First-Rate Sleekblaster
-121854	121854	200	200	2	Premium Sleekblaster
-121855	121856	1	20	2	Ill-Treated Chunkprojector
 121857	121858	21	40	2	Cast-Off Chunkprojector
-121859	121860	41	60	2	Over-Tuned Chunkprojector
-121861	121862	61	80	2	Second-Hand Chunkprojector
-121863	121864	81	100	2	Chunkprojector
-121865	121866	101	120	2	Quality Chunkprojector
-121867	121868	121	140	2	Balanced Chunkprojector
-121869	121870	141	160	2	Fine-Tuned Chunkprojector
-121871	121872	161	199	2	Deluxe Chunkprojector
-121873	121873	200	200	2	Premium Chunkprojector
-121893	121894	1	20	3	Ill-Treated Heavy Grinner
 121895	121896	21	40	3	Cast-Off Heavy Grinner
-121897	121898	41	60	3	Over-Tuned Heavy Grinner
-121899	121900	61	80	3	Second-Hand Heavy Grinner
-121901	121902	81	100	3	Heavy Grinner
-121903	121904	101	120	3	Quality Heavy Grinner
-121905	121906	121	140	3	Balanced Heavy Grinner
-121907	121908	141	160	3	Fine-Tuned Heavy Grinner
-121909	121910	161	199	3	Deluxe Heavy Grinner
-121911	121911	200	200	3	Premium Heavy Grinner
-121912	121913	1	20	2	Ill-Treated Flamethrower
 121914	121915	21	40	2	Cast-Off Flamethrower
-121916	121917	41	60	2	Over-Tuned Flamethrower
-121918	121919	61	80	2	Second-Hand Flamethrower
-121920	121921	81	100	2	Flamethrower
-121922	121923	101	120	2	Quality Flamethrower
-121924	121925	121	140	2	Balanced Flamethrower
-121926	121927	141	160	2	Fine-Tuned Flamethrower
-121928	121929	161	199	2	Deluxe Flamethrower
-121930	121930	200	200	2	Premium Flamethrower
-121931	121932	1	20	3	Ill-Treated Gatling Saw 20k
 121933	121934	21	40	3	Cast-Off Gatling Saw 20k
-121935	121936	41	60	3	Over-Tuned Gatling Saw 20k
-121937	121938	61	80	3	Second-Hand Gatling Saw 20k
-121939	121940	81	100	3	Gatling Saw 20k
-121941	121942	101	120	3	Quality Gatling Saw 20k
-121943	121944	121	140	3	Balanced Gatling Saw 20k
-121945	121946	141	160	3	Fine-Tuned Gatling Saw 20k
-121947	121948	161	199	3	Deluxe Gatling Saw 20k
-121949	121949	200	200	3	Premium Gatling Saw 20k
-121950	121951	1	20	1	Unbalanced Slank Chop
 121952	121953	21	40	1	Cast-Off Slank Chop
-121954	121955	41	60	1	Loose Slank Chop
-121956	121957	61	80	1	Blunt Slank Chop
-121958	121959	81	100	1	Chipped Slank Chop
-121960	121962	101	121	1	Quality Slank Chop
-121963	121964	140	141	1	Layered Slank Chop
-121965	121966	160	161	1	Senior Slank Chop
-121967	121968	199	200	1	Composite Slank Chop
-121969	121970	1	20	2	Dull Katana
 121971	121972	21	40	2	Edge-Less Katana
-121973	121974	41	60	2	Loose Katana
-121975	121976	61	80	2	Blunt Katana
-121977	121978	81	100	2	Chipped Katana
-121979	121980	101	120	2	Quality Katana
-121981	121982	121	140	2	Sharp Katana
-121983	121984	141	160	2	Senior Katana
-121985	121986	161	199	2	Professional Katana
-121987	121987	200	200	2	Premium Katana
-121988	121989	1	20	3	Irreparable Blackened Miniblaster
 121990	121991	21	40	3	Cast-Off Blackened Miniblaster
-121992	121993	41	60	3	Over-Tuned Blackened Miniblaster
-121994	121995	61	80	3	Second-Hand Blackened Miniblaster
-121996	121997	81	100	3	Worn Blackened Miniblaster
-121998	121999	101	120	3	Quality Blackened Miniblaster
-122000	122001	121	140	3	Balanced Blackened Miniblaster
-122002	122003	141	160	3	Senior Blackened Miniblaster
-122004	122005	161	199	3	First-Rate Blackened Miniblaster
-122006	122006	200	200	3	Premium Blackened Miniblaster
-122007	122008	1	20	4	Ill-Treated Blackened Blaster
 122009	122010	21	40	4	Cast-Off Blackened Blaster
-122011	122012	41	60	4	Over-Tuned Blackened Blaster
-122013	122014	61	80	4	Second-Hand Blackened Blaster
-122015	122016	81	100	4	Blackened Blaster
-122017	122018	101	120	4	Quality Blackened Blaster
-122019	122020	121	140	4	Balanced Blackened Blaster
-122021	122022	141	160	4	Fine-Tuned Blackened Blaster
-122023	122024	161	199	4	Deluxe Blackened Blaster
-122025	122025	200	200	4	Premium Blackened Blaster
-122026	122027	1	20	1	Irreparable Triplejolt
+122011	122012	41	60	1	Over-Tuned Blackened Blaster
 122028	122029	21	40	1	Cast-Off Triplejolt
-122030	122031	41	60	1	Over-Tuned Triplejolt
-122032	122033	61	80	1	Second-Hand Triplejolt
-122034	122035	81	100	1	Worn Triplejolt
-122036	122037	101	120	1	Quality Triplejolt
-122038	122039	121	140	1	Balanced Triplejolt
-122040	122041	141	160	1	Senior Triplejolt
-122042	122043	161	199	1	First-Rate Triplejolt
-122044	122044	200	200	1	Premium Triplejolt
-122064	122065	1	20	3	Unbalanced Clean Slay Axe
 122066	122067	21	40	3	Cast-Off Clean Slay Axe
-122068	122069	41	60	3	Loose Clean Slay Axe
-122070	122071	61	80	3	Blunt Clean Slay Axe
-122072	122073	81	100	3	Chipped Clean Slay Axe
-122074	122075	101	120	3	Quality Clean Slay Axe
-122076	122077	121	140	3	Layered Clean Slay Axe
-122078	122079	141	160	3	Senior Clean Slay Axe
-122080	122081	161	199	3	Composite Clean Slay Axe
-122082	122082	200	200	3	Premium Clean Slay Axe
-122083	122084	1	20	3	Ill-Treated Blackened Blaster Rifle
 122085	122086	21	40	3	Cast-Off Blackened Blaster Rifle
-122087	122088	41	60	3	Over-Tuned Blackened Blaster Rifle
-122089	122090	61	80	3	Second-Hand Blackened Blaster Rifle
-122091	122092	81	100	3	Blackened Blaster Rifle
-122093	122094	101	120	3	Quality Blackened Blaster Rifle
-122095	122096	121	140	3	Balanced Blackened Blaster Rifle
-122097	122098	141	160	3	Fine-Tuned Blackened Blaster Rifle
-122099	122100	161	199	3	Deluxe Blackened Blaster Rifle
-122101	122101	200	200	3	Premium Blackened Blaster Rifle
-122102	122103	1	20	4	Unbalanced Stabber
 122104	122105	21	40	4	Cast-Off Stabber
-122106	122107	41	60	4	Loose Stabber
-122108	122109	61	80	4	Blunt Stabber
-122110	122111	81	100	4	Chipped Stabber
-122112	122113	101	120	4	Quality Stabber
-122114	122115	121	140	4	Layered Stabber
-122116	122117	141	160	4	Senior Stabber
-122118	122119	161	199	4	Composite Stabber
-122120	122120	200	200	4	Premium Stabber
-122121	122122	1	20	1	Ill-Treated E-Beamer
 122123	122124	21	40	1	Cast-Off E-Beamer
-122125	122126	41	60	1	Over-Tuned E-Beamer
-122127	122128	61	80	1	Second-Hand E-Beamer
-122129	122130	81	100	1	E-Beamer
-122131	122132	101	120	1	Quality E-Beamer
-122133	122134	121	140	1	Balanced E-Beamer
-122135	122136	141	160	1	Fine-Tuned E-Beamer
-122137	122138	161	199	1	Deluxe E-Beamer
-122139	122139	200	200	1	Premium E-Beamer
-122140	122141	1	20	2	Unbalanced Cutlass
 122142	122143	21	40	2	Cast-Off Cutlass
-122144	122145	41	60	2	Loose Cutlass
-122146	122147	61	80	2	Blunt Cutlass
-122148	122149	81	100	2	Chipped Cutlass
-122150	122151	101	120	2	Quality Cutlass
-122152	122153	121	140	2	Layered Cutlass
-122154	122155	141	160	2	Senior Cutlass
-122156	122157	161	199	2	Composite Cutlass
-122158	122158	200	200	2	Premium Cutlass
-122159	122160	1	20	1	Dull E-Blade
 122161	122162	21	40	1	Edge-Less E-Blade
-122163	122164	41	60	1	Loose E-Blade
-122165	122166	61	80	1	Blunt E-Blade
-122167	122168	81	100	1	Chipped E-Blade
-122169	122170	101	120	1	Quality E-Blade
-122171	122172	121	140	1	Sharp E-Blade
-122173	122174	141	160	1	Senior E-Blade
-122175	122176	161	199	1	Professional E-Blade
-122177	122177	200	200	1	Premium E-Blade
-122178	122179	1	20	3	Ill-Treated Megajolt
 122180	122181	21	40	3	Cast-Off Megajolt
-122182	122183	41	60	3	Over-Tuned Megajolt
-122184	122185	61	80	3	Second-Hand Megajolt
-122186	122187	81	100	3	Megajolt
-122188	122189	101	120	3	Quality Megajolt
-122190	122191	121	140	3	Balanced Megajolt
-122192	122193	141	160	3	Fine-Tuned Megajolt
-122194	122195	161	199	3	Deluxe Megajolt
-122196	122196	200	200	3	Premium Megajolt
 122197	122198	1	40	3	Ill-Treated DNA-Locked Blaster Rifle
-122199	122200	41	80	3	Cast-Off DNA-Locked Blaster Rifle
-122201	122202	81	120	3	Over-Tuned DNA-Locked Blaster Rifle
-122203	122204	121	160	3	Second-Hand DNA-Locked Blaster Rifle
-122205	122206	161	200	3	DNA-Locked Blaster Rifle
-122207	122208	201	240	3	Quality DNA-Locked Blaster Rifle
-122209	122210	241	280	3	Balanced DNA-Locked Blaster Rifle
-122211	122212	281	320	3	Fine-Tuned DNA-Locked Blaster Rifle
-122213	122214	321	399	3	Deluxe DNA-Locked Blaster Rifle
-122215	122215	400	400	3	Premium DNA-Locked Blaster Rifle
-122216	122217	1	20	2	Ill-Treated Stigma Rifle
 122218	122219	21	40	2	Cast-Off Stigma Rifle
-122220	122221	41	60	2	Over-Tuned Stigma Rifle
-122222	122223	61	80	2	Second-Hand Stigma Rifle
-122224	122225	81	100	2	Stigma Rifle
-122226	122227	101	120	2	Quality Stigma Rifle
-122228	122229	121	140	2	Balanced Stigma Rifle
-122230	122231	141	160	2	Fine-Tuned Stigma Rifle
-122232	122233	161	199	2	Deluxe Stigma Rifle
-122234	122234	200	200	2	Premium Stigma Rifle
-122235	122236	1	20	2	Ill-Treated Electrical Pacifier
 122237	122238	21	40	2	Cast-Off Electrical Pacifier
-122239	122240	41	60	2	Over-Tuned Electrical Pacifier
-122241	122242	61	80	2	Second-Hand Electrical Pacifier
-122243	122244	81	100	2	Electrical Pacifier
-122245	122246	101	120	2	Quality Electrical Pacifier
-122247	122248	121	140	2	Balanced Electrical Pacifier
-122249	122250	141	160	2	Fine-Tuned Electrical Pacifier
-122251	122252	161	199	2	Deluxe Electrical Pacifier
-122253	122253	200	200	2	Premium Electrical Pacifier
-122254	122255	1	20	3	Ill-Treated Eradicator XCI-52
 122256	122257	21	40	3	Cast-Off Eradicator XCI-52
-122258	122259	41	60	3	Over-Tuned Eradicator XCI-52
-122260	122261	61	80	3	Second-Hand Eradicator XCI-52
-122262	122263	81	100	3	Eradicator XCI-52
-122264	122265	101	120	3	Quality Eradicator XCI-52
-122266	122267	121	140	3	Balanced Eradicator XCI-52
-122268	122269	141	160	3	Fine-Tuned Eradicator XCI-52
-122270	122271	161	199	3	Deluxe Eradicator XCI-52
-122272	122272	200	200	3	Premium Eradicator XCI-52
-122273	122274	1	20	3	Irreparable Kolt PDW-37
 122275	122276	21	40	3	Cast-Off Kolt PDW-37
-122277	122278	41	60	3	Over-Tuned Kolt PDW-37
-122279	122280	61	80	3	Second-Hand Kolt PDW-37
-122281	122282	81	100	3	Worn Kolt PDW-37
-122283	122284	101	120	3	Quality Kolt PDW-37
-122285	122286	121	140	3	Balanced Kolt PDW-37
-122287	122288	141	160	3	Senior Kolt PDW-37
-122289	122290	161	199	3	First-Rate Kolt PDW-37
-122291	122291	200	200	3	Premium Kolt PDW-37
-122292	122293	1	20	5	Irreparable Omni-Flamer Mk IV
 122294	122295	21	40	5	Cast-Off Omni-Flamer Mk IV
-122296	122297	41	60	5	Over-Tuned Omni-Flamer Mk IV
-122298	122299	61	80	5	Second-Hand Omni-Flamer Mk IV
-122300	122301	81	100	5	Worn Omni-Flamer Mk IV
-122302	122303	101	120	5	Quality Omni-Flamer Mk IV
-122304	122305	121	140	5	Balanced Omni-Flamer Mk IV
-122306	122307	141	160	5	Senior Omni-Flamer Mk IV
-122308	122309	161	199	5	First-Rate Omni-Flamer Mk IV
-122310	122310	200	200	5	Premium Omni-Flamer Mk IV
-122311	122312	1	20	4	Ill-Treated Stanton Stunner IV
 122313	122314	21	40	4	Cast-Off Stanton Stunner IV
-122315	122316	41	60	4	Over-Tuned Stanton Stunner IV
-122317	122318	61	80	4	Second-Hand Stanton Stunner IV
-122319	122320	81	100	4	Stanton Stunner IV
-122321	122322	101	120	4	Quality Stanton Stunner IV
-122323	122324	121	140	4	Balanced Stanton Stunner IV
-122325	122326	141	160	4	Fine-Tuned Stanton Stunner IV
-122327	122328	161	199	4	Deluxe Stanton Stunner IV
-122329	122329	200	200	4	Premium Stanton Stunner IV
 122351	122352	21	40	3	Cast-Off Metaphysic Energy Shield
-122353	122354	41	60	3	Loose Metaphysic Energy Shield
-122357	122358	81	100	3	Chipped Metaphysic Energy Shield
+122353	122354	41	60	1	Loose Metaphysic Energy Shield
 122370	122371	21	40	3	Cast-Off Energy Shield
-122372	122373	41	60	3	Loose Energy Shield
 122389	122390	21	40	1	Cast-Off Esoteric Energy Buckler
 122408	122409	21	40	2	Cast-Off Energy Buckler
-122410	122411	41	60	2	Loose Energy Buckler
-122414	122415	81	100	2	Chipped Energy Buckler
-122425	122426	1	20	3	Ill-Treated Mausser Particle Streamer
 122427	122428	21	40	3	Cast-Off Mausser Particle Streamer
-122429	122430	41	60	3	Over-Tuned Mausser Particle Streamer
-122431	122432	61	80	3	Second-Hand Mausser Particle Streamer
-122433	122434	81	100	3	Mausser Particle Streamer
-122435	122436	101	120	3	Quality Mausser Particle Streamer
-122437	122438	121	140	3	Balanced Mausser Particle Streamer
-122439	122440	141	160	3	Fine-Tuned Mausser Particle Streamer
-122441	122442	161	199	3	Deluxe Mausser Particle Streamer
-122443	122443	200	200	3	Premium Mausser Particle Streamer
-122444	122445	1	20	2	Irreparable El Dieu
 122446	122447	21	40	2	Cast-Off El Dieu
-122448	122449	41	60	2	Over-Tuned El Dieu
-122450	122451	61	80	2	Second-Hand El Dieu
-122452	122453	81	100	2	Worn El Dieu
-122454	122455	101	120	2	Quality El Dieu
-122456	122457	121	140	2	Balanced El Dieu
-122458	122459	141	160	2	Senior El Dieu
-122460	122461	161	199	2	First-Rate El Dieu
-122462	122462	200	200	2	Premium El Dieu
-122463	122464	1	20	4	Irreparable El Diablo
 122465	122466	21	40	4	Cast-Off El Diablo
-122467	122468	41	60	4	Over-Tuned El Diablo
-122469	122470	61	80	4	Second-Hand El Diablo
-122471	122472	81	100	4	Worn El Diablo
-122473	122474	101	120	4	Quality El Diablo
-122475	122476	121	140	4	Balanced El Diablo
-122477	122478	141	160	4	Senior El Diablo
-122479	122480	161	199	4	First-Rate El Diablo
-122481	122481	200	200	4	Premium El Diablo
-122482	122483	1	20	5	Irreparable Ingram Blaster 23-X
 122484	122485	21	40	5	Cast-Off Ingram Blaster 23-X
-122486	122487	41	60	5	Over-Tuned Ingram Blaster 23-X
-122488	122489	61	80	5	Second-Hand Ingram Blaster 23-X
-122490	122491	81	100	5	Worn Ingram Blaster 23-X
-122492	122493	101	120	5	Quality Ingram Blaster 23-X
-122494	122495	121	140	5	Balanced Ingram Blaster 23-X
-122496	122497	141	160	5	Senior Ingram Blaster 23-X
-122498	122499	161	199	5	First-Rate Ingram Blaster 23-X
-122500	122500	200	200	5	Premium Ingram Blaster 23-X
-122501	122502	1	20	4	Ill-Treated Biogun
 122503	122504	21	40	4	Cast-Off Biogun
-122505	122506	41	60	4	Over-Tuned Biogun
-122507	122508	61	80	4	Second-Hand Biogun
-122509	122510	81	100	4	Biogun
-122511	122512	101	120	4	Quality Biogun
-122513	122514	121	140	4	Balanced Biogun
-122515	122516	141	160	4	Fine-Tuned Biogun
-122517	122518	161	199	4	Deluxe Biogun
-122519	122519	200	200	4	Premium Biogun
-122539	122540	1	20	1	Ill-Treated Omni-Pol Standard Flamer
+122505	122506	41	60	1	Over-Tuned Biogun
 122541	122542	21	40	1	Cast-Off Omni-Pol Standard Flamer
-122543	122544	41	60	1	Over-Tuned Omni-Pol Standard Flamer
-122545	122546	61	80	1	Second-Hand Omni-Pol Standard Flamer
-122547	122548	81	100	1	Omni-Pol Standard Flamer
-122549	122550	101	120	1	Quality Omni-Pol Standard Flamer
-122551	122552	121	140	1	Balanced Omni-Pol Standard Flamer
-122553	122554	141	160	1	Fine-Tuned Omni-Pol Standard Flamer
-122555	122556	161	199	1	Deluxe Omni-Pol Standard Flamer
-122557	122557	200	200	1	Premium Omni-Pol Standard Flamer
-122615	122616	1	20	3	Irreparable Aero Borealis Corona
 122617	122618	21	40	3	Cast-Off Aero Borealis Corona
-122619	122620	41	60	3	Over-Tuned Aero Borealis Corona
-122621	122622	61	80	3	Second-Hand Aero Borealis Corona
-122623	122624	81	100	3	Worn Aero Borealis Corona
-122625	122626	101	120	3	Quality Aero Borealis Corona
-122627	122628	121	140	3	Balanced Aero Borealis Corona
-122629	122630	141	160	3	Senior Aero Borealis Corona
-122631	122632	161	199	3	First-Rate Aero Borealis Corona
-122633	122633	200	200	3	Premium Aero Borealis Corona
-122634	122635	1	20	3	Irreparable The Original Plasma-Emitter
 122636	122637	21	40	3	Cast-Off The Original Plasma-Emitter
-122638	122639	41	60	3	Over-Tuned The Original Plasma-Emitter
-122640	122641	61	80	3	Second-Hand The Original Plasma-Emitter
-122642	122643	81	100	3	Worn The Original Plasma-Emitter
-122644	122645	101	120	3	Quality The Original Plasma-Emitter
-122646	122647	121	140	3	Balanced The Original Plasma-Emitter
-122648	122649	141	160	3	Senior The Original Plasma-Emitter
-122650	122651	161	199	3	First-Rate The Original Plasma-Emitter
-122652	122652	200	200	3	Premium The Original Plasma-Emitter
-122672	122673	1	20	2	Ill-Treated Heavy Lead Sprayer
+122638	122639	41	60	1	Over-Tuned The Original Plasma-Emitter
 122674	122675	21	40	2	Cast-Off Heavy Lead Sprayer
-122676	122677	41	60	2	Over-Tuned Heavy Lead Sprayer
-122678	122679	61	80	2	Second-Hand Heavy Lead Sprayer
-122680	122681	81	100	2	Heavy Lead Sprayer
-122682	122683	101	120	2	Quality Heavy Lead Sprayer
-122684	122685	121	140	2	Balanced Heavy Lead Sprayer
-122686	122687	141	160	2	Fine-Tuned Heavy Lead Sprayer
-122688	122689	161	199	2	Deluxe Heavy Lead Sprayer
-122690	122690	200	200	2	Premium Heavy Lead Sprayer
-122691	122692	1	20	1	Unbalanced Advanced Baseballbat
 122693	122694	21	40	1	Cast-Off Advanced Baseballbat
-122695	122696	41	60	1	Loose Advanced Baseballbat
-122697	122698	61	80	1	Blunt Advanced Baseballbat
-122699	122700	81	100	1	Chipped Advanced Baseballbat
-122701	122702	101	120	1	Quality Advanced Baseballbat
-122703	122704	121	140	1	Layered Advanced Baseballbat
-122705	122706	141	160	1	Senior Advanced Baseballbat
-122707	122708	161	199	1	Composite Advanced Baseballbat
-122709	122709	200	200	1	Premium Advanced Baseballbat
-122710	122711	1	20	1	Ill-Treated Kevlar Bow
 122712	122713	21	40	1	Cast-Off Kevlar Bow
-122714	122715	41	60	1	Over-Tuned Kevlar Bow
-122716	122717	61	80	1	Second-Hand Kevlar Bow
-122718	122719	81	100	1	Kevlar Bow
-122720	122721	101	120	1	Quality Kevlar Bow
-122722	122723	121	140	1	Balanced Kevlar Bow
-122724	122725	141	160	1	Fine-Tuned Kevlar Bow
-122726	122727	161	199	1	Deluxe Kevlar Bow
-122728	122728	200	200	1	Premium Kevlar Bow
-122729	122730	1	20	2	Unbalanced Blackjack
 122731	122732	21	40	2	Cast-Off Blackjack
-122733	122734	41	60	2	Loose Blackjack
-122735	122736	61	80	2	Blunt Blackjack
-122737	122738	81	100	2	Chipped Blackjack
-122739	122740	101	120	2	Quality Blackjack
-122741	122742	121	140	2	Layered Blackjack
-122743	122744	141	160	2	Senior Blackjack
-122745	122746	161	199	2	Composite Blackjack
-122747	122747	200	200	2	Premium Blackjack
-122748	122749	1	20	1	Dull Two-Handed Blackjack
 122750	122751	21	40	1	Edge-Less Two-Handed Blackjack
-122752	122753	41	60	1	Loose Two-Handed Blackjack
-122754	122755	61	80	1	Blunt Two-Handed Blackjack
-122756	122757	81	100	1	Chipped Two-Handed Blackjack
-122758	122759	101	120	1	Quality Two-Handed Blackjack
-122760	122761	121	140	1	Sharp Two-Handed Blackjack
-122762	122763	141	160	1	Senior Two-Handed Blackjack
-122764	122765	161	199	1	Professional Two-Handed Blackjack
-122766	122766	200	200	1	Premium Two-Handed Blackjack
-122767	122768	1	20	3	Ill-Treated Bow-Blaster
 122769	122770	21	40	3	Cast-Off Bow-Blaster
-122771	122772	41	60	3	Over-Tuned Bow-Blaster
-122773	122774	61	80	3	Second-Hand Bow-Blaster
-122775	122776	81	100	3	Bow-Blaster
-122777	122778	101	120	3	Quality Bow-Blaster
-122779	122780	121	140	3	Balanced Bow-Blaster
-122781	122782	141	160	3	Fine-Tuned Bow-Blaster
-122783	122784	161	199	3	Deluxe Bow-Blaster
-122785	122785	200	200	3	Premium Bow-Blaster
-122786	122787	1	20	4	Dull Sword of Sir Galahad
 122788	122789	21	40	4	Edge-Less Sword of Sir Galahad
-122790	122791	41	60	4	Loose Sword of Sir Galahad
-122792	122793	61	80	4	Blunt Sword of Sir Galahad
-122794	122795	81	100	4	Chipped Sword of Sir Galahad
-122796	122797	101	120	4	Quality Sword of Sir Galahad
-122798	122799	121	140	4	Sharp Sword of Sir Galahad
-122800	122801	141	160	4	Senior Sword of Sir Galahad
-122802	122803	161	199	4	Professional Sword of Sir Galahad
-122804	122804	200	200	4	Premium Sword of Sir Galahad
-122805	122806	1	20	2	Dull Gofle-Prod
 122807	122808	21	40	2	Edge-Less Gofle-Prod
-122809	122810	41	60	2	Loose Gofle-Prod
-122811	122812	61	80	2	Blunt Gofle-Prod
-122813	122814	81	100	2	Chipped Gofle-Prod
-122815	122816	101	120	2	Quality Gofle-Prod
-122817	122818	121	140	2	Sharp Gofle-Prod
-122819	122820	141	160	2	Senior Gofle-Prod
-122821	122822	161	199	2	Professional Gofle-Prod
-122823	122823	200	200	2	Premium Gofle-Prod
 122826	122827	21	40	5	Chair
-122829	122830	1	20	1	Unbalanced Titanium Crowbar
 122831	122832	21	40	1	Cast-Off Titanium Crowbar
-122833	122834	41	60	1	Loose Titanium Crowbar
-122835	122836	61	80	1	Blunt Titanium Crowbar
-122837	122838	81	100	1	Chipped Titanium Crowbar
-122839	122840	101	120	1	Quality Titanium Crowbar
-122841	122842	121	140	1	Layered Titanium Crowbar
-122843	122844	141	160	1	Senior Titanium Crowbar
-122845	122846	161	199	1	Composite Titanium Crowbar
-122847	122847	200	200	1	Premium Titanium Crowbar
-122848	122849	1	20	2	Unbalanced Stun-Baton
 122850	122851	21	40	2	Cast-Off Stun-Baton
-122852	122853	41	60	2	Loose Stun-Baton
-122854	122855	61	80	2	Blunt Stun-Baton
-122856	122857	81	100	2	Chipped Stun-Baton
-122858	122859	101	120	2	Quality Stun-Baton
-122860	122861	121	140	2	Layered Stun-Baton
-122862	122863	141	160	2	Senior Stun-Baton
-122864	122865	161	199	2	Composite Stun-Baton
-122866	122866	200	200	2	Premium Stun-Baton
-122867	122868	1	20	3	Ill-Treated Grenade-Thrower
 122869	122870	21	40	3	Cast-Off Grenade-Thrower
-122871	122872	41	60	3	Over-Tuned Grenade-Thrower
-122873	122874	61	80	3	Second-Hand Grenade-Thrower
-122875	122876	81	100	3	Grenade-Thrower
-122877	122878	101	120	3	Quality Grenade-Thrower
-122879	122880	121	140	3	Balanced Grenade-Thrower
-122881	122882	141	160	3	Fine-Tuned Grenade-Thrower
-122883	122884	161	199	3	Deluxe Grenade-Thrower
-122885	122885	200	200	3	Premium Grenade-Thrower
-122886	122887	1	20	1	Irreparable Minielectronium
 122888	122889	21	40	1	Cast-Off Minielectronium
-122890	122891	41	60	1	Over-Tuned Minielectronium
-122892	122893	61	80	1	Second-Hand Minielectronium
-122894	122895	81	100	1	Worn Minielectronium
-122896	122897	101	120	1	Quality Minielectronium
-122898	122899	121	140	1	Balanced Minielectronium
-122900	122901	141	160	1	Senior Minielectronium
-122902	122903	161	199	1	First-Rate Minielectronium
-122904	122904	200	200	1	Premium Minielectronium
-122905	122906	1	20	2	Dull Support Beam
 122907	122908	21	40	2	Edge-Less Support Beam
-122909	122910	41	60	2	Loose Support Beam
-122911	122912	61	80	2	Blunt Support Beam
-122913	122914	81	100	2	Chipped Support Beam
-122915	122916	101	120	2	Quality Support Beam
-122917	122918	121	140	2	Sharp Support Beam
-122919	122920	141	160	2	Senior Support Beam
-122921	122922	161	199	2	Professional Support Beam
-122923	122923	200	200	2	Premium Support Beam
-122924	122925	1	20	3	Dull Blackjohn
 122926	122927	21	40	3	Edge-Less Blackjohn
-122928	122929	41	60	3	Loose Blackjohn
-122930	122931	61	80	3	Blunt Blackjohn
-122932	122933	81	100	3	Chipped Blackjohn
-122934	122935	101	120	3	Quality Blackjohn
-122936	122937	121	140	3	Sharp Blackjohn
-122938	122939	141	160	3	Senior Blackjohn
-122940	122941	161	199	3	Professional Blackjohn
-122942	122942	200	200	3	Premium Blackjohn
-122943	122944	1	20	3	Unbalanced Mace
 122945	122946	21	40	3	Cast-Off Mace
-122947	122948	41	60	3	Loose Mace
-122949	122950	61	80	3	Blunt Mace
-122951	122952	81	100	3	Chipped Mace
-122953	122954	101	120	3	Quality Mace
-122955	122956	121	140	3	Layered Mace
-122957	122958	141	160	3	Senior Mace
-122959	122960	161	199	3	Composite Mace
-122961	122961	200	200	3	Premium Mace
-122962	122963	1	20	2	Dull Notum Staff
+122947	122948	41	60	1	Loose Mace
 122964	122965	21	40	2	Edge-Less Notum Staff
-122966	122967	41	60	2	Loose Notum Staff
-122968	122969	61	80	2	Blunt Notum Staff
-122970	122971	81	100	2	Chipped Notum Staff
-122972	122973	101	120	2	Quality Notum Staff
-122974	122975	121	140	2	Sharp Notum Staff
-122976	122977	141	160	2	Senior Notum Staff
-122978	122979	161	199	2	Professional Notum Staff
-122980	122980	200	200	2	Premium Notum Staff
-122981	122982	1	20	2	Irreparable Kolt 58 Magnum
 122983	122984	21	40	2	Cast-Off Kolt 58 Magnum
-122985	122986	41	60	2	Over-Tuned Kolt 58 Magnum
-122987	122988	61	80	2	Second-Hand Kolt 58 Magnum
-122989	122990	81	100	2	Worn Kolt 58 Magnum
-122991	122992	101	120	2	Quality Kolt 58 Magnum
-122993	122994	121	140	2	Balanced Kolt 58 Magnum
-122995	122996	141	160	2	Senior Kolt 58 Magnum
-122997	122998	161	199	2	First-Rate Kolt 58 Magnum
-122999	122999	200	200	2	Premium Kolt 58 Magnum
-123000	123001	1	20	3	Dull Notum Spear
+122985	122986	41	60	1	Over-Tuned Kolt 58 Magnum
 123002	123003	21	40	3	Edge-Less Notum Spear
-123004	123005	41	60	3	Loose Notum Spear
-123006	123007	61	80	3	Blunt Notum Spear
-123008	123009	81	100	3	Chipped Notum Spear
-123010	123011	101	120	3	Quality Notum Spear
-123012	123013	121	140	3	Sharp Notum Spear
-123014	123015	141	160	3	Senior Notum Spear
-123016	123017	161	199	3	Professional Notum Spear
-123018	123018	200	200	3	Premium Notum Spear
-123019	123020	1	20	2	Ill-Treated Mini-Shotgun
+123004	123005	41	60	1	Loose Notum Spear
 123021	123022	21	40	2	Cast-Off Mini-Shotgun
-123023	123024	41	60	2	Over-Tuned Mini-Shotgun
-123025	123026	61	80	2	Second-Hand Mini-Shotgun
-123027	123028	81	100	2	Mini-Shotgun
-123029	123030	101	120	2	Quality Mini-Shotgun
-123031	123032	121	140	2	Balanced Mini-Shotgun
-123033	123034	141	160	2	Fine-Tuned Mini-Shotgun
-123035	123036	161	199	2	Deluxe Mini-Shotgun
-123037	123037	200	200	2	Premium Mini-Shotgun
-123038	123039	1	20	2	Ill-Treated Medium Shotgun
 123040	123041	21	40	2	Cast-Off Medium Shotgun
-123042	123043	41	60	2	Over-Tuned Medium Shotgun
-123044	123045	61	80	2	Second-Hand Medium Shotgun
-123046	123047	81	100	2	Medium Shotgun
-123048	123049	101	120	2	Quality Medium Shotgun
-123050	123051	121	140	2	Balanced Medium Shotgun
-123052	123053	141	160	2	Fine-Tuned Medium Shotgun
-123054	123055	161	199	2	Deluxe Medium Shotgun
-123056	123056	200	200	2	Premium Medium Shotgun
-123076	123077	1	20	3	Irreparable Sleekblaster Major
 123078	123079	21	40	3	Cast-Off Sleekblaster Major
-123080	123081	41	60	3	Over-Tuned Sleekblaster Major
-123082	123083	61	80	3	Second-Hand Sleekblaster Major
-123084	123085	81	100	3	Worn Sleekblaster Major
-123086	123087	101	120	3	Quality Sleekblaster Major
-123088	123089	121	140	3	Balanced Sleekblaster Major
-123090	123091	141	160	3	Senior Sleekblaster Major
-123092	123093	161	199	3	First-Rate Sleekblaster Major
-123094	123094	200	200	3	Premium Sleekblaster Major
-123095	123096	1	20	3	Irreparable DNA-Targeted Executioner Pistol
 123097	123098	21	40	3	Cast-Off DNA-Targeted Executioner Pistol
-123099	123100	41	60	3	Over-Tuned DNA-Targeted Executioner Pistol
-123101	123102	61	80	3	Second-Hand DNA-Targeted Executioner Pistol
-123103	123104	81	100	3	Worn DNA-Targeted Executioner Pistol
-123105	123106	101	120	3	Quality DNA-Targeted Executioner Pistol
-123107	123108	121	140	3	Balanced DNA-Targeted Executioner Pistol
-123109	123110	141	160	3	Senior DNA-Targeted Executioner Pistol
-123111	123112	161	199	3	First-Rate DNA-Targeted Executioner Pistol
-123113	123113	200	200	3	Premium DNA-Targeted Executioner Pistol
-123114	123115	1	20	1	Unbalanced Bow Split
 123116	123117	21	40	1	Cast-Off Bow Split
-123118	123119	41	60	1	Loose Bow Split
-123120	123121	61	80	1	Blunt Bow Split
-123122	123123	81	100	1	Chipped Bow Split
-123124	123125	101	120	1	Quality Bow Split
-123126	123127	121	140	1	Layered Bow Split
-123128	123129	141	160	1	Senior Bow Split
-123130	123131	161	199	1	Composite Bow Split
-123132	123132	200	200	1	Premium Bow Split
 123133	123134	15	32	1	Ill-Treated Heavy Gamma-Beamer
-123135	123136	33	50	1	Cast-Off Heavy Gamma-Beamer
-123137	123138	51	68	1	Over-Tuned Heavy Gamma-Beamer
-123139	123140	69	86	1	Second-Hand Heavy Gamma-Beamer
-123141	123142	87	104	1	Heavy Gamma-Beamer
-123143	123144	105	122	1	Quality Heavy Gamma-Beamer
-123145	123146	123	140	1	Balanced Heavy Gamma-Beamer
-123147	123148	141	158	1	Fine-Tuned Heavy Gamma-Beamer
-123149	123150	159	199	1	Deluxe Heavy Gamma-Beamer
-123151	123151	200	200	1	Premium Heavy Gamma-Beamer
 123152	123153	35	50	2	Irreparable Light Beamer Pistol
-123154	123155	51	66	2	Cast-Off Light Beamer Pistol
-123156	123157	67	82	2	Over-Tuned Light Beamer Pistol
-123158	123159	83	98	2	Second-Hand Light Beamer Pistol
-123160	123161	99	114	2	Worn Light Beamer Pistol
-123162	123163	115	130	2	Quality Light Beamer Pistol
-123164	123165	131	146	2	Balanced Light Beamer Pistol
-123166	123167	147	162	2	Senior Light Beamer Pistol
-123168	123169	163	199	2	First-Rate Light Beamer Pistol
-123170	123170	200	200	2	Premium Light Beamer Pistol
-123171	123172	1	20	2	Irreparable Electron-Charged Pistol
 123173	123174	21	40	2	Cast-Off Electron-Charged Pistol
-123175	123176	41	60	2	Over-Tuned Electron-Charged Pistol
-123177	123178	61	80	2	Second-Hand Electron-Charged Pistol
-123179	123180	81	100	2	Worn Electron-Charged Pistol
-123181	123182	101	120	2	Quality Electron-Charged Pistol
-123183	123184	121	140	2	Balanced Electron-Charged Pistol
-123185	123186	141	160	2	Senior Electron-Charged Pistol
-123187	123188	161	199	2	First-Rate Electron-Charged Pistol
-123189	123189	200	200	2	Premium Electron-Charged Pistol
-123190	123191	1	20	1	Ill-Treated Suppressor
 123192	123193	21	40	1	Cast-Off Suppressor
-123194	123195	41	60	1	Over-Tuned Suppressor
-123196	123197	61	80	1	Second-Hand Suppressor
-123198	123199	81	100	1	Suppressor
-123200	123201	101	120	1	Quality Suppressor
-123202	123203	121	140	1	Balanced Suppressor
-123204	123205	141	160	1	Fine-Tuned Suppressor
-123206	123207	161	199	1	Deluxe Suppressor
-123208	123208	200	200	1	Premium Suppressor
-123267	123268	10	28	2	Ill-Treated Nova Flow - Mk IV
 123269	123270	29	47	2	Cast-Off Nova Flow - Mk IV
-123271	123272	48	66	2	Over-Tuned Nova Flow - Mk IV
-123273	123274	67	85	2	Second-Hand Nova Flow - Mk IV
-123275	123276	86	104	2	Nova Flow - Mk IV
-123277	123278	105	123	2	Quality Nova Flow - Mk IV
-123279	123280	124	142	2	Balanced Nova Flow - Mk IV
-123281	123282	143	161	2	Fine-Tuned Nova Flow - Mk IV
-123283	123284	162	199	2	Deluxe Nova Flow - Mk IV
-123285	123285	200	200	2	Premium Nova Flow - Mk IV
 123286	123287	35	50	1	Ill-Treated Slugger
-123288	123289	51	66	1	Cast-Off Slugger
-123290	123291	67	82	1	Over-Tuned Slugger
-123292	123293	83	98	1	Second-Hand Slugger
-123294	123295	99	114	1	Slugger
-123296	123297	115	130	1	Quality Slugger
-123298	123299	131	146	1	Balanced Slugger
-123300	123301	147	162	1	Fine-Tuned Slugger
-123302	123303	163	199	1	Deluxe Slugger
-123304	123304	200	200	1	Premium Slugger
-123305	123306	1	20	2	Ill-Treated Enriched Uranium Sprayer
 123307	123308	21	40	2	Cast-Off Enriched Uranium Sprayer
-123309	123310	41	60	2	Over-Tuned Enriched Uranium Sprayer
-123311	123312	61	80	2	Second-Hand Enriched Uranium Sprayer
-123313	123314	81	100	2	Enriched Uranium Sprayer
-123315	123316	101	120	2	Quality Enriched Uranium Sprayer
-123317	123318	121	140	2	Balanced Enriched Uranium Sprayer
-123319	123320	141	160	2	Fine-Tuned Enriched Uranium Sprayer
-123321	123322	161	199	2	Deluxe Enriched Uranium Sprayer
-123323	123323	200	200	2	Premium Enriched Uranium Sprayer
-123324	123325	10	13	2	Dull Banjo
-123326	123327	14	17	2	Edge-Less Banjo
-123328	123329	18	21	2	Loose Banjo
-123330	123331	22	25	2	Blunt Banjo
-123332	123333	26	29	2	Chipped Banjo
-123334	123335	30	33	2	Quality Banjo
-123336	123337	34	37	2	Sharp Banjo
+123334	123335	30	33	1	Quality Banjo
 123338	123339	38	41	2	Senior Banjo
-123340	123341	42	49	2	Professional Banjo
-123342	123342	50	50	2	Premium Banjo
-123343	123344	1	20	1	Unbalanced Hand Axe
 123345	123346	21	40	1	Cast-Off Hand Axe
-123347	123348	41	60	1	Loose Hand Axe
-123349	123350	61	80	1	Blunt Hand Axe
-123351	123352	81	100	1	Chipped Hand Axe
-123353	123354	101	120	1	Quality Hand Axe
-123355	123356	121	140	1	Layered Hand Axe
-123357	123358	141	160	1	Senior Hand Axe
-123359	123360	161	199	1	Composite Hand Axe
-123361	123361	200	200	1	Premium Hand Axe
-123362	123363	1	20	2	Unbalanced Lead Pipe
 123364	123365	21	40	2	Cast-Off Lead Pipe
-123366	123367	41	60	2	Loose Lead Pipe
-123368	123369	61	80	2	Blunt Lead Pipe
-123370	123371	81	100	2	Chipped Lead Pipe
-123372	123373	101	120	2	Quality Lead Pipe
-123374	123375	121	140	2	Layered Lead Pipe
-123376	123377	141	160	2	Senior Lead Pipe
-123378	123379	161	199	2	Composite Lead Pipe
-123380	123380	200	200	2	Premium Lead Pipe
-123381	123382	1	20	2	Unbalanced Meat-Cleaver
 123383	123384	21	40	2	Cast-Off Meat-Cleaver
-123385	123386	41	60	2	Loose Meat-Cleaver
-123387	123388	61	80	2	Blunt Meat-Cleaver
-123389	123390	81	100	2	Chipped Meat-Cleaver
-123391	123392	101	120	2	Quality Meat-Cleaver
-123393	123395	121	141	2	Layered Meat-Cleaver
-123396	123397	160	161	2	Senior Meat-Cleaver
-123398	123399	199	200	2	Composite Meat-Cleaver
-123400	123401	1	23	2	Gluegun
 123402	123403	24	46	2	Gluegun
-123404	123405	47	69	2	Gluegun
-123406	123407	70	92	2	Gluegun
-123408	123409	93	115	2	Gluegun
-123410	123411	116	138	2	Gluegun
-123412	123413	139	161	2	Gluegun
-123414	123415	162	184	2	Gluegun
-123416	123417	185	199	2	Gluegun
-123418	123418	200	200	2	Gluegun
-123419	123420	1	20	2	Ill-Treated Netgun
 123421	123422	21	40	2	Cast-Off Netgun
-123423	123424	41	60	2	Over-Tuned Netgun
-123425	123426	61	80	2	Second-Hand Netgun
-123427	123428	81	100	2	Netgun
-123429	123430	101	120	2	Quality Netgun
-123431	123432	121	140	2	Balanced Netgun
-123433	123434	141	160	2	Fine-Tuned Netgun
-123435	123436	161	199	2	Deluxe Netgun
-123437	123437	200	200	2	Premium Netgun
-123438	123439	1	20	3	Irreparable Ultra-Light Missile Pistol Raid 9-X
 123440	123441	21	40	3	Cast-Off Ultra-Light Missile Pistol Raid 9-X
-123442	123443	41	60	3	Over-Tuned Ultra-Light Missile Pistol Raid 9-X
-123444	123445	61	80	3	Second-Hand Ultra-Light Missile Pistol Raid 9-X
-123446	123447	81	100	3	Worn Ultra-Light Missile Pistol Raid 9-X
-123448	123449	101	120	3	Quality Ultra-Light Missile Pistol Raid 9-X
-123450	123451	121	140	3	Balanced Ultra-Light Missile Pistol Raid 9-X
-123452	123453	141	160	3	Senior Ultra-Light Missile Pistol Raid 9-X
-123454	123455	161	199	3	First-Rate Ultra-Light Missile Pistol Raid 9-X
-123456	123456	200	200	3	Premium Ultra-Light Missile Pistol Raid 9-X
-123457	123458	1	20	4	Irreparable OT Boomer+.90AE
 123459	123460	21	40	4	Cast-Off OT Boomer+.90AE
-123461	123462	41	60	4	Over-Tuned OT Boomer+.90AE
-123463	123464	61	80	4	Second-Hand OT Boomer+.90AE
-123465	123466	81	100	4	Worn OT Boomer+.90AE
-123467	123468	101	120	4	Quality OT Boomer+.90AE
-123469	123470	121	140	4	Balanced OT Boomer+.90AE
-123471	123472	141	160	4	Senior OT Boomer+.90AE
-123473	123474	161	199	4	First-Rate OT Boomer+.90AE
-123475	123475	200	200	4	Premium OT Boomer+.90AE
-123476	123477	1	20	3	Irreparable MTI USP 21
 123478	123479	21	40	3	Cast-Off MTI USP 21
-123480	123481	41	60	3	Over-Tuned MTI USP 21
-123482	123483	61	80	3	Second-Hand MTI USP 21
-123484	123485	81	100	3	Worn MTI USP 21
-123486	123487	101	120	3	Quality MTI USP 21
-123488	123489	121	140	3	Balanced MTI USP 21
-123490	123491	141	160	3	Senior MTI USP 21
-123492	123493	161	199	3	First-Rate MTI USP 21
-123494	123494	200	200	3	Premium MTI USP 21
-123495	123496	1	20	5	Irreparable IMI Desert Reet 1000
 123497	123498	21	40	5	Cast-Off IMI Desert Reet 1000
-123499	123500	41	60	5	Over-Tuned IMI Desert Reet 1000
-123501	123502	61	80	5	Second-Hand IMI Desert Reet 1000
-123503	123504	81	100	5	Worn IMI Desert Reet 1000
-123505	123506	101	120	5	Quality IMI Desert Reet 1000
-123507	123508	121	140	5	Balanced IMI Desert Reet 1000
-123509	123510	141	160	5	Senior IMI Desert Reet 1000
-123511	123512	161	199	5	First-Rate IMI Desert Reet 1000
-123513	123513	200	200	5	Premium IMI Desert Reet 1000
-123514	123515	1	20	6	Irreparable Khemo-Tech Model 200
 123516	123517	21	40	6	Cast-Off Khemo-Tech Model 200
-123518	123519	41	60	6	Over-Tuned Khemo-Tech Model 200
-123520	123521	61	80	6	Second-Hand Khemo-Tech Model 200
-123522	123523	81	100	6	Worn Khemo-Tech Model 200
-123524	123525	101	120	6	Quality Khemo-Tech Model 200
-123526	123527	121	140	6	Balanced Khemo-Tech Model 200
-123528	123529	141	160	6	Senior Khemo-Tech Model 200
-123530	123531	161	199	6	First-Rate Khemo-Tech Model 200
-123532	123532	200	200	6	Premium Khemo-Tech Model 200
-123533	123534	15	32	1	Irreparable Khemo-Tech Model 07 (Pocket 20)
 123535	123536	33	50	1	Cast-Off Khemo-Tech Model 07 (Pocket 20)
-123537	123538	51	68	1	Over-Tuned Khemo-Tech Model 07 (Pocket 20)
-123539	123540	69	86	1	Second-Hand Khemo-Tech Model 07 (Pocket 20)
-123541	123542	87	104	1	Worn Khemo-Tech Model 07 (Pocket 20)
-123543	123544	105	122	1	Quality Khemo-Tech Model 07 (Pocket 20)
-123545	123546	123	140	1	Balanced Khemo-Tech Model 07 (Pocket 20)
-123547	123548	141	158	1	Senior Khemo-Tech Model 07 (Pocket 20)
-123549	123550	159	199	1	First-Rate Khemo-Tech Model 07 (Pocket 20)
-123551	123551	200	200	1	Premium Khemo-Tech Model 07 (Pocket 20)
 123554	123555	33	50	1	Cast-Off Knights Inc. Special-Purpose Pistol 2902
-123564	123565	123	140	1	Balanced Knights Inc. Special-Purpose Pistol 2902
 123571	123572	15	32	1	Ill-Treated OT 0220 22mm Combat Magnum
-123573	123574	33	50	1	Cast-Off OT 0220 22mm Combat Magnum
-123575	123576	51	68	1	Over-Tuned OT 0220 22mm Combat Magnum
-123577	123578	69	86	1	Second-Hand OT 0220 22mm Combat Magnum
-123579	123580	87	104	1	OT 0220 22mm Combat Magnum
-123581	123582	105	122	1	Quality OT 0220 22mm Combat Magnum
-123583	123584	123	140	1	Balanced OT 0220 22mm Combat Magnum
-123585	123586	141	158	1	Fine-Tuned OT 0220 22mm Combat Magnum
-123587	123588	159	199	1	Deluxe OT 0220 22mm Combat Magnum
-123589	123589	200	200	1	Premium OT 0220 22mm Combat Magnum
 123590	123591	15	32	1	Ill-Treated Sentinel 20mm Snub Pistol
 123592	123593	33	50	1	Cast-Off Sentinel 20mm Snub Pistol
-123594	123595	51	68	1	Over-Tuned Sentinel 20mm Snub Pistol
-123596	123597	69	86	1	Second-Hand Sentinel 20mm Snub Pistol
-123598	123599	87	104	1	Sentinel 20mm Snub Pistol
-123600	123601	105	122	1	Quality Sentinel 20mm Snub Pistol
-123602	123603	123	140	1	Balanced Sentinel 20mm Snub Pistol
-123604	123605	141	158	1	Fine-Tuned Sentinel 20mm Snub Pistol
-123606	123607	159	199	1	Deluxe Sentinel 20mm Snub Pistol
-123608	123608	200	200	1	Premium Sentinel 20mm Snub Pistol
-123609	123610	1	20	4	Irreparable PNG M1007A1 Tactical Revolver
 123611	123612	21	40	4	Cast-Off PNG M1007A1 Tactical Revolver
-123613	123614	41	60	4	Over-Tuned PNG M1007A1 Tactical Revolver
-123615	123616	61	80	4	Second-Hand PNG M1007A1 Tactical Revolver
-123617	123618	81	100	4	Worn PNG M1007A1 Tactical Revolver
-123619	123620	101	120	4	Quality PNG M1007A1 Tactical Revolver
-123621	123622	121	140	4	Balanced PNG M1007A1 Tactical Revolver
-123623	123624	141	160	4	Senior PNG M1007A1 Tactical Revolver
-123625	123626	161	199	4	First-Rate PNG M1007A1 Tactical Revolver
-123627	123627	200	200	4	Premium PNG M1007A1 Tactical Revolver
-123628	123629	1	20	3	Irreparable BBI Sigma III
+123613	123614	41	60	1	Over-Tuned PNG M1007A1 Tactical Revolver
 123630	123631	21	40	3	Cast-Off BBI Sigma III
-123632	123633	41	60	3	Over-Tuned BBI Sigma III
-123634	123635	61	80	3	Second-Hand BBI Sigma III
-123636	123637	81	100	3	Worn BBI Sigma III
-123638	123639	101	120	3	Quality BBI Sigma III
-123640	123641	121	140	3	Balanced BBI Sigma III
-123642	123643	141	160	3	Senior BBI Sigma III
-123644	123645	161	199	3	First-Rate BBI Sigma III
-123646	123646	200	200	3	Premium BBI Sigma III
-123647	123648	1	20	6	Irreparable Sentinels ETE Strike Gun
 123649	123650	21	40	6	Cast-Off Sentinels ETE Strike Gun
-123651	123652	41	60	6	Over-Tuned Sentinels ETE Strike Gun
-123653	123654	61	80	6	Second-Hand Sentinels ETE Strike Gun
-123655	123656	81	100	6	Worn Sentinels ETE Strike Gun
-123657	123658	101	120	6	Quality Sentinels ETE Strike Gun
-123659	123660	121	140	6	Balanced Sentinels ETE Strike Gun
-123661	123662	141	160	6	Senior Sentinels ETE Strike Gun
-123663	123664	161	199	6	First-Rate Sentinels ETE Strike Gun
-123665	123665	200	200	6	Premium Sentinels ETE Strike Gun
-123666	123667	1	20	7	Irreparable River MV
 123668	123669	21	40	7	Cast-Off River MV
-123670	123671	41	60	7	Over-Tuned River MV
-123672	123673	61	80	7	Second-Hand River MV
-123674	123675	81	100	7	Worn River MV
-123676	123677	101	120	7	Quality River MV
-123678	123679	121	140	7	Balanced River MV
-123680	123681	141	160	7	Senior River MV
-123682	123683	161	199	7	First-Rate River MV
-123684	123684	200	200	7	Premium River MV
-123685	123686	1	20	5	Irreparable Seburo Bobsons
 123687	123688	21	40	5	Cast-Off Seburo Bobsons
-123689	123690	41	60	5	Over-Tuned Seburo Bobsons
-123691	123692	61	80	5	Second-Hand Seburo Bobsons
-123693	123694	81	100	5	Worn Seburo Bobsons
-123695	123696	101	120	5	Quality Seburo Bobsons
-123697	123698	121	140	5	Balanced Seburo Bobsons
-123699	123700	141	160	5	Senior Seburo Bobsons
-123701	123702	161	199	5	First-Rate Seburo Bobsons
-123703	123703	200	200	5	Premium Seburo Bobsons
+123689	123690	41	60	1	Over-Tuned Seburo Bobsons
 123706	123707	30	49	6	Faded OT Biomag
 123727	123728	24	35	1	MTI M-1 Bipower A
 123729	123730	36	47	1	MTI M-1 Bipower C2
-123742	123743	1	11	2	Rusty OT M-10 Flechette Pistol
 123744	123745	12	21	1	Shortened OT M-10 Flechette Pistol
 123746	123747	22	37	2	OT M-10 Flechette Pistol
 123748	123749	38	119	3	OT M-10.3 Flechette Pistol
-123761	123762	1	11	1	Rusty Polizziotto M202F
 123767	123768	34	89	1	Polizziotto M202F
 123776	123777	21	50	2	MTI 95 Match Pistol 
 123793	123794	30	39	1	MTI VP300.f Proto Caseless
 123795	123796	40	49	1	MTI VP300.m Proto Caseless
 123810	123811	15	89	3	MTI SW500 
 123839	123840	10	93	4	Zastaba Cz-200 Assault Pistol 
-123844	123845	1	19	5	Rusty Freedom Arms Super 90
 123846	123847	20	64	5	Freedom Arms Super 90 
-123848	123849	65	84	5	Freedom Arms Super Duper 90
-123850	123851	85	99	5	Freedom Arms Super Duper 90A
-123852	123853	100	159	5	FA Super 90 Pannikin
-123854	123854	160	160	5	Freedom Arms Super 90 Queen
 123855	123856	1	39	1	Second-Hand Old English Trading Co.
 123870	123871	30	54	3	Atlas Bern C.V.
 123879	123880	1	49	5	Worn BigBurger Inc.
 123888	123889	21	99	2	HSR Arms
 123893	123894	1	23	1	Rusty OT Backup
 123895	123896	24	41	2	Shortened OT Backup
-123897	123898	42	83	1	OT Backup
-123904	123905	1	32	2	Rusty OT 0120 Machine Pistol
 123906	123907	33	98	2	OT 0120 Machine Pistol
-123909	123910	1	20	1	Rusty MTI SOCOM Mk IV
 123911	123912	21	40	1	MTI SOCOM Mk IV
 123913	123914	41	60	3	MTI SOCOM Mk V
 123928	123929	1	49	4	Rusty FN 7-7 Pistol
-123930	123931	50	174	4	FN 7-7 Pistol
 123933	123934	1	21	1	Stained MTI USP 1200
 123937	123938	32	63	3	MTI USP 1200 T
 123948	123949	33	43	5	Galahad Inc T70 Myre
-123968	123970	1	29	3	Rusty OT Boomer M30
+123968	123970	1	29	1	Rusty OT Boomer M30
 123971	123972	30	119	3	OT Boomer M30
 123976	123977	5	49	5	Gripo-Com AKR 1K20
-123984	123985	1	27	2	Rusty MTI-OT PF55 Flechette System
+123984	123985	1	27	1	Rusty MTI-OT PF55 Flechette System
 123986	123987	28	92	2	MTI-OT PF55 Flechette System
-123991	123992	1	9	3	Rusty Old English Trading Co. Type 77a
 123993	123994	10	44	3	Old English Trading Co. Type 77a
 124004	124005	1	54	2	Rusty M150 Booster Edition
-124006	124007	55	56	2	M150 Booster Edition
-124008	124009	57	58	2	M150 Booster (Unwanted Surprise)
-124010	124011	59	60	2	M150 Booster (How Does It Feel)
-124012	124013	61	62	2	M150 Booster  (You Cannot Watch Me)
-124014	124015	199	200	2	M150 N.A. Booster Edition
-124016	124017	1	7	3	Rusty Sig SG 992 SWAT Edition 2
 124018	124019	8	91	3	Sig SG 992 SWAT Edition 2
 124027	124028	24	53	4	Galahad Inc. 055 Police Edition
 124044	124045	21	50	2	F.D.A. Insurgent Moth
-124073	124074	1	25	2	Rusty BBI PS500
 124075	124076	26	43	2	BBI PS500
 124092	124093	1	37	1	Rusted AcuTek Cruncher
 124101	124102	1	43	1	O.E.T. Co. C70 Brigand
 124110	124111	22	37	2	Kalo-BBI Model 56
 124112	124113	38	49	1	Kalo-BBI Model 57
-124121	124122	1	20	3	Rusty ICC Arms SB21 Assault Shotgun
 124123	124124	21	40	3	ICC Arms SB21 Assault Shotgun
 124138	124139	30	79	2	ICC Arms 2Q2C Gun Bag
 124155	124156	38	40	4	OT-Windchaser M06 Emerald
 124164	124165	14	40	2	MTI SL70 Rifle 
-124166	124167	41	60	2	MTI SL70 Rifle 
-124172	124173	101	120	2	MTI SL70 Rifle 
-124176	124177	141	160	2	MTI SL70 Rifle 
-124178	124179	161	164	2	MTI SL70 Rifle 
-124183	124184	1	11	2	Worn OT-Windchaser RM70
 124185	124186	12	41	2	OT-Windchaser RM70
 124219	124220	8	43	2	Galahad Inc. Scout
 124232	124233	16	34	1	Springfield Arms Home Defender
-124241	124242	1	29	4	Rusty OT M50 Shotgun
 124243	124244	30	49	4	OT M50 Shotgun
 124258	124259	5	69	3	Vektor ND Shotgun
 124265	124266	30	88	4	OT MPS-00 Police Shotgun
-124276	124277	1	21	2	Rusty Krutt Assault 219
 124278	124279	22	83	2	Krutt Assault 219
-124285	124286	1	27	4	Rusty OT-Windchaser SM30 Shotgun
 124287	124288	28	47	4	OT-Windchaser SM30 Shotgun
 124306	124307	38	79	2	O.E.T. Co. Chic Urban Sniper
-124313	124314	1	32	3	Rusty Ithaca Ki-8
+124313	124314	1	32	1	Rusty Ithaca Ki-8
 124315	124316	33	50	3	Ithaca Ki-8
 124332	124333	32	41	3	Sako J-21 P-103 Response Rifle
-124341	124342	1	39	1	Tsakachumi PTO-HV Counter-Sniper Rifle
 124343	124344	40	79	1	Tsakachumi PTO-HV.2 Counter-Sniper Rifle
-124345	124346	80	174	1	Tsakachumi PTO-HV3a Counter-Sniper Rifle
-124347	124347	175	175	1	Tsakachumi PTO-HV6 Counter-Sniper Rifle
 124350	124351	25	49	1	OT M500 SWAT Rifle
 124359	124360	24	85	2	MTI G-90A3
 124364	124365	1	39	1	Rusty OT Anti-Cyborg Rifle
-124366	124367	40	124	1	OT Anti-Cyborg Rifle
 124369	124370	1	99	4	Barret M-00 Anti-Material Rifle
 124374	124375	22	54	2	BBI AS-90
 124383	124384	1	157	1	HSR Arms F-59
-124386	124387	1	29	7	Rusty MTI G02K
 124388	124389	30	69	7	MTI G02K
 124391	124392	1	32	1	OT Rancho Colonial Carbine
 124393	124394	33	59	2	OT Rancho CC Prototype
 124400	124401	1	39	1	Vektor V.21 Flechette Rifle
 124402	124403	40	79	1	Vektor V.21.16 Flechette Rifle
 124411	124412	20	64	1	MTI G-70 Zaman
-124420	124421	1	11	4	Shaky MTI B-94
-124422	124423	12	21	4	MTI B-94
 124424	124425	22	41	4	MTI B-94
-124426	124427	42	61	4	MTI B-94
-124428	124429	62	151	4	MTI B-94
-124430	124430	152	152	4	MTI B-94
 124433	124434	30	49	1	BBI Minami-90
 124453	124454	1	23	1	Rusty EN-RAL
-124455	124456	24	87	1	EN-RAL
 124467	124468	21	40	1	Gripo-Com AKMR 1K20
 124484	124485	1	99	1	Ingram Morning Star
 124487	124488	1	39	2	Manex SD 4004
 124489	124490	40	79	1	Manex SD 4004 (Mist reception sorrow)
 124494	124495	1	49	2	Old Manex STR 77
 124507	124508	30	187	1	OT Eskorpio 21 Hru
-124510	124511	1	20	3	Rusty Sentinels Personal Edition
 124512	124513	21	40	3	Sentinels Personal Edition
 124529	124530	1	35	2	Prototype Sito-Tech Model 00
 124531	124532	36	139	2	Sito-Tech Model 00
 124536	124537	32	59	2	YES Assault 1007 Model 5
 124545	124546	1	99	3	YES Support 1010
 124557	124558	1	179	3	Kang Tao Spitting Cobra
-124559	124559	180	180	3	Premium Kang Tao Spitting Cobra
-124560	124561	1	20	3	Ill-Treated OT Saladin
 124562	124563	21	40	3	Cast-Off OT Saladin
-124564	124565	41	60	3	Over-Tuned OT Saladin
-124568	124569	81	100	3	Second-Hand OT Saladin
-124570	124571	101	120	3	Quality OT Saladin
-124572	124573	121	140	3	Balanced OT Saladin
-124574	124575	141	160	3	Fine-Tuned OT Saladin
-124576	124577	161	199	3	Deluxe OT Saladin
-124578	124578	200	200	3	Premium OT Saladin
-124579	124580	1	20	4	Irreparable OT Viper IX
 124581	124582	21	40	4	Cast-Off OT Viper IX
-124583	124584	41	60	4	Over-Tuned OT Viper IX
-124587	124588	81	100	4	Worn OT Viper IX
-124589	124590	101	120	4	Quality OT Viper IX
-124591	124592	121	140	4	Balanced OT Viper IX
-124593	124594	141	160	4	Senior OT Viper IX
-124597	124597	200	200	4	Premium OT Viper IX
-124598	124599	1	20	3	Ill-Treated MTI MP200
-124600	124601	21	30	3	Cast-Off MTI MP200
 124602	124603	31	40	3	Over-Tuned MTI MP200
-124606	124607	51	100	3	Second-Hand MTI MP200
-124608	124609	101	140	3	Quality MTI MP200
-124610	124611	141	160	3	Balanced MTI MP200
-124612	124613	161	180	3	Fine-Tuned MTI MP200
-124614	124615	181	199	3	Deluxe MTI MP200
-124616	124616	200	200	3	Premium MTI MP200
 124617	124618	1	39	1	Used MTI SO1210
 124619	124620	40	119	1	MTI SO1210
-124624	124625	1	20	3	Ill-Treated MTI UMP22
 124626	124627	21	40	3	Cast-Off MTI UMP22
-124628	124629	41	60	3	Over-Tuned MTI UMP22
-124632	124633	71	100	3	Second-Hand MTI UMP22
-124634	124635	101	130	3	Quality MTI UMP22
-124636	124637	131	140	3	Balanced MTI UMP22
-124638	124639	141	180	3	Fine-Tuned MTI UMP22
-124640	124641	181	199	3	Deluxe MTI UMP22
-124642	124642	200	200	3	Premium MTI UMP22
-124643	124644	1	20	3	Ill-Treated Kalinkanov ZU-113 Security Weapon
 124645	124646	21	40	3	Cast-Off Kalinkanov ZU-113 Security Weapon
-124647	124648	41	60	3	Over-Tuned Kalinkanov ZU-113 Security Weapon
-124651	124652	81	100	3	Second-Hand Kalinkanov ZU-113 Security Weapon
-124653	124654	101	120	3	Quality Kalinkanov ZU-113 Security Weapon
-124655	124656	121	140	3	Balanced Kalinkanov ZU-113 Security Weapon
-124657	124658	141	160	3	Fine-Tuned Kalinkanov ZU-113 Security Weapon
-124659	124660	161	199	3	Deluxe Kalinkanov ZU-113 Security Weapon
-124661	124661	200	200	3	Premium Kalinkanov ZU-113 Security Weapon
-124662	124663	1	20	2	Ill-Treated Malorian Arms M25 Goodgun
 124664	124665	21	40	2	Cast-Off Malorian Arms M25 Goodgun
-124666	124667	41	60	2	Over-Tuned Malorian Arms M25 Goodgun
-124670	124671	81	100	2	Second-Hand Malorian Arms M25 Goodgun
-124672	124673	101	120	2	Quality Malorian Arms M25 Goodgun
-124674	124675	121	140	2	Balanced Malorian Arms M25 Goodgun
-124676	124677	141	160	2	Fine-Tuned Malorian Arms M25 Goodgun
-124678	124679	161	199	2	Deluxe Malorian Arms M25 Goodgun
-124680	124680	200	200	2	Premium Malorian Arms M25 Goodgun
-124681	124682	1	20	1	Ill-Treated MTI MPK-22 Briefcase Gun
+124666	124667	41	60	1	Over-Tuned Malorian Arms M25 Goodgun
 124683	124684	21	40	1	Cast-Off MTI MPK-22 Briefcase Gun
-124685	124686	41	60	1	Over-Tuned MTI MPK-22 Briefcase Gun
-124689	124690	81	100	1	Second-Hand MTI MPK-22 Briefcase Gun
-124695	124696	141	160	1	Fine-Tuned MTI MPK-22 Briefcase Gun
-124700	124701	1	15	3	Ill-Treated Seburo C-19a
-124702	124703	16	19	3	Cast-Off Seburo C-19a
 124704	124705	20	47	3	Over-Tuned Seburo C-19a
-124706	124707	48	59	3	Second-Hand Seburo C-19a
-124708	124709	60	199	3	Quality Seburo C-19a
-124711	124712	1	20	2	Ill-Treated Nord Armwerk MAX
 124713	124714	21	40	2	Cast-Off Nord Armwerk MAX
-124715	124716	41	60	2	Over-Tuned Nord Armwerk MAX
-124719	124720	81	100	2	Second-Hand Nord Armwerk MAX
-124721	124722	101	120	2	Quality Nord Armwerk MAX
-124723	124724	121	140	2	Balanced Nord Armwerk MAX
-124725	124726	141	160	2	Fine-Tuned Nord Armwerk MAX
-124727	124728	161	199	2	Deluxe Nord Armwerk MAX
-124729	124729	200	200	2	Premium Nord Armwerk MAX
-124730	124731	1	20	2	Ill-Treated FN P00
 124732	124733	21	40	2	Cast-Off FN P00
-124734	124735	41	60	2	Over-Tuned FN P00
-124738	124739	81	100	2	Second-Hand FN P00
-124740	124741	101	120	2	Quality FN P00
-124742	124743	121	140	2	Balanced FN P00
-124744	124745	141	160	2	Fine-Tuned FN P00
-124746	124747	161	199	2	Deluxe FN P00
-124748	124748	200	200	2	Premium FN P00
-124749	124750	1	20	3	Ill-Treated BBI WMMA CAW
 124751	124752	21	40	3	Cast-Off BBI WMMA CAW
-124753	124754	41	60	3	Over-Tuned BBI WMMA CAW
-124757	124758	81	100	3	Second-Hand BBI WMMA CAW
-124759	124760	101	120	3	Quality BBI WMMA CAW
-124761	124762	121	140	3	Balanced BBI WMMA CAW
-124763	124764	141	160	3	Fine-Tuned BBI WMMA CAW
-124765	124766	161	199	3	Deluxe BBI WMMA CAW
-124767	124767	200	200	3	Premium BBI WMMA CAW
-124768	124769	1	20	2	Ill-Treated OT ARL-10 Micromissile Launcher
 124770	124771	21	40	2	Cast-Off OT ARL-10 Micromissile Launcher
-124772	124773	41	60	2	Over-Tuned OT ARL-10 Micromissile Launcher
-124776	124777	70	179	2	OT ARL-10 Micromissile Launcher
-124779	124780	1	20	1	Ill-Treated Tsunami Raiden MP-Drum
 124781	124782	21	40	1	Cast-Off Tsunami Raiden MP-Drum
-124783	124784	41	60	1	Over-Tuned Tsunami Raiden MP-Drum
-124787	124788	81	100	1	Second-Hand Tsunami Raiden MP-Drum
-124789	124790	101	120	1	Quality Tsunami Raiden MP-Drum
-124791	124792	121	140	1	Balanced Tsunami Raiden MP-Drum
-124793	124794	141	160	1	Fine-Tuned Tsunami Raiden MP-Drum
-124795	124796	161	199	1	Deluxe Tsunami Raiden MP-Drum
-124797	124797	200	200	1	Premium Tsunami Raiden MP-Drum
-124798	124799	1	20	1	Ill-Treated OT M-110 Renegade SAW
 124800	124801	21	40	1	Cast-Off OT M-110 Renegade SAW
-124802	124803	41	60	1	Over-Tuned OT M-110 Renegade SAW
-124806	124807	81	100	1	Second-Hand OT M-110 Renegade SAW
-124808	124809	101	120	1	Quality OT M-110 Renegade SAW
-124810	124811	121	140	1	Balanced OT M-110 Renegade SAW
-124812	124813	141	160	1	Fine-Tuned OT M-110 Renegade SAW
-124814	124815	161	199	1	Deluxe OT M-110 Renegade SAW
-124816	124816	200	200	1	Premium OT M-110 Renegade SAW
-124817	124818	1	20	1	Ill-Treated OT M-70 HardRain GPMG
 124819	124820	21	40	1	Cast-Off OT M-70 HardRain GPMG
 124821	124822	41	60	1	Over-Tuned OT M-70 HardRain GPMG
-124825	124826	81	100	1	Second-Hand OT M-70 HardRain GPMG
-124827	124828	101	120	1	Quality OT M-70 HardRain GPMG
-124829	124830	121	140	1	Balanced OT M-70 HardRain GPMG
-124831	124832	141	160	1	Fine-Tuned OT M-70 HardRain GPMG
-124833	124834	161	199	1	Deluxe OT M-70 HardRain GPMG
-124835	124835	200	200	1	Premium OT M-70 HardRain GPMG
 124838	124839	21	40	8	Cast-Off Vektor M-31 Automatic Grenade Launcher
-124840	124841	41	60	8	Over-Tuned Vektor M-31 Automatic Grenade Launcher
-124844	124845	81	100	8	Second-Hand Vektor M-31 Automatic Grenade Launcher
-124846	124847	101	120	8	Quality Vektor M-31 Automatic Grenade Launcher
-124848	124849	121	140	8	Balanced Vektor M-31 Automatic Grenade Launcher
-124850	124851	141	160	8	Fine-Tuned Vektor M-31 Automatic Grenade Launcher
-124852	124853	161	199	8	Deluxe Vektor M-31 Automatic Grenade Launcher
-124854	124854	200	200	8	Premium Vektor M-31 Automatic Grenade Launcher
-124855	124856	1	20	3	Ill-Treated Planet Gripon Arms Hard-Boomer
 124857	124858	21	40	3	Cast-Off Planet Gripon Arms Hard-Boomer
-124859	124860	41	60	3	Over-Tuned Planet Gripon Arms Hard-Boomer
-124863	124864	81	100	3	Second-Hand Planet Gripon Arms Hard-Boomer
-124865	124866	101	120	3	Quality Planet Gripon Arms Hard-Boomer
-124867	124868	121	140	3	Balanced Planet Gripon Arms Hard-Boomer
-124869	124870	141	160	3	Fine-Tuned Planet Gripon Arms Hard-Boomer
-124871	124872	161	199	3	Deluxe Planet Gripon Arms Hard-Boomer
-124873	124873	200	200	3	Premium Planet Gripon Arms Hard-Boomer
-124874	124875	1	20	2	Ill-Treated GE ME30 Mom
 124876	124877	21	40	2	Cast-Off GE ME30 Mom
-124878	124879	41	60	2	Over-Tuned GE ME30 Mom
-124882	124883	91	110	2	Second-Hand GE ME30 Mom
-124884	124885	111	130	2	Quality GE ME30 Mom
-124886	124887	131	170	2	Balanced GE ME30 Mom
-124888	124889	171	199	2	Fine-Tuned GE ME30 Mom
-124890	124890	200	200	2	Deluxe GE ME30 Mom
-124891	124892	1	20	2	Ill-Treated OT M-00 Crystal
 124893	124894	21	40	2	Cast-Off OT M-00 Crystal
-124895	124896	41	60	2	Over-Tuned OT M-00 Crystal
-124899	124900	81	100	2	Second-Hand OT M-00 Crystal
-124901	124902	101	120	2	Quality OT M-00 Crystal
-124903	124904	121	140	2	Balanced OT M-00 Crystal
-124905	124906	141	160	2	Fine-Tuned OT M-00 Crystal
-124907	124908	161	199	2	Deluxe OT M-00 Crystal
-124909	124909	200	200	2	Premium OT M-00 Crystal
-124910	124911	1	20	3	Ill-Treated Westinghouse IM-50 Plasma Burner
 124912	124913	21	40	3	Cast-Off Westinghouse IM-50 Plasma Burner
-124914	124915	41	60	3	Over-Tuned Westinghouse IM-50 Plasma Burner
-124918	124919	81	100	3	Second-Hand Westinghouse IM-50 Plasma Burner
-124920	124921	101	120	3	Quality Westinghouse IM-50 Plasma Burner
-124922	124923	121	140	3	Balanced Westinghouse IM-50 Plasma Burner
-124924	124925	141	160	3	Fine-Tuned Westinghouse IM-50 Plasma Burner
-124926	124927	161	199	3	Deluxe Westinghouse IM-50 Plasma Burner
-124928	124928	200	200	3	Premium Westinghouse IM-50 Plasma Burner
-124929	124930	1	20	1	Ill-Treated IEC Flashpoint Laser Rifle
 124931	124932	21	40	1	Cast-Off IEC Flashpoint Laser Rifle
-124933	124934	41	60	1	Over-Tuned IEC Flashpoint Laser Rifle
-124937	124938	81	100	1	Second-Hand IEC Flashpoint Laser Rifle
-124939	124940	101	120	1	Quality IEC Flashpoint Laser Rifle
-124941	124942	121	140	1	Balanced IEC Flashpoint Laser Rifle
-124943	124944	141	160	1	Fine-Tuned IEC Flashpoint Laser Rifle
-124945	124946	161	199	1	Deluxe IEC Flashpoint Laser Rifle
-124947	124947	200	200	1	Premium IEC Flashpoint Laser Rifle
-124948	124949	1	20	1	Ill-Treated Techtronica Neural Disruptor
 124950	124951	21	40	1	Cast-Off Techtronica Neural Disruptor
-124952	124953	41	60	1	Over-Tuned Techtronica Neural Disruptor
-124956	124957	81	100	1	Second-Hand Techtronica Neural Disruptor
-124958	124959	101	120	1	Quality Techtronica Neural Disruptor
-124960	124961	121	140	1	Balanced Techtronica Neural Disruptor
-124962	124963	141	160	1	Fine-Tuned Techtronica Neural Disruptor
-124964	124965	161	199	1	Deluxe Techtronica Neural Disruptor
-124966	124966	200	200	1	Premium Techtronica Neural Disruptor
-124967	124968	1	20	5	Ill-Treated GE XM-559 Man-Portable Laser
 124969	124970	21	40	5	Cast-Off GE XM-559 Man-Portable Laser
-124971	124972	41	60	5	Over-Tuned GE XM-559 Man-Portable Laser
-124975	124976	81	100	5	Second-Hand GE XM-559 Man-Portable Laser
-124977	124978	101	120	5	Quality GE XM-559 Man-Portable Laser
-124979	124980	121	140	5	Balanced GE XM-559 Man-Portable Laser
-124981	124982	141	160	5	Fine-Tuned GE XM-559 Man-Portable Laser
-124983	124984	161	199	5	Deluxe GE XM-559 Man-Portable Laser
-124985	124985	200	200	5	Premium GE XM-559 Man-Portable Laser
-124986	124987	1	20	2	Ill-Treated Reet-Tech Stryker X
 124988	124989	21	40	2	Cast-Off Reet-Tech Stryker X
-124990	124991	41	60	2	Over-Tuned Reet-Tech Stryker X
-124994	124995	81	100	2	Second-Hand Reet-Tech Stryker X
-124996	124997	101	120	2	Quality Reet-Tech Stryker X
-124998	124999	121	140	2	Balanced Reet-Tech Stryker X
-125000	125001	141	160	2	Fine-Tuned Reet-Tech Stryker X
-125002	125003	161	199	2	Deluxe Reet-Tech Stryker X
-125004	125004	200	200	2	Premium Reet-Tech Stryker X
-125005	125006	1	20	3	Ill-Treated Joint Clans Exocet II
 125007	125008	21	40	3	Cast-Off Joint Clans Exocet II
-125009	125010	41	60	3	Over-Tuned Joint Clans Exocet II
-125013	125014	81	100	3	Second-Hand Joint Clans Exocet II
-125015	125016	101	120	3	Quality Joint Clans Exocet II
-125017	125018	121	140	3	Balanced Joint Clans Exocet II
-125019	125020	141	160	3	Fine-Tuned Joint Clans Exocet II
-125021	125022	161	199	3	Deluxe Joint Clans Exocet II
-125023	125023	200	200	3	Premium Joint Clans Exocet II
-125024	125025	1	20	14	Ill-Treated Joint Clans Patriot
 125026	125027	21	40	14	Cast-Off Joint Clans Patriot
-125028	125029	41	60	14	Over-Tuned Joint Clans Patriot
-125032	125033	81	100	14	Second-Hand Joint Clans Patriot
-125043	125044	1	20	4	Ill-Treated Reet-Tech Junior Urban Crossbow
 125045	125046	21	40	4	Cast-Off Reet-Tech Junior Urban Crossbow
-125047	125048	41	60	4	Over-Tuned Reet-Tech Junior Urban Crossbow
-125051	125052	81	100	4	Second-Hand Reet-Tech Junior Urban Crossbow
-125062	125063	1	20	2	Ill-Treated Reet-Tech Venom Compound Bow
+125047	125048	41	60	1	Over-Tuned Reet-Tech Junior Urban Crossbow
 125064	125065	21	40	2	Cast-Off Reet-Tech Venom Compound Bow
-125066	125067	41	60	2	Over-Tuned Reet-Tech Venom Compound Bow
-125070	125071	81	100	2	Second-Hand Reet-Tech Venom Compound Bow
-125072	125073	101	120	2	Quality Reet-Tech Venom Compound Bow
-125074	125075	121	140	2	Balanced Reet-Tech Venom Compound Bow
-125076	125077	141	160	2	Fine-Tuned Reet-Tech Venom Compound Bow
-125078	125079	161	199	2	Deluxe Reet-Tech Venom Compound Bow
-125080	125080	200	200	2	Premium Reet-Tech Venom Compound Bow
-125081	125082	1	20	5	Ill-Treated Oneida Razor Half-Bow
 125083	125084	21	40	5	Cast-Off Oneida Razor Half-Bow
-125085	125086	41	60	5	Over-Tuned Oneida Razor Half-Bow
-125089	125090	81	100	5	Second-Hand Oneida Razor Half-Bow
-125091	125092	101	120	5	Quality Oneida Razor Half-Bow
+125085	125086	41	60	1	Over-Tuned Oneida Razor Half-Bow
 125298	125299	23	47	2	Bent Peasant Squibber
 125313	125314	21	40	3	Bent Merchant Squibber
 125332	125333	30	53	1	Bent Large Rider Squibber
 125345	125346	21	40	2	Bent Protector Squibber
 125347	125348	41	60	1	Loose Protector Squibber
-125349	125350	61	80	1	Blunt Protector Squibber
-125351	125352	81	100	1	Chipped Protector Squibber
-125353	125354	101	120	1	Quality Protector Squibber
-125355	125356	121	140	1	Layered Protector Squibber
-125357	125358	141	160	1	Senior Protector Squibber
-125359	125360	161	199	1	Composite Protector Squibber
-125361	125361	200	200	1	Premium Protector Squibber
 125366	125367	41	60	1	Loose Merchant Executioner
-125368	125369	61	80	1	Blunt Merchant Executioner
-125370	125371	81	100	1	Chipped Merchant Executioner
-125372	125373	101	120	1	Quality Merchant Executioner
-125374	125375	121	140	1	Layered Merchant Executioner
-125376	125377	141	160	1	Senior Merchant Executioner
-125378	125379	161	199	1	Composite Merchant Executioner
-125380	125380	200	200	1	Premium Merchant Executioner
 125383	125384	21	40	1	Bent Rider Executioner
 125402	125403	21	40	2	Bent Protector Executioner
 125404	125405	41	60	1	Loose Protector Executioner
-125406	125407	61	80	1	Blunt Protector Executioner
-125408	125409	81	100	1	Chipped Protector Executioner
-125410	125411	101	120	1	Quality Protector Executioner
-125412	125413	121	140	1	Layered Protector Executioner
-125414	125415	141	160	1	Senior Protector Executioner
-125416	125417	161	199	1	Composite Protector Executioner
-125418	125418	200	200	1	Premium Protector Executioner
 125421	125422	21	40	1	Bent Torch
 125423	125424	41	60	1	Loose Torch
-125427	125428	81	100	1	Quality Torch
 125440	125441	21	90	1	Paper Hammer
-125442	125443	91	189	1	Quality Paper Hammer
 125445	125446	1	50	3	Tear-soaked Pillow with Important Stripes
-125447	125448	51	100	3	Pillow with Important Stripes
-125449	125450	101	150	3	Soft Pillow with Important Stripes
-125451	125452	151	193	3	Perfumed Pillow with Important Stripes
-125453	125453	194	194	3	Love-Filled Pillow with Important Stripes
 125456	125457	10	159	2	Concrete Cushion
-125458	125458	160	160	2	Excellent Concrete Cushion
 125459	125460	1	50	1	5th level Ninja Wakisashi
-125461	125462	51	100	1	4th level Ninja Wakisashi
-125463	125464	101	150	1	3rd level Ninja Wakisashi
-125465	125466	151	199	1	2nd level Ninja Wakisashi
-125467	125467	200	200	1	1st level Ninja Wakisashi
 125748	125748	37	37	3	Nano Crystal (Calling of Salvinous)
 128497	128498	1	35	2	Uncle Bazzit Custom 22mm
-128499	128500	36	95	2	Uncle Bazzit (New) Custom 22mm
-128501	128501	96	96	2	Uncle Bazzit Rusty 22mm
-128603	128604	1	39	2	Fragile D-nort Compact Assault Rifle
+128499	128500	36	95	1	Uncle Bazzit (New) Custom 22mm
+128603	128604	1	39	1	Fragile D-nort Compact Assault Rifle
 128605	128606	40	179	1	D-nort Compact Assault Rifle
-128608	128609	1	20	4	Ill-treated MTI G-36K
 128610	128611	21	40	4	Cast-off MTI G-36K
-128612	128613	41	60	4	Over-tuned MTI G-36K
-128616	128617	81	100	4	Second-hand MTI G-36K
-128618	128619	101	120	4	Quality MTI G-36K
-128620	128621	121	140	4	Balanced MTI G-36K
-128622	128623	141	160	4	Fine-tuned MTI G-36K
-128624	128625	161	199	4	Deluxe MTI G-36K
-128626	128626	200	200	4	Premium MTI G-36K
 128627	128628	1	50	3	Rusty Ares Arms AR-90 Jet Rifle
-128629	128630	51	100	3	Over-tuned Ares Arms AR-90 Jet Rifle
-128631	128632	101	150	3	Ares Arms AR-90 Jet Rifle
-128633	128634	151	199	3	Fine-tuned Ares Arms AR-90 Jet Rifle
-128636	128637	1	20	2	Ill-treated Seburo C-99a 
 128638	128639	21	40	2	Cast-off Seburo C-99a 
-128640	128641	41	60	2	Over-tuned Seburo C-99a 
-128644	128645	81	100	2	Second-hand Seburo C-99a 
-128646	128647	101	120	2	Quality Seburo C-99a 
-128648	128649	121	140	2	Balanced Seburo C-99a 
-128650	128651	141	160	2	Fine-tuned Seburo C-99a 
-128652	128653	161	199	2	Deluxe Seburo C-99a 
-128654	128654	200	200	2	Premium Seburo C-99a 
-128674	128675	1	20	2	Ill-treated HSR Arms Tech Assault V
 128676	128677	21	40	2	Cast-off HSR Arms Tech Assault V
-128678	128679	41	60	2	Over-tuned HSR Arms Tech Assault V
-128682	128683	81	100	2	Second-hand HSR Arms Tech Assault V
-128684	128685	101	120	2	Quality HSR Arms Tech Assault V
-128686	128687	121	140	2	Balanced HSR Arms Tech Assault V
-128688	128689	141	160	2	Fine-tuned HSR Arms Tech Assault V
-128690	128691	161	199	2	Deluxe HSR Arms Tech Assault V
-128692	128692	200	200	2	Premium HSR Arms Tech Assault V
-128710	128711	1	39	3	Rusty River Series 6
-128712	128713	40	184	3	River Series 6
-128714	128714	185	185	3	Exellent River Series 6
-128715	128716	1	20	1	Ill-treated Galahad Inc. 077 Personal Weapon
+128678	128679	41	60	1	Over-tuned HSR Arms Tech Assault V
+128710	128711	1	39	1	Rusty River Series 6
 128717	128718	21	40	1	Cast-off Galahad Inc. 077 Personal Weapon
-128719	128720	41	60	1	Over-tuned Galahad Inc. 077 Personal Weapon
-128723	128724	81	100	1	Second-hand Galahad Inc. 077 Personal Weapon
-128725	128726	101	120	1	Quality Galahad Inc. 077 Personal Weapon
-128727	128728	121	140	1	Balanced Galahad Inc. 077 Personal Weapon
-128729	128730	141	160	1	Fine-tuned Galahad Inc. 077 Personal Weapon
-128731	128732	161	199	1	Deluxe Galahad Inc. 077 Personal Weapon
-128733	128733	200	200	1	Premium Galahad Inc. 077 Personal Weapon
 128734	128735	1	55	4	1st edition Pistola Di Macchina Mini Automatico 2
 128741	128742	21	40	2	Cast-off Galahad Inc. Tactical Machine Pistol 102
-128751	128752	121	140	2	Balanced Galahad Inc. Tactical Machine Pistol 102
-128758	128759	1	20	1	Ill-treated Fabrique Des Armes Bizon 20-19
 128760	128761	21	40	1	Cast-off Fabrique Des Armes Bizon 20-19
-128762	128763	41	60	1	Over-tuned Fabrique Des Armes Bizon 20-19
-128766	128767	81	100	1	Second-hand Fabrique Des Armes Bizon 20-19
-128768	128769	101	120	1	Quality Fabrique Des Armes Bizon 20-19
-128770	128771	121	140	1	Balanced Fabrique Des Armes Bizon 20-19
-128772	128773	141	160	1	Fine-tuned Fabrique Des Armes Bizon 20-19
-128774	128775	161	199	1	Deluxe Fabrique Des Armes Bizon 20-19
-128776	128776	200	200	1	Premium Fabrique Des Armes Bizon 20-19
 128784	128785	1	119	4	MTI MP903A3D9
 128789	128790	12	79	1	Battered Old English Trading Co. SPP-502
-128792	128793	1	20	3	Ill-treated OT Cobra M-33
 128794	128795	21	40	3	Cast-off OT Cobra M-33
-128796	128797	41	60	3	Over-tuned OT Cobra M-33
-128800	128801	81	100	3	Second-hand OT Cobra M-33
-128802	128803	101	120	3	Quality OT Cobra M-33
-128804	128805	121	140	3	Balanced OT Cobra M-33
-128806	128807	141	160	3	Fine-tuned OT Cobra M-33
-128808	128809	161	199	3	Deluxe OT Cobra M-33
-128810	128810	200	200	3	Premium OT Cobra M-33
-128811	128812	1	20	1	Ill-treated Zastaba M0-2 Assault Weapon (Zero)
 128813	128814	21	40	1	Cast-off Zastaba M0-2 Assault Weapon (Zero)
-128815	128816	41	60	1	Over-tuned Zastaba M0-2 Assault Weapon (Zero)
-128819	128820	81	100	1	Second-hand Zastaba M0-2 Assault Weapon (Zero)
-128821	128822	101	120	1	Quality Zastaba M0-2 Assault Weapon (Zero)
-128823	128824	121	140	1	Balanced Zastaba M0-2 Assault Weapon (Zero)
-128825	128826	141	160	1	Fine-tuned Zastaba M0-2 Assault Weapon (Zero)
-128827	128828	161	199	1	Deluxe Zastaba M0-2 Assault Weapon (Zero)
-128829	128829	200	200	1	Premium Zastaba M0-2 Assault Weapon (Zero)
-128830	128831	1	10	1	Rusty Freedom Arms Defender
-128832	128833	11	20	1	Chipped Freedom Arms Defender
-128834	128835	21	30	1	Battered Freedom Arms Defender
 128836	128837	31	119	1	Second Hand Freedom Arms Defender
-128838	128838	120	120	1	Freedom Arms Defender
-128839	128840	1	20	3	Ill-treated OET Co. MP-21 Tactical Machine Pistol
 128841	128842	21	40	3	Cast-off OET Co. MP-21 Tactical Machine Pistol
-128843	128844	41	60	3	Over-tuned OET Co. MP-21 Tactical Machine Pistol
-128849	128850	101	120	3	Quality OET Co. MP-21 Tactical Machine Pistol
-128851	128852	121	140	3	Balanced OET Co. MP-21 Tactical Machine Pistol
-128853	128854	141	160	3	Fine-tuned OET Co. MP-21 Tactical Machine Pistol
-128855	128856	161	199	3	Deluxe OET Co. MP-21 Tactical Machine Pistol
-128857	128857	200	200	3	Premium OET Co. MP-21 Tactical Machine Pistol
-128858	128859	1	21	1	Ill-treated MTI MPK-22 
-128860	128861	22	32	1	Cast-off MTI MPK-22 
+128843	128844	41	60	1	Over-tuned OET Co. MP-21 Tactical Machine Pistol
 128862	128863	33	43	1	Over-tuned MTI MPK-22 
-128866	128867	66	87	1	Second-hand MTI MPK-22 
-128890	128891	1	20	3	Ill-treated Steiner LM-5 Assault Laser
 128892	128893	21	40	3	Cast-off Steiner LM-5 Assault Laser
-128894	128895	41	60	3	Over-tuned Steiner LM-5 Assault Laser
-128898	128899	81	100	3	Second-hand Steiner LM-5 Assault Laser
-128900	128901	101	120	3	Quality Steiner LM-5 Assault Laser
-128902	128903	121	140	3	Balanced Steiner LM-5 Assault Laser
-128904	128905	141	160	3	Fine-tuned Steiner LM-5 Assault Laser
-128906	128907	161	199	3	Deluxe Steiner LM-5 Assault Laser
-128908	128908	200	200	3	Premium Steiner LM-5 Assault Laser
 128909	128910	1	39	1	Outdated Fett j-8 Flammable
 128916	128917	1	179	3	Water balloon
 128921	128922	21	40	1	Bent Peasant Executioner
 128940	128941	21	40	1	Edge-less Peasant Warblade
 128942	128943	41	60	1	Loose Peasant Warblade
-128944	128945	61	80	1	Blunt Peasant Warblade
-128946	128947	81	100	1	Chipped Peasant Warblade
-128948	128949	101	120	1	Quality Peasant Warblade
-128950	128951	121	140	1	Sharp Peasant Warblade
-128952	128953	141	160	1	Senior Peasant Warblade
-128954	128955	161	199	1	Professional Peasant Warblade
-128956	128956	200	200	1	Premium Peasant Warblade
 128959	128960	21	40	3	Edge-less Merchant Warblade
-128961	128962	41	60	3	Loose Merchant Warblade
-128963	128964	61	80	3	Blunt Merchant Warblade
-128965	128966	81	100	3	Chipped Merchant Warblade
-128967	128968	101	120	3	Quality Merchant Warblade
-128969	128970	121	140	3	Sharp Merchant Warblade
-128971	128972	141	160	3	Senior Merchant Warblade
-128973	128974	161	199	3	Professional Merchant Warblade
-128975	128975	200	200	3	Premium Merchant Warblade
 128978	128979	21	40	4	Edge-less Rider Warblade
-128980	128981	41	60	4	Loose Rider Warblade
-128982	128983	61	80	4	Blunt Rider Warblade
-128984	128985	81	100	4	Chipped Rider Warblade
-128986	128987	101	120	4	Quality Rider Warblade
-128988	128989	121	140	4	Sharp Rider Warblade
-128990	128991	141	160	4	Senior Rider Warblade
-128992	128993	161	199	4	Professional Rider Warblade
-128994	128994	200	200	4	Premium Rider Warblade
 128997	128998	21	40	2	Edge-less Protector Warblade
-128999	129000	41	60	2	Loose Protector Warblade
-129001	129002	61	80	2	Blunt Protector Warblade
-129003	129004	81	100	2	Chipped Protector Warblade
-129005	129006	101	120	2	Quality Protector Warblade
-129007	129008	121	140	2	Sharp Protector Warblade
-129009	129010	141	160	2	Senior Protector Warblade
-129011	129012	161	199	2	Professional Protector Warblade
-129013	129013	200	200	2	Premium Protector Warblade
 129014	129015	1	169	4	Omni-Med Butter Cake
 129017	129018	1	50	2	Fast Chocolate Surprise
 129028	129029	21	40	3	Unbalanced Sledgehammer
-129030	129031	41	60	3	Loose Sledgehammer
-129036	129037	101	120	3	Quality Sledgehammer
-129040	129041	141	160	3	Senior Sledgehammer
-129042	129043	161	199	3	Professional Sledgehammer
+129030	129031	41	60	1	Loose Sledgehammer
 129064	129065	1	98	3	3rd level Ninja Tanto
-129066	129067	99	199	3	2nd level Ninja Tanto
-129068	129068	200	200	3	1st level Ninja Tanto
 129071	129072	30	59	2	Breathing Space
 129640	129641	21	40	4	Junior Wen-Wen
 129642	129643	41	60	1	Wen-Wen Teen
@@ -2878,63 +1702,18 @@
 130005	130006	1	200	5	Run Speed Cluster - Bright (Left-Wrist)
 130007	130008	1	200	2	Run Speed Cluster - Shiny (Right-Wrist)
 130055	130056	31	99	2	Featherwood Staff
-130060	130061	1	10	3	Unbalanced Heavy Staff
 130064	130065	31	102	3	Heavy Staff
 130075	130076	28	87	4	Light Staff
 130084	130085	20	89	4	Magical Stave of Inferno
 130089	130090	21	40	3	Unbalanced Native Alloy Staff
-130091	130092	41	60	3	Loose Native Alloy Staff
-130095	130096	81	100	3	Chipped Native Alloy Staff
-130097	130098	101	120	3	Quality Native Alloy Staff
-130099	130100	121	140	3	Layered Native Alloy Staff
-130101	130102	141	160	3	Senior Native Alloy Staff
-130103	130104	161	199	3	Composite Native Alloy Staff
-130105	130105	200	200	3	Premium Native Alloy Staff
 130108	130109	21	40	1	Edge-less Notum Lever
-130110	130111	41	60	1	Loose Notum Lever
-130112	130113	61	80	1	Blunt Notum Lever
-130114	130115	81	100	1	Chipped Notum Lever
-130116	130117	101	120	1	Quality Notum Lever
-130118	130119	121	140	1	Sharp Notum Lever
-130120	130121	141	160	1	Senior Notum Lever
-130122	130123	161	199	1	Professional Notum Lever
-130124	130124	200	200	1	Premium Notum Lever
 130129	130130	41	60	1	Loose Denunciatory Spear
-130131	130132	61	80	1	Blunt Denunciatory Spear
-130133	130134	81	100	1	Chipped Denunciatory Spear
-130135	130136	101	120	1	Quality Denunciatory Spear
-130137	130138	121	140	1	Layered Denunciatory Spear
-130139	130140	141	160	1	Senior Denunciatory Spear
-130141	130142	161	199	1	Composite Denunciatory Spear
-130143	130143	200	200	1	Premium Denunciatory Spear
-130144	130145	1	20	1	Rusty Hayfork
 130146	130147	21	40	1	Unbalanced Hayfork
-130148	130149	41	60	1	Loose Hayfork
-130152	130153	81	100	1	Chipped Hayfork
-130154	130155	101	120	1	Quality Hayfork
-130156	130157	121	140	1	Sharp Hayfork
-130158	130159	141	160	1	Balanced Hayfork
-130160	130161	161	199	1	Professional Hayfork
-130162	130162	200	200	1	Premium Hayfork
-130163	130164	1	34	2	Loose MTI Sword
+130163	130164	1	34	1	Loose MTI Sword
 130165	130166	35	74	2	Rusty MTI Sword
-130167	130168	75	144	2	MTI Sword
 130172	130173	1	39	2	Bent OT Sword
-130181	130182	1	19	1	Leaky Hot Air Stick
 130183	130184	20	70	1	Whistling Hot Air Stick
-130185	130186	71	83	1	Sticky Hot Air Stick
-130187	130188	84	149	1	Hot Air Stick
-130189	130190	150	169	1	Silver Hot Air Stick
-130191	130192	170	195	1	Quality Hot Air Stick
-130193	130193	196	196	1	Perfumed Hot Air Stick
-130218	130219	22	31	1	Loose Light Spear
 130220	130221	32	41	1	Blunt Light Spear
-130222	130223	42	49	1	Chipped Light Spear
-130224	130225	50	120	1	Light Spear
-130226	130227	121	140	1	Quality Light Spear
-130228	130229	141	160	1	Layered Light Spear
-130230	130231	161	199	1	Composite Light Spear
-130232	130232	200	200	1	Premium Light Spear
 130241	130242	1	200	1	Right-Wrist Implant: Run Speed, Shiny
 130251	130252	1	200	1	Right-Wrist Implant: Run Speed, Shiny
 130277	130278	1	200	1	Right-Wrist Implant: Run Speed, Shiny
@@ -2960,81 +1739,19 @@
 142721	142721	47	47	3	Nano Crystal (Reckless Digitization)
 142808	142809	33	59	4	Faded SSC Rustling Wakisashi
 142819	142820	21	40	2	Yadol Co Survival Knife
-142855	142856	1	20	4	Cast-off Eye Wind Onehander
 142857	142858	21	40	4	Over-tuned Eye Wind Onehander
-142861	142862	51	90	4	Eye Wind Onehander
-142863	142864	91	110	4	Quality Eye Wind Onehander
-142865	142866	111	130	4	Balanced Eye Wind Onehander
-142867	142868	131	160	4	Senior Eye Wind Onehander
-143833	143845	1	20	2	Ill-Treated Sunburst Mk IV
 143846	143847	21	40	2	Cast-Off Sunburst Mk IV
 143848	143849	41	60	2	Over-Tuned Sunburst Mk IV
-143850	143851	61	80	2	Second-Hand Sunburst Mk IV
-143852	143853	81	100	2	Sunburst Mk IV
-143854	143855	101	120	2	Quality Sunburst Mk IV
-143856	143857	121	140	2	Balanced Sunburst Mk IV
-143858	143859	141	160	2	Fine-Tuned Sunburst Mk IV
-143860	143861	161	199	2	Deluxe Sunburst Mk IV
-143862	143862	200	200	2	Premium Sunburst Mk IV
 144067	144068	21	30	1	Loose Survival Axe
-144069	144070	31	40	1	Chipped Survival Axe
-144071	144072	41	100	1	Survival Axe
-144073	144074	101	130	1	Quality Survival Axe
-144075	144076	131	150	1	Layered Survival Axe
-144077	144078	151	174	1	Senior Survival Axe
-144079	144080	175	199	1	Composite Survival Axe
-144081	144081	200	200	1	Premium Survival Axe
-144084	144085	11	20	4	Loose Tanto
-144086	144087	21	30	4	Blunt Tanto
 144088	144089	31	40	4	Chipped Tanto
-144090	144091	41	80	4	Tanto
-144092	144093	81	120	4	Quality Tanto
-144094	144095	121	140	4	Layered Tanto
-144096	144097	141	180	4	Senior Tanto
-144098	144099	181	199	4	Composite Tanto
-144100	144100	200	200	4	Premium Tanto
-144101	144102	1	20	3	Sparkling Freedom Arms 4200
-144103	144104	21	30	3	Cast-off Freedom Arms 4200
+144103	144104	21	30	1	Cast-off Freedom Arms 4200
 144105	144106	31	40	3	Over-tuned Freedom Arms 4200
-144107	144108	41	50	3	Worn Freedom Arms 4200
-144109	144110	51	100	3	Freedom Arms 4200
-144111	144112	101	120	3	Quality Freedom Arms 4200
-144113	144114	121	140	3	Improved Freedom Arms 4200
-144115	144116	141	160	3	Senior Freedom Arms 4200
-144117	144118	161	199	3	First rate Freedom Arms 4200
-144119	144119	200	200	3	Premium Freedom Arms 4200
 144148	144149	21	40	1	Edge-less Burning Copper Katana
-144150	144151	41	60	1	Loose Burning Copper Katana
-144152	144153	61	80	1	Chipped Burning Copper Katana
-144154	144155	81	100	1	Burning Copper Katana
-144158	144159	121	140	1	Quality Burning Copper Katana
-144160	144161	141	160	1	Senior Burning Copper Katana
-144162	144163	161	199	1	Professional Burning Copper Katana
-144164	144164	200	200	1	Premium Burning Copper Katana
 150178	150179	31	40	4	Crooked Bodum-Larga Club
-150197	150198	41	70	3	Santiago Crossblade
-150201	150202	91	120	3	Quality Santiago Crossblade
-150203	150204	121	150	3	Senior Santiago Crossblade
-150205	150206	151	180	3	Professional Santiago Crossblade
-150214	150215	71	90	1	Quality Fayalite Flamberge
-150218	150219	121	150	1	Senior Fayalite Flamberge
-150220	150221	151	180	1	Professional Fayalite Flamberge
-150222	150222	181	181	1	Superior Fayalite Flamberge
 150223	150224	1	40	1	Cheap Amytlo Executioner
-150225	150226	41	80	1	Amytlo Executioner
-150227	150228	81	120	1	Quality Amytlo Executioner
-150229	150230	121	160	1	Professional Amytlo Executioner
-150231	150231	161	161	1	Superior Amytlo Executioner
 150243	150244	31	60	4	Green Zenith Taichi
 150256	150257	21	40	2	Bent Wall-Blade
 150258	150259	41	60	1	Loose Wall-Blade
-150260	150261	61	80	1	Blunt Wall-Blade
-150262	150263	81	100	1	Chipped Wall-Blade
-150264	150265	101	120	1	Quality Wall-Blade
-150266	150267	121	140	1	Layered Wall-Blade
-150268	150269	141	160	1	Senior Wall-Blade
-150270	150271	161	199	1	Composite Wall-Blade
-150272	150272	200	200	1	Premium Wall-Blade
 150306	150307	1	200	1	Android NCU Upgrade
 150637	150637	24	24	1	Nano Crystal (Enfraam's Minor Fortification)
 150639	150639	37	37	3	Nano Crystal (Enfraam's Lesser Fortification)
@@ -3050,17 +1767,7 @@
 152158	152159	21	40	2	Splintered Light Tube-Bow
 152160	152161	41	50	1	Rough Light Tube-Bow
 152298	154071	1	60	2	Cheap Luxembourg Inferno Rifle
-152302	152303	61	90	2	Luxembourg Inferno Rifle
-152306	152307	121	150	2	Quality Luxembourg Inferno Rifle
-152308	152309	151	180	2	Professional Luxembourg Inferno Rifle
-152310	152310	181	181	2	Superior Luxembourg Inferno Rifle
 152313	152314	31	50	2	Loose Assault Partizan
-152315	152316	51	70	2	Rusty Assault Partizan
-152317	152318	71	90	2	Chipped Assault Partizan
-152319	152320	91	140	2	Assault Partizan
-152321	152322	141	170	2	Balanced Assault Partizan
-152323	152324	171	199	2	Quality Assault Partizan
-152325	152325	200	200	2	Senior Assault Partizan
 152328	152329	21	40	2	Simple MTI Aleph 99
 152341	152342	21	40	3	Bluebell Parry Stick
 152358	152359	1	50	5	Grey Acroblade
@@ -3068,13 +1775,7 @@
 152373	152374	31	40	8	OT Limb Bow Prototype XXIII
 152375	152376	41	50	1	OT Limb Bow Prototype XXVI Red
 152390	152391	31	40	2	Loose Khemo-Tech Platinum Wakisashi
-152392	152393	41	60	2	Blunt Khemo-Tech Platinum Wakisashi
-152394	152395	61	80	2	Chipped Khemo-Tech Platinum Wakisashi
-152396	152397	81	130	2	Khemo-Tech Platinum Wakisashi
-152398	152399	131	160	2	Quality Khemo-Tech Platinum Wakisashi
-152400	152401	161	180	2	Senior Khemo-Tech Platinum Wakisashi
-152402	152403	181	199	2	Composite Khemo-Tech Platinum Wakisashi
-152404	152404	200	200	2	Premium Khemo-Tech Platinum Wakisashi
+152392	152393	41	60	1	Blunt Khemo-Tech Platinum Wakisashi
 152723	152724	1	49	2	Burning Crescent - Star Five
 152766	152767	1	40	1	Beginner Click Stabber
 153083	153084	1	49	5	Obtuse G-Staff
@@ -3104,44 +1805,20 @@
 159035	159036	1	98	3	BBI Faithful 22
 159040	159041	1	49	5	True Katana of the Cunning Farmer
 159083	159087	1	79	1	Cheap Collins IX Bio-Energy Rifle
-159088	159089	80	199	1	Collins IX Bio-Energy Rifle
-159090	159090	200	200	1	Quality Collins IX Bio-Energy Rifle
 159196	159197	1	400	1	The Repressor
 160096	160097	21	40	5	Slightly Bent Compressed Blade
 160186	160187	21	90	4	Cheap FDA Caterwaul 913
-160188	160189	91	110	4	FDA Caterwaul 913
 160216	160217	1	199	1	East Wind Katana
 160219	160220	1	70	1	Cheap Black Pete
-160221	160222	71	199	1	Black Pete
-160223	160223	200	200	1	Quality Black Pete
 160224	160225	1	50	3	Cheap Heavy Chop
-160226	160227	51	100	3	Second-Hand Heavy Chop
-160228	160229	101	150	3	Heavy Chop
-160232	160232	200	200	3	High Quality Heavy Chop
 160233	160234	1	199	2	SOL Fire Executioner Type T
 160236	160237	1	199	3	SOL Fire Executioner Type F
 160239	160240	1	199	5	SOL Fire Executioner Type E
 160242	160243	1	199	1	SOL Fire Executioner Type C
 160264	160265	1	50	10	Cheap Kaen-Archibald Kolt
-160266	160267	51	100	10	Worn Kaen-Archibald Kolt
-160268	160269	101	180	10	Kaen-Archibald Kolt
-160270	160271	181	199	10	Quality Kaen-Archibald Kolt
-160276	160276	400	400	3	Ultra Advanced First-Aid Kit
-160277	160277	400	400	3	Superb Quality Health Treatment Laboratory
-160278	160278	400	400	2	Advanced Nano Recharger
 160279	160280	1	50	2	Hazangerine Rat Claw
-160295	160295	400	400	2	Ultra Sophisticated Nano Kit
 160476	160477	1	98	2	Cheap OT Kerans Automatic Grinner
-160478	160479	99	199	2	OT Kerans Automatic Grinner
-160480	160480	200	200	2	Quality OT Kerans Automatic Grinner
-160483	160484	11	20	1	Cast-off Sleekmaster Classic
-160485	160486	21	30	1	Over-tuned Sleekmaster Classic
 160487	160488	31	40	1	Worn Sleekmaster Classic
-160489	160490	41	120	1	Sleekmaster Classic
-160491	160492	121	140	1	Quality Sleekmaster Classic
-160493	160494	141	160	1	Balanced Sleekmaster Classic
-160495	160496	161	180	1	Senior Sleekmaster Classic
-160499	160499	200	200	1	Premium Sleekmaster Classic
 163389	163389	24	24	2	Nano Crystal (Pr0n0unc3m3nt 0f L4z1n3ss)
 166253	166254	1	200	4	A Bright NanoCluster of Nano Regeneration
 166257	166258	1	200	2	A Shining NanoCluster of Nano Regeneration
@@ -3179,23 +1856,11 @@
 203949	203949	36	36	1	NanoCrystal (Request Freedom)
 203959	203959	42	42	1	NanoCrystal (The Claim to Freedom)
 204139	204140	1	50	5	Virus Scanner
-204141	204142	100	200	5	Virus Scanner
-204143	204143	300	300	5	Virus Scanner
 204262	204263	1	50	4	Purge Nano Kit
-204264	204265	100	200	4	Purge Nano Kit
-204266	204266	300	300	4	Purge Nano Kit
 204267	204268	1	200	3	Battle Prepared Nano Recharge Kit
-204269	204269	300	300	3	Battle Prepared Nano Recharge Kit
 204270	204271	1	200	1	Battle Prepared Treatment Kit
-204272	204272	300	300	1	Battle Prepared Treatment Kit
-204328	204328	300	300	5	Bright, Blue, Cloudless Sky
-204329	204329	300	300	1	Bird of Prey
-204330	204330	300	300	1	Attack of the Snake
-204331	204331	300	300	1	Angel of Night
 205198	205198	16	16	2	Nano Crystal (Evocation of Unrestrained Ferocity)
 205224	205225	1	50	2	Personal Grid Converter
-205226	205227	100	200	2	Personal Grid Converter
-205228	205228	300	300	2	Personal Grid Converter
 205232	205232	37	37	4	Nano Crystal (Monitor Combat Array)
 205288	205288	30	30	1	Nano Crystal (Gallant Hero: The Enraged Drone)
 210300	210300	20	20	1	Nano Crystal (Impartiality of the Blade)
@@ -3211,19 +1876,8 @@
 210807	210807	44	44	9	Nano Crystal (Double Cover)
 211151	211151	49	49	16	Nano Crystal (Piercing Tooth)
 211165	211165	40	40	12	Nano Crystal (Sidestep)
-218351	218352	1	10	2	Weak Coil of Health
 218353	218354	20	30	2	Weak Coil of Health
-218355	218356	40	50	2	Weak Coil of Health
-218357	218358	60	70	2	Weak Coil of Health
-218359	218360	80	90	2	Weak Coil of Health
 218744	218745	1	200	2	Spiri-Aid Spindle
 218780	218781	1	200	2	Nano Spindle
-218782	218782	400	400	2	Nano Spindle
-218822	218823	1	10	3	Weak Coil of Nano Energy
 218824	218825	20	30	3	Weak Coil of Nano Energy
-218826	218827	40	50	3	Weak Coil of Nano Energy
-218828	218829	60	70	3	Weak Coil of Nano Energy
-218830	218831	80	90	3	Weak Coil of Nano Energy
-227473	227473	30	30	52	Nano Crystal (Overview of Elysium)
-230373	230373	30	30	1	Nano Crystal (Gallant Slave: The Enraged Slave)
 233794	233795	21	179	1	Illicit Laser Backup

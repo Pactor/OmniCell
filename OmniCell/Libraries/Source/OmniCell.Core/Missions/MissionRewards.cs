@@ -202,18 +202,29 @@ namespace OmniCell.Core.Missions
 
             if (eligible.Count == 0)
             {
-                // Nothing covers it. The pool is what one bot was offered, and
-                // it rolled QL 21 to 43 missions, so above QL 200 there is
-                // almost nothing on record - 2 bands at 250 against 1,656 at
-                // 30. Every captured offer carries a reward and an offer
-                // without one is not displayed at all, so the nearest band is
-                // better than none. It is offered at its own quality, which is
-                // the clamp doing what it always does.
-                Band nearest = All
-                    .OrderBy(b => Math.Min(
-                        Math.Abs(b.LowQuality - quality), Math.Abs(b.HighQuality - quality)))
-                    .FirstOrDefault();
-                return nearest;
+                // Above the top of Rubi-Ka. Only Rubi-Ka items are rollable -
+                // no Shadowlands - and Rubi-Ka stops at quality 200, so a
+                // mission above that still pays out, in the best thing there
+                // is. Every captured offer carries a reward and an offer
+                // without one is not displayed at all, so this hands over the
+                // highest band at or below the quality rather than nothing,
+                // and the clamp offers it at its own top.
+                int best = All.Where(b => b.HighQuality <= quality)
+                    .Select(b => b.HighQuality)
+                    .DefaultIfEmpty(0)
+                    .Max();
+                if (best == 0)
+                {
+                    return null;
+                }
+
+                List<Band> top = All.Where(b => b.HighQuality == best).ToList();
+                lock (ByQuality)
+                {
+                    ByQuality[quality] = top;
+                }
+
+                eligible = top;
             }
 
             return eligible[(random ?? new Random()).Next(eligible.Count)];

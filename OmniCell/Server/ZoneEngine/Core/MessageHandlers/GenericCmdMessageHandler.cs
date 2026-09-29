@@ -123,8 +123,15 @@ namespace ZoneEngine.Core.MessageHandlers
                                     // is taken away (see Playfield.CorpseEmptied).
                                     CorpseLootAccess.ForgetCharacter(client.Controller.Character.Identity);
                                     this.Acknowledge(client.Controller.Character, message);
+
+                                    // An emptied corpse is taken away. An
+                                    // emptied chest is not - the boxes in a
+                                    // mission building stay where they are once
+                                    // they have been gone through.
                                     var playfield = client.Controller.Character.Playfield as OmniCell.Core.Playfields.Playfield;
-                                    if (playfield != null && CorpseLootAccess.IsEmpty(corpse))
+                                    if (playfield != null
+                                        && message.Target[0].Type == IdentityType.Corpse
+                                        && CorpseLootAccess.IsEmpty(corpse))
                                     {
                                         playfield.CorpseEmptied(corpse.Identity);
                                     }
