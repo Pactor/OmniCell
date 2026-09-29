@@ -38,6 +38,8 @@ namespace ZoneEngine.Core.PacketHandlers
 
     using OmniCell.Core.Entities;
     using OmniCell.Core.Playfields;
+    using OmniCell.Database.Dao;
+    using OmniCell.Database.Entities;
     using OmniCell.Enums;
     using OmniCell.ObjectManager;
 
@@ -99,6 +101,18 @@ namespace ZoneEngine.Core.PacketHandlers
             // Before anything is sent, because the character's health goes out
             // in FullCharacterMessage a moment from now.
             FillUpANewCharacter(client.Controller.Character);
+
+            // gmlevel and expansion are never written to the stats table
+            // (DoNotDontWriteToSql), so a character read back after zoning or
+            // logging out has neither. The account holds both - take them from
+            // there on every entry, the way the chat server reads the GM level.
+            DBLoginData account =
+                LoginDataDao.Instance.GetByCharacterId(client.Controller.Character.Identity.Instance);
+            if (account != null)
+            {
+                client.Controller.Character.Stats[StatIds.gmlevel].BaseValue = (uint)account.GM;
+                client.Controller.Character.Stats[StatIds.expansion].BaseValue = (uint)account.Expansions;
+            }
 
             client.Server.Info(
                 client,
