@@ -606,6 +606,7 @@ namespace ZoneEngine
                 Console.WriteLine("Loaded {0} Playfields", PlayfieldLoader.CacheAllPlayfieldData());
                 Console.WriteLine("Loaded {0} Mission Room Pools", MissionPoolLoader.CacheAllMissionPools());
                 Console.WriteLine("Loaded {0} Lines of Mission Text", MissionText.Load());
+                Console.WriteLine("Loaded {0} Mission Reward Bands", MissionRewards.Load());
                 Console.WriteLine("Loaded {0} Quests", QuestManager.Load());
                 Console.WriteLine("Loaded {0} Levels", Leveling.Load());
                 Console.WriteLine("Loaded {0} Creature Experience Levels", Experience.Load());

@@ -160,6 +160,17 @@ namespace OmniCell.Core.Missions
         public int RewardHighId { get; set; }
 
         /// <summary>
+        /// The quality the reward item is offered at.
+        /// </summary>
+        /// <remarks>
+        /// Usually the mission's, but not always: it is clamped into the
+        /// band's own quality range, and a family of one template cannot
+        /// move. A QL 39 mission was captured offering a QL 30 nano crystal
+        /// and a QL 1 Trenchcoat.
+        /// </remarks>
+        public int RewardQuality { get; set; }
+
+        /// <summary>
         /// The resource code the captured offers carry in the quest action -
         /// four characters in an identity of type 70099, such as "MRBO".
         /// </summary>

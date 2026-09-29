@@ -371,8 +371,23 @@ namespace OmniCell.Core.Missions
             offer.ExperienceReward = Math.Max(1, (int)Math.Round(xp * jitter));
             offer.CashReward = Math.Max(1, (int)Math.Round(cash * (0.8 + (random.NextDouble() * 0.4))));
 
-            offer.RewardLowId = 0;
-            offer.RewardHighId = 0;
+            // Every captured offer carries an item - all 25 of them - and an
+            // offer without one is not displayed at all. Which item retail
+            // picks is not derivable from anything we hold; that it is a real
+            // item, offered at a quality retail would offer it at, is.
+            MissionRewards.Band reward = MissionRewards.Pick(offer.Quality, random);
+            if (reward == null)
+            {
+                offer.RewardLowId = 0;
+                offer.RewardHighId = 0;
+                offer.RewardQuality = 0;
+            }
+            else
+            {
+                offer.RewardLowId = reward.LowId;
+                offer.RewardHighId = reward.HighId;
+                offer.RewardQuality = reward.Quality(offer.Quality);
+            }
         }
 
         private static readonly double[] RewardQualities = { 30, 33, 39, 53 };

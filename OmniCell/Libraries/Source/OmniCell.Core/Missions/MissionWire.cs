@@ -112,7 +112,7 @@ namespace OmniCell.Core.Missions
                                                {
                                                    LowId = offer.RewardLowId,
                                                    HighId = offer.RewardHighId,
-                                                   Quality = offer.Quality,
+                                                   Quality = offer.RewardQuality,
                                                    Unused = 0
                                                }
                                            },

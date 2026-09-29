@@ -44,6 +44,8 @@ namespace ZoneEngine.Core.MessageHandlers
     using OmniCell.Core.Items;
     using OmniCell.Core.Network;
     using OmniCell.Enums;
+
+    using Utility;
     using OmniCell.Interfaces;
     using OmniCell.ObjectManager;
 
@@ -237,6 +239,11 @@ namespace ZoneEngine.Core.MessageHandlers
                             // QuestAlternative arrives.
                             if (message.Target[0].Type == IdentityType.MissionTerminal)
                             {
+                                LogUtil.Debug(
+                                    DebugInfoDetail.Engine,
+                                    "Mission terminal " + message.Target[0].Instance + " used by "
+                                    + client.Controller.Character.Identity.Instance
+                                    + "; acknowledged, waiting for the roll.");
                                 this.Acknowledge(client.Controller.Character, message);
                                 break;
                             }

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2026, OmniCell contributors
 //
@@ -19,6 +19,8 @@ namespace ZoneEngine.Core.MessageHandlers
     using OmniCell.Core.Entities;
     using OmniCell.Core.Network;
     using OmniCell.Enums;
+
+    using Utility;
     using OmniCell.ObjectManager;
 
     using SmokeLounge.AOtomation.Messaging.GameData;
@@ -97,8 +99,17 @@ namespace ZoneEngine.Core.MessageHandlers
             // should send the server one, and answering it would be a loop.
             if (message.QuestInfos != null && message.QuestInfos.Length > 0)
             {
+                LogUtil.Debug(
+                    DebugInfoDetail.Engine,
+                    "Mission roll ignored: it already carries " + message.QuestInfos.Length + " missions.");
                 return;
             }
+
+            LogUtil.Debug(
+                DebugInfoDetail.Engine,
+                "Mission roll asked for by " + character.Identity.Instance + " at terminal "
+                + message.MissionTerminalIdentity.Instance + ", difficulty " + message.Difficulty
+                + ", originator " + message.Originator + ".");
 
             int difficulty = Math.Min(HighestDifficulty, Math.Max(LowestDifficulty, (int)message.Difficulty));
 
@@ -133,6 +144,10 @@ namespace ZoneEngine.Core.MessageHandlers
             }
 
             MissionBook.Offer(character, offers);
+            LogUtil.Debug(
+                DebugInfoDetail.Engine,
+                "Mission roll answered with " + offers.Count + " offers for level "
+                + character.Stats[StatIds.level].Value + " at difficulty " + difficulty + ".");
             this.Send(character, offers, difficulty, answered, seed, message.Originator, message.MissionTerminalIdentity);
         }
 
