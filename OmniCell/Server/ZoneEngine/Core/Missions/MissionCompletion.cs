@@ -67,12 +67,36 @@ namespace ZoneEngine.Core.Missions
         public static void OnLookAt(ICharacter character, Identity target)
         {
             MissionOffer mission = Owning(character, target);
-            if (mission == null || mission.Type != MissionType.FindItem)
+            if (mission != null && mission.Type == MissionType.FindItem)
+            {
+                Finish(character, mission);
+                return;
+            }
+
+            // Finding a person is targeting them - there is nothing to pick
+            // up and nothing to kill, and the assignment asks only that they
+            // be tracked down and observed. The one meant is the monster the
+            // building named after the objective, the same one a kill person
+            // mission wants dead.
+            if (character == null || target.Instance == 0)
             {
                 return;
             }
 
-            Finish(character, mission);
+            foreach (MissionOffer found in MissionBook.Active(character))
+            {
+                if (found.Type != MissionType.FindPerson || found.Built == null)
+                {
+                    continue;
+                }
+
+                if (found.Built.Monsters.Any(
+                    m => m.IsObjective && m.Instance == target.Instance))
+                {
+                    Finish(character, found);
+                    return;
+                }
+            }
         }
 
         /// <summary>
@@ -283,6 +307,34 @@ namespace ZoneEngine.Core.Missions
         /// <summary>
         /// The mission whose objective this is, for a character who is on it.
         /// </summary>
+        /// <summary>
+        /// Something in the inventory was used on the thing that needs fixing.
+        /// </summary>
+        /// <remarks>
+        /// A repair mission puts a fixture in the building and gives the part
+        /// that goes on it - "For the repair task, use this component." - and
+        /// the client says so with a GenericCmd UseItemOnItem carrying two
+        /// targets, the inventory item first and the fixture second. That is
+        /// the same shape a return item hand-in uses, so this is tried after
+        /// it and only answers for the fixture of a repair.
+        ///
+        /// What is **not** checked is which inventory item was used, because
+        /// nothing recorded says which one a repair mission hands out. When
+        /// that is known this should refuse anything else.
+        /// </remarks>
+        /// <returns>Whether the thing used on was a repair objective.</returns>
+        public static bool OnRepair(ICharacter character, Identity fixture)
+        {
+            MissionOffer mission = Owning(character, fixture);
+            if (mission == null || mission.Type != MissionType.Repair)
+            {
+                return false;
+            }
+
+            Finish(character, mission);
+            return true;
+        }
+
         private static MissionOffer Owning(ICharacter character, Identity target)
         {
             if (character == null || target.Instance == 0)

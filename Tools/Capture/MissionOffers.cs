@@ -1,4 +1,4 @@
-// --------------------------------------------------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="MissionOffers.cs" company="OmniCell">
 //   Copyright © 2026 OmniCell contributors.
 // </copyright>
@@ -272,13 +272,17 @@ namespace OmniCell.Tools.Capture
                 return "two things in the building share an instance";
             }
 
+            // Two kinds name a person: one wants them dead and the other
+            // wants them looked at. Both need exactly one of the building's
+            // monsters to be them, and nothing else may be.
+            bool names = offer.Type == MissionType.KillPerson || offer.Type == MissionType.FindPerson;
             int named = offer.Built.Monsters.Count(m => m.IsObjective);
-            if (offer.Type == MissionType.KillPerson && offer.Built.Monsters.Count > 0 && named != 1)
+            if (names && offer.Built.Monsters.Count > 0 && named != 1)
             {
-                return "a kill mission with " + named + " named targets";
+                return "a " + offer.Type + " mission with " + named + " named targets";
             }
 
-            if (offer.Type != MissionType.KillPerson && named != 0)
+            if (!names && named != 0)
             {
                 return "a " + offer.Type + " mission named a monster";
             }

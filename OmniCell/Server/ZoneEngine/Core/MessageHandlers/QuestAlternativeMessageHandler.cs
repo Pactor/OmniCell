@@ -18,6 +18,7 @@ namespace ZoneEngine.Core.MessageHandlers
     using OmniCell.Core.Components;
     using OmniCell.Core.Entities;
     using OmniCell.Core.Network;
+    using OmniCell.Core.Vector;
     using OmniCell.Enums;
 
     using Utility;
@@ -86,6 +87,15 @@ namespace ZoneEngine.Core.MessageHandlers
 
         #region Inbound
 
+        /// <summary>
+        /// Which of a playfield's mission entrances an offer is given.
+        /// </summary>
+        /// <remarks>
+        /// Retail's choice is not derivable from anything captured, so this
+        /// is ours and it is only a spread across the doors that exist.
+        /// </remarks>
+        private static readonly Random Door = new Random();
+
         protected override void Read(QuestAlternativeMessage message, IZoneClient client)
         {
             if (client == null || client.Controller == null || client.Controller.Character == null)
@@ -134,6 +144,36 @@ namespace ZoneEngine.Core.MessageHandlers
                 PlayfieldName(character),
                 seed,
                 out answered);
+
+            // Every offer is at a door that exists. Retail's offers name a
+            // MissionEntrance statel by playfield and position - one read
+            // playfield 687 at 760.71, 51.76, 1154.49, which is the entrance
+            // the pack has at 761, 52, 1154 - and the client draws its map
+            // marker from it. Sending zeros, which is what this did, is a
+            // mission nobody can find and nobody can enter.
+            //
+            // Which playfield retail picks is not derivable: the captured
+            // terminal stood in Borealis and sent the player to Galway Shire.
+            // This uses the one the player is in, so the door is where the
+            // assignment text already says it is.
+            var here = character.Playfield as OmniCell.Core.Playfields.Playfield;
+            if (here != null)
+            {
+                List<Coordinate> doors = here.MissionEntrances().ToList();
+                foreach (MissionOffer offer in offers)
+                {
+                    if (doors.Count == 0)
+                    {
+                        break;
+                    }
+
+                    Coordinate door = doors[Door.Next(doors.Count)];
+                    offer.Playfield = here.Identity.Instance;
+                    offer.X = (float)door.x;
+                    offer.Y = (float)door.y;
+                    offer.Z = (float)door.z;
+                }
+            }
 
             // The identities the client will name a mission back by. They are
             // the server's to allocate and retail's are consecutive.

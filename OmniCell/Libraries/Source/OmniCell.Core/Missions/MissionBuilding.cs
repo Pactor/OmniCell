@@ -166,12 +166,18 @@ namespace OmniCell.Core.Missions
         /// the offer used, and it is the one furthest into the building, which
         /// is where a boss stands.
         ///
+        /// A find person mission is the same creature with a different job:
+        /// the assignment says to track somebody down and observe them, and
+        /// finding them is targeting them. Both name a person, so both get
+        /// one.
+        ///
         /// Which monster retail picks is not known; that it is one of them is,
         /// because the name in the assignment is a creature's.
         /// </remarks>
         private static void Target(Mission mission, MissionOffer offer)
         {
-            if (offer.Type != MissionType.KillPerson || string.IsNullOrEmpty(offer.Objective))
+            bool names = offer.Type == MissionType.KillPerson || offer.Type == MissionType.FindPerson;
+            if (!names || string.IsNullOrEmpty(offer.Objective))
             {
                 return;
             }

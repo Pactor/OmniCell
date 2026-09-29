@@ -555,6 +555,22 @@ namespace OmniCell.Core.Playfields
         }
 
         /// <summary>
+        /// Where a mission can be entered in this playfield.
+        /// </summary>
+        /// <remarks>
+        /// The MissionEntrance statels, which is what a mission offer names.
+        /// A captured offer read playfield 687 at 760.71, 51.76, 1154.49 and
+        /// the pack has an entrance at 761, 52, 1154 - the same door.
+        /// </remarks>
+        public IEnumerable<Coordinate> MissionEntrances()
+        {
+            return this.statels
+                .Where(s => s.Identity.Type == IdentityType.MissionEntrance)
+                .Select(s => s.Coord())
+                .ToList();
+        }
+
+        /// <summary>
         /// The meshes of the characters spawned in this playfield, by spawn id.
         /// </summary>
         /// <remarks>
@@ -2058,6 +2074,61 @@ namespace OmniCell.Core.Playfields
         /// door. Inside, there is one door, the socket the building was left
         /// open on, and it leads back to wherever they came in from.
         /// </remarks>
+        /// <summary>
+        /// Whether the player is standing at the entrance this mission names.
+        /// </summary>
+        /// <remarks>
+        /// The offer carries a playfield and a position, and together they
+        /// are a real MissionEntrance statel: a captured offer read playfield
+        /// 687 at 760.71, 51.76, 1154.49 and the pack has an entrance at 761,
+        /// 52, 1154.
+        ///
+        /// An offer whose position was never set - one taken before this
+        /// server filled them in - has nothing to check against, and is let
+        /// through at any entrance rather than being made unenterable.
+        /// </remarks>
+        private bool AtItsOwnEntrance(MissionOffer mission, ICharacter dynel)
+        {
+            bool nowhere = mission.X == 0f && mission.Y == 0f && mission.Z == 0f;
+            if (!nowhere && mission.Playfield != this.Identity.Instance)
+            {
+                return false;
+            }
+
+            Coordinate here = dynel.Coordinates();
+            foreach (Coordinate door in this.MissionEntrances())
+            {
+                if (door.Distance3D(here) >= MissionDoorReach)
+                {
+                    continue;
+                }
+
+                if (nowhere)
+                {
+                    return true;
+                }
+
+                double dx = door.x - mission.X;
+                double dy = door.y - mission.Y;
+                double dz = door.z - mission.Z;
+                if (Math.Sqrt((dx * dx) + (dy * dy) + (dz * dz)) < MissionDoorSame)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// How close two positions have to be to be the same door.
+        /// </summary>
+        /// <remarks>
+        /// The offer's position and the statel's agree to within a metre in
+        /// the captures - 760.71 against 761 - because one of them is rounded.
+        /// </remarks>
+        private const float MissionDoorSame = 2.0f;
+
         private void CheckMissionDoor(ICharacter dynel)
         {
             var body = dynel as Dynel;
@@ -2072,14 +2143,14 @@ namespace OmniCell.Core.Playfields
                 return;
             }
 
-            MissionOffer mission = null;
-            foreach (StatelData sd in this.statels)
+            // The mission names its own door - playfield and position both -
+            // and that is the only one it opens at. Any entrance used to do,
+            // which let a mission taken for one building be walked into from
+            // a door on the other side of town.
+            MissionOffer mission = MissionPlayfields.OpenedBy(MissionKeysHeldBy(dynel));
+            if (mission != null && !this.AtItsOwnEntrance(mission, dynel))
             {
-                if (sd.Identity.Type != IdentityType.MissionEntrance) continue;
-                if (sd.Coord().Distance3D(dynel.Coordinates()) >= MissionDoorReach) continue;
-
-                mission = MissionPlayfields.OpenedBy(MissionKeysHeldBy(dynel));
-                break;
+                mission = null;
             }
 
             if (mission == null || mission.Built == null)
