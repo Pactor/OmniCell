@@ -105,7 +105,13 @@ namespace ZoneEngine.Core.MessageHandlers
                             // A corpse is a normal item container. Opening it
                             // sends its current entries; taking one uses the
                             // same ContainerAddItem path as bags and inventory.
-                            if (message.Target[0].Type == IdentityType.Corpse)
+                            // A mission chest is the same thing as a corpse to
+                            // open: use it, get its contents, use it again to
+                            // close. The one difference the recording shows is
+                            // that a chest gets no CharacterAction 110 on close,
+                            // which is what CorpseLootAccess sends for a corpse.
+                            if (message.Target[0].Type == IdentityType.Corpse
+                                || (int)message.Target[0].Type == MissionChests.ChestType)
                             {
                                 CorpseLoot corpse = Pool.Instance.GetObject<CorpseLoot>(
                                     client.Controller.Character.Playfield.Identity,

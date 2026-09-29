@@ -182,7 +182,8 @@ namespace OmniCell.Core.Playfields
                     LogUtil.Debug(
                         DebugInfoDetail.Engine,
                         "Mission playfield " + this.Identity.Instance + " spawned "
-                        + MissionSpawner.Fill(this, mission) + " monsters.");
+                        + MissionSpawner.Fill(this, mission) + " monsters and stocked "
+                        + MissionChests.Fill(this, mission) + " chests.");
                 }
             }
         }

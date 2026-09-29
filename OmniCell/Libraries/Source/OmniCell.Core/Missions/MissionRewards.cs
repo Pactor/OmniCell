@@ -202,7 +202,18 @@ namespace OmniCell.Core.Missions
 
             if (eligible.Count == 0)
             {
-                return null;
+                // Nothing covers it. The pool is what one bot was offered, and
+                // it rolled QL 21 to 43 missions, so above QL 200 there is
+                // almost nothing on record - 2 bands at 250 against 1,656 at
+                // 30. Every captured offer carries a reward and an offer
+                // without one is not displayed at all, so the nearest band is
+                // better than none. It is offered at its own quality, which is
+                // the clamp doing what it always does.
+                Band nearest = All
+                    .OrderBy(b => Math.Min(
+                        Math.Abs(b.LowQuality - quality), Math.Abs(b.HighQuality - quality)))
+                    .FirstOrDefault();
+                return nearest;
             }
 
             return eligible[(random ?? new Random()).Next(eligible.Count)];
