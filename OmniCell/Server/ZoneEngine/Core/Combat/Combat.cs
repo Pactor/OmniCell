@@ -103,11 +103,51 @@ namespace ZoneEngine.Core.Combat
             // visible attack state time to begin before damage can kill a
             // low-health target.
             var fight = new Fight(target) { NextSwing = DateTime.UtcNow + AttackDelay(attacker) };
+            Fight previous;
+            bool wasFighting = Fights.TryGetValue(attacker.Identity, out previous);
             Fights[attacker.Identity] = fight;
             attacker.Controller.State = CharacterState.Fighting;
-            SpecialAttackWeaponMessageHandler.Default.AnnounceCombatStart(attacker);
+
+            // A creature turning on a player is StopFight for the creature, then
+            // Attack, then SpecialAttackWeapon - Attack first. Seen in a PRK
+            // capture and the same order as retail (StopFight right before
+            // Attack 1,751 times in the bot recordings).
+            if (attacker.Controller is NPCController && !(victim.Controller is NPCController))
+            {
+                StopFightMessageHandler.Default.Announce(attacker);
+            }
+
             AttackMessageHandler.Default.Send(attacker, target);
+            SpecialAttackWeaponMessageHandler.Default.AnnounceCombatStart(attacker);
+
+            // IsFightingMe (410) on a player counts the fights they are in,
+            // both ways - up on each start, down on each stop (1, 2, 1, 0 over
+            // one fight in the PRK capture; 0 to 13 in the retail captures).
+            if (wasFighting)
+            {
+                FightingMe(attacker.Playfield.FindByIdentity<ICharacter>(previous.Target), -1);
+                FightingMe(attacker, -1);
+            }
+
+            FightingMe(attacker, 1);
+            FightingMe(victim, 1);
             return true;
+        }
+
+        /// <summary>
+        /// Moves a player's IsFightingMe by <paramref name="delta"/>, never below
+        /// zero, and sends it. Creatures are left alone.
+        /// </summary>
+        private static void FightingMe(ICharacter character, int delta)
+        {
+            if (character == null || character.Controller == null || character.Controller is NPCController)
+            {
+                return;
+            }
+
+            int now = StatValue.OrZero(character.Stats[StatIds.isfightingme].Value);
+            character.Stats[StatIds.isfightingme].Value = Math.Max(0, now + delta);
+            character.Controller.SendChangedStats();
         }
 
         /// <summary>
@@ -120,11 +160,21 @@ namespace ZoneEngine.Core.Combat
                 return;
             }
 
-            Fight ignored;
-            if (Fights.TryRemove(attacker.Identity, out ignored) && attacker.Controller != null
-                && attacker.Controller.State == CharacterState.Fighting)
+            Fight ended;
+            if (!Fights.TryRemove(attacker.Identity, out ended))
+            {
+                return;
+            }
+
+            if (attacker.Controller != null && attacker.Controller.State == CharacterState.Fighting)
             {
                 attacker.Controller.State = CharacterState.Idle;
+            }
+
+            FightingMe(attacker, -1);
+            if (attacker.Playfield != null)
+            {
+                FightingMe(attacker.Playfield.FindByIdentity<ICharacter>(ended.Target), -1);
             }
         }
 
@@ -271,8 +321,12 @@ namespace ZoneEngine.Core.Combat
         /// </summary>
         public static void Forget(Identity attacker)
         {
-            Fight ignored;
-            Fights.TryRemove(attacker, out ignored);
+            Fight ended;
+            if (Fights.TryRemove(attacker, out ended))
+            {
+                // Removed without Stop, so the count Stop keeps is lowered here.
+                FightingMe(Pool.Instance.GetObject(ended.Target) as ICharacter, -1);
+            }
         }
 
         #endregion
@@ -620,7 +674,12 @@ namespace ZoneEngine.Core.Combat
                 if (entry.Value.Target == victim.Identity)
                 {
                     Fight ignored;
-                    Fights.TryRemove(entry.Key, out ignored);
+                    if (Fights.TryRemove(entry.Key, out ignored))
+                    {
+                        // Removed without Stop, so both sides' IsFightingMe come down here.
+                        FightingMe(Pool.Instance.GetObject(entry.Key) as ICharacter, -1);
+                        FightingMe(victim, -1);
+                    }
                 }
             }
 
