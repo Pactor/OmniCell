@@ -93,10 +93,19 @@ namespace ZoneEngine.ChatCommands
             }
 
             int wanted = int.Parse(args[1], CultureInfo.InvariantCulture);
+            if (wanted <= 0)
+            {
+                this.Reply(character, "A perk id is a positive number.");
+                return;
+            }
+
+            // Most perks have no action of their own - the Keeper in the
+            // recording owned 147 and only 30 of them put anything in the Perk
+            // Actions menu - so one without is trained all the same, and only
+            // said so about.
             if (!Perks.Actions.ContainsKey(wanted))
             {
-                this.Reply(character, "No perk action item carries perk " + wanted + ".");
-                return;
+                this.Reply(character, "Note: perk " + wanted + " has no action, so nothing to press.");
             }
 
             if (self.HasPerk(wanted))
@@ -127,20 +136,34 @@ namespace ZoneEngine.ChatCommands
         }
 
         /// <summary>
-        /// What the perk's action item is called.
+        /// The four letter code, back as letters.
+        /// </summary>
+        private static string Letters(int code)
+        {
+            var text = new char[4];
+            for (int i = 0; i < 4; i++)
+            {
+                text[i] = (char)((code >> ((3 - i) * 8)) & 0xFF);
+            }
+
+            return new string(text);
+        }
+
+        /// <summary>
+        /// What the perk's action is called.
         /// </summary>
         private static string Name(int perk)
         {
-            ItemTemplate item;
-            if (!Perks.Actions.TryGetValue(perk, out item))
+            Perks.PerkAction action;
+            if (!Perks.Actions.TryGetValue(perk, out action))
             {
-                return "(no action item)";
+                return "(nothing in the pack grants it)";
             }
 
             // The server has no item-name table - names live in itemnames.sql,
-            // which only the capture tools read - so the item id is what there
-            // is to show.
-            return "item " + item.ID;
+            // which only the capture tools read - so the code and the item are
+            // what there is to show. The code is what the client presses with.
+            return Letters(action.Code) + " (item " + action.Item.ID + ")";
         }
     }
 }

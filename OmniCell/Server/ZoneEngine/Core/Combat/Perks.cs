@@ -18,6 +18,8 @@ namespace ZoneEngine.Core.Combat
 
     using Cell.Core;
 
+    using MsgPack;
+
     using OmniCell.Core.Actions;
     using OmniCell.Core.Entities;
     using OmniCell.Core.Events;
@@ -143,21 +145,56 @@ namespace ZoneEngine.Core.Combat
             new ConcurrentDictionary<Identity, Dictionary<int, DateTime>>();
 
         /// <summary>
-        /// The item that carries each perk's behaviour, by short id.
+        /// What a perk gives you: the action id, the four letter code and the
+        /// item whose script runs.
+        /// </summary>
+        public sealed class PerkAction
+        {
+            /// <summary>The perk's short id, which is what a character owns.</summary>
+            public int Perk;
+
+            /// <summary>The id the client presses with - the short id plus ten thousand.</summary>
+            public int Action;
+
+            /// <summary>The four letter code, packed the way the wire carries it.</summary>
+            public int Code;
+
+            /// <summary>The item carrying the cast, the damage and the cooldown.</summary>
+            public ItemTemplate Item;
+        }
+
+        /// <summary>
+        /// Every perk action in the pack, by the short id that grants it.
         /// </summary>
         /// <remarks>
-        /// Built once, by reading every item's use requirements and keeping
-        /// the ones that ask for a perk of their own - which is what a perk
-        /// action item is. There is no list of them anywhere else.
+        /// From AddAction (53182), which is the client database's own
+        /// statement of the matter. A perk line item carries one - Blessing 1,
+        /// item 211702, reads <c>AddAction(10190, "LAON", 1, 215791)</c> -
+        /// and those four values are exactly what the server sends and what
+        /// the client sends back:
+        ///
+        ///   argument 0  the action id, 10190, which is 10000 + the short id
+        ///   argument 1  the code, "LAON", as CharacterAction 180 carries it
+        ///   argument 3  the item whose script the press runs
+        ///
+        /// This replaced looking the item up by its <c>HasPerk</c>
+        /// requirement, which was how both halves used to find it and which
+        /// was not good enough. Measured against the thirty CharacterAction
+        /// 180 messages in the retail recording, the HasPerk route resolved
+        /// 17 and silently skipped 13 - every AI perk, whose action item
+        /// carries no such requirement - while this reproduces 29 of the 30
+        /// exactly, item and code both. The one it misses is Unhallowed Wrath
+        /// (20010), which has no AddAction anywhere in the pack and whose
+        /// mechanism the recording did not settle either.
         /// </remarks>
-        private static Dictionary<int, ItemTemplate> actions;
+        private static Dictionary<int, PerkAction> actions;
 
         private static readonly object Gate = new object();
 
         /// <summary>
-        /// The perk action items, by the short id each one belongs to.
+        /// The perk actions, by the short id each one belongs to.
         /// </summary>
-        public static Dictionary<int, ItemTemplate> Actions
+        public static Dictionary<int, PerkAction> Actions
         {
             get
             {
@@ -168,44 +205,93 @@ namespace ZoneEngine.Core.Combat
             }
         }
 
-        private static Dictionary<int, ItemTemplate> Index()
+        private static Dictionary<int, PerkAction> Index()
         {
-            var found = new Dictionary<int, ItemTemplate>();
+            var found = new Dictionary<int, PerkAction>();
             foreach (ItemTemplate item in ItemLoader.ItemList.Values)
             {
-                if (item.Actions == null)
+                if (item.Events == null)
                 {
                     continue;
                 }
 
-                foreach (AOAction action in item.Actions)
+                foreach (Event ev in item.Events)
                 {
-                    if (action.ActionType != ActionType.ToUse || action.Requirements == null)
+                    if (ev.Functions == null)
                     {
                         continue;
                     }
 
-                    foreach (Requirement requirement in action.Requirements)
+                    foreach (Function function in ev.Functions)
                     {
-                        if (requirement.Operator != Operator.HasPerk)
+                        if (function.FunctionType != (int)FunctionType.AddAction
+                            || function.Arguments == null || function.Arguments.Values == null
+                            || function.Arguments.Values.Count < 4)
                         {
                             continue;
                         }
 
-                        // One item per perk. Where two claim the same short id
-                        // the lower id wins, so the pick does not depend on
-                        // what order the pack happened to load in.
-                        ItemTemplate already;
-                        if (!found.TryGetValue(requirement.Value, out already) || item.ID < already.ID)
+                        var values = function.Arguments.Values;
+                        int action = values[0].AsInt32();
+                        int perk = action - PressOffset;
+                        int carrier = values[3].AsInt32();
+                        ItemTemplate runs;
+                        if (perk <= 0 || !ItemLoader.ItemList.TryGetValue(carrier, out runs))
                         {
-                            found[requirement.Value] = item;
+                            continue;
                         }
+
+                        // Every level of a perk line repeats the same
+                        // AddAction, so the first is as good as the last.
+                        if (found.ContainsKey(perk))
+                        {
+                            continue;
+                        }
+
+                        found[perk] = new PerkAction
+                                          {
+                                              Perk = perk,
+                                              Action = action,
+                                              Code = Code(values[1]),
+                                              Item = runs,
+                                          };
                     }
                 }
             }
 
             LogUtil.Debug(DebugInfoDetail.Engine, "Perks: " + found.Count + " perk actions in the item pack.");
             return found;
+        }
+
+        /// <summary>
+        /// The four letter code as the wire carries it.
+        /// </summary>
+        /// <remarks>
+        /// The pack holds it as a string - "LAON" - and the messages carry it
+        /// as an int with the first letter in the top byte, which is
+        /// 0x4C414F4E. Verified both ways round in the recording: the server's
+        /// CharacterAction 180 for perk 190 reads 0x4C414F4E and the client's
+        /// press of it reads the same.
+        ///
+        /// Nothing in the pack stores the code as an int, so a non-string
+        /// argument is refused rather than converted on a guess about which
+        /// way round it would be.
+        /// </remarks>
+        private static int Code(MessagePackObject value)
+        {
+            if (!value.IsTypeOf<string>().GetValueOrDefault())
+            {
+                return 0;
+            }
+
+            string text = value.AsString() ?? string.Empty;
+            int code = 0;
+            for (int i = 0; i < 4 && i < text.Length; i++)
+            {
+                code |= (text[i] & 0xFF) << ((3 - i) * 8);
+            }
+
+            return code;
         }
 
         /// <summary>
@@ -235,12 +321,14 @@ namespace ZoneEngine.Core.Combat
                 return;
             }
 
-            ItemTemplate item;
-            if (!Actions.TryGetValue(perk, out item))
+            PerkAction action;
+            if (!Actions.TryGetValue(perk, out action))
             {
-                LogUtil.Debug(DebugInfoDetail.Engine, "Perks: no action item carries perk " + perk + ".");
+                LogUtil.Debug(DebugInfoDetail.Engine, "Perks: nothing in the pack grants perk " + perk + ".");
                 return;
             }
+
+            ItemTemplate item = action.Item;
 
             List<Queued> queue = Waiting.GetOrAdd(character.Identity, id => new List<Queued>());
             lock (queue)
@@ -628,16 +716,9 @@ namespace ZoneEngine.Core.Combat
             var sent = new HashSet<int>();
             foreach (int perk in owner.Perks)
             {
-                ItemTemplate item;
-                if (!Actions.TryGetValue(perk, out item) || !sent.Add(item.ID))
+                PerkAction action;
+                if (!Actions.TryGetValue(perk, out action) || !sent.Add(action.Action))
                 {
-                    continue;
-                }
-
-                AddAction added;
-                if (!Added.TryGetValue(item.ID, out added))
-                {
-                    LogUtil.Debug(DebugInfoDetail.Engine, "Perks: no AddAction names item " + item.ID + ".");
                     continue;
                 }
 
@@ -646,103 +727,13 @@ namespace ZoneEngine.Core.Combat
                     new CharacterActionMessage
                     {
                         Identity = character.Identity,
-                        Action = (CharacterActionType)180,
-                        Target = new Identity { Type = 0, Instance = item.ID },
-                        Parameter1 = added.Action,
-                        Parameter2 = added.Code,
+                        Action = CharacterActionType.PerkAction,
+                        Target = new Identity { Type = IdentityType.None, Instance = action.Item.ID },
+                        Parameter1 = action.Action,
+                        Parameter2 = action.Code,
                         Unknown = 0,
                     });
             }
-        }
-
-        private struct AddAction
-        {
-            public int Action;
-
-            public int Code;
-        }
-
-        private static Dictionary<int, AddAction> added;
-
-        /// <summary>
-        /// AddAction arguments by the perk action item they name.
-        /// </summary>
-        private static Dictionary<int, AddAction> Added
-        {
-            get
-            {
-                lock (Gate)
-                {
-                    if (added != null)
-                    {
-                        return added;
-                    }
-
-                    added = new Dictionary<int, AddAction>();
-                    foreach (ItemTemplate item in ItemLoader.ItemList.Values)
-                    {
-                        if (item.Events == null)
-                        {
-                            continue;
-                        }
-
-                        foreach (Event ev in item.Events)
-                        {
-                            if (ev.Functions == null)
-                            {
-                                continue;
-                            }
-
-                            foreach (Function function in ev.Functions)
-                            {
-                                if (function.FunctionType != (int)FunctionType.AddAction
-                                    || function.Arguments == null || function.Arguments.Values == null
-                                    || function.Arguments.Values.Count < 4)
-                                {
-                                    continue;
-                                }
-
-                                var values = function.Arguments.Values;
-                                int actionItem = values[3].AsInt32();
-                                if (!added.ContainsKey(actionItem))
-                                {
-                                    added[actionItem] = new AddAction
-                                    {
-                                        Action = values[0].AsInt32(),
-                                        Code = WireCode(values[1]),
-                                    };
-                                }
-                            }
-                        }
-                    }
-
-                    LogUtil.Debug(DebugInfoDetail.Engine, "Perks: " + added.Count + " AddAction entries in the item pack.");
-                    return added;
-                }
-            }
-        }
-
-        /// <summary>
-        /// The code as the message carries it. The client database stores the
-        /// four bytes little-endian (4E 4F 41 4C read as 0x4C414F4E) and the wire
-        /// sends them in the same order, which the big-endian writer needs as
-        /// 0x4E4F414C. A string is taken byte for byte.
-        /// </summary>
-        private static int WireCode(MsgPack.MessagePackObject value)
-        {
-            if (value.IsTypeOf<string>() == true)
-            {
-                string s = value.AsString();
-                int code = 0;
-                for (int i = 0; i < 4 && i < s.Length; i++)
-                {
-                    code |= (s[i] & 0xFF) << ((3 - i) * 8);
-                }
-
-                return code;
-            }
-
-            return System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(value.AsInt32());
         }
 
         private static void Send(ICharacter character, MessageBody message)

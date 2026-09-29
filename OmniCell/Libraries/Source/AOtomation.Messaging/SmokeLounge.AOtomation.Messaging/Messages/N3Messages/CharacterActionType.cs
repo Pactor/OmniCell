@@ -54,6 +54,14 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
         UsePerk = 0x000000B3,
 
         /// <summary>
+        /// One per perk action the character owns, sent straight after
+        /// FullCharacter, or the Perk Actions menu never appears. Target is
+        /// None:&lt;action item&gt;, Parameter1 the action id and Parameter2 the
+        /// four letter code. Thirty of these in the retail recording.
+        /// </summary>
+        PerkAction = 0x000000B4,
+
+        /// <summary>
         /// A perk has finished cooling down. P1 is 0, P2 the perk's short id.
         /// </summary>
         PerkAvailable = 0x000000CE,
