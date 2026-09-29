@@ -36,12 +36,18 @@ namespace OmniCell.Core.Missions
         private readonly MissionPool pool;
         private readonly Random random;
 
-        public MissionFactory(MissionPool pool, int seed)
+        public MissionFactory(MissionPool pool, int seed, int quality)
         {
             if (pool == null) throw new ArgumentNullException("pool");
             this.pool = pool;
             this.random = new Random(seed);
+            this.quality = Math.Max(1, quality);
         }
+
+        /// <summary>
+        /// The mission's quality, which is what its locks are measured against.
+        /// </summary>
+        private readonly int quality;
 
         /// <summary>
         /// Build one.
@@ -106,6 +112,7 @@ namespace OmniCell.Core.Missions
                                           X = x,
                                           Z = z,
                                           LockDifficulty = this.RollLock(),
+                                          Locked = this.locked,
                                           Approximate = approximate
                                       });
             }
@@ -132,10 +139,55 @@ namespace OmniCell.Core.Missions
         /// 220 of 255 captured chests read 50, which is no lock at all. The
         /// rest are spread over 77 to 95.
         /// </summary>
+        /// <summary>
+        /// How hard a chest is to pick, and whether it is locked at all.
+        /// </summary>
+        /// <remarks>
+        /// Breaking and entering scales with the mission, and two sets of
+        /// recordings pin the line. The bot's 253 locked chests run QL 21 to
+        /// 47 and read 44 to 114; the QL 250 mission recorded on 2026-09-28
+        /// read 546 to 550. Least squares over all of them:
+        ///
+        ///     difficulty = 2.1656 * quality + 7.61
+        ///
+        /// which is never more than nine off any of the 253 and predicts 549
+        /// at QL 250 against the 546 to 550 seen. The spread around the line
+        /// runs about a sixth under to a fifteenth over, so a roll is taken
+        /// inside that.
+        ///
+        /// A chest that is not locked reads 50 whatever the quality - that
+        /// value turns up at every quality from 21 to 47 and never moves - so
+        /// it is a marker rather than a difficulty, and it is what an open
+        /// box carries.
+        /// </remarks>
         private int RollLock()
         {
-            return this.random.Next(255) < 220 ? 50 : 77 + this.random.Next(19);
+            if (this.random.Next(255) < 220)
+            {
+                this.locked = false;
+                return Unlocked;
+            }
+
+            this.locked = true;
+
+            double line = (LockSlope * this.quality) + LockBase;
+            double spread = 1.0 - 0.17 + (this.random.NextDouble() * (0.17 + 0.07));
+            return Math.Max(1, (int)Math.Round(line * spread));
         }
+
+        /// <summary>
+        /// What an unlocked chest reads, at every quality.
+        /// </summary>
+        public const int Unlocked = 50;
+
+        /// <summary>
+        /// Whether the last roll came out locked.
+        /// </summary>
+        private bool locked;
+
+        private const double LockSlope = 2.1656;
+
+        private const double LockBase = 7.61;
 
         private void Populate(Mission mission)
         {

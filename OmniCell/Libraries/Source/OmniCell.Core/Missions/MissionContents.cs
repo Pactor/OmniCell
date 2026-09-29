@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2026, OmniCell contributors
 //
@@ -172,7 +172,7 @@ namespace OmniCell.Core.Missions
                                       },
                        InventoryId = 0,
                        BodyLocation = BodyLocation,
-                       Stats = Wire(DoorTemplate),
+                       Stats = Wire(DoorTemplate, false),
                        Name = string.Empty,
                        TailVersion = TailVersion,
 
@@ -205,7 +205,7 @@ namespace OmniCell.Core.Missions
                        Marker = new Identity { Type = (IdentityType)MarkerType, Instance = ChestMarker },
                        InventoryId = 0,
                        BodyLocation = BodyLocation,
-                       Stats = Wire(0),
+                       Stats = Wire(0, chest.Locked),
                        Name = string.Empty,
                        TailVersion = TailVersion,
                        LockDifficulty = chest.LockDifficulty,
@@ -254,10 +254,25 @@ namespace OmniCell.Core.Missions
                    };
         }
 
-        private static GameTuple<CharacterStat, uint>[] Wire(int template)
+        /// <summary>
+        /// The flags a chest carries, and the bit that says it is locked.
+        /// </summary>
+        /// <remarks>
+        /// From the 2026-09-28 recording: a Treasure chest read 0x20001841
+        /// locked against 0x20001801 open, and a Barrel 0x20001C61 against
+        /// 0x20001C21. The difference both times is 0x40, so that is the
+        /// locked bit; the rest is the container being a container and is
+        /// sent as the Treasure chest's, which is what a mission box is.
+        /// </remarks>
+        private const uint ChestFlags = 0x20001801;
+
+        private const uint LockedFlag = 0x40;
+
+        private static GameTuple<CharacterStat, uint>[] Wire(int template, bool locked)
         {
             var stats = new List<GameTuple<CharacterStat, uint>>
                         {
+                            Stat(StatIds.flags, locked ? ChestFlags | LockedFlag : ChestFlags),
                             Stat(StatIds.multiplecount, 1)
                         };
             if (template != 0)

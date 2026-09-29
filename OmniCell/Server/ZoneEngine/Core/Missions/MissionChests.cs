@@ -20,13 +20,17 @@ namespace ZoneEngine.Core.Missions
     using OmniCell.Core.Missions;
     using OmniCell.Core.Playfields;
     using OmniCell.Database.Dao;
+    using OmniCell.Core.Entities;
     using OmniCell.Interfaces;
+    using OmniCell.ObjectManager;
 
     using SmokeLounge.AOtomation.Messaging.GameData;
+    using SmokeLounge.AOtomation.Messaging.Messages.N3Messages;
 
     using Utility;
 
     using ZoneEngine.Core.Loot;
+    using ZoneEngine.Core.MessageHandlers;
 
     #endregion
 
@@ -108,6 +112,14 @@ namespace ZoneEngine.Core.Missions
                     }
 
                     Stock(chest, mission.Quality, wanted);
+                    if (thing.Locked)
+                    {
+                        lock (LockedChests)
+                        {
+                            LockedChests.Add(thing.Instance);
+                        }
+                    }
+
                     filled++;
                 }
                 catch (Exception exception)
@@ -123,6 +135,177 @@ namespace ZoneEngine.Core.Missions
         /// The identity type a mission chest is sent as.
         /// </summary>
         public const int ChestType = 51017;
+
+        /// <summary>
+        /// The chests that still need picking, by identity.
+        /// </summary>
+        private static readonly HashSet<int> LockedChests = new HashSet<int>();
+
+        /// <summary>
+        /// Whether this container is a chest that has not been picked yet.
+        /// </summary>
+        public static bool IsLocked(Identity container)
+        {
+            if ((int)container.Type != ChestType)
+            {
+                return false;
+            }
+
+            lock (LockedChests)
+            {
+                return LockedChests.Contains(container.Instance);
+            }
+        }
+
+        /// <summary>
+        /// The lock is off, for good.
+        /// </summary>
+        public static void Picked(Identity container)
+        {
+            lock (LockedChests)
+            {
+                LockedChests.Remove(container.Instance);
+            }
+        }
+
+        /// <summary>
+        /// Somebody shut a container. The live server says so.
+        /// </summary>
+        /// <remarks>
+        /// From the 2026-09-28 recording: closing either kind sends
+        /// ActionMessage 102 with FieldMask 1, the player as Instigator and
+        /// the container as Identity. A corpse is also sent CharacterAction
+        /// 110 with both parameters zero; a chest is not.
+        /// </remarks>
+        public static void Closed(ICharacter character, Identity container, bool corpse)
+        {
+            if (character == null || character.Controller == null
+                || character.Controller.Client == null)
+            {
+                return;
+            }
+
+            character.Controller.Client.SendCompressed(
+                new ActionMessage
+                    {
+                        Identity = container,
+                        Unknown = 0,
+                        FieldMask = 1,
+                        Action = ContainerClosed,
+                        Instigator = character.Identity,
+                    });
+
+            if (!corpse)
+            {
+                return;
+            }
+
+            character.Controller.Client.SendCompressed(
+                new CharacterActionMessage
+                    {
+                        Identity = character.Identity,
+                        Action = (CharacterActionType)CorpseClosed,
+                        Target = character.Identity,
+                        Parameter1 = 0,
+                        Parameter2 = 0,
+                        Unknown = 0,
+                    });
+        }
+
+        /// <summary>
+        /// A lock pick used on a chest.
+        /// </summary>
+        /// <remarks>
+        /// From the 2026-09-28 recording, in order: the echo, ActionMessage
+        /// 115 naming the chest, the chest's contents - picking opens it too,
+        /// in the same breath - and Feedback 110/265781900 "Lockpicking
+        /// successful." The pick survives; it was used five times and five
+        /// times it stayed in the inventory.
+        ///
+        /// What is **not** here is failing. Five picks, five successes, so
+        /// nothing recorded says what a failure looks like or what skill it
+        /// is measured against - the difficulty is carried and compared
+        /// against nothing. When a failed pick is captured this is where the
+        /// check belongs.
+        /// </remarks>
+        public static bool Pick(ICharacter character, Identity used, Identity container)
+        {
+            if (character == null || !IsLocked(container))
+            {
+                return false;
+            }
+
+            var item = Held(character, used);
+            if (item == null || item.LowID != LockPickTemplate)
+            {
+                return false;
+            }
+
+            var loot = Pool.Instance.GetObject<CorpseLoot>(
+                character.Playfield.Identity, container);
+            if (loot == null)
+            {
+                return false;
+            }
+
+            Picked(container);
+
+            character.Controller.Client.SendCompressed(
+                new ActionMessage
+                    {
+                        Identity = container,
+                        Unknown = 0,
+                        FieldMask = 1,
+                        Action = Unlocking,
+                        Instigator = character.Identity,
+                    });
+
+            int slot = CorpseLootAccess.Open(character, loot);
+            InventoryUpdateMessageHandler.Default.SendForCorpse(character, loot, slot);
+            FeedbackMessageHandler.Default.Send(character, FeedbackCategory, LockpickingSuccessful);
+            return true;
+        }
+
+        /// <summary>
+        /// The thing in the inventory slot the client named.
+        /// </summary>
+        private static IItem Held(ICharacter character, Identity slot)
+        {
+            try
+            {
+                foreach (IInventoryPage page in character.BaseInventory.Pages.Values)
+                {
+                    IItem found;
+                    if (page.List().TryGetValue(slot.Instance, out found))
+                    {
+                        return found;
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                LogUtil.ErrorException(exception);
+            }
+
+            return null;
+        }
+
+        /// <summary>Item 95577, "Lock Pick".</summary>
+        private const int LockPickTemplate = 95577;
+
+        /// <summary>ActionMessage 115, sent when a lock gives way.</summary>
+        private const int Unlocking = 115;
+
+        private const int FeedbackCategory = 110;
+
+        /// <summary>"Lockpicking successful."</summary>
+        private const int LockpickingSuccessful = 265781900;
+
+        /// <summary>ActionMessage 102, sent when a container is shut.</summary>
+        private const int ContainerClosed = 102;
+
+        /// <summary>CharacterAction 110, which only a corpse gets.</summary>
+        private const int CorpseClosed = 110;
 
         private static void Stock(CorpseLoot chest, int quality, int wanted)
         {

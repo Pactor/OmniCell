@@ -122,6 +122,16 @@ namespace ZoneEngine.Core.MessageHandlers
                                     // The second use closes it. A corpse closed with nothing left in it
                                     // is taken away (see Playfield.CorpseEmptied).
                                     CorpseLootAccess.ForgetCharacter(client.Controller.Character.Identity);
+
+                                    // Closing one is announced. Both a corpse
+                                    // and a chest get ActionMessage 102 with
+                                    // the container as its identity; a corpse
+                                    // gets CharacterAction 110 as well and a
+                                    // chest does not.
+                                    MissionChests.Closed(
+                                        client.Controller.Character,
+                                        corpse.Identity,
+                                        message.Target[0].Type == IdentityType.Corpse);
                                     this.Acknowledge(client.Controller.Character, message);
 
                                     // An emptied corpse is taken away. An
@@ -135,6 +145,17 @@ namespace ZoneEngine.Core.MessageHandlers
                                     {
                                         playfield.CorpseEmptied(corpse.Identity);
                                     }
+                                }
+                                else if (corpse != null
+                                         && MissionChests.IsLocked(corpse.Identity))
+                                {
+                                    // Shut until it is picked. What retail
+                                    // answers a plain use on a locked box
+                                    // with was never captured - nobody tried
+                                    // it - so nothing is said beyond the
+                                    // acknowledgement, rather than inventing
+                                    // a refusal.
+                                    this.Acknowledge(client.Controller.Character, message);
                                 }
                                 else if (corpse != null)
                                 {
@@ -267,6 +288,18 @@ namespace ZoneEngine.Core.MessageHandlers
 
                     break;
                 case GenericCmdAction.UseItemOnItem:
+                    // A lock pick on a mission chest. The recording has it as
+                    // the echo, ActionMessage 115, the contents - picking also
+                    // opens it - and "Lockpicking successful." The pick is not
+                    // consumed; five picks, five successes, and it stayed.
+                    if (message.Target.Length > 1
+                        && MissionChests.Pick(
+                            client.Controller.Character, message.Target[0], message.Target[1]))
+                    {
+                        this.Acknowledge(client.Controller.Character, message);
+                        break;
+                    }
+
                     // The objective used on a mission terminal is how a return
                     // item mission is handed in - the inventory slot first and
                     // the terminal second, which is what the capture shows.

@@ -55,6 +55,17 @@ namespace OmniCell.Core.Missions
         public int LockDifficulty { get; set; }
 
         /// <summary>
+        /// Whether this one actually needs picking.
+        /// </summary>
+        /// <remarks>
+        /// Kept apart from the difficulty because the two cannot be told
+        /// apart by value: an unlocked chest reads 50 at every quality, and
+        /// a locked one in a QL 21 mission reads about the same. The wire
+        /// says which with a flag bit, so this server does too.
+        /// </remarks>
+        public bool Locked { get; set; }
+
+        /// <summary>
         /// True when nobody has recorded where this room puts its furniture and
         /// the position is only somewhere on its floor.
         /// </summary>

@@ -141,7 +141,7 @@ namespace OmniCell.Core.Missions
                 return null;
             }
 
-            var factory = new MissionFactory(pool, offer.Instance);
+            var factory = new MissionFactory(pool, offer.Instance, offer.Quality);
             Mission mission = factory.Build(offer.Quality, offer.Type, Math.Max(1, offer.Floors));
             if (mission == null)
             {
