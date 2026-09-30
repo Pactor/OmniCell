@@ -1734,7 +1734,9 @@ namespace OmniCell.Core.Playfields
 
             if (newPlayfield == null)
             {
-                newPlayfield = new Playfield(this.server, playfield);
+                newPlayfield = new Playfield(
+                    this.server,
+                    new Identity { Type = IdentityType.Playfield, Instance = playfield.Instance });
             }
 
             dynel.Playfield = newPlayfield;

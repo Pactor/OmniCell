@@ -77,6 +77,15 @@ namespace ZoneEngine.Core.Functions.GameFunctions
             character.Stats[StatIds.externaldoorinstance].BaseValue = (uint)caller.Identity.Instance;
             character.Stats[StatIds.externalplayfieldinstance].BaseValue = (uint)character.Playfield.Identity.Instance;
 
+            // Remember which door of the building we are arriving by. A
+            // condensed shop shares one interior playfield between many cities,
+            // and PlayfieldLoader hangs an ExitProxyPlayfield on every door a
+            // teleports row names as its landing point. Without this, walking
+            // into any of those doors - a wing, or another city's entrance -
+            // sent you straight back out. You leave only by the door you came
+            // in by; ExitProxyPlayfield checks this stat.
+            character.Stats[StatIds.nextdoorinbuilding].BaseValue = (uint)statelId;
+
             if (arguments[1].AsInt32() > 0)
             {
                 StatelData sd = PlayfieldLoader.PFData[arguments[1].AsInt32()].GetDoor(statelId);

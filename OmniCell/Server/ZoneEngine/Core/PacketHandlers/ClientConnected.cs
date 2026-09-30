@@ -33,6 +33,7 @@ namespace ZoneEngine.Core.PacketHandlers
 {
     #region Usings ...
 
+    using System;
     using System.Linq;
     using System.Text;
 
@@ -154,14 +155,6 @@ namespace ZoneEngine.Core.PacketHandlers
                 client.Controller.Character.Playfield.Identity.Instance,
                 fixtures.Length);
 
-            foreach (
-Vendor vendor in
-Pool.Instance.GetAll<Vendor>(
-client.Controller.Character.Playfield.Identity,
-(int)IdentityType.VendingMachine))
-            {
-                VendingMachineFullUpdateMessageHandler.Default.Send(client.Controller.Character, vendor);
-            }
 
             // Doors. The live server reports the state of every door in a
             // playfield on entry - 28 of them on walking into the subway - and
@@ -231,6 +224,48 @@ client.Controller.Character.Playfield.Identity,
                     weapon.Value,
                     weapon.Key);
             }
+
+            // The playfield's shop machines, here rather than first. They
+            // used to go out immediately after the playfield message, before
+            // the client had been told about its own character - and that is
+            // not where the live server puts them. In the retail entry
+            // captured on 2026-09-11 the player's own SimpleCharFullUpdate is
+            // sequence 7 and the machines are 72 to 82, after the world's
+            // characters and before FullCharacter. A character in a playfield
+            // with no machines got the right order by accident and walked in;
+            // one standing in a shop got five of them before it knew who it
+            // was, and sat on the loading screen.
+            // Each machine on its own, and said out loud. A machine that
+            // cannot be sent used to take the whole entry down with it, and
+            // the only sign was a character that logged in, sent one movement
+            // and never finished loading - no error anywhere, because an
+            // entry that stops halfway is not an error, it is just an entry
+            // that stopped.
+            int machines = 0;
+            foreach (
+Vendor vendor in
+Pool.Instance.GetAll<Vendor>(
+client.Controller.Character.Playfield.Identity,
+(int)IdentityType.VendingMachine))
+            {
+                try
+                {
+                    VendingMachineFullUpdateMessageHandler.Default.Send(client.Controller.Character, vendor);
+                    machines++;
+                }
+                catch (Exception exception)
+                {
+                    LogUtil.ErrorException(
+                        exception,
+                        "ENTRY could not send shop {0} (template hash '{1}', {2} stats) - the rest of the"
+                        + " playfield still goes",
+                        vendor.Identity.Instance,
+                        vendor.TemplateHash,
+                        vendor.Stats == null ? -1 : vendor.Stats.GetStatValues().Count);
+                }
+            }
+
+            Log.Info("ENTRY character={0} shops={1}", charID, machines);
 
             // No ChangeAnimationAndStance here. CellAO sent one ("Action 167
             // Animation and Stance Data maybe?") and none of the 59 player entries
@@ -360,6 +395,10 @@ client.Controller.Character.Playfield.Identity,
 
             // Timers are allowed to update client stats now.
             client.Controller.Character.DoNotDoTimers = false;
+
+            // The loading screen is over by here. If this line is missing from
+            // the log, everything above it is where to look.
+            Log.Info("ENTRY DONE character={0}", charID);
         }
 
         /// <summary>

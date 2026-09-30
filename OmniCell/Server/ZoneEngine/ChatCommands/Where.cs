@@ -19,7 +19,6 @@ namespace ZoneEngine.ChatCommands
     using OmniCell.Core.Playfields;
     using OmniCell.Core.Statels;
     using OmniCell.Core.Vector;
-    using OmniCell.Database.Dao;
     using OmniCell.ObjectManager;
 
     using SmokeLounge.AOtomation.Messaging.GameData;
@@ -95,7 +94,6 @@ namespace ZoneEngine.ChatCommands
                         machines.Count,
                         data.Statels.Count(s => (int)s.Identity.Type == DoorType)));
 
-                Stocked(lines, character, machines);
                 Nearest(lines, character, data, at);
             }
 
@@ -126,39 +124,6 @@ namespace ZoneEngine.ChatCommands
         #region Methods
 
         private const int DoorType = 51016;
-
-        /// <summary>
-        /// How many of this playfield's machines the database has stock for,
-        /// which is the question when a shop opens empty.
-        /// </summary>
-        private static void Stocked(
-            List<MessageBody> lines,
-            ICharacter character,
-            List<StatelData> machines)
-        {
-            if (machines.Count == 0)
-            {
-                return;
-            }
-
-            int known = 0;
-            foreach (int template in machines.Select(m => m.TemplateId).Distinct())
-            {
-                string hash = OmniCell.Core.VendorHandler.VendorHandler.MachineHash(template);
-                if (VendorTemplateDao.Instance.GetWhere(new { Hash = hash }).Any())
-                {
-                    known++;
-                }
-            }
-
-            Say(
-                lines,
-                character,
-                string.Format(
-                    "{0} of {1} machine kinds have stock in the database",
-                    known,
-                    machines.Select(m => m.TemplateId).Distinct().Count()));
-        }
 
         /// <summary>
         /// The statel you are standing closest to, and how far off it is.

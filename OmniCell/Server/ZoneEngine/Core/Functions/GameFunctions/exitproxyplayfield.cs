@@ -68,6 +68,18 @@ namespace ZoneEngine.Core.Functions.GameFunctions
             IInstancedEntity target,
             MessagePackObject[] arguments)
         {
+            // Only the door you arrived by takes you out. Every other door in
+            // the building - the wings, and the entrances the other cities of a
+            // condensed shop use - is just a door that opens. teleportproxy
+            // records the arrival door in nextdoorinbuilding on the way in; a
+            // zero means we have no record (e.g. placed here by other means),
+            // so fall through to the old behaviour rather than trapping anyone.
+            uint arrivalDoor = self.Stats[StatIds.nextdoorinbuilding].BaseValue;
+            if (arrivalDoor != 0 && (uint)caller.Identity.Instance != arrivalDoor)
+            {
+                return false;
+            }
+
             uint externalDoorInstance = self.Stats[StatIds.externaldoorinstance].BaseValue;
             int externalPlayfieldId = self.Stats[StatIds.externalplayfieldinstance].Value;
 
