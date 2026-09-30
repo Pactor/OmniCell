@@ -2250,6 +2250,21 @@ namespace OmniCell.Core.Playfields
 
             float x, y, z;
             MissionBuilding.Landing(mission.Built, out x, out y, out z);
+
+            // Test checkpoint: the key matched this entrance and we are sending
+            // the player into the mission. If MISSION ENTER shows but no ENTRY
+            // for that playfield follows, the client stalled on the loading
+            // screen for an instance the login server never announced - the
+            // handshake, not the mission code.
+            NLog.LogManager.GetCurrentClassLogger().Info(
+                "MISSION ENTER character={0} playfield={1} building={2} landing {3}/{4}/{5}",
+                dynel.Identity.Instance,
+                mission.PlayfieldInstance,
+                mission.BuildingInstance,
+                x,
+                y,
+                z);
+
             this.Teleport(
                 (Dynel)dynel,
                 new Coordinate(x, y, z),

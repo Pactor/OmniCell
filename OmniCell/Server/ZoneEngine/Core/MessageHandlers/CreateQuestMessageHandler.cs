@@ -132,6 +132,22 @@ namespace ZoneEngine.Core.MessageHandlers
 
             QuestFullUpdateMessageHandler.Default.SendMissions(
                 character, MissionBook.Active(character), true);
+
+            // Test checkpoint: a mission was accepted and its building made. The
+            // entrance is an existing statel in offer.Playfield at these coords -
+            // walk there holding the key to go in. If entrance coords are 0/0/0
+            // that playfield had no MissionEntrance statels and only the
+            // "any entrance" fallback will admit you.
+            NLog.LogManager.GetCurrentClassLogger().Info(
+                "MISSION ACCEPT character={0} quest={1} building={2} playfield={3} entrancePf={4} at {5}/{6}/{7}",
+                character.Identity.Instance,
+                offer.Instance,
+                offer.BuildingInstance,
+                offer.PlayfieldInstance,
+                offer.Playfield,
+                offer.X,
+                offer.Y,
+                offer.Z);
         }
 
         /// <summary>
