@@ -53,8 +53,20 @@ namespace OmniCell.Core.Inventory
     {
         private readonly WeakRef<Vendor> ownerReference;
 
+        /// <summary>
+        /// How many things one machine may have on its shelves.
+        /// </summary>
+        /// <remarks>
+        /// Two hundred and fifty was a guess and it is too small. The basic
+        /// weapon shop in Fair Trade sent 854 slots in a single ShopUpdate on
+        /// 2026-09-29, and the advanced one 718, so a machine that held only
+        /// 250 would be missing two thirds of its stock. A thousand clears the
+        /// largest anybody has been seen to carry with room over.
+        /// </remarks>
+        public const int Shelves = 1000;
+
         public VendorInventoryPage(Identity ownerInstance)
-            : base((int)IdentityType.Inventory, 250, 0, ownerInstance)
+            : base((int)IdentityType.Inventory, Shelves, 0, ownerInstance)
         {
             this.ownerReference = new WeakRef<Vendor>(Pool.Instance.GetObject<Vendor>(ownerInstance));
         }

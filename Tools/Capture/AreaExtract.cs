@@ -1493,6 +1493,29 @@ internal static class AreaExtract
     /// is 18.8.50 and the captures are 18.8.62; the area gained machines in
     /// between, and a machine with no statel has nowhere to stand until the
     /// playfield file is rebuilt.
+    ///
+    /// **The stock is keyed on the machine, not on where it stands.** A machine
+    /// is built from an item template - 297433 is "Basic ICC Chemical
+    /// Supplies" - and the same template is stood in playfield after playfield.
+    /// Keying the stock on the playfield would say that Fair Trade's chemical
+    /// shop and the one in the next building are different shops, which they
+    /// are not; keying it on the template says they are the same machine, which
+    /// is what the client data says too. Sixty-four machines were opened in the
+    /// 2026-09-29 recording of Fair Trade, all sixty-four of different
+    /// templates, and those templates are stood 190 times across 26 playfields
+    /// - all of Neutral Supermarket Advanced, sixteen of Andromeda's seventeen,
+    /// two in Arete Landing. One recording stocks every one of them.
+    ///
+    /// **What it does not do is split a machine's stock between catalogues.**
+    /// A statel asks for its stock with Shophash(hash, low, high), and some ask
+    /// several times: the three chemical shops all name 5ZD6 and differ only in
+    /// the quality bands they may sell from - 1 to 109 for the basic one, 110
+    /// to 209 for the advanced, 210 to 300 for the superior. That is why the
+    /// three hold different things while naming one catalogue. A few machines
+    /// name more than one catalogue at once - the basic armour shop names A2YA,
+    /// 2DSI and 9LOD - and nothing on the wire says which item came from which,
+    /// so the stock is recorded against the machine that sold it rather than
+    /// guessed apart.
     /// </remarks>
     private static void WriteVendors(
         string outDir,
@@ -1516,31 +1539,30 @@ internal static class AreaExtract
 
         var sql = new List<string>
                   {
-                      "-- The vending machines of playfield " + playfield + " and what they sell,",
+                      "-- What the vending machines opened in playfield " + playfield + " were selling,",
                       "-- read out of the ShopUpdates the live server sent.",
                       "--",
                       "-- A machine is placed by the playfield file, not by this. What is here is",
-                      "-- the link from each one to its stock: a vendors row, the vendortemplate",
-                      "-- it names, and the shopinventorytemplates rows that template names.",
+                      "-- its stock: a vendortemplate row for the machine, and the",
+                      "-- shopinventorytemplates rows it names.",
                       "--",
-                      "-- The hash is the playfield and the statel's index, so it says which",
-                      "-- machine it belongs to and cannot collide with another playfield's. The",
-                      "-- three columns that hold one were seven and four characters wide, which",
-                      "-- is not enough for that, so they are widened here too.",
+                      "-- The hash is the item template the machine is built from, so it belongs",
+                      "-- to the machine rather than to this playfield, and every playfield that",
+                      "-- stands the same machine is stocked by the same rows. The column that",
+                      "-- holds it was four characters wide, which is not enough for that, so it",
+                      "-- is widened here too.",
                       string.Empty,
-                      "ALTER TABLE vendors MODIFY `Hash` varchar(32) NOT NULL;",
                       "ALTER TABLE vendortemplate MODIFY `Hash` varchar(32) NOT NULL;",
                       "ALTER TABLE vendortemplate MODIFY `ShopInvHash` varchar(32) NOT NULL;",
-                      string.Empty,
-                      "DELETE FROM vendors WHERE Playfield = " + playfield + ";",
-                      "DELETE FROM vendortemplate WHERE Hash LIKE '" + playfield + "-%';",
-                      "DELETE FROM shopinventorytemplates WHERE Hash LIKE '" + playfield + "-%';",
                       string.Empty
                   };
 
         int placed = 0;
         var homeless = new List<Static>();
         var bare = new List<StatelData>(statels);
+        var written = new HashSet<string>();
+        var stocked = new HashSet<int>();
+        var rows = new List<string>();
 
         foreach (Static machine in statics.Values
             .Where(s => s.Kind == "VendingMachine" && shops.ContainsKey(s.Instance))
@@ -1554,35 +1576,26 @@ internal static class AreaExtract
             }
 
             bare.Remove(statel);
-            placed++;
 
-            int index = (statel.Identity.Instance >> 16) & 0xff;
-            string hash = playfield + "-" + index;
             int template = Template(machine);
+            string hash = MachineHash(template);
 
-            sql.Add(
-                string.Format(
-                    CultureInfo.InvariantCulture,
-                    "INSERT INTO vendors (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW,"
-                    + " Name, TemplateId, Hash)"
-                    + " VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, '', {9}, '{10}');",
-                    (playfield << 16) | index,
-                    playfield,
-                    Str(statel.X),
-                    Str(statel.Y),
-                    Str(statel.Z),
-                    Str(statel.HeadingX),
-                    Str(statel.HeadingY),
-                    Str(statel.HeadingZ),
-                    Str(statel.HeadingW),
-                    template,
-                    hash));
+            // The same machine opened twice in one recording is one machine.
+            // Whichever sighting came first is kept, and the second is not a
+            // second shop.
+            if (!written.Add(hash))
+            {
+                continue;
+            }
+
+            stocked.Add(template);
+            placed++;
 
             // The machine's name is the name of the item it is built from, and
             // the server already has a table of those. Taking it from there as
             // the row goes in beats copying it into this file and letting the
             // two drift.
-            sql.Add(
+            rows.Add(
                 string.Format(
                     CultureInfo.InvariantCulture,
                     "INSERT INTO vendortemplate (Hash, Lvl, Name, ItemTemplate, ShopInvHash, MinQl, MaxQl,"
@@ -1595,7 +1608,7 @@ internal static class AreaExtract
             foreach (string slot in shops[machine.Instance])
             {
                 string[] parts = slot.Split(':');
-                sql.Add(
+                rows.Add(
                     string.Format(
                         CultureInfo.InvariantCulture,
                         "INSERT INTO shopinventorytemplates (Hash, LowId, HighId, MinQl, MaxQl,"
@@ -1607,14 +1620,32 @@ internal static class AreaExtract
                         parts[2]));
             }
 
-            sql.Add(string.Empty);
+            rows.Add(string.Empty);
         }
+
+        sql.AddRange(Reach(statelFile, stocked));
+        sql.Add(string.Empty);
+
+        // Only the machines this recording actually opened are replaced. A
+        // delete by playfield would take out every other recording's work, and
+        // these rows are not the playfield's to begin with.
+        foreach (string hash in written.OrderBy(h => h, StringComparer.Ordinal))
+        {
+            sql.Add("DELETE FROM vendortemplate WHERE Hash = '" + hash + "';");
+            sql.Add("DELETE FROM shopinventorytemplates WHERE Hash = '" + hash + "';");
+        }
+
+        sql.Add(string.Empty);
+        sql.AddRange(rows);
 
         // Shopkeepers. A machine stands on a statel; a shopkeeper's stock has
         // no position because it goes wherever its character goes, and the
-        // character is named on the record.
+        // character is named on the record. That is also why a shopkeeper is
+        // still keyed on the playfield: the stock belongs to one character
+        // standing in one place, not to a machine that is stood everywhere.
         int carried = 0;
         var noCharacter = new List<Static>();
+        var keepers = new List<string>();
         foreach (Static shop in statics.Values
             .Where(s => s.Npc != 0 && shops.ContainsKey(s.Instance))
             .OrderBy(s => s.Instance))
@@ -1630,7 +1661,7 @@ internal static class AreaExtract
             int template = Template(shop);
             carried++;
 
-            sql.Add(
+            keepers.Add(
                 string.Format(
                     CultureInfo.InvariantCulture,
                     "INSERT INTO vendors (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW,"
@@ -1649,7 +1680,7 @@ internal static class AreaExtract
                     hash,
                     keeper.Instance));
 
-            sql.Add(
+            keepers.Add(
                 string.Format(
                     CultureInfo.InvariantCulture,
                     "INSERT INTO vendortemplate (Hash, Lvl, Name, ItemTemplate, ShopInvHash, MinQl, MaxQl,"
@@ -1662,7 +1693,7 @@ internal static class AreaExtract
             foreach (string slot in shops[shop.Instance])
             {
                 string[] parts = slot.Split(':');
-                sql.Add(
+                keepers.Add(
                     string.Format(
                         CultureInfo.InvariantCulture,
                         "INSERT INTO shopinventorytemplates (Hash, LowId, HighId, MinQl, MaxQl,"
@@ -1674,8 +1705,18 @@ internal static class AreaExtract
                         parts[2]));
             }
 
-            sql.Add("-- " + keeper.Name + " sells " + shops[shop.Instance].Count + " things.");
+            keepers.Add("-- " + keeper.Name + " sells " + shops[shop.Instance].Count + " things.");
+            keepers.Add(string.Empty);
+        }
+
+        if (carried > 0)
+        {
+            sql.Add("ALTER TABLE vendors MODIFY `Hash` varchar(32) NOT NULL;");
+            sql.Add("DELETE FROM vendors WHERE Playfield = " + playfield + " AND Npc <> 0;");
+            sql.Add("DELETE FROM vendortemplate WHERE Hash LIKE '" + playfield + "-s%';");
+            sql.Add("DELETE FROM shopinventorytemplates WHERE Hash LIKE '" + playfield + "-s%';");
             sql.Add(string.Empty);
+            sql.AddRange(keepers);
         }
 
         foreach (Static shop in noCharacter)
@@ -1762,6 +1803,70 @@ internal static class AreaExtract
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// What a machine's stock is filed under: the item template it is built
+    /// from.
+    /// </summary>
+    /// <remarks>
+    /// The T keeps it clear of the four-character hashes the shop tables
+    /// already hold - GenN, AdvN and the rest - which are names, not numbers,
+    /// and could otherwise be read as one.
+    /// </remarks>
+    private static string MachineHash(int template)
+    {
+        return "T" + template.ToString(CultureInfo.InvariantCulture);
+    }
+
+    /// <summary>
+    /// Every playfield these machines are stood in, written into the file as
+    /// a comment.
+    /// </summary>
+    /// <remarks>
+    /// Because the stock is filed under the machine, one recording reaches
+    /// further than the room it was made in, and the only honest way to say
+    /// how much further is to count it. Counted here rather than written down
+    /// by hand, so that regenerating the file cannot leave a stale claim in
+    /// its header.
+    /// </remarks>
+    private static List<string> Reach(string statelFile, HashSet<int> stocked)
+    {
+        var found = new List<string>();
+        int machines = 0;
+
+        foreach (PlayfieldData data in OmniCellContentPack.ReadPlayfields(statelFile))
+        {
+            int hit = data.Statels.Count(
+                s => s.Identity.Type == IdentityType.VendingMachine && stocked.Contains(s.TemplateId));
+            if (hit == 0)
+            {
+                continue;
+            }
+
+            machines += hit;
+            found.Add(
+                string.Format(
+                    CultureInfo.InvariantCulture,
+                    "--   playfield {0,-6} {1,3} of these machines   {2}",
+                    data.PlayfieldId,
+                    hit,
+                    data.Name));
+        }
+
+        var lines = new List<string>
+                    {
+                        string.Empty,
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "-- These {0} machines are stood {1} times, across {2} playfields:",
+                            stocked.Count,
+                            machines,
+                            found.Count)
+                    };
+
+        lines.AddRange(found);
+        return lines;
     }
 
     /// <summary>

@@ -34,6 +34,7 @@ namespace OmniCell.Core.VendorHandler
     #region Usings ...
 
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
 
     using OmniCell.Core.Entities;
@@ -107,7 +108,19 @@ namespace OmniCell.Core.VendorHandler
                                                 0x70000000,
                                                 IdentityType.VendingMachine)
                                     };
-            Vendor v = new Vendor(pfIdentity, freeIdentity, statelData.TemplateId);
+
+            // A machine's stock belongs to the machine, not to the playfield it
+            // is standing in. "Basic ICC Chemical Supplies" sells the same
+            // things in Fair Trade as it does in the building next door, so its
+            // stock is filed under the item template it is built from and every
+            // playfield that stands one is stocked by the same rows. A vendors
+            // row still wins where there is one - that is how a shop with
+            // something particular about it is given its own stock.
+            string hash = MachineHash(statelData.TemplateId);
+            Vendor v = VendorTemplateDao.Instance.GetWhere(new { Hash = hash }).Any()
+                           ? new Vendor(pfIdentity, freeIdentity, hash)
+                           : new Vendor(pfIdentity, freeIdentity, statelData.TemplateId);
+
             v.OriginalIdentity = statelData.Identity;
             v.RawCoordinates = new Vector3(statelData.X, statelData.Y, statelData.Z);
             v.Heading = new Quaternion(
@@ -116,6 +129,21 @@ namespace OmniCell.Core.VendorHandler
                 statelData.HeadingZ,
                 statelData.HeadingW);
             v.Playfield = playfield;
+        }
+
+        /// <summary>
+        /// What a machine's stock is filed under: the item template it is built
+        /// from.
+        /// </summary>
+        /// <remarks>
+        /// The T keeps it clear of the four-character hashes the shop tables
+        /// already hold - GenN, AdvN and the rest - which are names, not
+        /// numbers, and could otherwise be read as one. AreaExtract writes the
+        /// rows under the same key.
+        /// </remarks>
+        public static string MachineHash(int template)
+        {
+            return "T" + template.ToString(CultureInfo.InvariantCulture);
         }
 
         public static void SpawnVendorsForPlayfield(IPlayfield playfield, StatelData[] rdbVendors)
