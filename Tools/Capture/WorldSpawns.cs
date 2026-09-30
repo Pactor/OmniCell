@@ -268,8 +268,6 @@ namespace OmniCell.Tools.Capture
 
             Console.WriteLine("{0} spawns given a route from a walk nearby", Route(all, routes));
 
-            Write(output, all, creatures);
-
             // A body the bot logged for this very spawn, or failing that one
             // borrowed from another creature of the same name.
             var logged = new Dictionary<string, Spawn>(StringComparer.OrdinalIgnoreCase);
@@ -288,6 +286,26 @@ namespace OmniCell.Tools.Capture
                 s.Scale = like.Scale;
                 borrowed++;
             }
+
+            // Nothing is stood that cannot be dressed - after the borrowing
+            // above, so a creature only loses its place when no capture, no
+            // mission and no other sighting of its own name has ever recorded
+            // a body for it.
+            //
+            // A spawn with no body wears the client's default model, and the
+            // world filled up with identical strangers in it. That is also
+            // exactly what a person looks like to this tool: a player carries
+            // no monster body either, because a player is built from a head
+            // and textures. Whichever of the two it was, it is not something
+            // to stand in a playfield, and it comes back the moment a body is
+            // recorded for it.
+            int faceless = all.RemoveAll(s => s.Monster == 0);
+            Console.WriteLine(
+                "{0} spawns left out for having no body to wear - the default model, and a person"
+                + " wears it too",
+                faceless);
+
+            Write(output, all, creatures);
 
             Console.WriteLine(
                 "{0} spawns wear a body the bot logged, {1} more borrowed one from the same name",
