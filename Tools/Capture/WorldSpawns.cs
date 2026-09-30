@@ -135,6 +135,19 @@ namespace OmniCell.Tools.Capture
             public bool Pet;
 
             /// <summary>
+            /// A person, not scenery.
+            /// </summary>
+            /// <remarks>
+            /// From the captures, where a player wears MonsterData zero. The
+            /// bot's own record cannot tell one from a creature - it writes a
+            /// name, a level and a place, and a person standing in a city
+            /// looks exactly like an NPC standing in a city - so this list is
+            /// the only thing that can, and it is only as complete as the
+            /// captures are.
+            /// </remarks>
+            public bool Player;
+
+            /// <summary>
             /// Level and maximum health, as caught on the wire.
             /// </summary>
             public readonly List<KeyValuePair<int, int>> Health = new List<KeyValuePair<int, int>>();
@@ -381,6 +394,7 @@ namespace OmniCell.Tools.Capture
                         }
 
                         creature.Pet |= parts[11] == "1";
+                        creature.Player |= parts.Length > 13 && parts[13] == "1";
                         continue;
                     }
 
@@ -490,7 +504,7 @@ namespace OmniCell.Tools.Capture
                     }
 
                     string name = Json.String(line, "name");
-                    if (string.IsNullOrEmpty(name) || Known(creatures, name).Pet)
+                    if (string.IsNullOrEmpty(name) || Skip(Known(creatures, name)))
                     {
                         continue;
                     }
@@ -658,7 +672,7 @@ namespace OmniCell.Tools.Capture
                 foreach (string entry in Json.Objects(text, "Mobs"))
                 {
                     string name = Json.String(entry, "Name");
-                    if (string.IsNullOrEmpty(name) || Known(creatures, name).Pet)
+                    if (string.IsNullOrEmpty(name) || Skip(Known(creatures, name)))
                     {
                         continue;
                     }
@@ -692,6 +706,22 @@ namespace OmniCell.Tools.Capture
             }
 
             return spawns;
+        }
+
+        /// <summary>
+        /// Whether this is something the world should stand, rather than
+        /// somebody who was passing.
+        /// </summary>
+        /// <remarks>
+        /// A player is not scenery and neither is a player's pet. Both were
+        /// written into the world spawn table because the bot records a name
+        /// and a place and nothing that says which is which, and the result
+        /// was Healsalot standing in Borealis as an NPC, with pets that pop
+        /// in and walk a path looking exactly like a spawn doing the same.
+        /// </remarks>
+        private static bool Skip(Creature creature)
+        {
+            return creature.Pet || creature.Player;
         }
 
         /// <summary>

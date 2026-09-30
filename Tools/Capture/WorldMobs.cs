@@ -1,4 +1,4 @@
-// --------------------------------------------------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="WorldMobs.cs" company="OmniCell">
 //   Copyright © 2026 OmniCell contributors.
 // </copyright>
@@ -18,6 +18,7 @@ namespace OmniCell.Tools.Capture
 
     using ICSharpCode.SharpZipLib.Zip.Compression;
 
+    using SmokeLounge.AOtomation.Messaging.GameData;
     using SmokeLounge.AOtomation.Messaging.Messages;
     using SmokeLounge.AOtomation.Messaging.Messages.N3Messages;
     using SmokeLounge.AOtomation.Messaging.Serialization;
@@ -105,6 +106,19 @@ namespace OmniCell.Tools.Capture
             /// </remarks>
             public bool Pet;
 
+            /// <summary>
+            /// Whether this is a person rather than a creature.
+            /// </summary>
+            /// <remarks>
+            /// A player wears MonsterData zero. Their names are kept rather
+            /// than dropped because the bot's own record cannot tell a person
+            /// from a creature - it writes down a name, a level and a place
+            /// and nothing that says which - so without this list the world
+            /// spawn table fills up with whoever happened to be standing
+            /// around. Healsalot is not an NPC.
+            /// </remarks>
+            public bool Player;
+
             public readonly HashSet<int> Playfields = new HashSet<int>();
 
             public readonly List<KeyValuePair<int, int>> Health = new List<KeyValuePair<int, int>>();
@@ -152,13 +166,29 @@ namespace OmniCell.Tools.Capture
                                 continue;
                             }
 
-                            if (character.MonsterData == 0)
+                            // A person, told from a creature by the packet
+                            // rather than guessed at. Every SimpleCharFullUpdate
+                            // carries a SimpleCharacterInfo and the type of it
+                            // is the answer: SimplePcInfo for a player,
+                            // SimpleNpcInfo for everything the world owns. In
+                            // the 2026-09-29 recording that is 37 people
+                            // against 96 NPCs.
+                            //
+                            // Two wrong tests stood here before. MonsterData
+                            // zero means the character is built from a head
+                            // and textures rather than a monster body, which
+                            // is true of every humanoid NPC - guards,
+                            // bartenders, shopkeepers - as much as of a
+                            // player. Testing CharacterInfo for null was worse:
+                            // it is never null, so nobody was ever a player.
+                            if (character.CharacterInfo is SimplePcInfo)
                             {
                                 players++;
+                                Remember(table, character).Player = true;
                                 continue;
                             }
 
-                            if (character.PetMaster != null)
+                            if (Owned(character))
                             {
                                 pets++;
                             }
@@ -258,7 +288,35 @@ namespace OmniCell.Tools.Capture
         /// "34 - Automatic", "34-V worker" and "32-V Docker" - so the body
         /// cannot be the key, and the name is what the bot wrote down.
         /// </remarks>
-        private static void Remember(Dictionary<string, Creature> table, SimpleCharFullUpdateMessage character)
+        /// <summary>
+        /// Whether this creature belongs to a player.
+        /// </summary>
+        /// <remarks>
+        /// Two flags say so and both are used, because they do not always
+        /// travel together. PetMaster is stat 196, the owner's dynel, and it
+        /// rides behind bit 4 of Flags2 - so it is only in the updates that
+        /// carry that bit. PetType is on the NPC's own info block and says
+        /// what kind of pet it is, which is not zero for a pet whichever
+        /// update you caught it in.
+        ///
+        /// The IsPet visual bit is deliberately not used: it reads set on
+        /// ordinary mission creatures - a Rhinoman Smasher had it - so it
+        /// means something else.
+        /// </remarks>
+        private static bool Owned(SimpleCharFullUpdateMessage character)
+        {
+            if (character.PetMaster.HasValue && character.PetMaster.Value != 0)
+            {
+                return true;
+            }
+
+            var npc = character.CharacterInfo as SimpleNpcInfo;
+            return npc != null && npc.PetType != 0;
+        }
+
+        private static Creature Remember(
+            Dictionary<string, Creature> table,
+            SimpleCharFullUpdateMessage character)
         {
             Creature creature;
             if (!table.TryGetValue(character.Name, out creature))
@@ -268,7 +326,7 @@ namespace OmniCell.Tools.Capture
             }
 
             creature.Seen++;
-            if (character.PetMaster != null)
+            if (Owned(character))
             {
                 creature.Pet = true;
             }
@@ -312,6 +370,8 @@ namespace OmniCell.Tools.Capture
 
                 creature.Health.Add(new KeyValuePair<int, int>(character.Level, (int)character.Health));
             }
+
+            return creature;
         }
 
         private static void Write(string output, IEnumerable<Creature> creatures)
@@ -328,12 +388,15 @@ namespace OmniCell.Tools.Capture
             text.AppendLine("# the rest rather than fitted where it would mean nothing.");
             text.AppendLine("# health is every level and maximum health this creature was actually seen with,");
             text.AppendLine("# as level:health. That is the measurement; the scale is a summary of it.");
-            text.AppendLine("# Players are not here - a person wears MonsterData zero. Pets are, with pet=1:");
-            text.AppendLine("# a pet carries its owner in PetMaster, and knowing the names is what lets a world");
-            text.AppendLine("# spawn list throw out the ones that only followed somebody around.");
+            text.AppendLine("# Players are here with player=1 - a person wears MonsterData zero - and pets");
+            text.AppendLine("# with pet=1, from the owner they carry in PetMaster. Neither is scenery and");
+            text.AppendLine("# neither belongs in a world spawn table. The bot's own record cannot tell either");
+            text.AppendLine("# of them from a creature - it writes a name, a level and a place and nothing");
+            text.AppendLine("# that says which - so these names are the only thing that can, and a world");
+            text.AppendLine("# spawn list throws out whatever is named here.");
             text.AppendLine(
                 "# name\tmonster\theadmesh\tscale\tvisual\trunspeed\tseen\tminLevel\tmaxLevel"
-                + "\thealthScale\thealth\tpet\tplayfields");
+                + "\thealthScale\thealth\tpet\tplayfields\tplayer");
 
             foreach (Creature creature in creatures.OrderBy(c => c.Name, StringComparer.OrdinalIgnoreCase))
             {
@@ -360,7 +423,8 @@ namespace OmniCell.Tools.Capture
                     string.Join(
                         " ",
                         creature.Playfields.OrderBy(p => p)
-                            .Select(p => p.ToString(CultureInfo.InvariantCulture)))));
+                            .Select(p => p.ToString(CultureInfo.InvariantCulture))),
+                    creature.Player ? "1" : "0"));
             }
 
             File.WriteAllText(output, text.ToString());
