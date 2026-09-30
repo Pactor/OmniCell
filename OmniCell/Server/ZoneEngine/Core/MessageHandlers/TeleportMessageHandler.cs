@@ -203,10 +203,13 @@ namespace ZoneEngine.Core.MessageHandlers
                             };
                 x.Unknown1 = 0x61;
                 x.Playfield = new Identity() { Type = IdentityType.Playfield1, Instance = playfield.Instance };
-                x.ChangePlayfield = ((playfield.Instance != character.Playfield.Identity.Instance)
-                                     || (playfield.Type != character.Playfield.Identity.Type))
-                    ? new Identity { Type = IdentityType.Playfield2, Instance = playfield.Instance }
-                    : Identity.None;
+                // Always filled in, the same playfield included. Playfield.Teleport
+                // drops the connection and sends a ZoneRedirection whatever the
+                // destination, so the client has to load the playfield again even
+                // when it has not changed. Given None for the same playfield - a
+                // player waking up where they died - it sits on a white screen
+                // and never sends CharInPlay.
+                x.ChangePlayfield = new Identity { Type = IdentityType.Playfield2, Instance = playfield.Instance };
                 x.Playfield2 = new Identity() { Type = IdentityType.Playfield3, Instance = playfield.Instance };
 
                 // Trailer (AoMember 10) was null -> NullReferenceException in the serializer.
