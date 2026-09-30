@@ -17,6 +17,7 @@ namespace ZoneEngine.Core.MessageHandlers
 
     using OmniCell.Core.Components;
     using OmniCell.Core.Entities;
+    using OmniCell.Core.Inventory;
     using OmniCell.Core.Items;
     using OmniCell.Core.Network;
     using OmniCell.Enums;
@@ -80,6 +81,45 @@ namespace ZoneEngine.Core.MessageHandlers
                         client.Controller.Character,
                         TradeSkill.Instance.GetItemName(taken.LowID, taken.HighID, taken.Quality));
                     client.Controller.Character.CalculateSkills();
+                }
+
+                return;
+            }
+
+            // Taking an item out of a held bag. The source names the bag by its
+            // open handle in the high half and the slot in the low; the corpse
+            // case above owns handle 112, bags start higher (BagAccess). The
+            // item goes to the main inventory, next free slot (0x6F).
+            if (message.Source.Type == IdentityType.Backpack)
+            {
+                int handle = (int)((uint)message.Source.Instance >> 16);
+                int bagSlot = message.Source.Instance & 0xFFFF;
+                BackPackInventoryPage bag = BagAccess.ByHandle(client.Controller.Character.Identity, handle);
+                if (bag != null)
+                {
+                    IItem item = bag[bagSlot];
+                    IInventoryPage inventory;
+                    if (item != null
+                        && client.Controller.Character.BaseInventory.Pages.TryGetValue(
+                            (int)IdentityType.Inventory,
+                            out inventory))
+                    {
+                        int free = inventory.FindFreeSlot();
+                        if (free >= 0)
+                        {
+                            bag.Remove(bagSlot);
+                            inventory.Add(free, item);
+                            client.Controller.Character.Send(
+                                new ContainerAddItemMessage
+                                {
+                                    Identity = client.Controller.Character.Identity,
+                                    Unknown = 0,
+                                    SourceContainer = message.Source,
+                                    Target = client.Controller.Character.Identity,
+                                    TargetPlacement = free
+                                });
+                        }
+                    }
                 }
 
                 return;

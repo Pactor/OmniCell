@@ -17,6 +17,7 @@ namespace ZoneEngine.Core.MessageHandlers
 
     using OmniCell.Core.Components;
     using OmniCell.Core.Entities;
+    using OmniCell.Core.Items;
     using OmniCell.Enums;
 
     using SmokeLounge.AOtomation.Messaging.GameData;
@@ -88,6 +89,77 @@ namespace ZoneEngine.Core.MessageHandlers
         public ChestItemFullUpdateMessage BuildForCorpse(ICharacter victim, Identity corpse, int cash)
         {
             return this.Create(victim, Filler(victim, corpse, cash));
+        }
+
+        /// <summary>
+        /// Registers a player-held bag on the client. A bag is a container like
+        /// a chest and reaches the client as this same message - the piece that
+        /// makes it openable. Without it the client is told a bag exists in
+        /// FullCharacter but has no container object for the open to attach to,
+        /// and asks to open it again and again.
+        /// </summary>
+        /// <remarks>
+        /// Shaped from the held containers in the 2026-09-23 captures and the
+        /// bought-bag note in AOSharp Inventory.OnChestItem: owner is the
+        /// player, InventoryId 101 (the main inventory page, 0x65), BodyLocation
+        /// the slot the bag sits in, and the stats carry the template in 702/703
+        /// and the quality in 701 - the same stat shape a SimpleItemFullUpdate
+        /// uses. The Instance being set is what tells the serializer to leave off
+        /// the world position a bag does not have.
+        /// </remarks>
+        public void SendForHeldBag(ICharacter character, IItem bag, int inventorySlot)
+        {
+            // Straight to the owner, not announced to the playfield. A bag is
+            // private, and Playfield.Announce drops a subject nobody "knows" -
+            // which a held bag's Container identity is - so announcing it sent it
+            // to no one and the client never got the container it needed to open.
+            this.Send(character, BagFiller(character, bag, inventorySlot), false);
+        }
+
+        private static MessageDataFiller BagFiller(ICharacter character, IItem bag, int inventorySlot)
+        {
+            return message =>
+            {
+                message.Identity = bag.Identity;
+                message.Unknown = 0;
+
+                message.Owner = character.Identity;
+                message.MsgVersion = Version;
+                message.Identitytype = ContainerType;
+                message.Instance = character.Identity.Instance;
+
+                message.Coordinates = new Vector3 { X = 0, Y = 0, Z = 0 };
+                message.Heading = new Quaternion { X = 0, Y = 0, Z = 0, W = 0 };
+
+                message.PlayfieldId = Playfields.GetClientInstance(character.Playfield.Identity.Instance);
+
+                message.Marker = new Identity
+                                 {
+                                     Type = (IdentityType)ItemMessageConstants.ItemMessageMarker,
+                                     Instance = 0
+                                 };
+
+                // 101 (0x65) is the main inventory page; BodyLocation is the slot
+                // the bag is in there.
+                message.InventoryId = 101;
+                message.BodyLocation = (byte)inventorySlot;
+
+                message.Stats = new[]
+                                {
+                                    Stat(StatIds.staticinstance, (uint)bag.LowID),
+                                    Stat(StatIds.acgitemlevel, (uint)bag.Quality),
+                                    Stat(StatIds.acgitemtemplateid, (uint)bag.LowID),
+                                    Stat(StatIds.acgitemtemplateid2, (uint)bag.HighID),
+                                    Stat(StatIds.multiplecount, 1)
+                                };
+
+                message.Name = string.Empty;
+
+                message.TailVersion = 2;
+                message.LockDifficulty = 0;
+                message.Keyholders = new Identity[0];
+                message.TailEndVersion = 3;
+            };
         }
 
         private static MessageDataFiller Filler(ICharacter victim, Identity corpse, int cash)

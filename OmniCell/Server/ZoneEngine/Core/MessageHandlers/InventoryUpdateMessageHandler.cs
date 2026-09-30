@@ -66,6 +66,55 @@ namespace ZoneEngine.Core.MessageHandlers
         }
 
         /// <summary>
+        /// Opens a player-held bag: the shape a real bag open takes on the wire.
+        /// </summary>
+        /// <remarks>
+        /// From the captures (work/decoded/20260923-201448 and 201746): a bag
+        /// answers with BagIdentity = its own Container identity, NumberOfSlots
+        /// 21, Access CanAdd|CanRemove, Open 1, and SlotnumberInMainInventory =
+        /// the handle. The handle is a per-character counter that starts at 112
+        /// and climbs one per open; it is the high half of every slot inside the
+        /// bag, Backpack (handle &lt;&lt; 16) | slot. Handle 0 is the empty shell
+        /// the client is given before a bag has been opened. <paramref
+        /// name="contents"/> is null for a bag with nothing in it yet.
+        /// </remarks>
+        public void SendForBag(ICharacter character, Identity bagIdentity, int handle, IInventoryPage contents)
+        {
+            this.Send(character, x =>
+            {
+                x.BagIdentity = bagIdentity;
+                x.NumberOfSlots = 21;
+                x.SlotnumberInMainInventory = handle;
+
+                var entries = new List<InventoryEntry>();
+                if (contents != null)
+                {
+                    foreach (KeyValuePair<int, IItem> kv in contents.List())
+                    {
+                        entries.Add(
+                            new InventoryEntry
+                            {
+                                Slotnumber = kv.Key,
+                                Identity = Identity.None,
+                                Quality = kv.Value.Quality,
+                                HighId = kv.Value.HighID,
+                                LowId = kv.Value.LowID,
+                                Flags = 0x21,
+                                Count = (short)kv.Value.MultipleCount,
+                                Unused = 0
+                            });
+                    }
+                }
+
+                x.Entries = entries.ToArray();
+                x.Open = 1;
+                x.Access = InventoryAccess.CanAdd | InventoryAccess.CanRemove;
+                x.Identity = character.Identity;
+                x.Unknown = 1;
+            });
+        }
+
+        /// <summary>
         /// A mission chest is not quite a corpse.
         /// </summary>
         /// <remarks>

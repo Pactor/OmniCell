@@ -54,7 +54,12 @@ namespace SmokeLounge.AOtomation.Messaging.GameData
 
         Door = 0x0000C748,
 
-        WeaponInstance = 0x0000C74A, 
+        // A player-held bag's own identity. Its contents are addressed as
+        // Backpack, (handle << 16) | slot. Chests and lootable corpses carry
+        // this type too.
+        Container = 0x0000C749,
+
+        WeaponInstance = 0x0000C74A,
 
         VendingMachine = 0x0000C75B, 
 

@@ -35,6 +35,7 @@ namespace ZoneEngine.Core.MessageHandlers
 
     // TODO: Make this to EntityEnvent or something like this
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     using OmniCell.Core.Components;
@@ -66,6 +67,62 @@ namespace ZoneEngine.Core.MessageHandlers
         #region Inbound
 
         /// <summary>
+        /// The handle the first bag a character opens is given. The captures
+        /// start here (112) and climb one per open.
+        /// </summary>
+        private const int FirstBagHandle = 112;
+
+        /// <summary>
+        /// The next open-bag handle to hand out, per character. A bag's contents
+        /// are addressed Backpack, (handle &lt;&lt; 16) | slot, so each open gets
+        /// its own high half.
+        /// </summary>
+        private static readonly Dictionary<ulong, int> NextBagHandle = new Dictionary<ulong, int>();
+
+        /// <summary>
+        /// The next Container instance to mint for a bag that has none yet.
+        /// Seeded high to stay clear of loaded item instances. Session-only for
+        /// now; persisting a bag's identity across logins is a later step.
+        /// </summary>
+        private static int nextBagInstance = 0x40000000;
+
+        private static readonly object bagLock = new object();
+
+        /// <summary>
+        /// Answers a Use on a held bag with the bag's contents, so the client
+        /// opens its window. See InventoryUpdateMessageHandler.SendForBag.
+        /// </summary>
+        private void OpenBag(ICharacter character, Item bag)
+        {
+            // A bag needs a Container identity for the client to address it and
+            // its contents. If it has none yet, mint one and keep it on the item
+            // so this open and any later move line up.
+            if (bag.Identity == null
+                || bag.Identity.Type != IdentityType.Container
+                || bag.Identity.Instance == 0)
+            {
+                int instance;
+                lock (bagLock)
+                {
+                    instance = ++nextBagInstance;
+                }
+
+                bag.Identity = new Identity { Type = IdentityType.Container, Instance = instance };
+            }
+
+            BackPackInventoryPage page = BagAccess.PageFor(character.Identity, bag.Identity);
+            int handle = BagAccess.Open(character.Identity, bag.Identity);
+
+            NLog.LogManager.GetCurrentClassLogger().Info(
+                "BAG OPEN character={0} bag={1} handle={2} items={3}",
+                character.Identity.Instance,
+                bag.Identity.ToString(true),
+                handle,
+                page.List().Count);
+            InventoryUpdateMessageHandler.Default.SendForBag(character, bag.Identity, handle, page);
+        }
+
+        /// <summary>
         /// </summary>
         /// <param name="message">
         /// </param>
@@ -93,7 +150,24 @@ namespace ZoneEngine.Core.MessageHandlers
 
                     if (message.Target[0].Type == IdentityType.Inventory)
                     {
-                        client.Controller.UseItem(message.Target[0]);
+                        Item inventoryItem = client.Controller.Character.BaseInventory.GetItemInContainer(
+                            (int)IdentityType.Inventory,
+                            message.Target[0].Instance);
+
+                        // A bag is opened, not used. The client sends the same
+                        // Use it sends for any inventory item; the server tells a
+                        // bag apart and answers with its contents so the window
+                        // fills, rather than running a use that a bag has no
+                        // action for and doing nothing - which is why a bought
+                        // bag would not open.
+                        if (inventoryItem != null && inventoryItem.IsContainer())
+                        {
+                            this.OpenBag(client.Controller.Character, inventoryItem);
+                        }
+                        else
+                        {
+                            client.Controller.UseItem(message.Target[0]);
+                        }
 
                         // Acknowledge action
                         this.Acknowledge(client.Controller.Character, message);

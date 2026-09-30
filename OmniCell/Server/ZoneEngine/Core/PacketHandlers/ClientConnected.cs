@@ -38,6 +38,8 @@ namespace ZoneEngine.Core.PacketHandlers
     using System.Text;
 
     using OmniCell.Core.Entities;
+    using OmniCell.Core.Inventory;
+    using OmniCell.Core.Items;
     using OmniCell.Core.Playfields;
     using OmniCell.Enums;
     using OmniCell.ObjectManager;
@@ -296,6 +298,33 @@ client.Controller.Character.Playfield.Identity,
 
             /* inventory, items and all that */
             FullCharacterMessageHandler.Default.Send(client.Controller.Character);
+
+            // A held bag is a container, and the client opens a container only
+            // once it has been sent the container itself - the same
+            // ChestItemFullUpdate a chest or a corpse gets. FullCharacter names
+            // the bag but does not carry the object; without this the client
+            // asks to open a bag it has no container for, over and over. One per
+            // bag in the main inventory.
+            int bagsRegistered = 0;
+            IInventoryPage mainPage;
+            if (client.Controller.Character.BaseInventory.Pages.TryGetValue(
+                    (int)IdentityType.Inventory, out mainPage))
+            {
+                foreach (KeyValuePair<int, IItem> slot in mainPage.List())
+                {
+                    Item held = slot.Value as Item;
+                    if (held != null && held.IsContainer())
+                    {
+                        ChestItemFullUpdateMessageHandler.Default.SendForHeldBag(
+                            client.Controller.Character,
+                            held,
+                            slot.Key);
+                        bagsRegistered++;
+                    }
+                }
+            }
+
+            Log.Info("ENTRY character={0} bags={1}", charID, bagsRegistered);
 
             // Straight after FullCharacter: one CharacterAction 180 per perk
             // action, or the Perk Actions menu never appears.

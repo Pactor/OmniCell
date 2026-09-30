@@ -104,6 +104,34 @@ namespace OmniCell.Core.Items
                 ? this.templateLow.Quality
                 : (QL > this.templateHigh.Quality ? this.templateHigh.Quality : QL);
             this.Identity = new Identity();
+
+            // A bag carries a Container identity from the moment it exists. The
+            // client learns an item is an openable container from this type in
+            // the inventory it is sent - not from its own files - so a bag with
+            // no identity is just an item that will not open. The instance is
+            // minted here and stays put, so this bag's open and any later move
+            // address the same container. It is session-only for now; keeping it
+            // the same across logins is a later step.
+            if (this.templateLow.IsContainer())
+            {
+                this.Identity = new Identity
+                {
+                    Type = IdentityType.Container,
+                    Instance = NextContainerInstance()
+                };
+            }
+        }
+
+        private static int nextContainerInstance = 0x40000000;
+
+        private static readonly object containerInstanceLock = new object();
+
+        private static int NextContainerInstance()
+        {
+            lock (containerInstanceLock)
+            {
+                return ++nextContainerInstance;
+            }
         }
 
         #endregion
@@ -308,6 +336,14 @@ namespace OmniCell.Core.Items
         {
             // for now return false til we get the instancing working
             return false;
+        }
+
+        /// <summary>
+        /// A container (bag) the player can open and put items in.
+        /// </summary>
+        public bool IsContainer()
+        {
+            return this.templateLow != null && this.templateLow.IsContainer();
         }
 
         /// <summary>
