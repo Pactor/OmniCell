@@ -496,6 +496,11 @@ namespace ZoneEngine.Core
                         ZoneEngine.Core.Missions.MissionPlayfields.Close(mission);
                     }
 
+                    // A bag's contents are held in memory during the session;
+                    // write them back before the character is disposed so they
+                    // are there next login.
+                    ZoneEngine.Core.Loot.BagAccess.Save(character.Identity);
+
                     character.Dispose();
                 }
                 catch (Exception exception)

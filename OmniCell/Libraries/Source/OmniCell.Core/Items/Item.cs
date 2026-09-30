@@ -122,7 +122,14 @@ namespace OmniCell.Core.Items
             }
         }
 
-        private static int nextContainerInstance = 0x40000000;
+        // Seeded from the clock so each server run starts in a different part
+        // of the high range (0x40000000..0x7FFFFFFF) and a bag bought this run
+        // does not land on the instance of one saved in an earlier run. Within
+        // a run it just climbs. Persisting a mint so it is truly unique against
+        // the database is the proper fix; this makes a clash astronomically
+        // unlikely in the meantime.
+        private static int nextContainerInstance =
+            unchecked((int)(0x40000000L + (System.DateTimeOffset.UtcNow.ToUnixTimeSeconds() & 0x3FFFFFFF)));
 
         private static readonly object containerInstanceLock = new object();
 

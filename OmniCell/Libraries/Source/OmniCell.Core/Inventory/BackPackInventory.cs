@@ -54,6 +54,19 @@ namespace OmniCell.Core.Inventory
         {
         }
 
+        /// <summary>
+        /// A held bag's contents page, keyed so Read/Write/Remove store it under
+        /// containertype Backpack and containerinstance the bag's own Container
+        /// instance. The base constructor builds its identity as
+        /// { Type = ownerInstance.Instance, Instance = pagenum }, so the bag
+        /// instance is passed as the page number and Backpack as the owner
+        /// instance to land on { Backpack, bagInstance }.
+        /// </summary>
+        public BackPackInventoryPage(int bagInstance)
+            : base(bagInstance, 30, 0, new Identity { Instance = (int)IdentityType.Backpack })
+        {
+        }
+
         #endregion
     }
 }

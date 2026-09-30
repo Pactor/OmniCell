@@ -3,6 +3,9 @@ namespace ZoneEngine.Core.Loot
     using System.Collections.Generic;
 
     using OmniCell.Core.Inventory;
+    using OmniCell.Core.Items;
+    using OmniCell.Database.Dao;
+    using OmniCell.Database.Entities;
 
     using SmokeLounge.AOtomation.Messaging.GameData;
 
@@ -61,7 +64,11 @@ namespace ZoneEngine.Core.Loot
                 BackPackInventoryPage page;
                 if (!pages.TryGetValue(bag.Instance, out page))
                 {
-                    page = new BackPackInventoryPage(bag);
+                    // Keyed on the bag's Container instance so its rows are
+                    // stored under containertype Backpack / containerinstance =
+                    // this bag. Read pulls back what was saved last session.
+                    page = new BackPackInventoryPage(bag.Instance);
+                    page.Read();
                     pages[bag.Instance] = page;
                 }
 
@@ -117,6 +124,78 @@ namespace ZoneEngine.Core.Loot
                 }
 
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Writes every bag this character opened this session back to the
+        /// database, so its contents are there next login. Called on logout,
+        /// before the character is disposed.
+        /// </summary>
+        /// <remarks>
+        /// A bag's contents are kept under containertype Backpack /
+        /// containerinstance the bag's Container instance - the same instance
+        /// the bag item itself is saved with (it persists as an instanced item
+        /// in the main inventory). Delete then add, rather than the update-only
+        /// Save the pages use, so items put in a bag this session are inserted
+        /// and items taken out are gone.
+        /// </remarks>
+        public static void Save(Identity character)
+        {
+            lock (Gate)
+            {
+                Dictionary<int, BackPackInventoryPage> pages;
+                if (!PagesByCharacter.TryGetValue(character.Long(), out pages))
+                {
+                    return;
+                }
+
+                foreach (KeyValuePair<int, BackPackInventoryPage> kv in pages)
+                {
+                    int bagInstance = kv.Key;
+
+                    ItemDao.Instance.Delete(
+                        new { containertype = (int)IdentityType.Backpack, containerinstance = bagInstance });
+                    InstancedItemDao.Instance.Delete(
+                        new { containertype = (int)IdentityType.Backpack, containerinstance = bagInstance });
+
+                    foreach (KeyValuePair<int, IItem> slot in kv.Value.List())
+                    {
+                        IItem item = slot.Value;
+                        if (item.Identity.Type != IdentityType.None)
+                        {
+                            InstancedItemDao.Instance.Add(
+                                new DBInstancedItem
+                                {
+                                    containerinstance = bagInstance,
+                                    containertype = (int)IdentityType.Backpack,
+                                    containerplacement = slot.Key,
+                                    itemtype = (int)item.Identity.Type,
+                                    Id = item.Identity.Instance,
+                                    lowid = item.LowID,
+                                    highid = item.HighID,
+                                    quality = item.Quality,
+                                    multiplecount = item.MultipleCount,
+                                    stats = item.GetItemAttributes()
+                                },
+                                dontUseId: false);
+                        }
+                        else
+                        {
+                            ItemDao.Instance.Add(
+                                new DBItem
+                                {
+                                    containerinstance = bagInstance,
+                                    containertype = (int)IdentityType.Backpack,
+                                    containerplacement = slot.Key,
+                                    lowid = item.LowID,
+                                    highid = item.HighID,
+                                    quality = item.Quality,
+                                    multiplecount = item.MultipleCount
+                                });
+                        }
+                    }
+                }
             }
         }
 
