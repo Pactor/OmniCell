@@ -1625,6 +1625,8 @@ internal static class AreaExtract
 
         sql.AddRange(Reach(statelFile, stocked));
         sql.Add(string.Empty);
+        sql.AddRange(Shadowed(statelFile, stocked));
+        sql.Add(string.Empty);
 
         // Only the machines this recording actually opened are replaced. A
         // delete by playfield would take out every other recording's work, and
@@ -1867,6 +1869,61 @@ internal static class AreaExtract
 
         lines.AddRange(found);
         return lines;
+    }
+
+    /// <summary>
+    /// The old hand-written vendors rows that stand on a machine this
+    /// recording measured, and would otherwise be believed instead of it.
+    /// </summary>
+    /// <remarks>
+    /// A vendors row wins over the machine's own stock, which is what lets a
+    /// shop with something particular about it be given its own. The rows
+    /// CellAO shipped were not measured, though, and three of them are on the
+    /// wrong machine: 77725713 calls Superior ICC Chemical Supplies "Basic
+    /// Tools", and 77791235 and 77791236 call the two engineering shops
+    /// "Advanced Tools" and "Superior Tools". Left alone they would serve the
+    /// wrong shop at three machines we have the real contents of.
+    ///
+    /// Only those are removed. The test is the shape of the hash: a row
+    /// written from a recording is keyed on its playfield and the statel it
+    /// stands on, so it has a dash in it, and one of those is evidence like
+    /// this file is. Arete Landing's own captured shops keep their rows and
+    /// keep winning.
+    /// </remarks>
+    private static List<string> Shadowed(string statelFile, HashSet<int> stocked)
+    {
+        var ids = new List<int>();
+        foreach (PlayfieldData data in OmniCellContentPack.ReadPlayfields(statelFile))
+        {
+            foreach (StatelData statel in data.Statels)
+            {
+                if (statel.Identity.Type != IdentityType.VendingMachine
+                    || !stocked.Contains(statel.TemplateId))
+                {
+                    continue;
+                }
+
+                ids.Add((data.PlayfieldId << 16) | ((statel.Identity.Instance >> 16) & 0xff));
+            }
+        }
+
+        if (ids.Count == 0)
+        {
+            return new List<string>();
+        }
+
+        return new List<string>
+               {
+                   "-- A vendors row is believed before the machine's own stock is. These"
+                   + " stand on",
+                   "-- a machine this recording measured and were written by hand rather than"
+                   + " read",
+                   "-- off the wire, so they go. A row keyed on a playfield and a statel - the"
+                   + " shape",
+                   "-- this tool writes - came from a recording too, and is left alone.",
+                   "DELETE FROM vendors WHERE Hash NOT LIKE '%-%' AND Id IN ("
+                   + string.Join(", ", ids.Distinct().OrderBy(i => i)) + ");"
+               };
     }
 
     /// <summary>
