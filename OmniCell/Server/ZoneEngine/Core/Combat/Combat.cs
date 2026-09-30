@@ -764,6 +764,9 @@ namespace ZoneEngine.Core.Combat
             {
                 CorpseFullUpdateMessageHandler.Default.Send(victim, corpse, deathVariant);
             }
+
+            // A player is brought back; a creature is the playfield's business.
+            PlayerDeath.Respawn(victim);
         }
 
         /// <summary>
