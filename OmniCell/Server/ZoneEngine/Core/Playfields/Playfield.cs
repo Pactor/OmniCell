@@ -1391,6 +1391,10 @@ namespace OmniCell.Core.Playfields
                     known.Remove(gone);
                 }
             }
+
+            // Which statels they were standing on goes with them, so somebody
+            // who leaves through a door and comes back walks into it again.
+            this.steppedOn.Remove(gone);
         }
 
         /// <summary>
@@ -2030,25 +2034,104 @@ namespace OmniCell.Core.Playfields
         #region Methods
 
         /// <summary>
+        /// Standing on a statel, for each character, so that walking onto one
+        /// is told apart from standing on it.
         /// </summary>
-        /// <param name="dynel">
-        /// </param>
+        private readonly Dictionary<Identity, HashSet<int>> steppedOn =
+            new Dictionary<Identity, HashSet<int>>();
+
+        /// <summary>
+        /// How close a character has to get for a statel to notice them.
+        /// </summary>
+        private const float StatelReach = 2.0f;
+
+        /// <summary>
+        /// How far they have to get away again before it will notice them
+        /// twice.
+        /// </summary>
+        /// <remarks>
+        /// Wider than the reach on purpose, and wider than the two and a half
+        /// metres a door puts you down at. See
+        /// <see cref="CheckStatelCollision"/>.
+        /// </remarks>
+        private const float StatelRelease = 4.0f;
+
+        /// <summary>
+        /// A character standing on a statel that does something.
+        /// </summary>
+        /// <remarks>
+        /// This ran every tick and fired every tick, which is not what a door
+        /// is: walking into one is an event, standing in its doorway is not.
+        /// The two are told apart here by remembering what each character is
+        /// already standing on, and the difference is the whole of why you
+        /// could not stay inside a building.
+        ///
+        /// Going in, TeleportProxy puts you two and a half metres from the
+        /// door on the other side, and PlayfieldLoader has given that door an
+        /// ExitProxyPlayfield so you can walk back out of it. Two and a half
+        /// is only half a metre outside the two this fires at, so the first
+        /// step in any direction that was not away - or the client settling
+        /// your position after the zone - put you back on the door and it sent
+        /// you straight out again. Out in Borealis you landed two and a half
+        /// metres from the door you came in by, which sent you back. That is
+        /// the bouncing.
+        ///
+        /// So a statel has to let go of you before it can take you again, and
+        /// it lets go at <see cref="StatelRelease"/> rather than at
+        /// <see cref="StatelReach"/> - you have to actually walk away from a
+        /// door, not just jitter at the edge of it. A character seen here for
+        /// the first time, which is what arriving in a playfield looks like,
+        /// keeps whatever it is standing on without firing it: you are put
+        /// down next to a door, you did not walk into it.
+        /// </remarks>
         private void CheckStatelCollision(ICharacter dynel)
         {
+            HashSet<int> standing;
+            bool arrived = !this.steppedOn.TryGetValue(dynel.Identity, out standing);
+            if (arrived)
+            {
+                standing = new HashSet<int>();
+                this.steppedOn[dynel.Identity] = standing;
+            }
+
             foreach (StatelData sd in this.statels)
             {
+                if (!sd.Events.Any(
+                        x => (x.EventType == EventType.OnCollide) || (x.EventType == EventType.OnEnter)
+                             || (x.EventType == EventType.OnTargetInVicinity)))
+                {
+                    continue;
+                }
+
+                double distance = sd.Coord().Distance3D(dynel.Coordinates());
+                if (distance >= StatelRelease)
+                {
+                    standing.Remove(sd.Identity.Instance);
+                    continue;
+                }
+
+                if (arrived)
+                {
+                    // Put down here rather than walked here. Remember it, so
+                    // the door that just let you in does not throw you out.
+                    standing.Add(sd.Identity.Instance);
+                    continue;
+                }
+
+                if (distance >= StatelReach || !standing.Add(sd.Identity.Instance))
+                {
+                    continue;
+                }
+
+                LogUtil.Debug(DebugInfoDetail.Statel, "Stepped on Statel " + sd.Identity.ToString(true));
                 foreach (Event ev in
                     sd.Events.Where(
                         x =>
                             (x.EventType == EventType.OnCollide) || (x.EventType == EventType.OnEnter)
                             || (x.EventType == EventType.OnTargetInVicinity)))
                 {
-                    if (sd.Coord().Distance3D(dynel.Coordinates()) < 2.0f)
-                    {
-                        LogUtil.Debug(DebugInfoDetail.Statel, "Stepped on Statel " + sd.Identity.ToString(true));
-                        LogUtil.Debug(DebugInfoDetail.Statel, ev.ToString());
-                        ev.Perform(dynel, sd);
-                    }
+                    LogUtil.Debug(DebugInfoDetail.Statel, ev.ToString());
+                    ev.Perform(dynel, sd);
                 }
             }
         }
