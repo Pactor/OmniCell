@@ -1530,66 +1530,88 @@ internal static class AreaExtract
             return;
         }
 
-        List<StatelData> statels = VendingMachineStatels(statelFile, playfield);
-        if (statels == null)
-        {
-            Console.WriteLine("vendors   no playfield " + playfield + " in " + statelFile);
-            return;
-        }
+        List<StatelData> statels = VendingMachineStatels(statelFile, playfield) ?? new List<StatelData>();
 
         var sql = new List<string>
                   {
-                      "-- What the vending machines opened in playfield " + playfield + " were selling,",
-                      "-- read out of the ShopUpdates the live server sent.",
+                      "-- What the vending machines in these recordings were selling, read out",
+                      "-- of the ShopUpdates the live server sent.",
                       "--",
                       "-- A machine is placed by the playfield file, not by this. What is here is",
                       "-- its stock: a vendortemplate row for the machine, and the",
                       "-- shopinventorytemplates rows it names.",
                       "--",
                       "-- The hash is the item template the machine is built from, so it belongs",
-                      "-- to the machine rather than to this playfield, and every playfield that",
-                      "-- stands the same machine is stocked by the same rows. The column that",
-                      "-- holds it was four characters wide, which is not enough for that, so it",
-                      "-- is widened here too.",
+                      "-- to the machine rather than to any one playfield, and every playfield",
+                      "-- that stands the same machine is stocked by the same rows. The column",
+                      "-- that holds it was four characters wide, which is not enough for that,",
+                      "-- so it is widened here too.",
+                      "--",
+                      "-- **A shop rolls what is on its shelves.** The same machine opened twice",
+                      "-- in one recording held the same two dozen items at different qualities -",
+                      "-- item 43145 at QL 179 one time and 189 the other - and sometimes a",
+                      "-- different number of them. So what is written is every distinct item and",
+                      "-- quality the machine was ever seen holding, which is a little more than",
+                      "-- it shows at any one moment and is all of it measured.",
                       string.Empty,
                       "ALTER TABLE vendortemplate MODIFY `Hash` varchar(32) NOT NULL;",
                       "ALTER TABLE vendortemplate MODIFY `ShopInvHash` varchar(32) NOT NULL;",
                       string.Empty
                   };
 
-        int placed = 0;
         var homeless = new List<Static>();
         var bare = new List<StatelData>(statels);
         var written = new HashSet<string>();
         var stocked = new HashSet<int>();
         var rows = new List<string>();
 
+        // Every shelf of every machine of a kind, gathered under the kind.
+        // A building is a zone of its own and so a connection of its own, so
+        // one walk through a shopping district is several recordings and the
+        // same machine turns up in more than one of them. Each sighting is
+        // one roll of that shop's shelves; together they are what it stocks.
+        var catalogue = new Dictionary<int, SortedDictionary<string, string>>();
+
         foreach (Static machine in statics.Values
             .Where(s => s.Kind == "VendingMachine" && shops.ContainsKey(s.Instance))
             .OrderBy(s => s.Instance))
         {
-            StatelData statel = Standing(machine, statels);
-            if (statel == null)
+            int template = Template(machine);
+            if (template == 0)
             {
                 homeless.Add(machine);
                 continue;
             }
 
-            bare.Remove(statel);
-
-            int template = Template(machine);
-            string hash = MachineHash(template);
-
-            // The same machine opened twice in one recording is one machine.
-            // Whichever sighting came first is kept, and the second is not a
-            // second shop.
-            if (!written.Add(hash))
+            StatelData statel = Standing(machine, statels);
+            if (statel != null)
             {
-                continue;
+                bare.Remove(statel);
             }
 
-            stocked.Add(template);
-            placed++;
+            SortedDictionary<string, string> shelves;
+            if (!catalogue.TryGetValue(template, out shelves))
+            {
+                shelves = new SortedDictionary<string, string>(StringComparer.Ordinal);
+                catalogue[template] = shelves;
+            }
+
+            foreach (string slot in shops[machine.Instance])
+            {
+                // Low, high and quality together: the same item at three
+                // qualities is three things on the shelf, which is how the
+                // implant machines are stocked, so quality is part of what
+                // makes a shelf its own.
+                shelves[slot] = slot;
+            }
+        }
+
+        foreach (KeyValuePair<int, SortedDictionary<string, string>> kind in
+            catalogue.OrderBy(k => k.Key))
+        {
+            string hash = MachineHash(kind.Key);
+            written.Add(hash);
+            stocked.Add(kind.Key);
 
             // The machine's name is the name of the item it is built from, and
             // the server already has a table of those. Taking it from there as
@@ -1603,9 +1625,9 @@ internal static class AreaExtract
                     + " COALESCE((SELECT Name FROM itemnames WHERE Id = {1}), ''), {1}, '{0}', 1, 500,"
                     + " 0.05, 1.00, 161;",
                     hash,
-                    template));
+                    kind.Key));
 
-            foreach (string slot in shops[machine.Instance])
+            foreach (string slot in kind.Value.Values)
             {
                 string[] parts = slot.Split(':');
                 rows.Add(
@@ -1623,6 +1645,7 @@ internal static class AreaExtract
             rows.Add(string.Empty);
         }
 
+        int placed = catalogue.Count;
         sql.AddRange(Reach(statelFile, stocked));
         sql.Add(string.Empty);
         sql.AddRange(Shadowed(statelFile, stocked));
@@ -1711,6 +1734,20 @@ internal static class AreaExtract
             keepers.Add(string.Empty);
         }
 
+        // A shopkeeper's stock belongs to one character standing in one
+        // place, so its row needs the playfield that character is in - and
+        // the wire only carries the instance, so the real one has to be given
+        // with --as. Without it the rows would say playfield 0, which is not
+        // a place, so they are reported instead of written.
+        if (carried > 0 && playfield == 0)
+        {
+            sql.Add(
+                "-- NEEDS REVIEW: " + carried + " shopkeeper(s) here were not written. A shopkeeper"
+                + " belongs to a playfield and none was given; re-run with --as <playfield> for the"
+                + " recording they are in.");
+            carried = 0;
+        }
+
         if (carried > 0)
         {
             sql.Add("ALTER TABLE vendors MODIFY `Hash` varchar(32) NOT NULL;");
@@ -1733,8 +1770,8 @@ internal static class AreaExtract
             sql.Add(
                 string.Format(
                     CultureInfo.InvariantCulture,
-                    "-- NEEDS REVIEW: a machine at {0:0.##},{1:0.##},{2:0.##} selling {3} things stands on"
-                    + " no statel. The playfield file predates it.",
+                    "-- NEEDS REVIEW: a machine at {0:0.##},{1:0.##},{2:0.##} selling {3} things says"
+                    + " it is built from no item, so there is nothing to file its stock under.",
                     machine.X,
                     machine.Y,
                     machine.Z,
@@ -1743,8 +1780,8 @@ internal static class AreaExtract
 
         File.WriteAllLines(Path.Combine(outDir, "vendors.sql"), sql);
         Console.WriteLine(
-            "vendors   " + placed + " machines stocked and " + carried + " shopkeepers; "
-            + homeless.Count + " machines with no statel to stand on, " + bare.Count
+            "vendors   " + placed + " kinds of machine stocked and " + carried + " shopkeepers; "
+            + homeless.Count + " machines built from no item, " + bare.Count
             + " statels nobody opened, " + noCharacter.Count + " shops whose character is not here");
     }
 
