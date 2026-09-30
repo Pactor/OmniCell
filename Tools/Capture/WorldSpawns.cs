@@ -527,6 +527,14 @@ namespace OmniCell.Tools.Capture
                         continue;
                     }
 
+                    // As above: the sighting log carries pc and petType now.
+                    if (Json.Flag(line, "pc") || Json.Number(line, "petType") > 0
+                        || Json.Number(line, "petMaster") > 0)
+                    {
+                        Known(creatures, name).Player = true;
+                        continue;
+                    }
+
                     double[] first = Json.Numbers(line, "first");
                     if (first == null || first.Length < 3)
                     {
@@ -692,6 +700,15 @@ namespace OmniCell.Tools.Capture
                     string name = Json.String(entry, "Name");
                     if (string.IsNullOrEmpty(name) || Skip(Known(creatures, name)))
                     {
+                        continue;
+                    }
+
+                    // The bot says so itself now: Pc for a person, PetType for
+                    // somebody's pet. Older entries carry neither and fall
+                    // back to what the captures know.
+                    if (Json.Flag(entry, "Pc") || Json.Number(entry, "PetType") > 0)
+                    {
+                        Known(creatures, name).Player = true;
                         continue;
                     }
 
