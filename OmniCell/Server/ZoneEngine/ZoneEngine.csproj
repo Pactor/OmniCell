@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -110,6 +110,9 @@
     <None Include="..\..\Datafiles\items.ocp" Link="items.ocp" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\..\Datafiles\items.ocp')" />
     <None Include="..\..\Datafiles\nanos.ocp" Link="nanos.ocp" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\..\Datafiles\nanos.ocp')" />
     <None Include="..\..\Datafiles\playfields.ocp" Link="playfields.ocp" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\..\Datafiles\playfields.ocp')" />
+    <None Include="..\..\Datafiles\missionpools.ocp" Link="missionpools.ocp" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\..\Datafiles\missionpools.ocp')" />
+    <None Include="..\..\Datafiles\missiontext.tsv" Link="missiontext.tsv" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\..\Datafiles\missiontext.tsv')" />
+    <None Include="..\..\Datafiles\missionrewards.tsv" Link="missionrewards.tsv" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\..\Datafiles\missionrewards.tsv')" />
   </ItemGroup>
 
 </Project>

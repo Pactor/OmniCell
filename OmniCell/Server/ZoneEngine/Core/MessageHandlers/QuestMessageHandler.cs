@@ -14,9 +14,13 @@ namespace ZoneEngine.Core.MessageHandlers
 
     using OmniCell.Core.Components;
     using OmniCell.Core.Entities;
+    using OmniCell.Core.Missions;
+    using OmniCell.Core.Network;
 
     using SmokeLounge.AOtomation.Messaging.GameData;
     using SmokeLounge.AOtomation.Messaging.Messages.N3Messages;
+
+    using ZoneEngine.Core.Quests;
 
     #endregion
 
@@ -30,14 +34,19 @@ namespace ZoneEngine.Core.MessageHandlers
     /// updates, which is close enough to one each to read as "and this is the
     /// one that changed".
     ///
-    /// All four unnamed fields hold the same value in all 58: Unknown1 is 1 and
-    /// the rest are 0. With no sample showing anything else there is nothing to
-    /// say about what Unknown1 would mean at 2, so it is sent as seen and named
-    /// as a constant rather than dressed up as an action code it may not be.
+    /// The other fields hold the same value in all 58: Version is 1, and the two
+    /// still unnamed, Unknown2 and Unknown3, are 0. With no sample showing anything
+    /// else there is nothing to say about what they would mean otherwise, so they
+    /// are sent as seen rather than dressed up as an action code they may not be.
     /// </remarks>
-    [MessageHandler(MessageHandlerDirection.OutboundOnly)]
+    [MessageHandler(MessageHandlerDirection.All)]
     public class QuestMessageHandler : BaseMessageHandler<QuestMessage, QuestMessageHandler>
     {
+        public QuestMessageHandler()
+        {
+            this.UpdateCharacterStatsOnReceive = false;
+        }
+
         #region Constants
 
         /// <summary>
@@ -49,6 +58,43 @@ namespace ZoneEngine.Core.MessageHandlers
         /// 102 captured copies.
         /// </remarks>
         private const int Version = 1;
+
+        #endregion
+
+        #region Inbound
+
+        /// <summary>
+        /// The client sends this to give a mission or a quest up.
+        /// </summary>
+        /// <remarks>
+        /// The same message in both directions: the server sends it to say a
+        /// quest has left the window, and the client sends it to ask for that.
+        /// A generated mission is dropped from the book and an authored quest
+        /// goes to the quest manager, which is the only one of the two that
+        /// has anything written down to undo.
+        /// </remarks>
+        protected override void Read(QuestMessage message, IZoneClient client)
+        {
+            if (client == null || client.Controller == null || client.Controller.Character == null)
+            {
+                return;
+            }
+
+            ICharacter character = client.Controller.Character;
+            int quest = message.QuestIdentity.Instance;
+
+            MissionOffer dropped = MissionBook.Drop(character, quest);
+            if (dropped != null)
+            {
+                ZoneEngine.Core.Missions.MissionPlayfields.Close(dropped);
+                this.Send(character, quest);
+                QuestFullUpdateMessageHandler.Default.SendMissions(
+                    character, MissionBook.Active(character), false);
+                return;
+            }
+
+            QuestManager.Abandon(character, quest);
+        }
 
         #endregion
 

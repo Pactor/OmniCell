@@ -38,6 +38,8 @@ namespace ZoneEngine.Core.MessageHandlers
 
     using SmokeLounge.AOtomation.Messaging.Messages.N3Messages;
 
+    using ZoneEngine.Core.Missions;
+
     #endregion
 
     /// <summary>
@@ -62,6 +64,14 @@ namespace ZoneEngine.Core.MessageHandlers
         /// </param>
         protected override void Read(LookAtMessage message, IZoneClient client)
         {
+            // A find item mission is finished by looking at the thing:
+            // nothing is picked up and it stays on the floor
+            // (Documentation/Missions.md).
+            if (client != null && client.Controller != null && client.Controller.Character != null)
+            {
+                MissionCompletion.OnLookAt(client.Controller.Character, message.Target);
+            }
+
             if (client.Controller.LookAt(message.Target))
             {
                 if (message.ReturnInfo != 1)

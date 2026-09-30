@@ -30,7 +30,7 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
     /// client already has the detail for.
     ///
     /// The identity type 0x0000DAC3 was likewise absent from IdentityType. It
-    /// sits alongside MissionEntrance (0xDAC6) and MissionTerminal (0xDCA1),
+    /// sits alongside MissionTerminal (0xDAC1) and MissionEntrance (0xDAC6),
     /// the rest of the mission family.
     /// </remarks>
     [AoContract((int)N3MessageType.Quest)]

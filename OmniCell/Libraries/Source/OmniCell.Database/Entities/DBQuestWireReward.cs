@@ -14,6 +14,9 @@ namespace OmniCell.Database.Entities
         public int LowId { get; set; }
         public int HighId { get; set; }
         public int Quality { get; set; }
-        public int Unknown1 { get; set; }
+        /// <summary>
+        /// QuestItemShort.Unused: the ACGItem_t's reserved zero.
+        /// </summary>
+        public int Unused { get; set; }
     }
 }

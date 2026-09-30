@@ -72,6 +72,19 @@ namespace ZoneEngine.Core.Quests
         private static readonly ConcurrentDictionary<int, List<DBQuestObjective>> Objectives =
             new ConcurrentDictionary<int, List<DBQuestObjective>>();
 
+        /// <summary>
+        /// The stats a quest changes on whoever finishes it.
+        /// </summary>
+        /// <remarks>
+        /// Cash, experience and items were all a quest could give, and some
+        /// of what the world checks for is none of those. Arete Landing's
+        /// exit is the case: the door out wants bit 16384 of stat 685, the ID
+        /// card the whole tutorial chain is about making, and nothing could
+        /// set it.
+        /// </remarks>
+        private static readonly ConcurrentDictionary<int, List<DBQuestStatReward>> StatRewards =
+            new ConcurrentDictionary<int, List<DBQuestStatReward>>();
+
         private static readonly ConcurrentDictionary<int, List<DBQuestItemReward>> ItemRewards =
             new ConcurrentDictionary<int, List<DBQuestItemReward>>();
 
@@ -143,6 +156,7 @@ namespace ZoneEngine.Core.Quests
             Definitions.Clear();
             Objectives.Clear();
             ItemRewards.Clear();
+            StatRewards.Clear();
             WireDefinitions.Clear();
             WireActions.Clear();
             WireRewards.Clear();
@@ -165,6 +179,23 @@ namespace ZoneEngine.Core.Quests
             foreach (DBQuestItemReward reward in QuestItemRewardDao.Instance.GetAll())
             {
                 ItemRewards.GetOrAdd(reward.QuestId, id => new List<DBQuestItemReward>()).Add(reward);
+            }
+
+            // A database made before this table existed has no such table, and
+            // the server refusing to start over a quest reward nobody has yet
+            // is worse than starting without it. create-database.bat adds it.
+            try
+            {
+                foreach (DBQuestStatReward reward in QuestStatRewardDao.Instance.GetAll())
+                {
+                    StatRewards.GetOrAdd(reward.QuestId, id => new List<DBQuestStatReward>())
+                        .Add(reward);
+                }
+            }
+            catch (Exception exception)
+            {
+                LogUtil.ErrorException(
+                    exception, "No queststatrewards table; run create-database.bat to add it.");
             }
 
             foreach (DBQuestWire wire in QuestWireDao.Instance.GetAll())
@@ -241,6 +272,8 @@ namespace ZoneEngine.Core.Quests
                 Definitions.TryRemove(questId, out gone);
                 Objectives.TryRemove(questId, out alsoGone);
                 ItemRewards.TryRemove(questId, out rewardsGone);
+                List<DBQuestStatReward> statRewardsGone;
+                StatRewards.TryRemove(questId, out statRewardsGone);
                 WireDefinitions.TryRemove(questId, out wireGone);
                 WireActions.TryRemove(questId, out wireActionsGone);
                 WireRewards.TryRemove(questId, out wireRewardsGone);
@@ -261,6 +294,16 @@ namespace ZoneEngine.Core.Quests
 
             Objectives[questId] = objectives;
             ItemRewards[questId] = rewards;
+            try
+            {
+                StatRewards[questId] = QuestStatRewardDao.Instance
+                    .GetWhere(new { QuestId = questId })
+                    .ToList();
+            }
+            catch (Exception exception)
+            {
+                LogUtil.ErrorException(exception);
+            }
             if (wire == null)
             {
                 DBQuestWire ignored;
@@ -438,6 +481,15 @@ namespace ZoneEngine.Core.Quests
                 return false;
             }
 
+            // A chain can fork on the profession: Vernon Godfray sends a Shade to Lady Sheila Black
+            // and everybody else to Dr. Mason, and both stages hang off the same finished quest.
+            // The one that is not for this character is passed over in silence, the way the branch
+            // that was never offered reads in the captures.
+            if (!QuestStateRules.ProfessionAllows(quest, character.Stats[StatIds.profession].Value))
+            {
+                return false;
+            }
+
             List<DBCharacterQuest> rows = Rows(character);
             IList<DBQuestObjective> objectives = ObjectivesOf(questId);
             if (objectives.Count == 0)
@@ -532,6 +584,8 @@ namespace ZoneEngine.Core.Quests
             // else (20260914-124401 #1688-1697, #3382-3384; 20260914-120906 #2796). MissionChanged and
             // QuestMessage belong to a stage finishing, never to one starting.
             BestEffort(() => NotifyItemRewards(character, pendingRewards, false));
+            BestEffort(() => GiveStatRewards(character, questId, true));
+            BestEffort(character.SendChangedStats);
             BestEffort(() => SendQuestWindow(character, true, questId));
             return true;
         }
@@ -853,14 +907,23 @@ namespace ZoneEngine.Core.Quests
         /// <summary>
         /// Somebody put an item on.
         /// </summary>
-        public static void OnEquip(ICharacter character, string itemName)
+        public static void OnEquip(ICharacter character, string itemName, int itemLow, int itemHigh)
         {
-            if (string.IsNullOrEmpty(itemName))
-            {
-                return;
-            }
-
-            Advance(character, QuestObjectiveType.Equip, itemName);
+            // Name or template id, like a purchase: retail finishes "Install the implant" and the
+            // Shade's "become its vessel" the moment the item lands in its slot, and the extracted
+            // objectives name the item by its id (20260909-142713 s3 8042-8043, 20260914-220505
+            // 26820-26823).
+            Advance(
+                character,
+                QuestObjectiveType.Equip,
+                new[]
+                    {
+                        itemName,
+                        itemLow.ToString(CultureInfo.InvariantCulture),
+                        itemHigh.ToString(CultureInfo.InvariantCulture)
+                    },
+                itemLow,
+                itemHigh);
         }
 
         /// <summary>
@@ -1437,6 +1500,7 @@ namespace ZoneEngine.Core.Quests
                         QuestFeedback.Reward(quest.ExperienceReward, quest.CashReward)));
             }
 
+            BestEffort(() => GiveStatRewards(character, quest.Id, false));
             BestEffort(character.SendChangedStats);
             BestEffort(() => NotifyItemRewards(character, pendingRewards, true));
             BestEffort(() => CharacterActionMessageHandler.Default.SendMissionChanged(character, quest.Id));
@@ -1718,6 +1782,55 @@ namespace ZoneEngine.Core.Quests
                 if (completion)
                 {
                     FeedbackMessageHandler.Default.Send(character, 110, 108871108);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Change whatever stats this quest changes.
+        /// </summary>
+        /// <remarks>
+        /// Setting bits rather than writing the value is the usual case,
+        /// because the stats worth granting this way are flag words that more
+        /// than one thing writes to - overwriting stat 685 to give somebody an
+        /// ID card would take away everything else they had done.
+        ///
+        /// Granting twice is harmless for bits and would be wrong for a
+        /// write, so a quest that can be repeated should only ever set bits.
+        /// </remarks>
+        private static void GiveStatRewards(ICharacter character, int questId, bool onAccept)
+        {
+            List<DBQuestStatReward> rewards;
+            if (character == null || !StatRewards.TryGetValue(questId, out rewards))
+            {
+                return;
+            }
+
+            foreach (DBQuestStatReward reward in rewards)
+            {
+                if ((reward.GrantOnAccept != 0) != onAccept)
+                {
+                    continue;
+                }
+
+                try
+                {
+                    int was = character.Stats[reward.Stat].Value;
+                    int now = reward.SetBits != 0 ? was | reward.Value : reward.Value;
+                    if (now == was)
+                    {
+                        continue;
+                    }
+
+                    character.Stats[reward.Stat].Value = now;
+                    LogUtil.Debug(
+                        DebugInfoDetail.Engine,
+                        "Quest " + questId + " set stat " + reward.Stat + " from " + was + " to "
+                        + now + " on " + character.Identity.Instance + ".");
+                }
+                catch (Exception exception)
+                {
+                    LogUtil.ErrorException(exception);
                 }
             }
         }

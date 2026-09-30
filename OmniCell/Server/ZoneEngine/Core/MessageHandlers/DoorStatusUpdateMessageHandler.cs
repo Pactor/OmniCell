@@ -26,7 +26,7 @@ namespace ZoneEngine.Core.MessageHandlers
     /// <remarks>
     /// 77 in the captures, in bursts on entering a playfield full of doors - 28
     /// of them on walking into the subway. Every captured one is the same shape:
-    /// Unknown1 is 2, everything else zero, and the identity is the door.
+    /// Version is 2, everything else zero, and the identity is the door.
     ///
     /// What a value other than 2 means is not known, because no capture holds
     /// one, so this sends what was seen and nothing more. It goes out for the

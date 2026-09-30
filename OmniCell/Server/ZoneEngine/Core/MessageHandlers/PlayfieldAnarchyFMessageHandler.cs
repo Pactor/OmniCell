@@ -43,6 +43,9 @@ namespace ZoneEngine.Core.MessageHandlers
     using SmokeLounge.AOtomation.Messaging.GameData;
     using SmokeLounge.AOtomation.Messaging.Messages.N3Messages;
 
+    using OmniCell.Core.Missions;
+
+    using ZoneEngine.Core.Missions;
     using ZoneEngine.Core.Playfields;
 
     using Vector3 = SmokeLounge.AOtomation.Messaging.GameData.Vector3;
@@ -100,6 +103,18 @@ namespace ZoneEngine.Core.MessageHandlers
             return x =>
             {
                 int playfield = character.Playfield.Identity.Instance;
+
+                // A mission is a playfield that exists because somebody took
+                // the mission, and the whole of its world is on this message:
+                // the pool it is built from and where each room goes. The
+                // client owns the geometry and puts it together.
+                MissionOffer mission = MissionPlayfields.Of(playfield);
+                if (mission != null)
+                {
+                    Mission(x, character, mission);
+                    return;
+                }
+
                 int instance = Playfields.GetClientInstance(playfield);
                 bool instanced = Playfields.IsInstanced(playfield);
 
@@ -131,16 +146,18 @@ namespace ZoneEngine.Core.MessageHandlers
 
                 if (instanced)
                 {
-                    // An empty run table. The client is told what the playfield
-                    // is filled with by the dynel updates that follow, not by
-                    // this; the object is here because the client reads it.
+                    // The runs name the playfield file's statels to the client: which
+                    // instance each terminal and door goes by. Sent empty, the client had
+                    // no ids for them that the server could look up, so nothing it used -
+                    // an exit, the shuttle door, the Surgery Clinic - was found. See
+                    // StatelRuns and playfieldstatelruns.
                     x.TemplateGenerator = new PlayfieldTemplateGeneratorData
                                           {
                                               Identity =
                                                   new Identity { Type = TemplateGenerator, Instance = 1 },
                                               Revision = 1,
                                               Version = 1,
-                                              Runs = new PlayfieldDynelRun[0]
+                                              Runs = StatelRuns.ToWire(playfield)
                                           };
                 }
 
@@ -174,6 +191,50 @@ namespace ZoneEngine.Core.MessageHandlers
                                                   };
             }
             */
+        }
+
+        /// <summary>
+        /// The zone-in packet for a mission.
+        /// </summary>
+        /// <remarks>
+        /// Read off 20260926-135805 stream 10, a HiTech mission of 23 rooms:
+        ///
+        ///   ModelId     51103:2224708   the building
+        ///   PlayfieldId Playfield2:112085
+        ///   Identity    Playfield2:112085
+        ///   Group       0, Subgroup 0
+        ///   PlayfieldX  -1, PlayfieldZ -1
+        ///   Generator   the 23 placements
+        ///
+        /// The two generator slots a playfield can carry are exclusive: an
+        /// instanced playfield of the ordinary sort sends TemplateGenerator
+        /// and a mission sends this one, and no captured packet has both.
+        /// PlayfieldX and Z are -1 rather than a world position because a
+        /// mission is nowhere on the map.
+        /// </remarks>
+        private static void Mission(
+            PlayfieldAnarchyFMessage x, ICharacter character, MissionOffer mission)
+        {
+            var playfieldId = new Identity
+                              {
+                                  Type = IdentityType.Playfield2,
+                                  Instance = mission.PlayfieldInstance
+                              };
+
+            Coordinate here = character.Coordinates();
+            x.Identity = playfieldId;
+            x.CharacterCoordinates = new Vector3 { X = here.x, Y = here.y, Z = here.z };
+            x.ModelId = new Identity
+                        {
+                            Type = MissionBuilding.BuildingType,
+                            Instance = mission.BuildingInstance
+                        };
+            x.PlayfieldId = playfieldId;
+            x.Group = 0;
+            x.Subgroup = 0;
+            x.Generator = MissionBuilding.Generator(mission.Built, mission.BuildingInstance);
+            x.PlayfieldX = -1;
+            x.PlayfieldZ = -1;
         }
 
         #endregion

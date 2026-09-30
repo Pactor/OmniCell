@@ -183,6 +183,16 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
         public BuildingGeneratorData Generator { get; set; }
 
         /// <summary>
+        /// The apartment this playfield is, when it is one.
+        /// </summary>
+        /// <remarks>
+        /// Identity type 51067, AVOwnedBuildingGeneratorData_t as the client
+        /// names its classes. Set instead of <see cref="Generator"/> and
+        /// TemplateGenerator, never beside them.
+        /// </remarks>
+        public OwnedBuildingGeneratorData OwnedBuildingGenerator { get; set; }
+
+        /// <summary>
         /// What the playfield is filled with, when it is not a mission.
         /// </summary>
         [AoMember(8)]

@@ -33,7 +33,7 @@ namespace ZoneEngine.Core
     /// this server knows, and SpawnItem treats it as a pet, as before.
     ///
     /// What the client is told, per item, is the live server's order when a
-    /// package is opened: TemplateAction with Unknown2 87 at OverflowWindow:0,
+    /// package is opened: TemplateAction with Action 87 at OverflowWindow:0,
     /// then ContainerAddItem from OverflowWindow:0 to the player's overflow
     /// window at placement 0x6F. That pair repeats once per item in
     /// 20260911-171203_s12 (seq 1590-1604, 1617-1632) and 20260909-141545 (seq

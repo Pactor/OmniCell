@@ -48,6 +48,7 @@ namespace ZoneEngine
     using OmniCell.Core.Entities;
     using OmniCell.Core.Events;
     using OmniCell.Core.Items;
+    using OmniCell.Core.Missions;
     using OmniCell.Core.Nanos;
     using OmniCell.Core.Playfields;
     using OmniCell.Database;
@@ -603,9 +604,14 @@ namespace ZoneEngine
             try
             {
                 Console.WriteLine("Loaded {0} Playfields", PlayfieldLoader.CacheAllPlayfieldData());
+                Console.WriteLine("Loaded {0} Mission Room Pools", MissionPoolLoader.CacheAllMissionPools());
+                Console.WriteLine("Loaded {0} Lines of Mission Text", MissionText.Load());
+                Console.WriteLine("Loaded {0} Mission Reward Bands", MissionRewards.Load());
                 Console.WriteLine("Loaded {0} Quests", QuestManager.Load());
                 Console.WriteLine("Loaded {0} Levels", Leveling.Load());
                 Console.WriteLine("Loaded {0} Creature Experience Levels", Experience.Load());
+                Console.WriteLine("Loaded {0} Creature Behaviours", NpcLife.Load());
+                Console.WriteLine("Loaded {0} Creature Appearances", NpcAppearance.Load());
                 Console.WriteLine("Loaded {0} Fixture Behaviours", FixtureBehaviours.Load());
                 Console.WriteLine("Loaded {0} Combat Weapon Descriptors", CombatWeaponProfiles.Load());
                 Console.WriteLine("Loaded {0} SpawnItem Keys", ItemSpawns.Load());

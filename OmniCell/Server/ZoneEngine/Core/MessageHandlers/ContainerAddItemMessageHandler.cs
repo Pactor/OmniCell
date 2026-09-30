@@ -207,9 +207,16 @@ namespace ZoneEngine.Core.MessageHandlers
                 {
                     if (receivingPage.NeedsItemCheck)
                     {
-                        AOAction action = this.getAction(sendingPage, itemFrom);
+                        // The requirements are those of the page the item goes on. This asked the
+                        // page it came from - the inventory, which has none - so swapping into an
+                        // occupied equipment slot skipped every requirement.
+                        AOAction action = this.getAction(receivingPage, itemFrom);
 
-                        if (action.CheckRequirements(client.Controller.Character))
+                        if (FitsSlot(receivingPage, itemFrom, toPlacement)
+                            && ProfessionAllows(receivingPage, itemFrom, client.Controller.Character)
+                            && ClinicAllows(receivingPage, itemFrom, client.Controller.Character)
+                            && ClinicAllows(receivingPage, itemTo, client.Controller.Character)
+                            && action.CheckRequirements(client.Controller.Character))
                         {
                             UnEquip.Send(client, receivingPage, toPlacement);
                             if (!noAppearanceUpdate)
@@ -255,7 +262,9 @@ namespace ZoneEngine.Core.MessageHandlers
                                 TradeSkill.Instance.GetItemName(
                                     itemFrom.LowID,
                                     itemFrom.HighID,
-                                    itemFrom.Quality));
+                                    itemFrom.Quality),
+                                itemFrom.LowID,
+                                itemFrom.HighID);
                         }
                     }
                 }
@@ -270,7 +279,10 @@ namespace ZoneEngine.Core.MessageHandlers
 
                         AOAction action = this.getAction(receivingPage, itemFrom);
 
-                        if (action.CheckRequirements(client.Controller.Character))
+                        if (FitsSlot(receivingPage, itemFrom, toPlacement)
+                            && ProfessionAllows(receivingPage, itemFrom, client.Controller.Character)
+                            && ClinicAllows(receivingPage, itemFrom, client.Controller.Character)
+                            && action.CheckRequirements(client.Controller.Character))
                         {
                             if (!noAppearanceUpdate)
                             {
@@ -318,7 +330,9 @@ namespace ZoneEngine.Core.MessageHandlers
                                 TradeSkill.Instance.GetItemName(
                                     itemFrom.LowID,
                                     itemFrom.HighID,
-                                    itemFrom.Quality));
+                                    itemFrom.Quality),
+                                itemFrom.LowID,
+                                itemFrom.HighID);
                         }
                     }
                 }
@@ -327,6 +341,13 @@ namespace ZoneEngine.Core.MessageHandlers
             {
                 if (unequipFrom != null)
                 {
+                    // An implant comes out only at a Surgery Clinic, like it goes in.
+                    if (!ClinicAllows(sendingPage, itemFrom, client.Controller.Character))
+                    {
+                        client.Controller.Character.DoNotDoTimers = false;
+                        return;
+                    }
+
                     // Send to client first
                     if (!noAppearanceUpdate)
                     {
@@ -396,6 +417,37 @@ namespace ZoneEngine.Core.MessageHandlers
             {
                 AppearanceUpdateMessageHandler.Default.Send(client.Controller.Character);
             }
+        }
+
+        /// <summary>
+        /// Whether the item may go in that slot of the page. Only implant slots are checked so far:
+        /// an implant or spirit fits the slots its Placement names, so a leg implant no longer goes
+        /// in the eye. A refused move is answered like a failed requirement, with nothing.
+        /// </summary>
+        private static bool FitsSlot(IInventoryPage page, IItem item, int slot)
+        {
+            ImplantInventoryPage implants = page as ImplantInventoryPage;
+            return (implants == null) || implants.Fits(item, slot);
+        }
+
+        /// <summary>
+        /// Whether this character's profession may wear the item at all. Only the implant page is
+        /// checked: a Shade wears spirits and no implant, and nobody else wears a spirit. Taking one
+        /// off is not gated, so nothing can be stuck on a character.
+        /// </summary>
+        private static bool ProfessionAllows(IInventoryPage page, IItem item, ICharacter character)
+        {
+            return !(page is ImplantInventoryPage) || (character == null)
+                   || ImplantInventoryPage.ProfessionMayWear(character.Stats[StatIds.profession].Value, item);
+        }
+
+        /// <summary>
+        /// Implants go into and come out of the implant page only while a Surgery Clinic window is
+        /// open. Spirits and every other page are not gated.
+        /// </summary>
+        private static bool ClinicAllows(IInventoryPage page, IItem item, ICharacter character)
+        {
+            return !(page is ImplantInventoryPage) || SurgeryClinic.MayMoveImplant(character, item);
         }
 
         /// <summary>

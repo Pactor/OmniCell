@@ -36,7 +36,7 @@ namespace ZoneEngine.Core.Quests
                         Quality = 0,
                         TimeLimit = 0,
                         Unknown20 = 6,
-                        Unknown21 = 0,
+                        RequiredCount = 0,
                         Unknown22 = 0,
                         Unknown23Type = 0,
                         Unknown23Instance = 0,
@@ -138,10 +138,10 @@ namespace ZoneEngine.Core.Quests
                     });
 
             DBQuestWire wire = QuestWireDao.Instance.GetWhere(new { QuestId = quest.Id }).First();
-            wire.Unknown21 = objective.Required > 1 ? objective.Required : 0;
+            wire.RequiredCount = objective.Required > 1 ? objective.Required : 0;
             OmniCell.Database.SqlMapperUtil.InsertUpdateOrDeleteSql(
-                "UPDATE questwire SET Unknown21=@Unknown21 WHERE QuestId=@QuestId",
-                new { wire.QuestId, wire.Unknown21 });
+                "UPDATE questwire SET RequiredCount=@RequiredCount WHERE QuestId=@QuestId",
+                new { wire.QuestId, wire.RequiredCount });
         }
 
         public static void RebuildRewards(int questId)
@@ -182,7 +182,7 @@ namespace ZoneEngine.Core.Quests
                                 LowId = lowId,
                                 HighId = highId,
                                 Quality = selected.Quality,
-                                Unknown1 = 0
+                                Unused = 0
                             });
                 }
             }

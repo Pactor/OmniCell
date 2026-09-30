@@ -41,6 +41,32 @@ namespace ZoneEngine.Core.Loot
             return CapturedVirtualSlot;
         }
 
+        /// <summary>
+        /// Whether the character has this corpse open. The client uses a corpse once to open it and
+        /// again to close it (retail: two uses per looted corpse in 222 of 264 cases).
+        /// </summary>
+        public static bool IsOpen(ICharacter character, Identity corpse)
+        {
+            if (character == null)
+            {
+                return false;
+            }
+
+            lock (Sync)
+            {
+                OpenCorpse open;
+                return OpenByCharacter.TryGetValue(character.Identity.Long(), out open) && open.Corpse == corpse;
+            }
+        }
+
+        /// <summary>
+        /// Whether a corpse has nothing left in it.
+        /// </summary>
+        public static bool IsEmpty(CorpseLoot corpse)
+        {
+            return corpse == null || corpse.BaseInventory[corpse.BaseInventory.StandardPage].List().Count == 0;
+        }
+
         public static bool TryTake(
             ICharacter character,
             Identity encodedSource,

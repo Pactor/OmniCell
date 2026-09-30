@@ -2740,6 +2740,13 @@ namespace OmniCell.Enums
         pvpduelscore = 684,
 
         /// <summary>
+        /// A word of flags the playfields read; bit 16384 is the Arete
+        /// Landing ID card. Named here from what reads it, not from a client
+        /// string. See OmniCell.Stats' ProgressFlags.
+        /// </summary>
+        progressflags = 685,
+
+        /// <summary>
         /// </summary>
         acgitemseed = 700,
 

@@ -23,6 +23,8 @@ namespace ZoneEngine.Core.MessageHandlers
     using SmokeLounge.AOtomation.Messaging.GameData;
     using SmokeLounge.AOtomation.Messaging.Messages.N3Messages;
 
+    using OmniCell.Core.Missions;
+
     #endregion
 
     /// <summary>
@@ -40,7 +42,7 @@ namespace ZoneEngine.Core.MessageHandlers
     /// of being filled with a majority value or a guessed marker shape.
     ///
     /// The action tracking identity is the only runtime-created value. Captures
-    /// prove its type is quest-specific and that QuestInfo.Unknown18 repeats
+    /// prove its type is quest-specific and that QuestInfo.ActionTrackingInstances repeats
     /// the instance with its upper five bits masked. OmniCell allocates a fresh
     /// instance and preserves that exact relationship.
     /// </remarks>
@@ -88,6 +90,28 @@ namespace ZoneEngine.Core.MessageHandlers
         }
 
         /// <summary>
+        /// Sends the window when only the missions have changed.
+        /// </summary>
+        /// <remarks>
+        /// There is one window and one message for it, so a mission cannot be
+        /// shown without the authored quests going with it - sending only the
+        /// missions would clear the rest out of the client's list. The authored
+        /// half comes from the same place the quest path takes it from.
+        /// </remarks>
+        public void SendMissions(
+            ICharacter character,
+            IEnumerable<MissionOffer> missions,
+            bool announceAsNew)
+        {
+            if (character == null)
+            {
+                return;
+            }
+
+            this.Send(character, this.FillData(character, null, announceAsNew), false);
+        }
+
+        /// <summary>
         /// Materializes the quest-window message without putting it on a socket.
         /// This is public so the exact production packet can pass the headless
         /// protocol gates before it is ever sent to a client.
@@ -106,9 +130,19 @@ namespace ZoneEngine.Core.MessageHandlers
             {
                 message.Identity = character == null ? Identity.None : character.Identity;
                 message.Unknown = 0;
-                message.QuestInfos = character == null
-                                         ? new QuestInfo[0]
-                                         : safeQuests.Select(q => Info(character, q)).ToArray();
+                // Authored quests and generated missions share the window, and
+                // the client is given one list. A mission is told from a quest
+                // on the wire by Flags, which is 0 on all 25 captured offers
+                // and 2 on all 218 authored records.
+                var all = new List<QuestInfo>();
+                if (character != null)
+                {
+                    all.AddRange(safeQuests.Select(q => Info(character, q)));
+                    all.AddRange(
+                        MissionBook.Active(character).Select(m => MissionWire.Info(m, character.Identity)));
+                }
+
+                message.QuestInfos = all.ToArray();
                 message.AnnounceAsNew = announceAsNew ? (byte)1 : (byte)0;
             };
         }
@@ -118,7 +152,7 @@ namespace ZoneEngine.Core.MessageHandlers
             DBQuest quest = entry.Quest;
             DBQuestWire wire = entry.Wire;
             QuestActionList[] actions = entry.WireActions.Select(Action).ToArray();
-            int[] tracking = actions.Select(a => a.Unknown17.Instance & 0x07FFFFFF).ToArray();
+            int[] tracking = actions.Select(a => a.ActionTracking.Instance & 0x07FFFFFF).ToArray();
 
             return new QuestInfo
                    {
@@ -142,7 +176,7 @@ namespace ZoneEngine.Core.MessageHandlers
                                         LowId = r.LowId,
                                         HighId = r.HighId,
                                         Quality = r.Quality,
-                                        Unknown1 = r.Unknown1
+                                        Unused = r.Unused
                                     }).ToArray(),
                        QuestCode = wire.QuestCode,
                        Unknown8 = 0,
@@ -156,12 +190,12 @@ namespace ZoneEngine.Core.MessageHandlers
                        TimeLimitCopy = wire.TimeLimit,
                        QuestActions = actions,
                        Unknown17 = new[] { character.Identity },
-                       Unknown18 = tracking,
+                       ActionTrackingInstances = tracking,
                        Unknown19 = new int[0],
                        CharInfos = new QuestCharInfo[0],
                        Unknown20 = wire.Unknown20,
                        UnknownIdentities20 = new[] { character.Identity },
-                       Unknown21 = wire.Unknown21,
+                       RequiredCount = wire.RequiredCount,
                        Unknown22 = wire.Unknown22,
                        Unknown23 = Id(wire.Unknown23Type, wire.Unknown23Instance),
                        Unknown24 = 0,
@@ -196,7 +230,7 @@ namespace ZoneEngine.Core.MessageHandlers
                        Unknown14 = Id(source.Unknown14Type, source.Unknown14Instance),
                        Deadline = source.Deadline,
                        Unknown16 = source.Unknown16,
-                       Unknown17 = Id(source.TrackingType, trackingInstance),
+                       ActionTracking = Id(source.TrackingType, trackingInstance),
                        Playfield = Id(source.PlayfieldType, source.PlayfieldInstance),
                        Unknown18 = source.Unknown18,
                        Unknown19 = source.Unknown19,

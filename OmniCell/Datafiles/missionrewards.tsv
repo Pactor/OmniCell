@@ -1,0 +1,1883 @@
+# Items a mission terminal has been seen to offer as a reward.
+#
+# The pool is measured: every band here is the band an item the AOBuddy10 bot
+# was actually offered belongs to - 1876 items over 813 rolls (offered.json).
+# Only that band, not the rest of its family: expanding a family invented
+# high-quality bands nobody was ever offered, which is how QL 250 rewards got
+# in. Shadowlands items are dropped outright - only Rubi-Ka rolls - which took
+# out 3 more bands.
+#
+# A band is one (low, high) template pair, from the pack's Relations sorted by
+# quality and taken two at a time. The reward is offered at the mission QL
+# clamped into the band, which is why a QL 39 mission can hand out a QL 30 nano
+# crystal or a QL 1 Trenchcoat: those are families of one template. Checked
+# against all 25 rewards in the captures - band and quality both.
+# lowId	highId	lowQl	highQl	seen	name
+23314	23316	1	200	3	Simple First-Aid Kit
+25812	25811	1	200	3	Treatment Laboratory
+25820	25821	1	200	2	Basic Nano Recharger
+26207	26207	27	27	3	Nano Crystal (Enhanced Senses)
+26245	26245	43	43	1	Nano Crystal (Free Movement)
+26503	26503	14	14	2	Nano Crystal (Melee Special Attacks Incompetence)
+27381	27381	1	1	1	Omni-Med Suit Gloves
+27382	27382	1	1	1	Omni-Med Suit Boots
+27383	27383	1	1	3	Omni-Med Suit Shirt
+27384	27384	1	1	2	Omni-Med Suit Skirt
+27385	27385	1	1	2	Omni-Med Suit Sleeves
+27386	27386	1	1	7	Omni-Med Suit Trousers
+27805	27805	24	24	1	Nano Crystal (Blood Circle)
+28744	28744	33	33	2	Nano Crystal (Survival Aid)
+28755	28755	43	43	1	Nano Crystal (Biotoxin MK II)
+28771	28771	37	37	5	Nano Crystal (Enlarge)
+28785	28785	37	37	2	Nano Crystal (Premium Cover)
+28787	28787	33	33	3	Nano Crystal (Specialist Treatment)
+28789	28789	30	30	2	Nano Crystal (Superior Healing)
+28795	28795	33	33	3	Nano Crystal (Abyssal Flames)
+28798	28798	33	33	3	Nano Crystal (Blight)
+28810	28810	27	27	1	Nano Crystal (Fire Snake)
+28833	28833	30	30	1	Nano Crystal (Poison Missile)
+28917	28917	24	24	1	Nano Crystal (Bad Blood)
+28921	28921	33	33	6	Nano Crystal (Dirty Fighter)
+28923	28923	37	37	7	Nano Crystal (Elusive Target)
+28938	28938	14	14	2	Nano Crystal (Give Life: 25)
+28945	28945	17	17	1	Nano Crystal (Limbo Mastery)
+28956	28956	24	24	2	Nano Crystal (Rubber Skin)
+29102	29102	33	33	1	Nano Crystal (Apprentice: Weapon Smithing)
+29202	29202	37	37	3	Nano Crystal (Nano Growth)
+29358	29358	24	24	4	Nano Crystal (Pistol Mastery)
+29359	29359	43	43	4	Nano Crystal (Precognition)
+29362	29362	37	37	4	Nano Crystal (Rifle Mastery)
+29372	29372	37	37	6	Nano Crystal (BioMet Mastery)
+29391	29391	43	43	2	Nano Crystal (MatCrea Mastery)
+29392	29392	40	40	4	Nano Crystal (SpaceTime Mastery)
+29409	29409	47	47	1	Nano Crystal (PsyMod Mastery)
+29412	29412	43	43	4	Nano Crystal (Sense Imp Mastery)
+29804	29804	27	27	1	Nano Crystal (Glowing Retribution)
+29806	29806	30	30	8	Nano Crystal (Headcracker)
+29838	29838	37	37	1	Nano Crystal (Energy Spike)
+29858	29858	40	40	3	Nano Crystal (Quick Weapon)
+30102	30102	43	43	3	Nano Crystal (Authority Figure)
+30113	30113	37	37	3	Nano Crystal (Drill Missile)
+30138	30138	43	43	1	Nano Crystal (Sleep)
+30759	30759	30	30	2	Nano Crystal (Apprentice: Mechanical Engineering)
+31419	31419	27	27	2	Nano Crystal (Contact Poison)
+31498	31498	1	1	7	White Cloak
+31499	31499	1	1	7	Red Cloak
+31500	274647	1	100	4	Grey Cloak
+31501	31501	1	1	6	Green Cloak
+31502	31502	1	1	4	Brown Cloak
+31503	31503	1	1	6	Blue Cloak
+31504	31504	1	1	1	Jean Trenchcoat
+31505	31505	1	1	9	Black Trenchcoat
+31506	31506	1	1	5	Black Omni-Tek Commander Cloak
+31515	31515	1	1	4	Red Omni-Tek Commander Cloak
+31516	31516	1	1	7	Trenchcoat
+31517	31517	1	1	7	Black Cloak
+31528	31528	1	1	5	Red Cloak Hood
+31530	31530	1	1	8	Grey Cloak Hood
+31531	31531	1	1	8	Green Cloak Hood
+31532	31532	1	1	4	Brown Cloak Hood
+31533	31533	1	1	8	Blue Cloak Hood
+32073	32073	33	33	4	Nano Crystal (False Profession: Bureaucrat)
+32074	32074	30	30	4	Nano Crystal (False Profession: Doctor)
+32077	32077	37	37	5	Nano Crystal (False Profession: Meta-Physicist)
+32078	32078	40	40	4	Nano Crystal (False Profession: Nanotechnician)
+32080	32080	24	24	1	Nano Crystal (False Profession: Fixer)
+32081	32081	27	27	1	Nano Crystal (False Profession: Trader)
+32100	32100	40	40	5	Nano Crystal (Ruse of Taren - Phase 1)
+32105	32105	43	43	2	Nano Crystal (Sniper's Bliss)
+36777	36785	40	80	2	Belt Component Platform 300X
+36779	36778	1	20	1	2 - 3 NCU Memory
+36783	36782	1	20	3	Belt Component Platform Ti-100X
+36786	36780	40	50	1	8 - 15 NCU Memory
+38531	38531	24	24	1	Nano Crystal (Team Terrain Knowledge)
+42420	42420	40	40	9	Nano Crystal (Team Healing)
+42545	42545	17	17	1	Nano Crystal (Deep Slash)
+43145	43146	1	200	1	Attack of the Snake
+43552	43552	1	1	2	Portable Surgery Clinic
+43777	43777	37	37	2	Nano Crystal (Summon Rage Materialization)
+43780	43780	14	14	4	Nano Crystal (Summon Fury Externalization)
+43941	43941	40	40	2	Nano Crystal (Restorative Boost)
+43949	43949	40	40	2	Nano Crystal (Minor Balm)
+43954	43954	27	27	2	Nano Crystal (Periodic Checkup)
+43955	43955	33	33	1	Nano Crystal (Physician's Skill)
+43963	43963	24	24	1	Nano Crystal (Lesser Nano Surgery)
+43999	43999	37	37	3	Nano Crystal (Company Policy)
+44004	44004	33	33	4	Nano Crystal (Active Remedy)
+44188	44188	30	30	2	Nano Crystal (Infected Wounds)
+44193	44193	40	40	4	Nano Crystal (Parasitic Affliction)
+44201	44201	47	47	2	Nano Crystal (Dark Venom)
+44203	44203	37	37	2	Nano Crystal (Minor Consuming Toxin)
+45336	45336	43	43	1	Nano Crystal (Thunderous Blow)
+45362	45362	50	50	1	Nano Crystal (Isotope Deluge)
+45366	45366	30	30	3	Nano Crystal (Entropy Beam)
+45369	45369	43	43	1	Nano Crystal (Frosty Welcome)
+45371	45371	37	37	1	Nano Crystal (Gaping Puncture)
+45394	45394	40	40	1	Nano Crystal (Cellular Decay)
+45395	45395	47	47	2	Nano Crystal (Chaotic Entropy)
+45397	45397	24	24	1	Nano Crystal (Accelerated Decay)
+45399	45399	27	27	1	Nano Crystal (Acidic Conversion)
+45945	45945	27	27	2	Nano Crystal (Wind Blade)
+45946	45946	40	40	1	Nano Crystal (Shower With Sludge)
+45951	45951	24	24	1	Nano Crystal (Sudden Chill)
+45963	45963	37	37	3	Nano Crystal (Mild Toxic Spill)
+45971	45971	40	40	2	Nano Crystal (Lesser Bane of the Living)
+45972	45972	47	47	1	Nano Crystal (Lesser Encircle With Blades)
+45973	45973	14	14	1	Nano Crystal (Lesser RNA Reaper)
+45983	45983	43	43	1	Nano Crystal (Dense Matter Missile)
+45996	45996	33	33	2	Nano Crystal (Chilling Stream)
+46009	46009	37	37	4	Nano Crystal (Upgraded Android)
+46018	46018	43	43	1	Nano Crystal (Semi-Sentient Android)
+46039	46039	40	40	3	Nano Crystal (Perfect Android)
+46052	46052	24	24	2	Nano Crystal (Inferior Android)
+46058	46058	24	24	1	Nano Crystal (Lesser Android)
+46068	46068	27	27	1	Nano Crystal (Flawed Android)
+46073	46073	33	33	2	Nano Crystal (Android)
+46075	46075	30	30	3	Nano Crystal (Common Android)
+46425	46425	30	30	1	Nano Crystal (Limited Attendant-Droid)
+46433	46433	33	33	3	Nano Crystal (Faithful Attendant-Droid)
+46442	46442	40	40	1	Nano Crystal (Executive-Grade Attendant-Droid)
+46444	46444	24	24	1	Nano Crystal (Executive-Grade Helper-Droid)
+46449	46449	43	43	2	Nano Crystal (Director-Grade Attendant-Droid)
+46454	46454	14	14	1	Nano Crystal (Director-Grade Worker-Droid)
+46465	46465	47	47	2	Nano Crystal (Basic Assistant-Droid)
+49812	49812	53	53	1	Nano Crystal (Mighty Challenger to Titan)
+49819	49819	33	33	5	Nano Crystal (Challenger to Titan)
+49823	49823	14	14	1	Nano Crystal (Brave Challenger to Cyclops)
+49827	49827	40	40	2	Nano Crystal (Brave Challenger to Titan)
+55679	55678	1	200	2	Weapon Smithing Tutoring Device
+55683	55682	1	200	4	Pharma Tech Tutoring Device
+55685	55684	1	200	1	Nano Programming Tutoring Device
+55687	55686	1	200	1	Computer Literacy Tutoring Device
+55688	55677	1	200	2	Chemistry Tutoring Device
+55690	55689	1	200	4	Mechanical Engineering Tutoring Device
+55694	55693	1	200	2	Electrical Engineering Tutoring Device
+55697	55696	1	200	3	Boosted Stim
+55757	55757	47	47	2	Nano Crystal (Poison Stingers)
+55760	55760	37	37	2	Nano Crystal (Arctic Cloak)
+55775	55775	24	24	3	Nano Crystal (Electrical Chastiser)
+55776	55776	37	37	1	Nano Crystal (Lesser Retaliatory Barrier)
+55841	55841	30	30	5	Nano Crystal (Firefly's Fury)
+55842	55842	24	24	2	Nano Crystal (Enshroud with Barbs)
+55843	55843	37	37	9	Nano Crystal (Cloak of Fire)
+55844	55844	47	47	3	Nano Crystal (Sparking Touch)
+56004	56004	33	33	1	Nano Crystal (Lesser Musculature Command)
+56005	56005	24	24	1	Nano Crystal (Restrict Movement)
+56006	56006	47	47	2	Nano Crystal (Revoke Movement License)
+56177	56177	40	40	1	Nano Crystal (Weak Gravity Pull)
+56239	56239	33	33	5	Nano Crystal (Lesser Paralyze with Indecision)
+56251	56251	27	27	1	Nano Crystal (Lesser Prolong Encounter)
+56252	56252	14	14	3	Nano Crystal (No Escape Possible)
+56260	56260	37	37	2	Nano Crystal (Profiteer's Grip)
+70253	70253	10	10	4	Deflection Shield
+70254	70254	20	20	1	Damage Shield Projector
+70383	70383	33	33	4	Nano Crystal (Deflection Shield)
+70384	70384	37	37	3	Nano Crystal (Deflection Shield (Extended))
+70389	70389	30	30	4	Nano Crystal (Lesser Deflection Shield (Extended))
+70390	70390	24	24	2	Nano Crystal (Lesser Deflection Shield)
+70412	70412	27	27	1	Nano Crystal (Total Mirror Shield Mk II)
+70413	70413	47	47	1	Nano Crystal (Total Mirror Shield Mk III)
+70426	70426	30	30	3	Nano Crystal (Partial Harmonic Cocoon)
+70558	85640	1	200	5	Battered Low-Tech Armor Boots
+70559	85689	1	200	4	Battered Low-Tech Body Armor
+70560	85688	1	200	8	Battered Low-Tech Female Body Armor
+70561	85744	1	200	7	Battered Low-Tech Armor Sleeves
+70562	85597	1	200	3	Battered Low-Tech Armor Gloves
+70563	85558	1	200	3	Battered Low-Tech Armor Helmet
+70564	85515	1	200	3	Battered Low-Tech Armor Pants
+70565	85514	1	200	4	Battered Low-Tech Armor Shorts
+70584	70584	27	27	1	Nano Crystal (Basic Shielding Barrier)
+70586	70586	37	37	3	Nano Crystal (Basic Defensive Screen)
+70587	70587	43	43	6	Nano Crystal (Lesser Shielding Barrier)
+70608	70607	35	200	1	Angel of Night
+70610	70609	10	200	1	Bird of Prey
+70611	70617	30	200	5	Bright, Blue, Cloudless Sky
+75356	75356	33	33	8	Nano Crystal (Lesser Shen Protection)
+75357	75357	43	43	2	Nano Crystal (Wooden Skin)
+75358	75358	53	53	1	Nano Crystal (Greater Wooden Skin)
+75370	75370	43	43	2	Nano Crystal (Wilderness Protection)
+75416	75416	14	14	1	Nano Crystal (Minor Absorption Shield)
+75417	75417	20	20	1	Nano Crystal (Lesser Combat Barrier)
+75419	75419	37	37	2	Nano Crystal (Lesser Absorption Shield)
+78423	78423	33	33	3	Nano Crystal (Greater Health Funnel)
+78424	78424	30	30	1	Nano Crystal (Advanced Health Funnel)
+78425	78425	47	47	4	Nano Crystal (Weak Health Freeloader)
+78427	78427	40	40	1	Nano Crystal (Sophisticated Health Funnel)
+81838	81838	40	40	5	Nano Crystal (Meditate on an Autumn Leaf)
+81839	81839	27	27	1	Nano Crystal (Lotus on Water)
+81846	81846	47	47	6	Nano Crystal (Fists of Shocking Touch)
+81849	81849	37	37	3	Nano Crystal (Corrosive Fists)
+81893	81893	43	43	1	Nano Crystal (Hasty Augmentation Cloud)
+81897	81897	24	24	3	Nano Crystal (Nano Augmentation)
+81902	81902	40	40	5	Nano Crystal (Anatomy Lesson)
+81929	81929	30	30	1	Nano Crystal (Hired Hands)
+81950	81950	47	47	3	Nano Crystal (Suspicious Death)
+81953	81953	27	27	1	Nano Crystal (Lesser Mysterious Causes)
+81957	81957	40	40	5	Nano Crystal (Hidden Killer)
+82005	82005	43	43	3	Nano Crystal (Performance Review)
+82066	82066	40	40	5	Nano Crystal (Team Healing Touch)
+82072	82072	43	43	3	Nano Crystal (Healing Touch)
+82077	82077	33	33	4	Nano Crystal (Team Survival Technique)
+82080	82080	27	27	1	Nano Crystal (Survival Technique)
+82087	82087	43	43	6	Nano Crystal (Greater Quick Heal)
+82801	82801	37	37	2	Nano Crystal (Nano Net)
+82808	82808	37	37	2	Nano Crystal (Lesser Delay the Inevitable)
+82812	82812	30	30	1	Nano Crystal (Stumbling Steps)
+82839	82839	24	24	2	Nano Crystal (Sparrow Flight)
+83920	83919	1	200	1	Aggression Enhancer
+83965	83965	37	37	2	Nano Crystal (Wild Eye Gouger)
+84160	84159	30	200	2	Cloaking Device
+85145	85145	47	47	4	Nano Crystal (Playful Cub)
+85264	85264	20	20	1	Nano Crystal (Lesser Net Cast Wide)
+85267	85267	47	47	1	Nano Crystal (Insurance Hack)
+85270	85270	30	30	6	Nano Crystal (Falsify Medical Records)
+85274	85274	33	33	4	Nano Crystal (Active Distributed Entanglement)
+85277	85277	43	43	1	Nano Crystal (Net Cast Wide)
+85319	85319	37	37	1	Nano Crystal (Lesser Weighty Announcement)
+85322	85322	27	27	1	Nano Crystal (Lesser Delay Pursuers)
+85366	85367	1	200	2	Simple Nano Kit
+85368	85369	1	200	2	Burst of Speed Stim
+85477	21917	1	200	9	Worn Cyber Armor Sleeves
+85481	85690	1	200	5	Battered Leather Vest
+85489	22351	1	200	7	Basic Tech Armor Pants
+85494	22347	1	200	2	Worn Steel-Ribbed Armor Pants
+85496	85495	1	200	5	Inferior Titan Plasteel Armor Pants
+85498	85497	1	200	5	Inferior Vito's Plasteel Armor Pants
+85500	85499	1	200	7	Inferior Chilled Plasteel Armor Pants
+85501	22343	1	200	2	Inferior Heated Plasteel Armor Pants
+85502	22339	1	200	5	Recruit-Issue Omni-Pol Forest Armor Pants
+85504	27394	1	200	5	Recruit-Issue Omni-Pol Desert Armor Pants
+85505	22331	1	200	5	Recruit-Issue Omni-Pol Armor Pants
+85507	85506	1	200	2	Battered Nomad Armor Pants
+85510	85509	1	200	6	Inferior Nail Armor Pants
+85512	85511	1	200	8	Worn Metaplast Armor Pants
+85513	22313	1	200	9	Basic Martial Artist Suit Pants
+85516	22301	1	200	6	Inferior Kevlar Armor Pants
+85517	27360	1	200	5	Battered Flak Armor Pants
+85519	85518	1	200	5	Battered Sid's Leather Armor Pants
+85521	85520	1	200	8	Battered Leather Armor Pants
+85525	85524	1	200	4	Inferior Raven's Energized Armor Pants
+85526	22293	1	200	3	Inferior Energized Armor Pants
+85528	85527	1	200	1	Worn Waitt Cyber Armor Pants
+85530	85529	1	200	8	Worn Bau Cyber Armor Pants
+85531	22289	1	200	4	Worn Cyber Armor Pants
+85533	85532	1	200	6	Battered Light Combat Armor Pants
+85536	22266	1	200	4	Basic Tech Armor Helmet
+85541	22262	1	200	3	Worn Steel-Ribbed Armor Helmet
+85543	85542	1	200	3	Inferior Titan Plasteel Armor Helmet
+85545	85544	1	200	2	Inferior Vito's Plasteel Armor Helmet
+85547	85546	1	200	2	Inferior Chilled Plasteel Armor Helmet
+85548	22258	1	200	4	Inferior Heated Plasteel Armor Helmet
+85549	22254	1	200	4	Recruit-Issue Omni-Pol Forest Armor Helmet
+85551	27402	1	200	4	Recruit-Issue Omni-Pol Desert Armor Helmet
+85552	22246	1	200	3	Recruit-Issue Omni-Pol Armor Helmet
+85554	85553	1	200	6	Battered Nomad Armor Helmet
+85557	85556	1	200	8	Worn Metaplast Armor Helmet
+85560	85559	1	200	7	Battered Sid's Leather Armor Helmet
+85562	85561	1	200	7	Battered Leather Armor Helmet
+85566	85565	1	200	4	Inferior Raven's Energized Armor Helmet
+85567	22223	1	200	7	Inferior Energized Armor Helmet
+85569	85568	1	200	3	Worn Waitt Cyber Armor Helmet
+85571	85570	1	200	7	Worn Bau Cyber Armor Helmet
+85572	22219	1	200	5	Worn Cyber Armor Helmet
+85575	22216	1	200	3	Basic Tech Armor Gloves
+85580	22212	1	200	4	Worn Steel-Ribbed Armor Gloves
+85582	85581	1	200	3	Inferior Titan Plasteel Armor Gloves
+85584	85583	1	200	4	Inferior Vito's Plasteel Armor Gloves
+85586	85585	1	200	11	Inferior Chilled Plasteel Armor Gloves
+85587	22208	1	200	5	Inferior Heated Plasteel Armor Gloves
+85588	22204	1	200	6	Recruit-Issue Omni-Pol Forest Armor Gloves
+85590	27396	1	200	5	Recruit-Issue Omni-Pol Desert Armor Gloves
+85591	22196	1	200	2	Recruit-Issue Omni-Pol Armor Gloves
+85593	85592	1	200	6	Battered Nomad Armor Gloves
+85596	85595	1	200	6	Worn Metaplast Armor Gloves
+85598	22178	1	200	8	Inferior Kevlar Armor Gloves
+85600	85599	1	200	10	Battered Sid's Leather Armor Gloves
+85602	85601	1	200	3	Battered Leather Armor Gloves
+85606	85605	1	200	5	Inferior Raven's Energized Armor Gloves
+85607	22170	1	200	5	Inferior Energized Armor Gloves
+85609	85608	1	200	6	Worn Waitt Cyber Armor Gloves
+85611	85610	1	200	4	Worn Bau Cyber Armor Gloves
+85620	22158	1	200	3	Worn Steel-Ribbed Armor Boots
+85622	85621	1	200	3	Inferior Titan Plasteel Armor Boots
+85624	85623	1	200	6	Inferior Vito's Plasteel Armor Boots
+85626	85625	1	200	5	Inferior Chilled Plasteel Armor Boots
+85627	22154	1	200	4	Inferior Heated Plasteel Armor Boots
+85628	22150	1	200	7	Recruit-Issue Omni-Pol Forest Armor Boots
+85630	27392	1	200	8	Recruit-Issue Omni-Pol Desert Armor Boots
+85631	22142	1	200	4	Recruit-Issue Omni-Pol Armor Boots
+85633	85632	1	200	5	Battered Nomad Armor Boots
+85636	85635	1	200	5	Inferior Nail Armor Boots
+85638	85637	1	200	5	Worn Metaplast Armor Boots
+85639	22124	1	200	5	Basic Martial Artist Suit Boots
+85641	22116	1	200	5	Inferior Kevlar Armor Boots
+85643	85642	1	200	3	Battered Sid's Leather Armor Boots
+85645	85644	1	200	7	Battered Leather Armor Boots
+85649	85648	1	200	5	Inferior Raven's Energized Armor Boots
+85650	22108	1	200	2	Inferior Energized Armor Boots
+85652	85651	1	200	2	Worn Waitt Cyber Armor Boots
+85654	85653	1	200	4	Worn Bau Cyber Armor Boots
+85655	22104	1	200	5	Worn Cyber Armor Boots
+85657	85656	1	200	3	Battered Light Combat Armor Boots
+85662	22088	1	200	3	Basic Tech Female Body Armor
+85663	22084	1	200	3	Basic Tech Body Armor
+85668	22080	1	200	4	Worn Steel-Ribbed Body Armor
+85670	85669	1	200	7	Inferior Titan Plasteel Body Armor
+85672	85671	1	200	8	Inferior Vito's Plasteel Body Armor
+85674	85673	1	200	2	Inferior Chilled Plasteel Body Armor
+85675	22076	1	200	3	Inferior Heated Plasteel Body Armor
+85676	22072	1	200	4	Recruit-Issue Omni-Pol Forest Body Armor
+85678	27398	1	200	3	Recruit-Issue Omni-Pol Desert Body Armor
+85679	22064	1	200	2	Recruit-Issue Omni-Pol Body Armor
+85681	85680	1	200	10	Battered Nomad Body Armor
+85684	85683	1	200	4	Inferior Nail Body Armor
+85686	85685	1	200	7	Worn Metaplast Body Armor
+85687	22046	1	200	3	Basic Martial Artist Suit Shirt
+85691	22004	1	200	5	Inferior Kevlar Vest
+85692	22026	1	200	7	Inferior Kevlar Body Armor
+85693	27389	1	200	5	Battered Flak Body Armor
+85695	85694	1	200	7	Battered Sid's Leather Body Armor
+85697	85696	1	200	7	Battered Leather Body Armor
+85701	85700	1	200	6	Inferior Raven's Energized Body Armor
+85702	22018	1	200	4	Inferior Energized Body Armor
+85706	85705	1	200	1	Worn Waitt Cyber Body Armor
+85708	85707	1	200	5	Worn Bau Cyber Female Body Armor
+85710	85709	1	200	3	Worn Bau Cyber Body Armor
+85711	22014	1	200	2	Worn Cyber Female Body Armor
+85712	22010	1	200	5	Worn Cyber Body Armor
+85714	85713	1	200	7	Battered Light Combat Body Armor
+85719	21975	1	200	1	Basic Tech Armor Sleeves
+85723	85722	1	200	4	Worn Nadir Steel-Ribbed Armor Sleeves
+85724	21971	1	200	3	Worn Steel-Ribbed Armor Sleeves
+85726	85725	1	200	6	Inferior Titan Plasteel Armor Sleeves
+85728	85727	1	200	6	Inferior Vito's Plasteel Armor Sleeves
+85730	85729	1	200	7	Inferior Chilled Plasteel Armor Sleeves
+85731	21967	1	200	3	Inferior Heated Plasteel Armor Sleeves
+85732	21963	1	200	5	Recruit-Issue Omni-Pol Forest Armor Sleeves
+85734	27400	1	200	4	Recruit-Issue Omni-Pol Desert Armor Sleeves
+85735	21955	1	200	1	Recruit-Issue Omni-Pol Armor Sleeves
+85737	85736	1	200	7	Battered Nomad Armor Sleeves
+85740	85739	1	200	11	Inferior Nail Armor Sleeves
+85742	85741	1	200	4	Worn Metaplast Armor Sleeves
+85743	21937	1	200	1	Basic Martial Artist Suit Sleeves
+85745	21929	1	200	7	Inferior Kevlar Armor Sleeves
+85746	27391	1	200	3	Battered Flak Armor Sleeves
+85748	85747	1	200	4	Battered Sid's Leather Armor Sleeves
+85750	85749	1	200	8	Battered Leather Armor Sleeves
+85754	85753	1	200	2	Inferior Raven's Energized Armor Sleeves
+85755	21921	1	200	2	Inferior Energized Armor Sleeves
+85757	85756	1	200	2	Worn Waitt Cyber Armor Sleeves
+85759	85758	1	200	3	Worn Bau Cyber Armor Sleeves
+85761	85760	1	200	5	Battered Light Combat Armor Sleeves
+85875	85875	30	30	1	Nano Crystal (Ransack Skills (Average))
+85877	85877	40	40	2	Nano Crystal (Ransack Skills (Lesser))
+85897	85897	57	57	1	Nano Crystal (Deprive Skills (Major))
+85898	85898	33	33	2	Nano Crystal (Deprive Skills (Lesser))
+85900	85900	43	43	2	Nano Crystal (Deprive Skills)
+85907	85908	25	200	1	Flurry of Blows
+86438	86438	1	1	2	Katara Sunglasses
+86441	86441	1	1	2	Keelarr Sunglasses
+86443	86443	1	1	5	Visor
+87470	87470	1	1	6	Tattoo
+87471	87471	1	1	1	Tattoo
+87472	87472	1	1	1	Tattoo
+87473	87473	1	1	1	Tattoo
+87474	87474	1	1	1	Tattoo
+87475	87475	1	1	1	Tattoo
+87476	87476	1	1	2	Tattoo
+87477	87477	1	1	1	Tattoo
+87478	87478	1	1	4	Tattoo
+87479	87479	1	1	2	Tattoo
+87483	87483	1	1	3	Tattoo
+87810	87810	1	1	3	Hacker Tool
+87893	87936	10	200	1	Trimmer - Divert Energy to Defense
+88373	88374	5	200	3	Yatamutchy Movement Predictor -X7B
+88377	88378	10	200	3	Trimmer - Divert Energy to Offense
+88379	88380	10	200	1	Trimmer - Divert Energy to Avoidance
+88381	88382	10	200	3	Trimmer - Divert Energy to Hitpoints
+88383	88384	1	100	6	Trimmer - Positive Aggressive-Defensive
+88385	88386	1	100	4	Trimmer - Negative Aggressive-Defensive
+93136	93136	30	30	5	Nano Crystal (Hack Grid Vector)
+93138	93138	43	43	1	Nano Crystal (Grid Runner)
+95418	95418	24	24	1	Nano Crystal (Ease of Execution)
+95422	95422	47	47	2	Nano Crystal (CrunchCom Nano Compressor)
+95454	95454	40	40	3	Nano Crystal (Coherent Nano Pathway)
+95512	95513	40	200	1	CPU Upgrade
+95514	95515	10	200	2	NCU Coolant Sink
+95518	95519	20	200	4	Nano Formula Recompiler
+95532	95532	30	30	3	Nano Crystal (Subconscious Guidance)
+95537	95537	47	47	2	Nano Crystal (Engrossing Activity)
+95723	95723	33	33	5	Nano Crystal (Combat Hardening)
+95731	95731	24	24	1	Nano Crystal (Essence of Might)
+95732	95732	43	43	4	Nano Crystal (Mongo's Golem)
+95737	95737	33	33	4	Nano Crystal (Essence of Boundless Health)
+95742	95742	33	33	1	Nano Crystal (Metabolism Booster)
+95746	95746	47	47	1	Nano Crystal (Medic's Respite)
+95748	95748	27	27	2	Nano Crystal (Enhance Constitution)
+97458	97458	30	30	3	Nano Crystal (Health Surge)
+97464	97464	43	43	3	Nano Crystal (Bodily Amplification)
+99138	99138	30	30	1	Nano Crystal (Quell Anger)
+99214	99214	40	40	4	Nano Crystal (Soft Siren Call)
+99221	99221	47	47	1	Nano Crystal (Dominate Psyche)
+99226	99226	33	33	2	Nano Crystal (Bend Will)
+99619	99619	33	33	2	Nano Crystal (Strip Assets)
+99622	99622	24	24	1	Nano Crystal (Overdraught)
+99629	99629	40	40	2	Nano Crystal (Enforced Loan)
+99999	99999	1	1	1	Body Tattoo, Back
+100004	100004	1	1	1	Body Tattoo, Front
+100005	100005	1	1	4	Body Tattoo, Front
+100006	100006	1	1	3	Body Tattoo, Back
+100007	100007	1	1	5	Body Tattoo, Front
+100009	100009	1	1	4	Body Tattoo, Back
+100010	100010	1	1	1	Body Tattoo, Back
+100011	100011	1	1	1	Body Tattoo, Front
+100012	100012	1	1	3	Tattoo
+100013	100013	1	1	2	Tattoo
+100228	100228	14	14	2	Nano Crystal (Draw Attention)
+100229	100229	30	30	2	Nano Crystal (Enraged Mind)
+100264	100264	30	30	2	Nano Crystal (Berserk Rage)
+100447	100447	30	30	1	Nano Crystal (Bewilder)
+100454	100454	33	33	1	Nano Crystal (Bright Shiny Sparkling Thing)
+101111	101112	1	200	1	Eye Implant: Rifle, Shiny
+101141	101142	1	200	1	Ear Implant: Perception, Shiny
+101159	101160	1	200	1	Right-Arm Implant: 1h Blunt, Shiny
+101175	101176	1	200	1	Chest Implant: Melee/Ma AC, Shiny
+101181	101182	1	200	1	Basic Left Arm Implant
+101243	101244	1	200	1	Left-Wrist Implant: Mult. Melee, Shiny
+101265	101266	1	200	1	Leg Implant: Energy AC, Bright
+101301	101302	1	200	1	Feet Implant: Melee. Init, Shiny
+101309	101310	1	200	5	Imp/Proj AC Cluster - Faded (Waist)
+101311	101312	1	200	4	Imp/Proj AC Cluster - Bright (Chest)
+101313	101314	1	200	4	Imp/Proj AC Cluster - Shiny (Leg)
+101315	101316	1	200	3	Melee/Ma AC Cluster - Faded (Leg)
+101317	101318	1	200	1	Melee/Ma AC Cluster - Bright (Waist)
+101319	101320	1	200	1	Melee/Ma AC Cluster - Shiny (Chest)
+101321	101322	1	200	5	Energy AC Cluster - Faded (Waist)
+101325	101326	1	200	1	Energy AC Cluster - Shiny (Chest)
+101327	101328	1	200	3	Chemical AC Cluster - Faded (Left-Arm)
+101329	101330	1	200	4	Chemical AC Cluster - Bright (Right-Arm)
+101331	101332	1	200	2	Chemical AC Cluster - Shiny (Waist)
+101333	101371	1	200	2	Radiation AC Cluster - Faded (Right-Arm)
+101335	101336	1	200	1	1h Blunt Cluster - Bright (Right-Wrist)
+101337	101338	1	200	5	1h Blunt Cluster - Shiny (Right-Arm)
+101339	101340	1	200	1	1h Edged Weapon Cluster - Faded (Right-Hand)
+101343	101344	1	200	4	1h Edged Weapon Cluster - Shiny (Right-Arm)
+101345	101346	1	200	3	Melee Ener Cluster - Faded (Right-Wrist)
+101347	101348	1	200	2	Melee Ener Cluster - Bright (Left-Wrist)
+101349	101350	1	200	3	Melee Ener Cluster - Shiny (Head)
+101351	101352	1	200	1	2h Edged Cluster - Faded (Waist)
+101353	101354	1	200	2	2h Edged Cluster - Bright (Left-Arm)
+101357	101358	1	200	1	Piercing Cluster - Faded (Waist)
+101359	101360	1	200	4	Piercing Cluster - Bright (Left-Arm)
+101361	101362	1	200	1	Piercing Cluster - Shiny (Right-Arm)
+101363	101364	1	200	4	2h Blunt Cluster - Faded (Chest)
+101365	101366	1	200	2	2h Blunt Cluster - Bright (Left-Arm)
+101367	101368	1	200	3	2h Blunt Cluster - Shiny (Right-Arm)
+101369	101370	1	200	2	Sharp Obj Cluster - Faded (Eye)
+101372	101373	1	200	2	Radiation AC Cluster - Bright (Left-Arm)
+101376	101377	1	200	4	Cold AC Cluster - Faded (Left-Hand)
+101378	101379	1	200	4	Cold AC Cluster - Bright (Right-Hand)
+101380	101381	1	200	1	Cold AC Cluster - Shiny (Waist)
+101382	101383	1	200	4	Nano Resist Cluster - Faded (Left-Wrist)
+101384	101385	1	200	3	Nano Resist Cluster - Bright (Right-Wrist)
+101386	101387	1	200	1	Nano Resist Cluster - Shiny (Head)
+101388	101389	1	200	6	Fire AC Cluster - Faded (Right-Hand)
+101390	101391	1	200	1	Fire AC Cluster - Bright (Left-Hand)
+101392	101393	1	200	2	Fire AC Cluster - Shiny (Waist)
+101394	101395	1	200	2	Martial Arts Cluster - Faded (Left-Hand)
+101396	101397	1	200	3	Martial Arts Cluster - Bright (Feet)
+101398	101399	1	200	4	Martial Arts Cluster - Shiny (Right-Hand)
+101400	101401	1	200	1	Mult. Melee Cluster - Faded (Right-Wrist)
+101402	101403	1	200	2	Mult. Melee Cluster - Bright (Eye)
+101404	101405	1	200	2	Mult. Melee Cluster - Shiny (Left-Wrist)
+101406	101334	1	200	2	1h Blunt Cluster - Faded (Right-Hand)
+101412	101413	1	200	1	Matter Crea Cluster - Shiny (Head)
+101414	101415	1	200	6	Time & Space Cluster - Faded (Eye)
+101416	101417	1	200	2	Time & Space Cluster - Bright (Right-Hand)
+101418	101419	1	200	3	Time & Space Cluster - Shiny (Head)
+101420	101421	1	200	1	Nano Pool Cluster - Faded (Waist)
+101422	101423	1	200	2	Nano Pool Cluster - Bright (Head)
+101424	101554	1	200	2	Nano Pool Cluster - Shiny (Chest)
+101425	101426	1	200	4	Sharp Obj Cluster - Bright (Right-Hand)
+101427	101428	1	200	4	Sharp Obj Cluster - Shiny (Right-Wrist)
+101431	101432	1	200	3	Grenade Cluster - Bright (Eye)
+101433	101434	1	200	2	Grenade Cluster - Shiny (Right-Arm)
+101435	101436	1	200	4	Heavy Weapons Cluster - Faded (Right-Hand)
+101437	101438	1	200	3	Heavy Weapons Cluster - Bright (Eye)
+101439	101440	1	200	4	Heavy Weapons Cluster - Shiny (Right-Arm)
+101441	101442	1	200	1	Bow Cluster - Faded (Eye)
+101443	101444	1	200	2	Bow Cluster - Bright (Left-Arm)
+101445	101446	1	200	2	Bow Cluster - Shiny (Right-Arm)
+101449	101450	1	200	1	Pistol Cluster - Bright (Right-Hand)
+101451	101452	1	200	2	Pistol Cluster - Shiny (Right-Wrist)
+101453	101454	1	200	4	Rifle Cluster - Faded (Left-Wrist)
+101455	101456	1	200	1	Rifle Cluster - Bright (Right-Wrist)
+101457	101458	1	200	4	Rifle Cluster - Shiny (Eye)
+101459	101460	1	200	4	MG / SMG Cluster - Faded (Chest)
+101461	101462	1	200	4	MG / SMG Cluster - Bright (Right-Hand)
+101463	101464	1	200	1	MG / SMG Cluster - Shiny (Right-Arm)
+101465	101466	1	200	2	Shotgun Cluster - Faded (Waist)
+101467	101468	1	200	1	Shotgun Cluster - Bright (Right-Hand)
+101469	101470	1	200	1	Shotgun Cluster - Shiny (Right-Arm)
+101471	101472	1	200	1	Assault Rif Cluster - Faded (Eye)
+101475	101476	1	200	3	Assault Rif Cluster - Shiny (Right-Arm)
+101477	101478	1	200	3	Vehicle Hydr Cluster - Faded (Ear)
+101479	101480	1	200	3	Vehicle Hydr Cluster - Bright (Eye)
+101483	101484	1	200	3	Melee. Init Cluster - Faded (Waist)
+101485	101486	1	200	3	Melee. Init Cluster - Bright (Leg)
+101487	101488	1	200	1	Melee. Init Cluster - Shiny (Feet)
+101489	101490	1	200	4	Ranged. Init Cluster - Faded (Right-Hand)
+101491	101492	1	200	4	Ranged. Init Cluster - Bright (Head)
+101493	101494	1	200	1	Ranged. Init Cluster - Shiny (Right-Wrist)
+101495	101496	1	200	2	Physic. Init Cluster - Faded (Left-Arm)
+101497	101498	1	200	2	Physic. Init Cluster - Bright (Right-Arm)
+101501	101502	1	200	2	Bow Spc Att Cluster - Faded (Right-Wrist)
+101503	101504	1	200	1	Bow Spc Att Cluster - Bright (Right-Hand)
+101505	101506	1	200	3	Bow Spc Att Cluster - Shiny (Head)
+101507	101508	1	200	4	Sensory Impr Cluster - Faded (Chest)
+101509	101510	1	200	1	Sensory Impr Cluster - Bright (Eye)
+101511	101512	1	200	6	Sensory Impr Cluster - Shiny (Head)
+101513	101514	1	200	1	First Aid Cluster - Faded (Left-Hand)
+101515	101516	1	200	3	First Aid Cluster - Bright (Right-Hand)
+101517	101518	1	200	3	First Aid Cluster - Shiny (Head)
+101519	101520	1	200	1	Treatment Cluster - Faded (Right-Hand)
+101521	101522	1	200	5	Treatment Cluster - Bright (Eye)
+101523	101524	1	200	1	Treatment Cluster - Shiny (Head)
+101527	101528	1	200	4	Mech. Engi Cluster - Bright (Eye)
+101529	101530	1	200	1	Mech. Engi Cluster - Shiny (Head)
+101531	101532	1	200	3	Elec. Engi Cluster - Faded (Right-Hand)
+101533	101534	1	200	5	Elec. Engi Cluster - Bright (Head)
+101535	101536	1	200	5	Elec. Engi Cluster - Shiny (Eye)
+101537	101538	1	200	2	Matt.Metam Cluster - Faded (Left-Arm)
+101539	101540	1	200	3	Matt.Metam Cluster - Bright (Chest)
+101541	101542	1	200	3	Matt.Metam Cluster - Shiny (Head)
+101543	101544	1	200	2	Bio.Metamor Cluster - Faded (Waist)
+101545	101546	1	200	2	Bio.Metamor Cluster - Bright (Chest)
+101547	101548	1	200	1	Bio.Metamor Cluster - Shiny (Head)
+101549	101550	1	200	3	Psycho Modi Cluster - Faded (Ear)
+101551	101552	1	200	1	Psycho Modi Cluster - Bright (Eye)
+101553	101407	1	200	1	Psycho Modi Cluster - Shiny (Head)
+101555	101556	1	200	5	Ranged Ener Cluster - Faded (Left-Hand)
+101557	101558	1	200	2	Ranged Ener Cluster - Bright (Eye)
+101559	101560	1	200	1	Ranged Ener Cluster - Shiny (Head)
+101561	101562	1	200	2	Multi Ranged Cluster - Faded (Eye)
+101563	101564	1	200	1	Multi Ranged Cluster - Bright (Right-Wrist)
+101565	101566	1	200	2	Multi Ranged Cluster - Shiny (Left-Wrist)
+101567	101568	1	200	7	Trap Disarm Cluster - Faded (Head)
+101569	101570	1	200	2	Trap Disarm Cluster - Bright (Left-Hand)
+101575	101576	1	200	2	Perception Cluster - Bright (Eye)
+101577	101578	1	200	4	Perception Cluster - Shiny (Ear)
+101579	101580	1	200	2	Adventuring Cluster - Faded (Chest)
+101581	101582	1	200	2	Adventuring Cluster - Bright (Waist)
+101583	101584	1	200	1	Adventuring Cluster - Shiny (Leg)
+101591	101592	1	200	3	Vehicle Air Cluster - Faded (Head)
+101593	101594	1	200	2	Vehicle Air Cluster - Bright (Ear)
+101595	101596	1	200	1	Vehicle Air Cluster - Shiny (Eye)
+101603	101604	1	200	2	Tutoring Cluster - Faded (Head)
+101605	101606	1	200	2	Tutoring Cluster - Bright (Ear)
+101607	101608	1	200	3	Tutoring Cluster - Shiny (Eye)
+101609	101610	1	200	1	Brawling Cluster - Faded (Waist)
+101611	101612	1	200	2	Brawling Cluster - Bright (Right-Arm)
+101613	101614	1	200	3	Brawling Cluster - Shiny (Left-Arm)
+101615	101616	1	200	1	Riposte Cluster - Faded (Right-Arm)
+101617	101618	1	200	2	Riposte Cluster - Bright (Left-Wrist)
+101619	101620	1	200	2	Riposte Cluster - Shiny (Right-Wrist)
+101623	101624	1	200	2	Dimach Cluster - Bright (Head)
+101625	101626	1	200	5	Dimach Cluster - Shiny (Chest)
+101627	101628	1	200	1	Parry Cluster - Faded (Right-Arm)
+101629	101630	1	200	1	Parry Cluster - Bright (Left-Wrist)
+101631	101632	1	200	1	Parry Cluster - Shiny (Right-Wrist)
+101633	101634	1	200	1	Sneak Atck Cluster - Faded (Eye)
+101635	101636	1	200	4	Sneak Atck Cluster - Bright (Right-Wrist)
+101637	101638	1	200	2	Sneak Atck Cluster - Shiny (Feet)
+101639	101640	1	200	3	Fast Attack Cluster - Faded (Right-Arm)
+101641	101642	1	200	3	Fast Attack Cluster - Bright (Right-Hand)
+101643	101644	1	200	2	Fast Attack Cluster - Shiny (Left-Hand)
+101645	101646	1	200	3	NanoC. Init Cluster - Faded (Chest)
+101647	101648	1	200	1	NanoC. Init Cluster - Bright (Eye)
+101649	101650	1	200	2	NanoC. Init Cluster - Shiny (Head)
+101651	101652	1	200	1	Fling Shot Cluster - Faded (Right-Wrist)
+101653	101654	1	200	3	Fling Shot Cluster - Bright (Right-Hand)
+101655	101656	1	200	3	Fling Shot Cluster - Shiny (Right-Arm)
+101657	101658	1	200	1	Aimed Shot Cluster - Faded (Right-Hand)
+101659	101660	1	200	1	Aimed Shot Cluster - Bright (Right-Wrist)
+101661	101662	1	200	3	Aimed Shot Cluster - Shiny (Eye)
+101663	101664	1	200	3	Body Dev Cluster - Faded (Leg)
+101665	101666	1	200	3	Body Dev Cluster - Bright (Waist)
+101667	101668	1	200	1	Body Dev Cluster - Shiny (Chest)
+101669	101670	1	200	3	Duck-Exp Cluster - Faded (Feet)
+101671	101672	1	200	3	Duck-Exp Cluster - Bright (Waist)
+101673	101674	1	200	1	Duck-Exp Cluster - Shiny (Leg)
+101675	101676	1	200	1	Dodge-Rng Cluster - Faded (Waist)
+101677	101678	1	200	2	Dodge-Rng Cluster - Bright (Feet)
+101681	101682	1	200	6	Evade-ClsC Cluster - Faded (Waist)
+101683	101684	1	200	2	Evade-ClsC Cluster - Bright (Leg)
+101685	101686	1	200	2	Evade-ClsC Cluster - Shiny (Feet)
+101687	101688	1	200	4	Quantum FT Cluster - Faded (Right-Hand)
+101689	101690	1	200	2	Quantum FT Cluster - Bright (Eye)
+101693	101694	1	200	4	Weapon Smt Cluster - Faded (Eye)
+101695	101696	1	200	5	Weapon Smt Cluster - Bright (Head)
+101697	101698	1	200	1	Weapon Smt Cluster - Shiny (Right-Hand)
+101699	101700	1	200	1	Pharma Tech Cluster - Faded (Right-Hand)
+101701	101702	1	200	2	Pharma Tech Cluster - Bright (Eye)
+101703	101704	1	200	1	Pharma Tech Cluster - Shiny (Head)
+101705	101706	1	200	2	Nano Progra Cluster - Faded (Right-Hand)
+101707	101708	1	200	2	Nano Progra Cluster - Bright (Eye)
+101709	101710	1	200	8	Nano Progra Cluster - Shiny (Head)
+101711	101712	1	200	2	Comp. Liter Cluster - Faded (Right-Hand)
+101713	101714	1	200	2	Comp. Liter Cluster - Bright (Eye)
+101717	101718	1	200	1	Psychology Cluster - Faded (Eye)
+101719	101720	1	200	3	Psychology Cluster - Bright (Ear)
+101721	101722	1	200	2	Psychology Cluster - Shiny (Head)
+101723	101724	1	200	5	Chemistry Cluster - Faded (Right-Hand)
+101725	101726	1	200	2	Chemistry Cluster - Bright (Eye)
+101727	101728	1	200	2	Chemistry Cluster - Shiny (Head)
+101729	101730	1	200	2	Concealment Cluster - Faded (Eye)
+101733	101734	1	200	3	Concealment Cluster - Shiny (Feet)
+101735	101736	1	200	2	Break & Entry Cluster - Faded (Chest)
+101739	101740	1	200	1	Break & Entry Cluster - Shiny (Right-Arm)
+101741	101742	1	200	2	Vehicle Grnd Cluster - Faded (Ear)
+101743	101744	1	200	3	Vehicle Grnd Cluster - Bright (Eye)
+101745	101746	1	200	2	Vehicle Grnd Cluster - Shiny (Head)
+101747	101748	1	200	2	Full Auto Cluster - Faded (Waist)
+101751	101752	1	200	4	Full Auto Cluster - Shiny (Right-Arm)
+101753	101754	1	200	1	Burst Cluster - Faded (Right-Hand)
+101755	101756	1	200	3	Burst Cluster - Bright (Right-Wrist)
+101759	101760	1	200	2	Disease AC Cluster - Faded (Chest)
+101761	101762	1	200	2	Disease AC Cluster - Bright (Leg)
+101763	101764	1	200	2	Disease AC Cluster - Shiny (Head)
+101771	101772	1	200	2	Strength Cluster - Faded (Chest)
+101773	101774	1	200	1	Strength Cluster - Bright (Left-Arm)
+101775	101776	1	200	1	Strength Cluster - Shiny (Right-Arm)
+101777	101778	1	200	2	Agility Cluster - Faded (Waist)
+101779	101780	1	200	5	Agility Cluster - Bright (Feet)
+101781	101782	1	200	4	Agility Cluster - Shiny (Leg)
+101783	101784	1	200	3	Stamina Cluster - Faded (Waist)
+101785	101786	1	200	2	Stamina Cluster - Bright (Leg)
+101787	101788	1	200	1	Stamina Cluster - Shiny (Chest)
+101789	101790	1	200	1	Intelligence Cluster - Faded (Ear)
+101791	101792	1	200	2	Intelligence Cluster - Bright (Eye)
+101793	101794	1	200	1	Intelligence Cluster - Shiny (Head)
+101799	101800	1	200	4	Sense Cluster - Shiny (Chest)
+101801	101802	1	200	2	Psychic Cluster - Faded (Ear)
+101805	101806	1	200	5	Psychic Cluster - Shiny (Head)
+101807	101808	1	200	4	Max Health Cluster - Faded (Leg)
+101811	101812	1	200	3	Max Health Cluster - Shiny (Chest)
+101813	101814	1	200	2	Max Nano Cluster - Faded (Chest)
+101825	101826	1	200	1	Eye Implant: Elec. Engi, Shiny
+101841	101842	1	200	1	Eye Implant: Map Navig, Shiny
+101845	101846	1	200	1	Eye Implant: Tutoring, Shiny
+101869	101870	1	200	1	Eye Implant: Elec. Engi, Shiny
+101913	101914	1	200	1	Eye Implant: Aimed Shot, Shiny
+101919	101920	1	200	1	Eye Implant: Rifle, Shiny
+101921	101922	1	200	1	Eye Implant: Rifle, Shiny
+101923	101924	1	200	1	Eye Implant: Elec. Engi, Shiny
+101927	101928	1	200	1	Eye Implant: Vehicle Air, Shiny
+101929	101930	1	200	1	Eye Implant: Vehicle Air, Shiny
+101931	101932	1	200	1	Eye Implant: Map Navig, Shiny
+101937	101938	1	200	1	Eye Implant: Tutoring, Shiny
+101939	101940	1	200	1	Eye Implant: Aimed Shot, Shiny
+101975	101976	1	200	1	Eye Implant: Rifle, Shiny
+101979	101980	1	200	1	Eye Implant: Elec. Engi, Shiny
+101985	101986	1	200	1	Eye Implant: Vehicle Air, Shiny
+102005	102006	1	200	1	Eye Implant: Rifle, Shiny
+102015	102016	1	200	2	Eye Implant: Map Navig, Shiny
+102027	102028	1	200	1	Eye Implant: Psycho Modi, Bright
+102047	102048	1	200	1	Eye Implant: Tutoring, Shiny
+102053	102054	1	200	1	Eye Implant: Aimed Shot, Shiny
+102057	102058	1	200	1	Eye Implant: Ranged Ener, Bright
+102134	102135	1	200	2	Eye Implant: Rifle, Shiny
+102162	102163	1	200	1	Eye Implant: Rifle, Shiny
+102164	102165	1	200	1	Eye Implant: Map Navig, Shiny
+102220	102221	1	200	2	Eye Implant: Map Navig, Shiny
+102236	102237	1	200	1	Eye Implant: Rifle, Shiny
+102242	102243	1	200	1	Eye Implant: Elec. Engi, Shiny
+102254	102255	1	200	1	Eye Implant: Tutoring, Shiny
+102264	102265	1	200	1	Eye Implant: Rifle, Shiny
+102272	102273	1	200	1	Eye Implant: Vehicle Air, Shiny
+102274	102275	1	200	2	Eye Implant: Vehicle Air, Shiny
+102279	102280	1	200	1	Eye Implant: Aimed Shot, Shiny
+102309	102310	1	200	2	Eye Implant: Intelligence, Bright
+102329	102330	1	200	1	Eye Implant: Tutoring, Shiny
+102348	102349	1	200	1	Eye Implant: Sensory Impr, Bright
+102378	102379	1	200	1	Eye Implant: Aimed Shot, Shiny
+102384	102385	1	200	1	Eye Implant: Rifle, Shiny
+102388	102389	1	200	1	Eye Implant: Vehicle Air, Shiny
+102417	102418	1	200	1	Eye Implant: Aimed Shot, Shiny
+102437	102438	1	200	1	Eye Implant: Elec. Engi, Shiny
+102482	102483	1	200	1	Eye Implant: Rifle, Shiny
+102488	102489	1	200	1	Eye Implant: Map Navig, Shiny
+102494	102495	1	200	1	Eye Implant: Perception, Bright
+102502	102503	1	200	1	Eye Implant: Map Navig, Shiny
+102506	102507	1	200	1	Eye Implant: Aimed Shot, Shiny
+102508	102509	1	200	1	Eye Implant: NanoC. Init, Bright
+102510	102511	1	200	1	Eye Implant: Rifle, Shiny
+102522	102523	1	200	1	Eye Implant: Quantum FT, Bright
+102530	102531	1	200	1	Eye Implant: Elec. Engi, Shiny
+102534	102535	1	200	1	Eye Implant: Map Navig, Shiny
+102567	102568	1	200	1	Eye Implant: Map Navig, Shiny
+102569	102570	1	200	1	Eye Implant: Tutoring, Shiny
+102575	102576	1	200	1	Eye Implant: Rifle, Shiny
+102583	102584	1	200	1	Eye Implant: Tutoring, Shiny
+102593	102594	1	200	1	Eye Implant: Rifle, Shiny
+102653	102654	1	200	1	Eye Implant: Vehicle Air, Shiny
+102659	102660	1	200	1	Eye Implant: Rifle, Shiny
+102661	102662	1	200	1	Eye Implant: Elec. Engi, Shiny
+102667	102668	1	200	1	Eye Implant: Tutoring, Shiny
+102677	102678	1	200	1	Eye Implant: Vehicle Air, Shiny
+102683	102684	1	200	1	Eye Implant: Aimed Shot, Shiny
+102695	102810	1	200	1	Eye Implant: Tutoring, Shiny
+102706	102707	1	200	2	Eye Implant: Aimed Shot, Shiny
+102726	102727	1	200	1	Eye Implant: Elec. Engi, Shiny
+102730	102731	1	200	1	Eye Implant: Map Navig, Shiny
+102757	102758	1	200	1	Eye Implant: Rifle, Shiny
+102763	102764	1	200	2	Eye Implant: Map Navig, Shiny
+102832	102833	1	200	1	Eye Implant: Vehicle Air, Shiny
+102844	102845	1	200	1	Eye Implant: Elec. Engi, Shiny
+102846	102847	1	200	1	Eye Implant: Vehicle Air, Shiny
+102860	102861	1	200	1	Eye Implant: Vehicle Air, Shiny
+102864	102865	1	200	1	Eye Implant: Map Navig, Shiny
+102872	102873	1	200	1	Eye Implant: Aimed Shot, Shiny
+102878	102879	1	200	1	Eye Implant: Rifle, Shiny
+102892	102893	1	200	1	Eye Implant: Nano Progra, Bright
+102894	102895	1	200	1	Eye Implant: Rifle, Shiny
+102905	102906	1	200	1	Eye Implant: Tutoring, Shiny
+102927	102928	1	200	1	Eye Implant: Elec. Engi, Shiny
+102931	102932	1	200	1	Eye Implant: Map Navig, Shiny
+102972	102973	1	200	2	Eye Implant: Aimed Shot, Shiny
+103002	103003	1	200	1	Eye Implant: NanoC. Init, Bright
+103019	103020	1	200	1	Eye Implant: Vehicle Air, Shiny
+103035	103036	1	200	1	Eye Implant: Map Navig, Shiny
+103049	103050	1	200	1	Eye Implant: Pharma Tech, Bright
+103055	103056	1	200	1	Eye Implant: Vehicle Air, Shiny
+103069	103070	1	200	1	Eye Implant: Vehicle Air, Shiny
+103080	103081	1	200	1	Eye Implant: Aimed Shot, Shiny
+103084	103085	1	200	1	Eye Implant: Rifle, Shiny
+103092	103093	1	200	1	Eye Implant: Tutoring, Shiny
+103106	103107	1	200	2	Eye Implant: Tutoring, Shiny
+103118	103119	1	200	1	Eye Implant: Map Navig, Shiny
+103132	103133	1	200	1	Eye Implant: Map Navig, Shiny
+103155	103156	1	200	1	Eye Implant: Tutoring, Shiny
+103163	103164	1	200	1	Eye Implant: Rifle, Shiny
+103167	103168	1	200	1	Eye Implant: Vehicle Air, Shiny
+103189	103190	1	200	1	Eye Implant: Vehicle Hydr, Bright
+103203	103204	1	200	1	Eye Implant: Sensory Impr, Bright
+103219	103220	1	200	1	Eye Implant: Rifle, Shiny
+103231	103232	1	200	2	Eye Implant: Mech. Engi, Bright
+103268	103269	1	200	1	Eye Implant: NanoC. Init, Bright
+103272	103273	1	200	1	Eye Implant: Elec. Engi, Shiny
+103293	103294	1	200	1	Eye Implant: Tutoring, Shiny
+103295	103296	1	200	1	Eye Implant: Aimed Shot, Shiny
+103303	103247	1	200	1	Eye Implant: Vehicle Air, Shiny
+103304	103305	1	200	1	Eye Implant: Elec. Engi, Shiny
+103306	103307	1	200	1	Eye Implant: Vehicle Air, Shiny
+103314	103315	1	200	1	Eye Implant: Vehicle Grnd, Bright
+103336	103337	1	200	1	Eye Implant: Rifle, Shiny
+103356	103357	1	200	1	Eye Implant: Map Navig, Shiny
+103362	103363	1	200	1	Eye Implant: Tutoring, Shiny
+103364	103365	1	200	1	Eye Implant: Aimed Shot, Shiny
+103376	103377	1	200	1	Eye Implant: Tutoring, Shiny
+103388	103389	1	200	1	Eye Implant: Elec. Engi, Shiny
+103402	103403	1	200	2	Eye Implant: Tutoring, Shiny
+103408	103409	1	200	1	Eye Implant: Grenade, Bright
+103416	103417	1	200	1	Eye Implant: Map Navig, Shiny
+103429	103430	1	200	2	Eye Implant: Tutoring, Shiny
+103465	103466	1	200	1	Eye Implant: Aimed Shot, Shiny
+103469	103470	1	200	1	Eye Implant: Rifle, Shiny
+103500	103501	1	200	1	Eye Implant: Rifle, Shiny
+103512	103722	1	200	1	Eye Implant: Vehicle Hydr, Bright
+103514	103515	1	200	1	Eye Implant: Rifle, Shiny
+103522	103523	1	200	1	Eye Implant: Tutoring, Shiny
+103524	103525	1	200	1	Eye Implant: Aimed Shot, Shiny
+103536	103537	1	200	1	Eye Implant: Tutoring, Shiny
+103540	103541	1	200	1	Eye Implant: Treatment, Bright
+103560	103561	1	200	1	Eye Implant: Vehicle Air, Shiny
+103566	103567	1	200	1	Eye Implant: Aimed Shot, Shiny
+103588	103589	1	200	1	Eye Implant: Vehicle Air, Shiny
+103614	103615	1	200	1	Eye Implant: Elec. Engi, Shiny
+103629	103630	1	200	1	Eye Implant: Tutoring, Shiny
+103635	103636	1	200	1	Eye Implant: Rifle, Shiny
+103639	103640	1	200	1	Eye Implant: Vehicle Air, Shiny
+103643	103644	1	200	1	Eye Implant: Tutoring, Shiny
+103645	103646	1	200	1	Eye Implant: Aimed Shot, Shiny
+103665	103666	1	200	1	Eye Implant: Elec. Engi, Shiny
+103671	103672	1	200	1	Eye Implant: Tutoring, Shiny
+103673	103674	1	200	1	Eye Implant: Aimed Shot, Shiny
+103679	103680	1	200	1	Eye Implant: Elec. Engi, Shiny
+103683	103684	1	200	1	Eye Implant: Map Navig, Shiny
+103685	103686	1	200	1	Eye Implant: Tutoring, Shiny
+103687	103688	1	200	1	Eye Implant: Aimed Shot, Shiny
+103741	103742	1	200	1	Eye Implant: Vehicle Air, Shiny
+103751	103752	1	200	1	Eye Implant: Rifle, Shiny
+103809	103810	1	200	1	Eye Implant: Elec. Engi, Shiny
+103855	103856	1	200	1	Eye Implant: Map Navig, Shiny
+103891	103892	1	200	1	Eye Implant: Rifle, Shiny
+103906	103907	1	200	1	Eye Implant: Map Navig, Shiny
+103928	103929	1	200	1	Eye Implant: Vehicle Air, Shiny
+103945	103946	1	200	1	Eye Implant: Vehicle Air, Shiny
+103947	103948	1	200	1	Eye Implant: Map Navig, Shiny
+103961	103962	1	200	1	Eye Implant: Rifle, Shiny
+103969	103970	1	200	1	Eye Implant: Tutoring, Shiny
+103985	103986	1	200	1	Eye Implant: Aimed Shot, Shiny
+103987	103988	1	200	1	Eye Implant: Vehicle Hydr, Bright
+103993	103994	1	200	1	Eye Implant: Vehicle Air, Shiny
+104007	104008	1	200	1	Eye Implant: Vehicle Air, Shiny
+104011	104012	1	200	2	Eye Implant: Tutoring, Shiny
+104033	104034	1	200	1	Eye Implant: Elec. Engi, Shiny
+104057	104058	1	200	1	Eye Implant: Ranged Ener, Bright
+104077	104078	1	200	1	Eye Implant: Vehicle Air, Shiny
+104113	104114	1	200	1	Eye Implant: Pharma Tech, Bright
+104139	104140	1	200	1	Eye Implant: Aimed Shot, Shiny
+104178	104179	1	200	1	Eye Implant: Elec. Engi, Shiny
+104180	104181	1	200	1	Eye Implant: Vehicle Air, Shiny
+104188	104189	1	200	1	Eye Implant: Vehicle Grnd, Bright
+104208	104209	1	200	1	Eye Implant: Vehicle Air, Shiny
+104248	104249	1	200	1	Eye Implant: Sensory Impr, Bright
+104252	104253	1	200	1	Eye Implant: Elec. Engi, Shiny
+104256	104257	1	200	1	Eye Implant: Map Navig, Shiny
+104264	104265	1	200	1	Eye Implant: Rifle, Shiny
+104284	104285	1	200	1	Eye Implant: Rifle, Shiny
+104319	104320	1	200	1	Eye Implant: Tutoring, Shiny
+104341	104342	1	200	1	Eye Implant: Elec. Engi, Shiny
+104343	104344	1	200	1	Eye Implant: Vehicle Air, Shiny
+104366	104367	1	200	1	Eye Implant: Vehicle Air, Shiny
+104370	104371	1	200	1	Eye Implant: Tutoring, Shiny
+104376	104377	1	200	1	Eye Implant: Rifle, Shiny
+104402	104403	1	200	1	Eye Implant: Chemistry, Bright
+104412	104413	1	200	2	Eye Implant: Elec. Engi, Shiny
+104420	104421	1	200	1	Eye Implant: Aimed Shot, Shiny
+104458	104459	1	200	1	Eye Implant: Vehicle Air, Shiny
+104472	104473	1	200	1	Eye Implant: Map Navig, Shiny
+104474	104475	1	200	1	Eye Implant: Tutoring, Shiny
+104483	104484	1	200	1	Eye Implant: Rifle, Shiny
+104524	104525	1	200	1	Eye Implant: Rifle, Shiny
+104546	104547	1	200	2	Eye Implant: Aimed Shot, Shiny
+104560	104561	1	200	1	Eye Implant: Aimed Shot, Shiny
+104570	104571	1	200	1	Eye Implant: Map Navig, Shiny
+104607	104608	1	200	1	Eye Implant: Map Navig, Shiny
+104631	104632	1	200	1	Eye Implant: Elec. Engi, Shiny
+104635	104636	1	200	1	Eye Implant: Map Navig, Shiny
+104639	104640	1	200	1	Eye Implant: Aimed Shot, Shiny
+104643	104644	1	200	1	Eye Implant: Rifle, Shiny
+104647	104648	1	200	1	Eye Implant: Vehicle Air, Shiny
+104649	104650	1	200	1	Eye Implant: Map Navig, Shiny
+104651	104652	1	200	1	Eye Implant: Tutoring, Shiny
+104675	104676	1	200	1	Eye Implant: Vehicle Air, Shiny
+104701	104702	1	200	1	Eye Implant: Elec. Engi, Shiny
+104760	104761	1	200	1	Eye Implant: Vehicle Air, Shiny
+104772	104773	1	200	1	Eye Implant: Aimed Shot, Shiny
+104794	104795	1	200	1	Eye Implant: Elec. Engi, Shiny
+104842	104843	1	200	1	Eye Implant: Vehicle Air, Shiny
+104864	104865	1	200	1	Eye Implant: NanoC. Init, Bright
+104874	104875	1	200	1	Eye Implant: Tutoring, Shiny
+104898	104899	1	200	1	Eye Implant: Vehicle Air, Shiny
+104913	104914	1	200	1	Head Implant: First Aid, Shiny
+104925	104926	1	200	1	Eye Implant: Aimed Shot, Shiny
+104933	104934	1	200	1	Eye Implant: Vehicle Air, Shiny
+104935	104936	1	200	1	Eye Implant: Map Navig, Shiny
+104964	104965	1	200	1	Eye Implant: Vehicle Air, Shiny
+104972	104973	1	200	1	Eye Implant: Chemistry, Bright
+105004	105005	1	200	1	Eye Implant: Elec. Engi, Shiny
+105027	105028	1	200	2	Head Implant: Bio.Metamor, Shiny
+105043	105044	1	200	1	Head Implant: Vehicle Hydr, Shiny
+105062	105063	1	200	1	Head Implant: Mech. Engi, Shiny
+105135	105136	1	200	1	Head Implant: Ranged Ener, Shiny
+105145	105146	1	200	2	Head Implant: Quantum FT, Shiny
+105153	105154	1	200	1	Head Implant: Pharma Tech, Shiny
+105159	105160	1	200	1	Head Implant: Pharma Tech, Shiny
+105185	105186	1	200	1	Head Implant: Psychic, Shiny
+105203	105204	1	200	1	Head Implant: Melee Ener, Shiny
+105237	105238	1	200	1	Head Implant: Bio.Metamor, Shiny
+105261	105262	1	200	1	Head Implant: Quantum FT, Shiny
+105295	105296	1	200	1	Head Implant: Psychic, Shiny
+105313	105314	1	200	1	Head Implant: Melee Ener, Shiny
+105351	105352	1	200	1	Head Implant: Matter Crea, Shiny
+105382	105383	1	200	1	Head Implant: Intelligence, Shiny
+105406	105407	1	200	1	Head Implant: Chemistry, Shiny
+105410	105411	1	200	1	Head Implant: Vehicle Grnd, Shiny
+105412	105413	1	200	1	Head Implant: Vehicle Grnd, Shiny
+105427	105428	1	200	1	Head Implant: Bow Spc Att, Shiny
+105433	105434	1	200	1	Head Implant: Sensory Impr, Shiny
+105445	105446	1	200	1	Head Implant: Mech. Engi, Shiny
+105467	105468	1	200	1	Head Implant: Ranged Ener, Shiny
+105489	105490	1	200	1	Head Implant: Comp. Liter, Shiny
+105529	105530	1	200	1	Head Implant: Melee Ener, Shiny
+105545	105546	1	200	1	Head Implant: First Aid, Shiny
+105563	105564	1	200	2	Head Implant: Psycho Modi, Shiny
+105601	105602	1	200	1	Head Implant: Psychology, Shiny
+105625	105626	1	200	1	Head Implant: Max Nano, Shiny
+105629	105630	1	200	1	Head Implant: Weapon Smt, Bright
+105667	105668	1	200	1	Head Implant: Bio.Metamor, Shiny
+105679	105680	1	200	1	Head Implant: Time & Space, Shiny
+105681	105682	1	200	1	Head Implant: Time & Space, Shiny
+105735	105736	1	200	1	Head Implant: Perception, Faded
+105763	105764	1	200	1	Head Implant: Treatment, Shiny
+105775	105776	1	200	1	Head Implant: Bio.Metamor, Shiny
+105793	105794	1	200	1	Head Implant: Ranged Ener, Shiny
+105806	105807	1	200	1	Head Implant: Bio.Metamor, Shiny
+105810	105811	1	200	1	Head Implant: Matter Crea, Shiny
+105829	105830	1	200	1	Head Implant: Comp. Liter, Shiny
+105831	105832	1	200	1	Head Implant: Comp. Liter, Shiny
+105843	105844	1	200	1	Head Implant: Vehicle Grnd, Shiny
+105856	105857	1	200	1	Head Implant: Psychic, Shiny
+105858	105859	1	200	1	Head Implant: Max Nano, Shiny
+105876	105877	1	200	1	Head Implant: Pharma Tech, Shiny
+105921	105922	1	200	1	Head Implant: Matter Crea, Shiny
+105923	105924	1	200	1	Head Implant: Time & Space, Shiny
+105949	105950	1	200	1	Head Implant: Max Nano, Shiny
+105953	105954	1	200	1	Head Implant: Nano Resist, Shiny
+105965	105966	1	200	2	Head Implant: Treatment, Shiny
+105967	105968	1	200	1	Head Implant: Mech. Engi, Shiny
+105971	105972	1	200	1	Head Implant: Bio.Metamor, Shiny
+105973	105974	1	200	2	Head Implant: Psycho Modi, Shiny
+105975	105976	1	200	1	Head Implant: Matter Crea, Shiny
+105981	105982	1	200	1	Head Implant: NanoC. Init, Shiny
+106051	106052	1	200	1	Head Implant: Sensory Impr, Shiny
+106053	106054	1	200	1	Head Implant: First Aid, Shiny
+106067	106068	1	200	1	Head Implant: Time & Space, Shiny
+106083	106084	1	200	1	Head Implant: Chemistry, Shiny
+106106	106107	1	200	1	Head Implant: Matter Crea, Shiny
+106152	106153	1	200	1	Head Implant: Sensory Impr, Shiny
+106174	106175	1	200	1	Head Implant: Psychology, Shiny
+106184	106185	1	200	1	Head Implant: Vehicle Grnd, Shiny
+106192	106193	1	200	1	Head Implant: Intelligence, Shiny
+106207	106208	1	200	1	Head Implant: Matter Crea, Shiny
+106236	106237	1	200	1	Head Implant: Treatment, Shiny
+106248	106249	1	200	1	Head Implant: Bio.Metamor, Shiny
+106277	106278	1	200	1	Head Implant: Nano Resist, Shiny
+106285	106286	1	200	1	Head Implant: Sensory Impr, Shiny
+106291	106292	1	200	1	Head Implant: Mech. Engi, Shiny
+106293	106294	1	200	1	Head Implant: Matt.Metam, Shiny
+106317	106318	1	200	1	Head Implant: Vehicle Hydr, Shiny
+106387	106388	1	200	1	Head Implant: Melee Ener, Shiny
+106413	106414	1	200	1	Head Implant: NanoC. Init, Shiny
+106441	106442	1	200	1	Head Implant: Psycho Modi, Shiny
+106481	106482	1	200	1	Head Implant: Melee Ener, Shiny
+106493	106494	1	200	1	Head Implant: Sensory Impr, Shiny
+106514	106515	1	200	1	Head Implant: NanoC. Init, Shiny
+106556	106557	1	200	1	Head Implant: Psycho Modi, Shiny
+106570	106571	1	200	2	Head Implant: Intelligence, Shiny
+106572	106573	1	200	1	Head Implant: Psychic, Shiny
+106586	106587	1	200	1	Head Implant: Vehicle Hydr, Shiny
+106616	106617	1	200	1	Head Implant: Vehicle Grnd, Shiny
+106618	106619	1	200	2	Head Implant: Vehicle Grnd, Shiny
+106635	106636	1	200	1	Head Implant: Nano Progra, Shiny
+106641	106642	1	200	1	Head Implant: Chemistry, Shiny
+106643	106644	1	200	1	Head Implant: Vehicle Grnd, Shiny
+106647	106648	1	200	1	Head Implant: Intelligence, Shiny
+106651	106652	1	200	1	Head Implant: Max Nano, Shiny
+106659	106660	1	200	1	Head Implant: Vehicle Hydr, Shiny
+106683	106684	1	200	1	Head Implant: NanoC. Init, Shiny
+106691	106692	1	200	1	Head Implant: Comp. Liter, Shiny
+106693	106694	1	200	1	Head Implant: Psychology, Shiny
+106725	106726	1	200	1	Head Implant: Matt.Metam, Shiny
+106739	106740	1	200	1	Head Implant: Quantum FT, Shiny
+106747	106748	1	200	1	Head Implant: Melee Ener, Shiny
+106781	106782	1	200	1	Head Implant: Comp. Liter, Shiny
+106795	106796	1	200	1	Head Implant: Pharma Tech, Shiny
+106819	106820	1	200	1	Head Implant: Melee Ener, Shiny
+106821	106822	1	200	1	Head Implant: Vehicle Hydr, Shiny
+106839	106840	1	200	1	Head Implant: Chemistry, Shiny
+106857	106858	1	200	1	Head Implant: Chemistry, Shiny
+106871	106872	1	200	1	Head Implant: Ranged. Init, Bright
+106875	106876	1	200	1	Head Implant: Nano Resist, Shiny
+106891	106892	1	200	1	Head Implant: Sensory Impr, Shiny
+106908	106909	1	200	1	Head Implant: Ranged Ener, Shiny
+106916	106917	1	200	1	Head Implant: Quantum FT, Shiny
+106922	106923	1	200	1	Head Implant: Nano Progra, Shiny
+106936	106937	1	200	1	Head Implant: Chemistry, Shiny
+106938	106939	1	200	1	Head Implant: Vehicle Grnd, Shiny
+106948	106949	1	200	1	Head Implant: Intelligence, Shiny
+106979	106980	1	200	1	Head Implant: Nano Resist, Shiny
+106995	106996	1	200	1	Head Implant: Matt.Metam, Shiny
+107079	107080	1	200	1	Head Implant: Intelligence, Shiny
+107089	107090	1	200	2	Head Implant: Melee Ener, Shiny
+107093	107094	1	200	1	Head Implant: Bow Spc Att, Shiny
+107099	107100	1	200	1	Head Implant: Treatment, Shiny
+107147	107148	1	200	1	Head Implant: Vehicle Grnd, Shiny
+107161	107162	1	200	1	Head Implant: Melee Ener, Shiny
+107175	107176	1	200	1	Head Implant: Matt.Metam, Shiny
+107183	107184	1	200	1	Head Implant: Time & Space, Shiny
+107223	107224	1	200	1	Head Implant: Intelligence, Shiny
+107227	107228	1	200	1	Head Implant: Max Nano, Shiny
+107233	107234	1	200	1	Ear Implant: Perception, Shiny
+107259	107260	1	200	1	Ear Implant: Perception, Shiny
+107266	107267	1	200	1	Head Implant: Treatment, Shiny
+107287	107288	1	200	1	Ear Implant: Concealment, Bright
+107297	107298	1	200	1	Ear Implant: Perception, Shiny
+107309	107310	1	200	1	Ear Implant: Perception, Shiny
+107331	107332	1	200	1	Ear Implant: Intelligence, Faded
+107337	107338	1	200	1	Ear Implant: Perception, Shiny
+107345	107346	1	200	1	Ear Implant: Perception, Shiny
+107357	107358	1	200	1	Ear Implant: Perception, Shiny
+107359	107360	1	200	1	Ear Implant: Tutoring, Bright
+107363	107364	1	200	1	Ear Implant: Psychology, Bright
+107406	107407	1	200	1	Right-Arm Implant: Piercing, Shiny
+107442	107443	1	200	1	Right-Arm Implant: Bow, Shiny
+107458	107459	1	200	1	Right-Arm Implant: Shotgun, Shiny
+107466	107467	1	200	1	Right-Arm Implant: Assault Rif, Shiny
+107496	107497	1	200	2	Right-Arm Implant: 2h Blunt, Shiny
+107516	107517	1	200	1	Right-Arm Implant: Shotgun, Shiny
+107524	107525	1	200	1	Right-Arm Implant: Fling Shot, Shiny
+107534	107535	1	200	1	Right-Arm Implant: Burst, Shiny
+107560	107561	1	200	1	Right-Arm Implant: Piercing, Shiny
+107584	107585	1	200	1	Right-Arm Implant: 1h Edged Weapon, Shiny
+107599	107600	1	200	1	Right-Arm Implant: Shotgun, Shiny
+107607	107608	1	200	1	Right-Arm Implant: Fling Shot, Shiny
+107623	107624	1	200	1	Right-Arm Implant: Strength, Shiny
+107631	107632	1	200	1	Right-Arm Implant: 1h Blunt, Shiny
+107635	107636	1	200	1	Right-Arm Implant: 1h Edged Weapon, Shiny
+107671	107672	1	200	1	Right-Arm Implant: Assault Rif, Shiny
+107679	107680	1	200	1	Right-Arm Implant: Break & Entry, Shiny
+107707	107708	1	200	1	Right-Arm Implant: 2h Edged, Shiny
+107719	107720	1	200	1	Right-Arm Implant: Grenade, Shiny
+107747	107748	1	200	1	Right-Arm Implant: Break & Entry, Shiny
+107753	107754	1	200	1	Right-Arm Implant: Full Auto, Shiny
+107779	107780	1	200	1	Right-Arm Implant: Bow, Shiny
+107787	107788	1	200	1	Right-Arm Implant: Fling Shot, Shiny
+107815	107816	1	200	1	Right-Arm Implant: MG / SMG, Shiny
+107835	107836	1	200	2	Right-Arm Implant: 1h Blunt, Shiny
+107871	107872	1	200	1	Right-Arm Implant: 2h Edged, Shiny
+107883	107884	1	200	1	Right-Arm Implant: MG / SMG, Shiny
+107887	107888	1	200	1	Right-Arm Implant: 2h Blunt, Shiny
+107901	107902	1	200	1	Right-Arm Implant: MG / SMG, Shiny
+107931	107932	1	200	1	Right-Arm Implant: Strength, Shiny
+107935	107936	1	200	1	Right-Arm Implant: 1h Blunt, Shiny
+107947	107948	1	200	1	Right-Arm Implant: Heavy Weapons, Shiny
+107967	107968	1	200	1	Right-Arm Implant: Swimming, Bright
+107975	107976	1	200	1	Right-Arm Implant: Piercing, Shiny
+108003	108004	1	200	1	Right-Arm Implant: MG / SMG, Shiny
+108018	108019	1	200	1	Right-Arm Implant: Brawling, Bright
+108036	108037	1	200	1	Right-Arm Implant: MG / SMG, Shiny
+108038	108039	1	200	1	Right-Arm Implant: Shotgun, Shiny
+108046	108047	1	200	1	Right-Arm Implant: Full Auto, Shiny
+108058	108059	1	200	1	Right-Arm Implant: 1h Blunt, Shiny
+108068	108069	1	200	1	Right-Arm Implant: Piercing, Shiny
+108085	108086	1	200	1	Right-Arm Implant: Fling Shot, Shiny
+108093	108094	1	200	1	Right-Arm Implant: Full Auto, Shiny
+108111	108112	1	200	1	Right-Arm Implant: Piercing, Shiny
+108121	108122	1	200	1	Right-Arm Implant: MG / SMG, Shiny
+108142	108143	1	200	1	Right-Arm Implant: Strength, Shiny
+108170	108171	1	200	1	Right-Arm Implant: Break & Entry, Shiny
+108176	108177	1	200	1	Right-Arm Implant: Strength, Shiny
+108182	108183	1	200	1	Right-Arm Implant: 1h Edged Weapon, Shiny
+108186	108187	1	200	1	Right-Arm Implant: Piercing, Shiny
+108188	108189	1	200	1	Right-Arm Implant: 2h Blunt, Shiny
+108212	108213	1	200	1	Right-Arm Implant: Fast Attack, Faded
+108250	108251	1	200	2	Right-Arm Implant: MG / SMG, Shiny
+108262	108263	1	200	1	Right-Arm Implant: Fling Shot, Shiny
+108284	108285	1	200	1	Right-Arm Implant: 1h Edged Weapon, Shiny
+108302	108303	1	200	1	Right-Arm Implant: Assault Rif, Shiny
+108306	108307	1	200	1	Right-Arm Implant: Break & Entry, Shiny
+108337	108338	1	200	1	Right-Arm Implant: 2h Edged, Shiny
+108353	108354	1	200	1	Right-Arm Implant: Assault Rif, Shiny
+108359	108360	1	200	1	Right-Arm Implant: Full Auto, Shiny
+108363	108364	1	200	1	Right-Arm Implant: Strength, Shiny
+108371	108372	1	200	1	Chest Implant: Energy AC, Shiny
+108375	108376	1	200	1	Chest Implant: Nano Pool, Shiny
+108385	108386	1	200	2	Chest Implant: Dimach, Shiny
+108410	108411	1	200	2	Chest Implant: Body Dev, Shiny
+108414	108415	1	200	1	Chest Implant: Stamina, Shiny
+108424	108425	1	200	1	Chest Implant: Body Dev, Shiny
+108426	108427	1	200	2	Chest Implant: Stamina, Shiny
+108436	108437	1	200	1	Chest Implant: Max Health, Shiny
+108476	108477	1	200	1	Chest Implant: Matt.Metam, Bright
+108478	108479	1	200	1	Chest Implant: Melee/Ma AC, Shiny
+108490	108491	1	200	1	Chest Implant: Dimach, Shiny
+108496	108497	1	200	1	Chest Implant: Body Dev, Shiny
+108518	108519	1	200	1	Chest Implant: Energy AC, Shiny
+108526	108527	1	200	1	Chest Implant: Dimach, Shiny
+108530	108531	1	200	1	Chest Implant: Body Dev, Shiny
+108546	108547	1	200	1	Chest Implant: MG / SMG, Faded
+108560	108561	1	200	1	Chest Implant: Nano Pool, Shiny
+108570	108571	1	200	2	Chest Implant: Stamina, Shiny
+108588	108589	1	200	1	Chest Implant: Nano Pool, Shiny
+108602	108603	1	200	1	Chest Implant: Melee/Ma AC, Shiny
+108618	108619	1	200	1	Chest Implant: Psychic, Bright
+108622	108623	1	200	1	Chest Implant: Energy AC, Shiny
+108626	108627	1	200	1	Chest Implant: Dimach, Shiny
+108628	108629	1	200	1	Chest Implant: Body Dev, Shiny
+108658	108659	1	200	1	Chest Implant: Energy AC, Shiny
+108670	108671	1	200	1	Chest Implant: Max Health, Shiny
+108696	108697	1	200	1	Chest Implant: Stamina, Shiny
+108704	108705	1	200	1	Chest Implant: Max Health, Shiny
+108716	108717	1	200	1	Chest Implant: Dimach, Shiny
+108722	108723	1	200	1	Chest Implant: Sense, Shiny
+108742	108743	1	200	1	Chest Implant: Dimach, Shiny
+108760	108761	1	200	1	Chest Implant: Max Health, Shiny
+108770	108771	1	200	2	Chest Implant: Dimach, Shiny
+108778	108779	1	200	1	Chest Implant: Max Health, Shiny
+108780	108781	1	200	1	Chest Implant: Psychic, Bright
+108796	108797	1	200	1	Chest Implant: Max Health, Shiny
+108860	108861	1	200	1	Chest Implant: Dimach, Shiny
+108886	108887	1	200	1	Chest Implant: Max Health, Shiny
+108898	108899	1	200	1	Chest Implant: Energy AC, Shiny
+108916	108917	1	200	1	Chest Implant: Body Dev, Shiny
+108924	108925	1	200	1	Chest Implant: Bio.Metamor, Bright
+108928	108929	1	200	1	Chest Implant: Body Dev, Shiny
+108930	108931	1	200	1	Chest Implant: Stamina, Shiny
+108944	108945	1	200	1	Chest Implant: Melee/Ma AC, Shiny
+109072	109073	1	200	1	Chest Implant: Energy AC, Shiny
+109106	109107	1	200	1	Chest Implant: Body Dev, Shiny
+109114	109115	1	200	1	Chest Implant: Body Dev, Shiny
+109116	109117	1	200	1	Chest Implant: Stamina, Shiny
+109134	109135	1	200	1	Chest Implant: Stamina, Shiny
+109158	109159	1	200	1	Chest Implant: Max Nano, Faded
+109160	109161	1	200	1	Chest Implant: Imp/Proj AC, Bright
+109190	109191	1	200	1	Chest Implant: Max Health, Shiny
+109212	109213	1	200	2	Chest Implant: Matt.Metam, Bright
+109220	109221	1	200	1	Chest Implant: Dimach, Shiny
+109232	109233	1	200	1	Chest Implant: Melee/Ma AC, Shiny
+109277	109278	1	200	1	Left-Arm Implant: Radiation AC, Bright
+109283	109284	1	200	1	Left-Arm Implant: 2h Edged, Bright
+109313	109314	1	200	1	Left-Arm Implant: 2h Blunt, Bright
+109319	109320	1	200	1	Left-Arm Implant: Brawling, Shiny
+109329	109330	1	200	1	Left-Arm Implant: Matt.Metam, Faded
+109331	109332	1	200	1	Left-Arm Implant: Radiation AC, Bright
+109347	109348	1	200	1	Left-Arm Implant: Brawling, Shiny
+109349	109350	1	200	1	Left-Arm Implant: Break & Entry, Bright
+109356	109357	1	200	1	Left-Arm Implant: Brawling, Shiny
+109394	109395	1	200	1	Left-Arm Implant: 2h Blunt, Bright
+109402	109403	1	200	1	Left-Arm Implant: Break & Entry, Bright
+109407	109408	1	200	1	Right-Wrist Implant: Pistol, Shiny
+109440	109441	1	200	1	Right-Wrist Implant: Parry, Shiny
+109471	109473	1	200	1	Right-Wrist Implant: Parry, Shiny
+109490	109491	1	200	1	Right-Wrist Implant: Ranged. Init, Shiny
+109494	109495	1	200	1	Right-Wrist Implant: Riposte, Shiny
+109564	109565	1	200	1	Right-Wrist Implant: Sharp Obj, Shiny
+109566	109567	1	200	1	Right-Wrist Implant: Pistol, Shiny
+109576	109577	1	200	1	Right-Wrist Implant: Riposte, Shiny
+109588	109589	1	200	1	Right-Wrist Implant: Parry, Shiny
+109594	109531	1	200	1	Right-Wrist Implant: Multi Ranged, Bright
+109602	109603	1	200	1	Right-Wrist Implant: Sharp Obj, Shiny
+109606	109607	1	200	1	Right-Wrist Implant: Pistol, Shiny
+109612	109613	1	200	1	Right-Wrist Implant: Parry, Shiny
+109632	109633	1	200	1	Right-Wrist Implant: Ranged. Init, Shiny
+109634	109635	1	200	1	Right-Wrist Implant: Riposte, Shiny
+109658	109659	1	200	1	Right-Wrist Implant: Burst, Bright
+109662	109663	1	200	1	Right-Wrist Implant: Sharp Obj, Shiny
+109668	109669	1	200	1	Right-Wrist Implant: Pistol, Shiny
+109686	109687	1	200	1	Right-Wrist Implant: Melee Ener, Faded
+109698	109699	1	200	1	Right-Wrist Implant: Ranged. Init, Shiny
+109714	109715	1	200	1	Right-Wrist Implant: 1h Blunt, Bright
+109760	109761	1	200	1	Right-Wrist Implant: 1h Edged Weapon, Bright
+109794	109795	1	200	1	Right-Wrist Implant: Riposte, Shiny
+109808	109809	1	200	1	Right-Wrist Implant: Sharp Obj, Shiny
+109870	109871	1	200	1	Right-Wrist Implant: Sharp Obj, Shiny
+109878	109879	1	200	1	Right-Wrist Implant: Parry, Shiny
+109886	109887	1	200	1	Right-Wrist Implant: Pistol, Shiny
+109902	109903	1	200	2	Right-Wrist Implant: Ranged. Init, Shiny
+109940	109941	1	200	1	Right-Wrist Implant: Sharp Obj, Shiny
+109952	109953	1	200	1	Right-Wrist Implant: Burst, Bright
+109972	109973	1	200	1	Right-Wrist Implant: Parry, Shiny
+109980	109981	1	200	1	Right-Wrist Implant: Sharp Obj, Shiny
+110026	109963	1	200	1	Right-Wrist Implant: Ranged. Init, Shiny
+110036	110037	1	200	1	Right-Wrist Implant: Multi Ranged, Bright
+110038	110039	1	200	1	Right-Wrist Implant: Sharp Obj, Shiny
+110058	110111	1	200	1	Right-Wrist Implant: Riposte, Shiny
+110068	110069	1	200	1	Right-Wrist Implant: Ranged. Init, Shiny
+110076	110077	1	200	1	Right-Wrist Implant: Burst, Bright
+110082	110083	1	200	1	Right-Wrist Implant: Ranged. Init, Shiny
+110094	110095	1	200	1	Waist Implant: Radiation AC, Shiny
+110108	110109	1	200	1	Waist Implant: Fire AC, Shiny
+110134	110135	1	200	1	Waist Implant: Chemical AC, Shiny
+110144	110145	1	200	1	Waist Implant: Cold AC, Shiny
+110160	110161	1	200	1	Waist Implant: Radiation AC, Shiny
+110162	110199	1	200	1	Waist Implant: Cold AC, Shiny
+110190	110191	1	200	1	Waist Implant: Fire AC, Shiny
+110192	110193	1	200	1	Waist Implant: Max Health, Bright
+110230	110231	1	200	1	Waist Implant: Chemical AC, Shiny
+110232	110233	1	200	1	Waist Implant: Chemical AC, Shiny
+110246	110247	1	200	1	Waist Implant: Max Health, Bright
+110250	110251	1	200	1	Waist Implant: Chemical AC, Shiny
+110252	110253	1	200	1	Waist Implant: Chemical AC, Shiny
+110256	110257	1	200	1	Waist Implant: Radiation AC, Shiny
+110276	110277	1	200	1	Waist Implant: Radiation AC, Shiny
+110278	110279	1	200	1	Waist Implant: Cold AC, Shiny
+110308	110309	1	200	1	Waist Implant: Duck-Exp, Bright
+110322	110323	1	200	1	Waist Implant: Radiation AC, Shiny
+110334	110335	1	200	1	Waist Implant: Cold AC, Shiny
+110336	110337	1	200	1	Waist Implant: Fire AC, Shiny
+110348	110349	1	200	1	Waist Implant: 2h Edged, Faded
+110350	110351	1	200	1	Waist Implant: Melee/Ma AC, Bright
+110378	110379	1	200	1	Waist Implant: Body Dev, Bright
+110382	110383	1	200	1	Waist Implant: Radiation AC, Shiny
+110392	110393	1	200	1	Waist Implant: Radiation AC, Shiny
+110398	110399	1	200	2	Waist Implant: Fire AC, Shiny
+110422	110423	1	200	1	Waist Implant: Cold AC, Shiny
+110430	110431	1	200	1	Waist Implant: Adventuring, Bright
+110436	110437	1	200	1	Waist Implant: Fire AC, Shiny
+110442	110443	1	200	1	Waist Implant: Radiation AC, Shiny
+110444	110445	1	200	1	Waist Implant: Cold AC, Shiny
+110458	110459	1	200	1	Waist Implant: Body Dev, Bright
+110490	110491	1	200	1	Waist Implant: Chemical AC, Shiny
+110522	110433	1	200	1	Waist Implant: Cold AC, Shiny
+110534	110535	1	200	1	Waist Implant: Radiation AC, Shiny
+110538	110539	1	200	1	Waist Implant: Fire AC, Shiny
+110554	110555	1	200	1	Waist Implant: Radiation AC, Shiny
+110556	110557	1	200	1	Waist Implant: Cold AC, Shiny
+110558	110613	1	200	1	Waist Implant: Fire AC, Shiny
+110580	110581	1	200	1	Waist Implant: Fire AC, Shiny
+110582	110583	1	200	1	Waist Implant: Body Dev, Bright
+110594	110595	1	200	1	Waist Implant: Chemical AC, Shiny
+110604	110605	1	200	1	Waist Implant: Chemical AC, Shiny
+110606	110607	1	200	1	Waist Implant: Radiation AC, Shiny
+110636	110637	1	200	1	Waist Implant: Cold AC, Shiny
+110640	110641	1	200	1	Waist Implant: Max Nano, Bright
+110680	110681	1	200	1	Waist Implant: Body Dev, Bright
+110708	110709	1	200	2	Waist Implant: Fire AC, Shiny
+110714	110715	1	200	1	Waist Implant: Radiation AC, Shiny
+110758	110759	1	200	1	Waist Implant: Fire AC, Shiny
+110772	110773	1	200	1	Waist Implant: Chemical AC, Shiny
+110786	110787	1	200	1	Waist Implant: Cold AC, Shiny
+110792	110793	1	200	1	Waist Implant: Chemical AC, Shiny
+110796	110797	1	200	1	Waist Implant: Cold AC, Shiny
+110802	110803	1	200	1	Waist Implant: Chemical AC, Shiny
+110820	110821	1	200	1	Waist Implant: Radiation AC, Shiny
+110822	110823	1	200	1	Waist Implant: Cold AC, Shiny
+110834	110835	1	200	1	Waist Implant: Radiation AC, Shiny
+110874	110875	1	200	1	Waist Implant: Melee/Ma AC, Bright
+110896	110897	1	200	1	Waist Implant: Fire AC, Shiny
+110924	110925	1	200	1	Waist Implant: Radiation AC, Shiny
+110942	110943	1	200	1	Waist Implant: Radiation AC, Shiny
+110972	111027	1	200	1	Waist Implant: Radiation AC, Shiny
+110998	110999	1	200	1	Waist Implant: Cold AC, Shiny
+111072	111073	1	200	1	Waist Implant: Sense, Bright
+111114	111115	1	200	2	Waist Implant: Cold AC, Shiny
+111118	111119	1	200	1	Waist Implant: Sense, Bright
+111122	111123	1	200	1	Waist Implant: Radiation AC, Shiny
+111160	111161	1	200	1	Waist Implant: Cold AC, Shiny
+111166	111167	1	200	1	Waist Implant: Fire AC, Shiny
+111176	111177	1	200	1	Waist Implant: Fire AC, Shiny
+111188	111063	1	200	1	Waist Implant: Duck-Exp, Bright
+111209	111210	1	200	1	Waist Implant: Chemical AC, Shiny
+111221	111222	1	200	1	Waist Implant: Radiation AC, Shiny
+111239	111240	1	200	1	Waist Implant: Cold AC, Shiny
+111253	111254	1	200	1	Waist Implant: Cold AC, Shiny
+111261	111262	1	200	1	Waist Implant: Radiation AC, Shiny
+111281	111282	1	200	1	Waist Implant: Radiation AC, Shiny
+111313	111314	1	200	1	Waist Implant: Chemical AC, Shiny
+111317	111318	1	200	1	Waist Implant: Radiation AC, Shiny
+111327	111328	1	200	1	Waist Implant: Adventuring, Bright
+111343	111344	1	200	1	Waist Implant: Cold AC, Shiny
+111353	111354	1	200	1	Waist Implant: Cold AC, Shiny
+111363	111364	1	200	2	Waist Implant: Cold AC, Shiny
+111381	111382	1	200	1	Waist Implant: Radiation AC, Shiny
+111398	111399	1	200	1	Left-Wrist Implant: Rifle, Faded
+111402	111403	1	200	1	Left-Wrist Implant: Mult. Melee, Shiny
+111408	111409	1	200	1	Left-Wrist Implant: Multi Ranged, Shiny
+111421	111422	1	200	2	Left-Wrist Implant: Multi Ranged, Shiny
+111444	111445	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+111456	111457	1	200	1	Right-Hand Implant: Weapon Smt, Shiny
+111492	111493	1	200	1	Right-Hand Implant: MG / SMG, Bright
+111496	111497	1	200	1	Right-Hand Implant: Martial Arts, Shiny
+111533	111534	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+111545	111546	1	200	1	Right-Hand Implant: Martial Arts, Shiny
+111551	111552	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+111556	111557	1	200	1	Right-Hand Implant: First Aid, Bright
+111566	111567	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+111596	111597	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+111631	111632	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+111656	111657	1	200	1	Right-Hand Implant: Weapon Smt, Shiny
+111658	111659	1	200	1	Right-Hand Implant: Bow Spc Att, Bright
+111664	111665	1	200	2	Right-Hand Implant: Weapon Smt, Shiny
+111674	111709	1	200	1	Right-Hand Implant: Matter Crea, Bright
+111680	111681	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+111743	111744	1	200	1	Right-Hand Implant: Martial Arts, Shiny
+111777	111778	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+111805	111806	1	200	1	Right-Hand Implant: Martial Arts, Shiny
+111822	111823	1	200	1	Right-Hand Implant: Assault Rif, Bright
+111826	111827	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+111832	111833	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+111852	111853	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+111864	111865	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+111880	111881	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+111899	111900	1	200	1	Right-Hand Implant: Matter Crea, Bright
+111923	111924	1	200	1	Right-Hand Implant: Fling Shot, Bright
+111925	111926	1	200	2	Right-Hand Implant: Martial Arts, Shiny
+111927	111928	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+111931	111932	1	200	1	Right-Hand Implant: Heavy Weapons, Faded
+111947	111948	1	200	1	Right-Hand Implant: Sharp Obj, Bright
+111970	111971	1	200	2	Right-Hand Implant: Bow Spc Att, Bright
+111991	111992	1	200	1	Right-Hand Implant: Weapon Smt, Shiny
+111995	111996	1	200	1	Right-Hand Implant: Martial Arts, Shiny
+112021	112022	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+112057	112058	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+112079	112080	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+112116	112117	1	200	1	Right-Hand Implant: Weapon Smt, Shiny
+112132	112133	1	200	1	Right-Hand Implant: Weapon Smt, Shiny
+112146	112147	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+112156	112157	1	200	1	Right-Hand Implant: Weapon Smt, Shiny
+112176	112177	1	200	1	Right-Hand Implant: Martial Arts, Shiny
+112203	112204	1	200	1	Right-Hand Implant: Weapon Smt, Shiny
+112211	112212	1	200	1	Right-Hand Implant: Weapon Smt, Shiny
+112222	112223	1	200	1	Right-Hand Implant: Weapon Smt, Shiny
+112226	112227	1	200	1	Right-Hand Implant: Martial Arts, Shiny
+112255	112256	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+112261	112262	1	200	1	Right-Hand Implant: Sharp Obj, Bright
+112274	112275	1	200	1	Right-Hand Implant: Martial Arts, Shiny
+112278	112279	1	200	1	Right-Hand Implant: Weapon Smt, Shiny
+112284	112285	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+112286	112287	1	200	2	Right-Hand Implant: Weapon Smt, Shiny
+112306	112307	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+112340	112341	1	200	1	Right-Hand Implant: Weapon Smt, Shiny
+112370	112371	1	200	1	Right-Hand Implant: Martial Arts, Shiny
+112376	112377	1	200	2	Right-Hand Implant: Trap Disarm, Shiny
+112414	112415	1	200	1	Right-Hand Implant: Assault Rif, Bright
+112420	112421	1	200	1	Right-Hand Implant: Weapon Smt, Shiny
+112457	112458	1	200	1	Right-Hand Implant: Martial Arts, Shiny
+112461	112462	1	200	1	Right-Hand Implant: Weapon Smt, Shiny
+112465	112466	1	200	2	Right-Hand Implant: Martial Arts, Shiny
+112510	112511	1	200	1	Right-Hand Implant: Bow Spc Att, Bright
+112550	112551	1	200	1	Right-Hand Implant: Fling Shot, Bright
+112570	112571	1	200	1	Right-Hand Implant: Weapon Smt, Shiny
+112595	112545	1	200	1	Right-Hand Implant: Martial Arts, Shiny
+112607	112608	1	200	1	Right-Hand Implant: Martial Arts, Shiny
+112609	112610	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+112616	112617	1	200	1	Right-Hand Implant: Pistol, Bright
+112650	112651	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+112699	112700	1	200	2	Right-Hand Implant: Trap Disarm, Shiny
+112705	112706	1	200	2	Right-Hand Implant: Martial Arts, Shiny
+112750	112751	1	200	2	Right-Hand Implant: Fast Attack, Bright
+112756	112757	1	200	1	Right-Hand Implant: Weapon Smt, Shiny
+112770	112771	1	200	1	Right-Hand Implant: Martial Arts, Shiny
+112778	112779	1	200	1	Right-Hand Implant: Weapon Smt, Shiny
+112784	112785	1	200	1	Right-Hand Implant: Martial Arts, Shiny
+112798	112799	1	200	1	Right-Hand Implant: MG / SMG, Bright
+112809	112810	1	200	1	Right-Hand Implant: Weapon Smt, Shiny
+112811	112812	1	200	1	Right-Hand Implant: First Aid, Bright
+112825	112826	1	200	1	Right-Hand Implant: Martial Arts, Shiny
+112847	112848	1	200	1	Right-Hand Implant: First Aid, Bright
+112863	112864	1	200	1	Right-Hand Implant: Time & Space, Bright
+112897	112898	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+112915	112916	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+112923	112924	1	200	2	Right-Hand Implant: Trap Disarm, Shiny
+112951	112952	1	200	1	Right-Hand Implant: First Aid, Bright
+112953	112954	1	200	1	Right-Hand Implant: Martial Arts, Shiny
+112980	112981	1	200	1	Leg Implant: Swimming, Shiny
+112986	112987	1	200	2	Right-Hand Implant: Trap Disarm, Shiny
+113052	113053	1	200	1	Right-Hand Implant: Weapon Smt, Shiny
+113090	113091	1	200	1	Right-Hand Implant: Trap Disarm, Shiny
+113113	113114	1	200	1	Leg Implant: Duck-Exp, Shiny
+113135	113136	1	200	1	Leg Implant: Melee. Init, Bright
+113137	113138	1	200	1	Leg Implant: Melee. Init, Bright
+113152	113153	1	200	1	Leg Implant: Adventuring, Shiny
+113164	113165	1	200	1	Leg Implant: Dodge-Rng, Shiny
+113170	113171	1	200	1	Leg Implant: Duck-Exp, Shiny
+113261	113262	1	200	1	Leg Implant: Imp/Proj AC, Shiny
+113279	113280	1	200	1	Leg Implant: Dodge-Rng, Shiny
+113291	113292	1	200	1	Leg Implant: Imp/Proj AC, Shiny
+113406	113407	1	200	1	Leg Implant: Adventuring, Shiny
+113416	113417	1	200	1	Leg Implant: Dodge-Rng, Shiny
+113430	113431	1	200	1	Leg Implant: Swimming, Shiny
+113432	113488	1	200	1	Leg Implant: Duck-Exp, Shiny
+113462	113463	1	200	1	Left-Hand Implant: First Aid, Faded
+113466	113467	1	200	1	Left-Hand Implant: Fast Attack, Shiny
+113499	113500	1	200	1	Leg Implant: Swimming, Shiny
+113503	113504	1	200	1	Leg Implant: Dodge-Rng, Shiny
+113538	113539	1	200	1	Feet Implant: Sneak Atck, Shiny
+113567	113568	1	200	1	Left-Hand Implant: Trap Disarm, Bright
+113569	113570	1	200	1	Left-Hand Implant: Fast Attack, Shiny
+113573	113574	1	200	1	Left-Hand Implant: Fire AC, Bright
+113579	113580	1	200	1	Left-Hand Implant: Trap Disarm, Bright
+113587	113588	1	200	1	Feet Implant: Sneak Atck, Shiny
+113595	113596	1	200	1	Feet Implant: Concealment, Shiny
+113605	113606	1	200	1	Feet Implant: Melee. Init, Shiny
+113617	113618	1	200	1	Feet Implant: Evade-ClsC, Shiny
+116801	116801	34	34	6	Nano Crystal (Patchy Repairs)
+116824	116824	21	21	1	Nano Crystal (Instill With Rage)
+116826	116826	41	41	5	Nano Crystal (Instill With Fury)
+118117	118117	37	37	5	Nano Crystal (Thicken Skin)
+118254	118254	44	44	3	Nano Crystal (Average Delayed Health Payment)
+120573	142656	1	200	5	Senpai Tertius Decus Armor Helmet
+120585	142680	1	200	2	Inferior Organic Armor Pants
+120586	142682	1	200	1	Inferior Organic Armor Helmet
+120587	142684	1	200	1	Inferior Organic Armor Gloves
+120588	142686	1	200	6	Inferior Organic Armor Boots
+120589	142688	1	200	3	Inferior Organic Body Armor
+120590	142690	1	200	1	Inferior Organic Armor Sleeves
+120609	120609	1	1	9	Omni-Med Cloak
+120628	120628	1	1	3	Medical Cloak
+121151	121151	37	37	4	Nano Crystal (Fearsome Shout)
+121305	121304	1	200	4	Information Tool - Aggressive
+121306	121307	1	200	1	Information Tool - Level
+121351	121351	27	27	2	Nano Crystal (Team Skill Wrangler (Patchy))
+121353	121353	37	37	2	Nano Crystal (Team Skill Wrangler (Minor))
+121370	121370	41	41	4	Nano Crystal (Skill Wrangler (Lossy))
+121375	121375	34	34	2	Nano Crystal (Skill Wrangler (Commonplace))
+121509	121509	41	41	2	Nano Crystal (Proficient Health Haggler)
+121510	121510	47	47	1	Nano Crystal (Skilled Health Haggler)
+121511	121511	27	27	2	Nano Crystal (Practiced Health Haggler)
+121520	121520	34	34	1	Nano Crystal (Capable Health Haggler)
+121574	121575	24	46	2	Rusty Tripler
+121593	121594	24	46	2	Setting-Moon Edge
+121612	121613	24	46	2	Training Bladestaff
+121650	121651	24	46	2	Long-Axe Hyper 200x
+121667	121668	24	46	3	Second-Hand Thagh Whings
+121684	121685	1	23	1	Cracked  Bolter 42mm
+121686	121687	24	46	1	Rusty Bolter 42mm
+121705	121706	21	40	2	Edge-Less Whings
+121724	121725	21	40	4	Edge-Less Haxor 9922
+121743	121744	21	40	3	Cast-Off Right Slice
+121762	121763	21	40	6	Cast-Off Mini Axe
+121781	121782	21	40	2	Cast-Off Subturbine
+121800	121801	21	40	5	Cast-Off Disaffiliation Sniper
+121802	121803	41	60	1	Over-Tuned Disaffiliation Sniper
+121819	121820	21	40	1	Cast-Off Sleekblaster Minor
+121821	121822	41	60	1	Over-Tuned Sleekblaster Minor
+121838	121839	21	40	2	Cast-Off Sleekblaster
+121857	121858	21	40	2	Cast-Off Chunkprojector
+121895	121896	21	40	3	Cast-Off Heavy Grinner
+121914	121915	21	40	2	Cast-Off Flamethrower
+121933	121934	21	40	3	Cast-Off Gatling Saw 20k
+121952	121953	21	40	1	Cast-Off Slank Chop
+121971	121972	21	40	2	Edge-Less Katana
+121990	121991	21	40	3	Cast-Off Blackened Miniblaster
+122009	122010	21	40	4	Cast-Off Blackened Blaster
+122011	122012	41	60	1	Over-Tuned Blackened Blaster
+122028	122029	21	40	1	Cast-Off Triplejolt
+122066	122067	21	40	3	Cast-Off Clean Slay Axe
+122085	122086	21	40	3	Cast-Off Blackened Blaster Rifle
+122104	122105	21	40	4	Cast-Off Stabber
+122123	122124	21	40	1	Cast-Off E-Beamer
+122142	122143	21	40	2	Cast-Off Cutlass
+122161	122162	21	40	1	Edge-Less E-Blade
+122180	122181	21	40	3	Cast-Off Megajolt
+122197	122198	1	40	3	Ill-Treated DNA-Locked Blaster Rifle
+122218	122219	21	40	2	Cast-Off Stigma Rifle
+122237	122238	21	40	2	Cast-Off Electrical Pacifier
+122256	122257	21	40	3	Cast-Off Eradicator XCI-52
+122275	122276	21	40	3	Cast-Off Kolt PDW-37
+122294	122295	21	40	5	Cast-Off Omni-Flamer Mk IV
+122313	122314	21	40	4	Cast-Off Stanton Stunner IV
+122351	122352	21	40	3	Cast-Off Metaphysic Energy Shield
+122353	122354	41	60	1	Loose Metaphysic Energy Shield
+122370	122371	21	40	3	Cast-Off Energy Shield
+122389	122390	21	40	1	Cast-Off Esoteric Energy Buckler
+122408	122409	21	40	2	Cast-Off Energy Buckler
+122427	122428	21	40	3	Cast-Off Mausser Particle Streamer
+122446	122447	21	40	2	Cast-Off El Dieu
+122465	122466	21	40	4	Cast-Off El Diablo
+122484	122485	21	40	5	Cast-Off Ingram Blaster 23-X
+122503	122504	21	40	4	Cast-Off Biogun
+122505	122506	41	60	1	Over-Tuned Biogun
+122541	122542	21	40	1	Cast-Off Omni-Pol Standard Flamer
+122617	122618	21	40	3	Cast-Off Aero Borealis Corona
+122636	122637	21	40	3	Cast-Off The Original Plasma-Emitter
+122638	122639	41	60	1	Over-Tuned The Original Plasma-Emitter
+122674	122675	21	40	2	Cast-Off Heavy Lead Sprayer
+122693	122694	21	40	1	Cast-Off Advanced Baseballbat
+122712	122713	21	40	1	Cast-Off Kevlar Bow
+122731	122732	21	40	2	Cast-Off Blackjack
+122750	122751	21	40	1	Edge-Less Two-Handed Blackjack
+122769	122770	21	40	3	Cast-Off Bow-Blaster
+122788	122789	21	40	4	Edge-Less Sword of Sir Galahad
+122807	122808	21	40	2	Edge-Less Gofle-Prod
+122826	122827	21	40	5	Chair
+122831	122832	21	40	1	Cast-Off Titanium Crowbar
+122850	122851	21	40	2	Cast-Off Stun-Baton
+122869	122870	21	40	3	Cast-Off Grenade-Thrower
+122888	122889	21	40	1	Cast-Off Minielectronium
+122907	122908	21	40	2	Edge-Less Support Beam
+122926	122927	21	40	3	Edge-Less Blackjohn
+122945	122946	21	40	3	Cast-Off Mace
+122947	122948	41	60	1	Loose Mace
+122964	122965	21	40	2	Edge-Less Notum Staff
+122983	122984	21	40	2	Cast-Off Kolt 58 Magnum
+122985	122986	41	60	1	Over-Tuned Kolt 58 Magnum
+123002	123003	21	40	3	Edge-Less Notum Spear
+123004	123005	41	60	1	Loose Notum Spear
+123021	123022	21	40	2	Cast-Off Mini-Shotgun
+123040	123041	21	40	2	Cast-Off Medium Shotgun
+123078	123079	21	40	3	Cast-Off Sleekblaster Major
+123097	123098	21	40	3	Cast-Off DNA-Targeted Executioner Pistol
+123116	123117	21	40	1	Cast-Off Bow Split
+123133	123134	15	32	1	Ill-Treated Heavy Gamma-Beamer
+123152	123153	35	50	2	Irreparable Light Beamer Pistol
+123173	123174	21	40	2	Cast-Off Electron-Charged Pistol
+123192	123193	21	40	1	Cast-Off Suppressor
+123269	123270	29	47	2	Cast-Off Nova Flow - Mk IV
+123286	123287	35	50	1	Ill-Treated Slugger
+123307	123308	21	40	2	Cast-Off Enriched Uranium Sprayer
+123334	123335	30	33	1	Quality Banjo
+123338	123339	38	41	2	Senior Banjo
+123345	123346	21	40	1	Cast-Off Hand Axe
+123364	123365	21	40	2	Cast-Off Lead Pipe
+123383	123384	21	40	2	Cast-Off Meat-Cleaver
+123402	123403	24	46	2	Gluegun
+123421	123422	21	40	2	Cast-Off Netgun
+123440	123441	21	40	3	Cast-Off Ultra-Light Missile Pistol Raid 9-X
+123459	123460	21	40	4	Cast-Off OT Boomer+.90AE
+123478	123479	21	40	3	Cast-Off MTI USP 21
+123497	123498	21	40	5	Cast-Off IMI Desert Reet 1000
+123516	123517	21	40	6	Cast-Off Khemo-Tech Model 200
+123535	123536	33	50	1	Cast-Off Khemo-Tech Model 07 (Pocket 20)
+123554	123555	33	50	1	Cast-Off Knights Inc. Special-Purpose Pistol 2902
+123571	123572	15	32	1	Ill-Treated OT 0220 22mm Combat Magnum
+123590	123591	15	32	1	Ill-Treated Sentinel 20mm Snub Pistol
+123592	123593	33	50	1	Cast-Off Sentinel 20mm Snub Pistol
+123611	123612	21	40	4	Cast-Off PNG M1007A1 Tactical Revolver
+123613	123614	41	60	1	Over-Tuned PNG M1007A1 Tactical Revolver
+123630	123631	21	40	3	Cast-Off BBI Sigma III
+123649	123650	21	40	6	Cast-Off Sentinels ETE Strike Gun
+123668	123669	21	40	7	Cast-Off River MV
+123687	123688	21	40	5	Cast-Off Seburo Bobsons
+123689	123690	41	60	1	Over-Tuned Seburo Bobsons
+123706	123707	30	49	6	Faded OT Biomag
+123727	123728	24	35	1	MTI M-1 Bipower A
+123729	123730	36	47	1	MTI M-1 Bipower C2
+123744	123745	12	21	1	Shortened OT M-10 Flechette Pistol
+123746	123747	22	37	2	OT M-10 Flechette Pistol
+123748	123749	38	119	3	OT M-10.3 Flechette Pistol
+123767	123768	34	89	1	Polizziotto M202F
+123776	123777	21	50	2	MTI 95 Match Pistol 
+123793	123794	30	39	1	MTI VP300.f Proto Caseless
+123795	123796	40	49	1	MTI VP300.m Proto Caseless
+123810	123811	15	89	3	MTI SW500 
+123839	123840	10	93	4	Zastaba Cz-200 Assault Pistol 
+123846	123847	20	64	5	Freedom Arms Super 90 
+123855	123856	1	39	1	Second-Hand Old English Trading Co.
+123870	123871	30	54	3	Atlas Bern C.V.
+123879	123880	1	49	5	Worn BigBurger Inc.
+123888	123889	21	99	2	HSR Arms
+123893	123894	1	23	1	Rusty OT Backup
+123895	123896	24	41	2	Shortened OT Backup
+123906	123907	33	98	2	OT 0120 Machine Pistol
+123911	123912	21	40	1	MTI SOCOM Mk IV
+123913	123914	41	60	3	MTI SOCOM Mk V
+123928	123929	1	49	4	Rusty FN 7-7 Pistol
+123933	123934	1	21	1	Stained MTI USP 1200
+123937	123938	32	63	3	MTI USP 1200 T
+123948	123949	33	43	5	Galahad Inc T70 Myre
+123968	123970	1	29	1	Rusty OT Boomer M30
+123971	123972	30	119	3	OT Boomer M30
+123976	123977	5	49	5	Gripo-Com AKR 1K20
+123984	123985	1	27	1	Rusty MTI-OT PF55 Flechette System
+123986	123987	28	92	2	MTI-OT PF55 Flechette System
+123993	123994	10	44	3	Old English Trading Co. Type 77a
+124004	124005	1	54	2	Rusty M150 Booster Edition
+124018	124019	8	91	3	Sig SG 992 SWAT Edition 2
+124027	124028	24	53	4	Galahad Inc. 055 Police Edition
+124044	124045	21	50	2	F.D.A. Insurgent Moth
+124075	124076	26	43	2	BBI PS500
+124092	124093	1	37	1	Rusted AcuTek Cruncher
+124101	124102	1	43	1	O.E.T. Co. C70 Brigand
+124110	124111	22	37	2	Kalo-BBI Model 56
+124112	124113	38	49	1	Kalo-BBI Model 57
+124123	124124	21	40	3	ICC Arms SB21 Assault Shotgun
+124138	124139	30	79	2	ICC Arms 2Q2C Gun Bag
+124155	124156	38	40	4	OT-Windchaser M06 Emerald
+124164	124165	14	40	2	MTI SL70 Rifle 
+124185	124186	12	41	2	OT-Windchaser RM70
+124219	124220	8	43	2	Galahad Inc. Scout
+124232	124233	16	34	1	Springfield Arms Home Defender
+124243	124244	30	49	4	OT M50 Shotgun
+124258	124259	5	69	3	Vektor ND Shotgun
+124265	124266	30	88	4	OT MPS-00 Police Shotgun
+124278	124279	22	83	2	Krutt Assault 219
+124287	124288	28	47	4	OT-Windchaser SM30 Shotgun
+124306	124307	38	79	2	O.E.T. Co. Chic Urban Sniper
+124313	124314	1	32	1	Rusty Ithaca Ki-8
+124315	124316	33	50	3	Ithaca Ki-8
+124332	124333	32	41	3	Sako J-21 P-103 Response Rifle
+124343	124344	40	79	1	Tsakachumi PTO-HV.2 Counter-Sniper Rifle
+124350	124351	25	49	1	OT M500 SWAT Rifle
+124359	124360	24	85	2	MTI G-90A3
+124364	124365	1	39	1	Rusty OT Anti-Cyborg Rifle
+124369	124370	1	99	4	Barret M-00 Anti-Material Rifle
+124374	124375	22	54	2	BBI AS-90
+124383	124384	1	157	1	HSR Arms F-59
+124388	124389	30	69	7	MTI G02K
+124391	124392	1	32	1	OT Rancho Colonial Carbine
+124393	124394	33	59	2	OT Rancho CC Prototype
+124400	124401	1	39	1	Vektor V.21 Flechette Rifle
+124402	124403	40	79	1	Vektor V.21.16 Flechette Rifle
+124411	124412	20	64	1	MTI G-70 Zaman
+124424	124425	22	41	4	MTI B-94
+124433	124434	30	49	1	BBI Minami-90
+124453	124454	1	23	1	Rusty EN-RAL
+124467	124468	21	40	1	Gripo-Com AKMR 1K20
+124484	124485	1	99	1	Ingram Morning Star
+124487	124488	1	39	2	Manex SD 4004
+124489	124490	40	79	1	Manex SD 4004 (Mist reception sorrow)
+124494	124495	1	49	2	Old Manex STR 77
+124507	124508	30	187	1	OT Eskorpio 21 Hru
+124512	124513	21	40	3	Sentinels Personal Edition
+124529	124530	1	35	2	Prototype Sito-Tech Model 00
+124531	124532	36	139	2	Sito-Tech Model 00
+124536	124537	32	59	2	YES Assault 1007 Model 5
+124545	124546	1	99	3	YES Support 1010
+124557	124558	1	179	3	Kang Tao Spitting Cobra
+124562	124563	21	40	3	Cast-Off OT Saladin
+124581	124582	21	40	4	Cast-Off OT Viper IX
+124602	124603	31	40	3	Over-Tuned MTI MP200
+124617	124618	1	39	1	Used MTI SO1210
+124619	124620	40	119	1	MTI SO1210
+124626	124627	21	40	3	Cast-Off MTI UMP22
+124645	124646	21	40	3	Cast-Off Kalinkanov ZU-113 Security Weapon
+124664	124665	21	40	2	Cast-Off Malorian Arms M25 Goodgun
+124666	124667	41	60	1	Over-Tuned Malorian Arms M25 Goodgun
+124683	124684	21	40	1	Cast-Off MTI MPK-22 Briefcase Gun
+124704	124705	20	47	3	Over-Tuned Seburo C-19a
+124713	124714	21	40	2	Cast-Off Nord Armwerk MAX
+124732	124733	21	40	2	Cast-Off FN P00
+124751	124752	21	40	3	Cast-Off BBI WMMA CAW
+124770	124771	21	40	2	Cast-Off OT ARL-10 Micromissile Launcher
+124781	124782	21	40	1	Cast-Off Tsunami Raiden MP-Drum
+124800	124801	21	40	1	Cast-Off OT M-110 Renegade SAW
+124819	124820	21	40	1	Cast-Off OT M-70 HardRain GPMG
+124821	124822	41	60	1	Over-Tuned OT M-70 HardRain GPMG
+124838	124839	21	40	8	Cast-Off Vektor M-31 Automatic Grenade Launcher
+124857	124858	21	40	3	Cast-Off Planet Gripon Arms Hard-Boomer
+124876	124877	21	40	2	Cast-Off GE ME30 Mom
+124893	124894	21	40	2	Cast-Off OT M-00 Crystal
+124912	124913	21	40	3	Cast-Off Westinghouse IM-50 Plasma Burner
+124931	124932	21	40	1	Cast-Off IEC Flashpoint Laser Rifle
+124950	124951	21	40	1	Cast-Off Techtronica Neural Disruptor
+124969	124970	21	40	5	Cast-Off GE XM-559 Man-Portable Laser
+124988	124989	21	40	2	Cast-Off Reet-Tech Stryker X
+125007	125008	21	40	3	Cast-Off Joint Clans Exocet II
+125026	125027	21	40	14	Cast-Off Joint Clans Patriot
+125045	125046	21	40	4	Cast-Off Reet-Tech Junior Urban Crossbow
+125047	125048	41	60	1	Over-Tuned Reet-Tech Junior Urban Crossbow
+125064	125065	21	40	2	Cast-Off Reet-Tech Venom Compound Bow
+125083	125084	21	40	5	Cast-Off Oneida Razor Half-Bow
+125085	125086	41	60	1	Over-Tuned Oneida Razor Half-Bow
+125298	125299	23	47	2	Bent Peasant Squibber
+125313	125314	21	40	3	Bent Merchant Squibber
+125332	125333	30	53	1	Bent Large Rider Squibber
+125345	125346	21	40	2	Bent Protector Squibber
+125347	125348	41	60	1	Loose Protector Squibber
+125366	125367	41	60	1	Loose Merchant Executioner
+125383	125384	21	40	1	Bent Rider Executioner
+125402	125403	21	40	2	Bent Protector Executioner
+125404	125405	41	60	1	Loose Protector Executioner
+125421	125422	21	40	1	Bent Torch
+125423	125424	41	60	1	Loose Torch
+125440	125441	21	90	1	Paper Hammer
+125445	125446	1	50	3	Tear-soaked Pillow with Important Stripes
+125456	125457	10	159	2	Concrete Cushion
+125459	125460	1	50	1	5th level Ninja Wakisashi
+125748	125748	37	37	3	Nano Crystal (Calling of Salvinous)
+128497	128498	1	35	2	Uncle Bazzit Custom 22mm
+128499	128500	36	95	1	Uncle Bazzit (New) Custom 22mm
+128603	128604	1	39	1	Fragile D-nort Compact Assault Rifle
+128605	128606	40	179	1	D-nort Compact Assault Rifle
+128610	128611	21	40	4	Cast-off MTI G-36K
+128627	128628	1	50	3	Rusty Ares Arms AR-90 Jet Rifle
+128638	128639	21	40	2	Cast-off Seburo C-99a 
+128676	128677	21	40	2	Cast-off HSR Arms Tech Assault V
+128678	128679	41	60	1	Over-tuned HSR Arms Tech Assault V
+128710	128711	1	39	1	Rusty River Series 6
+128717	128718	21	40	1	Cast-off Galahad Inc. 077 Personal Weapon
+128734	128735	1	55	4	1st edition Pistola Di Macchina Mini Automatico 2
+128741	128742	21	40	2	Cast-off Galahad Inc. Tactical Machine Pistol 102
+128760	128761	21	40	1	Cast-off Fabrique Des Armes Bizon 20-19
+128784	128785	1	119	4	MTI MP903A3D9
+128789	128790	12	79	1	Battered Old English Trading Co. SPP-502
+128794	128795	21	40	3	Cast-off OT Cobra M-33
+128813	128814	21	40	1	Cast-off Zastaba M0-2 Assault Weapon (Zero)
+128836	128837	31	119	1	Second Hand Freedom Arms Defender
+128841	128842	21	40	3	Cast-off OET Co. MP-21 Tactical Machine Pistol
+128843	128844	41	60	1	Over-tuned OET Co. MP-21 Tactical Machine Pistol
+128862	128863	33	43	1	Over-tuned MTI MPK-22 
+128892	128893	21	40	3	Cast-off Steiner LM-5 Assault Laser
+128909	128910	1	39	1	Outdated Fett j-8 Flammable
+128916	128917	1	179	3	Water balloon
+128921	128922	21	40	1	Bent Peasant Executioner
+128940	128941	21	40	1	Edge-less Peasant Warblade
+128942	128943	41	60	1	Loose Peasant Warblade
+128959	128960	21	40	3	Edge-less Merchant Warblade
+128978	128979	21	40	4	Edge-less Rider Warblade
+128997	128998	21	40	2	Edge-less Protector Warblade
+129014	129015	1	169	4	Omni-Med Butter Cake
+129017	129018	1	50	2	Fast Chocolate Surprise
+129028	129029	21	40	3	Unbalanced Sledgehammer
+129030	129031	41	60	1	Loose Sledgehammer
+129064	129065	1	98	3	3rd level Ninja Tanto
+129071	129072	30	59	2	Breathing Space
+129640	129641	21	40	4	Junior Wen-Wen
+129642	129643	41	60	1	Wen-Wen Teen
+130003	130004	1	200	1	Run Speed Cluster - Faded (Leg)
+130005	130006	1	200	5	Run Speed Cluster - Bright (Left-Wrist)
+130007	130008	1	200	2	Run Speed Cluster - Shiny (Right-Wrist)
+130055	130056	31	99	2	Featherwood Staff
+130064	130065	31	102	3	Heavy Staff
+130075	130076	28	87	4	Light Staff
+130084	130085	20	89	4	Magical Stave of Inferno
+130089	130090	21	40	3	Unbalanced Native Alloy Staff
+130108	130109	21	40	1	Edge-less Notum Lever
+130129	130130	41	60	1	Loose Denunciatory Spear
+130146	130147	21	40	1	Unbalanced Hayfork
+130163	130164	1	34	1	Loose MTI Sword
+130165	130166	35	74	2	Rusty MTI Sword
+130172	130173	1	39	2	Bent OT Sword
+130183	130184	20	70	1	Whistling Hot Air Stick
+130220	130221	32	41	1	Blunt Light Spear
+130241	130242	1	200	1	Right-Wrist Implant: Run Speed, Shiny
+130251	130252	1	200	1	Right-Wrist Implant: Run Speed, Shiny
+130277	130278	1	200	1	Right-Wrist Implant: Run Speed, Shiny
+130287	130288	1	200	1	Right-Wrist Implant: Run Speed, Shiny
+130307	130308	1	200	1	Right-Wrist Implant: Run Speed, Shiny
+130333	130343	1	200	1	Left-Wrist Implant: Run Speed, Bright
+130378	130379	1	200	1	Leg Implant: Swimming, Shiny
+130382	130383	1	200	1	Leg Implant: Duck-Exp, Shiny
+130389	130360	1	200	1	Leg Implant: Energy AC, Bright
+130395	130396	1	200	1	Leg Implant: Agility, Shiny
+130401	130402	1	200	1	Leg Implant: Adventuring, Shiny
+130413	130414	1	200	2	Leg Implant: Imp/Proj AC, Shiny
+130417	130418	1	200	1	Leg Implant: Swimming, Shiny
+131605	131606	1	99	4	Rough Club
+136692	136692	41	41	9	Nano Crystal (Patch Wounds)
+136699	136699	34	34	7	Nano Crystal (Natural Cure)
+136701	136701	21	21	1	Nano Crystal (Lesser Restore to Health)
+142655	142654	1	200	6	Senpai Tertius Decus Armor Pants
+142658	142657	1	200	4	Senpai Tertius Decus Armor Gloves
+142660	142659	1	200	7	Senpai Tertius Decus Armor Boots
+142662	142661	1	200	3	Senpai Tertius Decus Body Armor
+142665	142664	1	200	2	Senpai Tertius Decus Armor Sleeves
+142721	142721	47	47	3	Nano Crystal (Reckless Digitization)
+142808	142809	33	59	4	Faded SSC Rustling Wakisashi
+142819	142820	21	40	2	Yadol Co Survival Knife
+142857	142858	21	40	4	Over-tuned Eye Wind Onehander
+143846	143847	21	40	2	Cast-Off Sunburst Mk IV
+143848	143849	41	60	2	Over-Tuned Sunburst Mk IV
+144067	144068	21	30	1	Loose Survival Axe
+144088	144089	31	40	4	Chipped Tanto
+144103	144104	21	30	1	Cast-off Freedom Arms 4200
+144105	144106	31	40	3	Over-tuned Freedom Arms 4200
+144148	144149	21	40	1	Edge-less Burning Copper Katana
+150178	150179	31	40	4	Crooked Bodum-Larga Club
+150223	150224	1	40	1	Cheap Amytlo Executioner
+150243	150244	31	60	4	Green Zenith Taichi
+150256	150257	21	40	2	Bent Wall-Blade
+150258	150259	41	60	1	Loose Wall-Blade
+150306	150307	1	200	1	Android NCU Upgrade
+150637	150637	24	24	1	Nano Crystal (Enfraam's Minor Fortification)
+150639	150639	37	37	3	Nano Crystal (Enfraam's Lesser Fortification)
+151778	151778	21	21	2	Nano Crystal (Teachings of Material Creation)
+151833	151833	37	37	4	Nano Crystal (Anima of Unleashed Malice)
+152066	152067	21	40	4	Ramen and Devis - Mathis Multi-Energy Rifle
+152068	152069	41	60	1	1244 Co - Mathis Multi-Energy Rifle
+152085	152086	31	60	3	Simple Abigail
+152098	152099	31	60	4	Simple Fiddle Rifle
+152111	152112	31	60	3	Simple Pow Bow
+152124	152125	31	60	3	Simple Sapphistic Bow
+152137	152138	21	40	3	Model A Spring Inc Tube-Bow
+152158	152159	21	40	2	Splintered Light Tube-Bow
+152160	152161	41	50	1	Rough Light Tube-Bow
+152298	154071	1	60	2	Cheap Luxembourg Inferno Rifle
+152313	152314	31	50	2	Loose Assault Partizan
+152328	152329	21	40	2	Simple MTI Aleph 99
+152341	152342	21	40	3	Bluebell Parry Stick
+152358	152359	1	50	5	Grey Acroblade
+152371	152372	21	30	1	OT Limb Bow Prototype XIV
+152373	152374	31	40	8	OT Limb Bow Prototype XXIII
+152375	152376	41	50	1	OT Limb Bow Prototype XXVI Red
+152390	152391	31	40	2	Loose Khemo-Tech Platinum Wakisashi
+152392	152393	41	60	1	Blunt Khemo-Tech Platinum Wakisashi
+152723	152724	1	49	2	Burning Crescent - Star Five
+152766	152767	1	40	1	Beginner Click Stabber
+153083	153084	1	49	5	Obtuse G-Staff
+154069	150213	1	70	1	Fayalite Flamberge
+154070	150196	1	40	3	Cheap Santiago Crossblade
+154587	154587	34	34	4	Nano Crystal (Sympathetic Armor Boost)
+154735	154735	41	41	1	Nano Crystal (Disruptive Photon Deflector)
+154739	154739	17	17	1	Nano Crystal (Disruptive Field Negator)
+154740	154740	41	41	2	Nano Crystal (Disruptive Field Harmonics)
+155367	155367	34	34	4	Nano Crystal (Smuggler Shipment (OP-LX))
+155368	155368	24	24	1	Nano Crystal (Smuggler Shipment (OP-XL))
+155377	155377	34	34	7	Nano Crystal (Bootleg Blades 'n Blunts (OP-LX))
+155390	155390	34	34	3	Nano Crystal (Bootleg Beamers 'n Bolters (OP-LX))
+155618	155618	44	44	1	Nano Crystal (Mud Slinger)
+155811	155811	37	37	2	Nano Crystal (Motivational Speech: Lead From The Front)
+156132	156132	41	41	4	Nano Crystal (Deranged Mindreaver)
+156143	156143	34	34	1	Nano Crystal (Lesser Deranged Mindreaver)
+157548	157548	44	44	3	Nano Crystal (Demotivational Speech: Let's Make a Committee)
+157550	157550	34	34	1	Nano Crystal (Demotivational Speech: Factory Recall)
+158019	158019	10	10	3	Chemical Deflection Shield
+158035	158035	10	10	4	Radiation Deflection Shield
+158038	158038	10	10	2	Energy Deflection Shield
+158045	158046	1	200	2	Da Taunter!
+158963	158964	1	99	3	Low Quality Arwen MO-404 Grenade Launcher
+159007	159008	1	199	3	Tango Dirk
+159021	159022	1	199	6	Schuyler Bow
+159035	159036	1	98	3	BBI Faithful 22
+159040	159041	1	49	5	True Katana of the Cunning Farmer
+159083	159087	1	79	1	Cheap Collins IX Bio-Energy Rifle
+159196	159197	1	400	1	The Repressor
+160096	160097	21	40	5	Slightly Bent Compressed Blade
+160186	160187	21	90	4	Cheap FDA Caterwaul 913
+160216	160217	1	199	1	East Wind Katana
+160219	160220	1	70	1	Cheap Black Pete
+160224	160225	1	50	3	Cheap Heavy Chop
+160233	160234	1	199	2	SOL Fire Executioner Type T
+160236	160237	1	199	3	SOL Fire Executioner Type F
+160239	160240	1	199	5	SOL Fire Executioner Type E
+160242	160243	1	199	1	SOL Fire Executioner Type C
+160264	160265	1	50	10	Cheap Kaen-Archibald Kolt
+160279	160280	1	50	2	Hazangerine Rat Claw
+160476	160477	1	98	2	Cheap OT Kerans Automatic Grinner
+160487	160488	31	40	1	Worn Sleekmaster Classic
+163389	163389	24	24	2	Nano Crystal (Pr0n0unc3m3nt 0f L4z1n3ss)
+166253	166254	1	200	4	A Bright NanoCluster of Nano Regeneration
+166257	166258	1	200	2	A Shining NanoCluster of Nano Regeneration
+169960	169961	1	200	1	Head Implant: Disease AC, Shiny
+171469	171470	1	200	1	Head Implant: Disease AC, Shiny
+171883	171884	1	200	2	Head Implant: Disease AC, Shiny
+172015	172016	1	200	1	Head Implant: Disease AC, Shiny
+172469	172470	1	200	1	Head Implant: Disease AC, Shiny
+173105	173106	1	200	1	Head Implant: Disease AC, Shiny
+177599	177600	1	200	1	Chest Implant: Nano Pool, Shiny
+178106	178107	1	200	1	Chest Implant: Stamina, Shiny
+178110	177622	1	200	1	Chest Implant: Sense, Shiny
+178118	178119	1	200	1	Chest Implant: Energy AC, Shiny
+178170	178171	1	200	1	Chest Implant: Stamina, Shiny
+178206	178207	1	200	1	Chest Implant: Stamina, Shiny
+190730	190275	1	200	1	Leg Implant: Disease AC, Bright
+191173	191174	1	200	1	Leg Implant: Dodge-Rng, Shiny
+191600	191601	1	200	1	Leg Implant: Imp/Proj AC, Shiny
+191691	191692	1	200	1	Leg Implant: Adventuring, Shiny
+202740	202740	30	30	3	NanoCrystal (Edge of the Barber)
+202829	202829	30	30	3	NanoCrystal (Skill of the Savage)
+202869	202869	35	35	2	NanoCrystal (Talon of the Eagle)
+203122	203122	30	30	3	NanoCrystal (A Sergeant's Knowledge)
+203124	203124	36	36	3	NanoCrystal (Alleysweeper)
+203134	203134	38	38	3	NanoCrystal (Power Volley)
+203136	203136	33	33	3	NanoCrystal (Laser Surgery)
+203150	203150	31	31	3	NanoCrystal (Metal Stream)
+203658	203658	22	22	1	NanoCrystal (Sidestep the Blame)
+203785	203785	40	40	2	NanoCrystal (Writ of Mobility)
+203798	203798	52	52	1	NanoCrystal (Break Chains)
+203833	203833	24	24	1	NanoCrystal (Beg for Freedom)
+203836	203836	49	49	2	NanoCrystal (Pursuade for Freedom)
+203851	203851	36	36	2	NanoCrystal (Minor Exoskeleton Pulse)
+203872	203872	40	40	5	NanoCrystal (Energize Shell)
+203949	203949	36	36	1	NanoCrystal (Request Freedom)
+203959	203959	42	42	1	NanoCrystal (The Claim to Freedom)
+204139	204140	1	50	5	Virus Scanner
+204262	204263	1	50	4	Purge Nano Kit
+204267	204268	1	200	3	Battle Prepared Nano Recharge Kit
+204270	204271	1	200	1	Battle Prepared Treatment Kit
+205198	205198	16	16	2	Nano Crystal (Evocation of Unrestrained Ferocity)
+205224	205225	1	50	2	Personal Grid Converter
+205232	205232	37	37	4	Nano Crystal (Monitor Combat Array)
+205288	205288	30	30	1	Nano Crystal (Gallant Hero: The Enraged Drone)
+210300	210300	20	20	1	Nano Crystal (Impartiality of the Blade)
+210302	210302	48	48	10	Nano Crystal (Decision Maker)
+210312	210312	27	27	1	Nano Crystal (Defender's Poise)
+210485	210485	20	20	1	Nano Crystal (Sanctifier)
+210614	210614	35	35	13	Nano Crystal (Vengeance of the Steadfast)
+210672	210672	31	31	8	Nano Crystal (Imminence of Scrimmage)
+210708	210708	41	41	14	Nano Crystal (Enervate Bonds)
+210735	210735	29	29	9	Nano Crystal (Knock of the Poltergeist)
+210747	210747	36	36	13	Nano Crystal (Sneak)
+210788	210788	22	22	6	Nano Crystal (Footpad Apprentice)
+210807	210807	44	44	9	Nano Crystal (Double Cover)
+211151	211151	49	49	16	Nano Crystal (Piercing Tooth)
+211165	211165	40	40	12	Nano Crystal (Sidestep)
+218353	218354	20	30	2	Weak Coil of Health
+218744	218745	1	200	2	Spiri-Aid Spindle
+218780	218781	1	200	2	Nano Spindle
+218824	218825	20	30	3	Weak Coil of Nano Energy
+233794	233795	21	179	1	Illicit Laser Backup

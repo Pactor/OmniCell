@@ -46,6 +46,7 @@ namespace ZoneEngine.Core
     using OmniCell.Communication.Messages;
     using OmniCell.Core.Components;
     using OmniCell.Core.Entities;
+    using OmniCell.Core.Missions;
     using Utility;
     using OmniCell.Core.Playfields;
     using OmniCell.ObjectManager;
@@ -228,12 +229,36 @@ namespace ZoneEngine.Core
         /// </param>
         /// <returns>
         /// </returns>
+        /// <summary>
+        /// The playfield with this instance number, building it if this is the
+        /// first time anybody has gone there.
+        /// </summary>
+        /// <remarks>
+        /// **On the instance alone, not on the whole identity.** A playfield
+        /// is asked for with more than one identity type: logging in asks with
+        /// IdentityType.Playfield, which is 51101, and a door asks with
+        /// whatever its TeleportProxy carries, which for the Borealis doors is
+        /// 51102 - a number that is not in the enum at all. Matching on the
+        /// type as well meant those two never found each other, so walking
+        /// into a building you had logged into built a second Playfield for
+        /// it.
+        ///
+        /// Two Playfields for one place is not a wasted object. Each one loads
+        /// the playfield's vendors, and both sets register under the same
+        /// parent - the statel's playfield id, which does not care which
+        /// identity type asked - so entry then sent the client every shop
+        /// machine twice. Fair Trade has 63 and the client was told about 126,
+        /// and locked up on the way in.
+        ///
+        /// An instance number identifies a playfield on its own; that is what
+        /// PlayfieldLoader.PFData is keyed on and what a vendor's parent is
+        /// built from. So it is what this matches on.
+        /// </remarks>
         public IPlayfield PlayfieldById(Identity id)
         {
-            // TODO: This needs to be changed to check for whole Identity
             foreach (IPlayfield pf in this.playfields)
             {
-                if (pf.Identity == id)
+                if (pf.Identity.Instance == id.Instance)
                 {
                     return pf;
                 }
@@ -317,7 +342,15 @@ namespace ZoneEngine.Core
         /// </returns>
         protected IPlayfield CreatePlayfield(Identity playfieldIdentity)
         {
-            var temp = new Playfield(this, playfieldIdentity);
+            // A playfield is identified by its instance, never by the type an
+            // entry asked with: a door's TeleportProxy carries 51102, not
+            // IdentityType.Playfield (51101). Letting that type become the
+            // playfield's own identity makes every lookup parented on it miss -
+            // vendors register under IdentityType.Playfield and came back empty
+            // (shops=0), and the ChangePlayfield test in TeleportMessageHandler
+            // fires on Type != Playfield. Normalise here. See PlayfieldById.
+            var canonical = new Identity { Type = IdentityType.Playfield, Instance = playfieldIdentity.Instance };
+            var temp = new Playfield(this, canonical);
             this.playfields.Add(temp);
             return temp;
         }
@@ -455,6 +488,18 @@ namespace ZoneEngine.Core
                     {
                         character.Controller.Client = null;
                     }
+
+                    // Missions live in memory and nowhere else, so the only
+                    // thing that clears them is the player leaving.
+                    foreach (MissionOffer mission in MissionBook.Forget(character.Identity))
+                    {
+                        ZoneEngine.Core.Missions.MissionPlayfields.Close(mission);
+                    }
+
+                    // A bag's contents are held in memory during the session;
+                    // write them back before the character is disposed so they
+                    // are there next login.
+                    ZoneEngine.Core.Loot.BagAccess.Save(character.Identity);
 
                     character.Dispose();
                 }

@@ -32,11 +32,10 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization.Serializers.Custom
     ///
     /// Whether they are there is not announced. Of 3,906 captured copies, 2,914
     /// carry them and 992 do not, and the two populations line up exactly with
-    /// the value of Unknown6 - 10090 against 8072 - but nobody knows what that
-    /// field is, so gating on it would be building on a correlation. Reading to
-    /// the end needs no such assumption: pairs are taken while more than the
-    /// closing word remains. If the guess about Unknown6 is ever wrong, this
-    /// still reads the message correctly.
+    /// the X3F1 count in front of the pairs (once called Unknown6) - 10090
+    /// against 8072, the counts for nine stats and for seven (see
+    /// WeaponItemFullUpdateMessage). Reading to the end needs no gating on it:
+    /// pairs are taken while more than the closing word remains.
     ///
     /// The last four bytes are zero in all 3,906 and are read separately.
     /// </remarks>

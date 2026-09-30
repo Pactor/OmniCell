@@ -148,7 +148,7 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization.Serializers.Custom
                                     ? streamReader.ReadByte()
                                     : streamReader.ReadInt16();
 
-                npc.PetType = flags.HasFlag(SimpleCharFullUpdateFlags.UnknownDataFlag)
+                npc.PetType = flags.HasFlag(SimpleCharFullUpdateFlags.HasSmallPetType)
                                    ? streamReader.ReadByte()
                                    : streamReader.ReadInt16();
 
@@ -276,9 +276,9 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization.Serializers.Custom
                 scfu.ImmuneData = streamReader.ReadByte();
             }
 
-            if (flags.HasFlag(SimpleCharFullUpdateFlags.UnknownFlag3))
+            if (flags.HasFlag(SimpleCharFullUpdateFlags.HasSecondMonsterScale))
             {
-                scfu.UnknownData3 = streamReader.ReadByte();
+                scfu.SecondMonsterScale = streamReader.ReadByte();
             }
 
             scfu.ActiveNanos = new ActiveNano[X3F1Count(streamReader.ReadInt32())];
@@ -364,9 +364,9 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization.Serializers.Custom
                 }
             }
 
-            if (flags.HasFlag(SimpleCharFullUpdateFlags.UnknownFlag4))
+            if (flags.HasFlag(SimpleCharFullUpdateFlags.HasShadowBreed))
             {
-                scfu.UnknownData4 = streamReader.ReadByte();
+                scfu.ShadowBreed = streamReader.ReadByte();
             }
 
             if (flags.HasFlag(SimpleCharFullUpdateFlags.HasCatTextures))
@@ -525,13 +525,13 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization.Serializers.Custom
             SimpleCharFullUpdateFlags.HasPlayfieldId | SimpleCharFullUpdateFlags.HasParentDynel
             | SimpleCharFullUpdateFlags.HasHeading | SimpleCharFullUpdateFlags.IsNpc
             | SimpleCharFullUpdateFlags.HasSmallNpcFamily | SimpleCharFullUpdateFlags.HasSmallNpcLosHeight
-            | SimpleCharFullUpdateFlags.UnknownDataFlag | SimpleCharFullUpdateFlags.HasOrgName | SimpleCharFullUpdateFlags.HasExtendedLevel
+            | SimpleCharFullUpdateFlags.HasSmallPetType | SimpleCharFullUpdateFlags.HasOrgName | SimpleCharFullUpdateFlags.HasExtendedLevel
             | SimpleCharFullUpdateFlags.HasSmallHealth | SimpleCharFullUpdateFlags.HasSmallHealthDamage
             | SimpleCharFullUpdateFlags.HasHeadMesh
             | SimpleCharFullUpdateFlags.HasExtendedRunSpeed | SimpleCharFullUpdateFlags.IsUnderAttack
             | SimpleCharFullUpdateFlags.HasExtendedTextures | SimpleCharFullUpdateFlags.IsImmune
-            | SimpleCharFullUpdateFlags.UnknownFlag3 | SimpleCharFullUpdateFlags.HasWaypoints
-            | SimpleCharFullUpdateFlags.HasNoWeaponPairs | SimpleCharFullUpdateFlags.UnknownFlag4
+            | SimpleCharFullUpdateFlags.HasSecondMonsterScale | SimpleCharFullUpdateFlags.HasWaypoints
+            | SimpleCharFullUpdateFlags.HasNoWeaponPairs | SimpleCharFullUpdateFlags.HasShadowBreed
             | SimpleCharFullUpdateFlags.HasCatTextures;
 
         public void Serialize(
@@ -624,8 +624,8 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization.Serializers.Custom
                     streamWriter.WriteByte((byte)snpc.LosHeight);
                 }
 
-                // UnknownDataFlag set means the byte form, clear means the short.
-                flags |= SimpleCharFullUpdateFlags.UnknownDataFlag;
+                // HasSmallPetType set means the byte form, clear means the short.
+                flags |= SimpleCharFullUpdateFlags.HasSmallPetType;
                 streamWriter.WriteByte((byte)snpc.PetType);
 
                 streamWriter.WriteInt16(snpc.Unknown2);
@@ -793,10 +793,10 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization.Serializers.Custom
                 streamWriter.WriteByte(scfu.ImmuneData.Value);
             }
 
-            if (scfu.UnknownData3.HasValue)
+            if (scfu.SecondMonsterScale.HasValue)
             {
-                flags |= SimpleCharFullUpdateFlags.UnknownFlag3;
-                streamWriter.WriteByte(scfu.UnknownData3.Value);
+                flags |= SimpleCharFullUpdateFlags.HasSecondMonsterScale;
+                streamWriter.WriteByte(scfu.SecondMonsterScale.Value);
             }
 
             streamWriter.WriteInt32((scfu.ActiveNanos.Length + 1) * 0x3F1);
@@ -859,10 +859,10 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization.Serializers.Custom
                 }
             }
 
-            if (scfu.UnknownData4.HasValue)
+            if (scfu.ShadowBreed.HasValue)
             {
-                flags |= SimpleCharFullUpdateFlags.UnknownFlag4;
-                streamWriter.WriteByte(scfu.UnknownData4.Value);
+                flags |= SimpleCharFullUpdateFlags.HasShadowBreed;
+                streamWriter.WriteByte(scfu.ShadowBreed.Value);
             }
 
             if (scfu.CatTextures != null)

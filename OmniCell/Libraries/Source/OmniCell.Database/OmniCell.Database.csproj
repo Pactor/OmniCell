@@ -56,6 +56,7 @@
     <Content Include="SqlTables\instanceditems.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\itemnames.sql" CopyToOutputDirectory="PreserveNewest" Condition="Exists('SqlTables\itemnames.sql')" />
     <Content Include="SqlTables\knubotscript.sql" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="SqlTables\playfieldstatelruns.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\items.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\login.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\mobdroptable.sql" CopyToOutputDirectory="PreserveNewest" />
@@ -67,10 +68,16 @@
     <Content Include="SqlTables\mobspawnsuploadednanos.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\mobspawnsweapons.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\mobcorpses.sql" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="SqlTables\npcactivenanos.sql" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="SqlTables\npcappearance.sql" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="SqlTables\npcbehaviour.sql" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="SqlTables\npctextures.sql" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="SqlTables\npcwanderpoints.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\mobspawns_stats.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\quests.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\questobjectives.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\questitemrewards.sql" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="SqlTables\queststatrewards.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\questwire.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\questwireactions.sql" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="SqlTables\questwirerewards.sql" CopyToOutputDirectory="PreserveNewest" />

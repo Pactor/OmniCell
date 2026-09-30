@@ -36,13 +36,13 @@ namespace ZoneEngine.Core.MessageHandlers
     /// Goes both ways: the client sends one to command its pets, and the server
     /// sends the same message back. 149 up and 34 down across the captures.
     ///
-    /// Unknown2 is the command, and a capture taken with each button marked as
+    /// Command is the command, and a capture taken with each button marked as
     /// it was pressed says what the numbers are:
     ///
     ///     1   follow      one message per pet, three pets, three messages
     ///     4   wait        the same, one per pet
     ///     7   attack      names the pet and no target
-    ///    10   terminate   Unknown1 set to 1 and no pet named at all
+    ///    10   terminate   Scope set to 1 and no pet named at all
     ///    12   heal        in the window marked "pet heal"
     ///
     /// Two of them carry less than you would expect, and both for the same

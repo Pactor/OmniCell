@@ -22,11 +22,28 @@ PREPARE omnicell_stmt FROM @omnicell_sql;
 EXECUTE omnicell_stmt;
 DEALLOCATE PREPARE omnicell_stmt;
 
+-- Which name that column is going by. This patch runs before
+-- arete-landing-01-column-names-schema.sql the first time, when the column is
+-- still Unknown7, and after it every time since, when it is MultipleCount.
+-- Naming Unknown7 outright worked on a new database and failed on every
+-- re-run, which left ItemDelay, RechargeDelay and Energy unadded on any
+-- database that had been loaded once already - and the patches are meant to be
+-- safe to run again.
+SET @omnicell_after = IF(
+  (SELECT COUNT(*) FROM information_schema.COLUMNS
+   WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'mobspawnsweapons'
+     AND COLUMN_NAME = 'Unknown7') = 1,
+  'Unknown7',
+  'MultipleCount');
+
 SET @omnicell_sql = IF(
   (SELECT COUNT(*) FROM information_schema.COLUMNS
    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'mobspawnsweapons'
      AND COLUMN_NAME = 'ItemDelay') = 0,
-  'ALTER TABLE mobspawnsweapons ADD COLUMN ItemDelay int(32) DEFAULT NULL AFTER Unknown7',
+  CONCAT(
+    'ALTER TABLE mobspawnsweapons ADD COLUMN ItemDelay int(32) DEFAULT NULL AFTER `',
+    @omnicell_after,
+    '`'),
   'SELECT 1');
 PREPARE omnicell_stmt FROM @omnicell_sql;
 EXECUTE omnicell_stmt;

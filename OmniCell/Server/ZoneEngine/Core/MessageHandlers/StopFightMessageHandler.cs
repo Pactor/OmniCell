@@ -60,6 +60,15 @@ namespace ZoneEngine.Core.MessageHandlers
         }
 
         /// <summary>
+        /// Tells everyone nearby that <paramref name="character"/>'s fight has
+        /// ended. A creature has no client of its own, so Send reaches nobody.
+        /// </summary>
+        public void Announce(ICharacter character)
+        {
+            this.Send(character, this.Filler(character), true);
+        }
+
+        /// <summary>
         /// </summary>
         private MessageDataFiller Filler(ICharacter character)
         {

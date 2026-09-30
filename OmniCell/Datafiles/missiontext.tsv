@@ -1,0 +1,50 @@
+# The prose a mission terminal writes, taken from 105 captured offers.
+#
+# An offer is an opener bolted onto a body. The openers are interchangeable -
+# the same ones turn up on every kind of mission - and the body is chosen by
+# the mission's type. Slots are in braces.
+#
+# This is what 105 offers contain and no more. Other bodies certainly exist,
+# and a slot filled the same way in every captured copy may still be a slot.
+# Sources: 20260910-200346 stream 2 and 20260923-201746 stream 8.
+#
+# kind	part	text
+
+opener	-	Hello. Thanks for taking on this assignment.
+opener	-	Please hold on. Assignment coming up.
+opener	-	You are just what this node wanted. Please stand by for an assignment:
+opener	-	This is an assignment suited for you:
+opener	-	Welcome! Your service is invaluable to us!
+opener	-	Sir, your assignment, sir! (Or is it 'madam?' This unit lacks auxiliary sensors...)
+opener	-	Please stand by for assignment:
+opener	-	Thank you for choosing this terminal. My success depends on your success:
+opener	-	There are so many assignments, there is so little time. Please help us.
+opener	-	Great! Come back for another mission, will you?
+opener	-	I know it's not much - but hey, it's work.
+opener	-	Several possible missions are available.
+opener	-	Well. Not much to choose from right now. Still, this might be something for you:
+opener	-	I have a very important assignment for you!
+opener	-	Mission Assignment {code}:
+opener	-	Hi there! My name is John Perkins. I am in jail right now, for hacking Info Booths. He, he, he. They didn't take my neural interface away. Guess what I am doing, right now! He, he, he. Listen, I have something to tell you. You know this... HACKER EJECTED. PARDON THE INCONVENIENCE. STANDBY FOR MISSION:
+
+find item	body	We have gained knowledge of a serious threat to the environment.  According to our sources, a {item} found in {place} in {playfield} is leaking heavily.  If you go there and pick it up, your sub-space containment field (in your inventory) should hold it long enough for you to destroy it.
+find item	body	Warning!  Biohazard!  You must be extremely careful taking this mission.  Within 48 hours an extremely dangerous virus will break out within the {place} and quickly spread through entire {playfield}.  Fight your way inside, pick up the {item}, and destroy it safely in your sub-space containment field (in your inventory).
+
+return item	body	If we can steal a {item} from our enemies, we would not only learn a lot, but also slow down their movement into our areas.  A spy told us we can find one in {playfield}.  But please hurry, we need the item before 48 hours.
+return item	body	The enemy is currently making a new prototype {item}.  It is important that we get our hands on it as soon as possible.  Please hurry to {playfield} and find it in the {place}, then bring it back here.  Your efforts will not go unrewarded.
+return item	body	Last night, one {item} was stolen from a production facility and brought to {playfield}.  The thieves have not been able to move it far, and we have tracked its progress to area {place}.  Please go there and get it back here.  Your deadline is 48 hours.
+
+kill person	body	We know that a weird character with the name {name} is building a stronghold, where his or her supporters are gathering to breed and spread fear.  If you travel to {playfield} you will find the hideout - and kill this monster!
+kill person	body	Please cleanse the {place} in {playfield} of all monsters.  The big boss-man of the hole is {name}.  You have 48 hours.
+kill person	body	There is trouble brewing in {playfield}.  A certain {name} is building a nest there, and it must be cleansed.  Go there and do it before 48 hours, and you shall be well rewarded.
+
+find person	body	We represent the Socio-Anthropological Society, and need some help.  Rumors say that {name} is helping mutants building a hive.  We do not know where he/she is at the moment, please track him/her down, and with the utmost care, approach this character, observe it and tell us what happens!
+find person	body	We are suspecting {name} to be an enemy agent. Please track him down, observe ongoing behavior, and report back to us. <BR> You will earn {credits} credits and {xp} in experience points for this mission if you complete it before 48 hours have passed. <BR>PS we do not know in which playfield {name} is! You will have to find that out yourself!
+
+repair	body	Every year mutants crawl out of their hideout in {playfield}.  Someone had grown tired of the situation and would like you to go to {place} and take care of the problem.  Add some good old {item} to the {fixture} to make them docile enough through this breeding season, and get out of there as soon as possible before 48 hours.
+repair	body	The enemy relies on the Defense Grid to screen our troop movements.  Last night, our intelligence found a deserted, but still operational part of their system.  Inside one of the rooms is the {fixture} we seek.  We would like you to bring the {item} into the {place} in {playfield} and use it on the {fixture}.  This will enable us to control it, feed it false information and leech it dry when we want to.  Please accept our thanks, {credits} credits and some experience in reward.
+repair	body	The {place}, property of {org} in {playfield} was overrun by enemy forces last night.  We fear that some key components were disabled in the process.  We need you to go there and get any broken machinery back online before 48 hours.  For the repair task, use this {item}.
+
+closer	-	Ok, that is all for now. Good luck.
+closer	-	Good luck, Keeper.
+closer	-	Take care now.

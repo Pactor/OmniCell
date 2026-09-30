@@ -215,7 +215,7 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536065, 6553, 0, 0, 40137, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536065, 6553, 1, 0, 268617, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536065, 6553, 5, 0, 267981, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536065, 6553, 51018, 633164542, 201327649, 268702, 268702, 1, 268702, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536065, 6553, 51018, 633164542, 201327649, 268702, 268702, 1, 268702, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (7074256, 6553, 3596.295, 5.11, 851.5947, 0, -0.9929, 0, 0.1193, 'Anger Manifestation', 0, 0, 0, 0, 0, 0x939700d2006bf1d0d20020d03d01ca4560c4b9ca40a38520ca4454e60f9700d2006bf1d0d20020d03d01ca4560cd24ca40b38520ca445582359700d2006bf1d0d20020d03d01ca4560da7fca40a38520ca4455e09e000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (7074256, 6553, 0, 403182081);
@@ -332,7 +332,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536092, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536092, 6553, 285, 77);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536092, 6553, 0, 0, 40687, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536092, 6553, 1, 0, 7777, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536092, 6553, 51018, 633164566, 67109889, 121567, 121567, 1, 121567, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536092, 6553, 51018, 633164566, 67109889, 121567, 121567, 1, 121567, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536093, 6553, 3516.731, 6.805, 826.9835, 0, 0.774, 0, -0.6332, 'Barry the Food Vendor', 0, 30862, 40903, 30839, 30886, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536093, 6553, 0, 279450113);
@@ -354,7 +354,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536093, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536093, 6553, 285, 39);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536093, 6553, 0, 0, 40249, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536093, 6553, 1, 0, 7777, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536093, 6553, 51018, 633164567, 67109889, 121567, 121567, 1, 121567, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536093, 6553, 51018, 633164567, 67109889, 121567, 121567, 1, 121567, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536086, 6553, 3602.789, 8.145, 819.8487, 0, -0.6474, 0, 0.7622, 'Bodyguard Logan Fixx', 0, 0, 0, 0, 0, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536086, 6553, 0, 268964353);
@@ -375,7 +375,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536086, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536086, 6553, 286, 181);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536086, 6553, 285, 387);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536086, 6553, 1, 0, 233232, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536086, 6553, 51018, 633164563, 67109891, 233244, 233245, 100, 233244, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536086, 6553, 51018, 633164563, 67109891, 233244, 233245, 100, 233244, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (7291989, 6553, 3579.905, 8.055, 832.1291, 0, 0.9719, 0, 0.2355, 'Bruiser', 0, 81912, 81914, 81909, 81917, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (7291989, 6553, 0, 269226497);
@@ -397,7 +397,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (7291989, 6553, 
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (7291989, 6553, 285, 8);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (7291989, 6553, 0, 0, 40687, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (7291989, 6553, 1, 0, 7826, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (7291989, 6553, 51018, 633657825, 67109889, 121564, 121564, 1, 121564, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (7291989, 6553, 51018, 633657825, 67109889, 121564, 121564, 1, 121564, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054415664, 6553, 3486.213, 5.11, 841.3201, 0, 0.6691, 0, 0.7431, 'Bruiser', 0, 81912, 81914, 81909, 81917, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054415664, 6553, 0, 269226497);
@@ -419,7 +419,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054415664, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054415664, 6553, 285, 19);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054415664, 6553, 0, 0, 40687, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054415664, 6553, 1, 0, 7826, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2054415664, 6553, 51018, 633701258, 67109889, 121564, 121564, 1, 121564, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2054415664, 6553, 51018, 633701258, 67109889, 121564, 121564, 1, 121564, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054442097, 6553, 3526.442, 5.11, 830.4608, 0, 0.6689, 0, 0.7433, 'Bruiser', 0, 81912, 81914, 81909, 81917, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054442097, 6553, 0, 269226497);
@@ -441,7 +441,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054442097, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054442097, 6553, 285, 19);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054442097, 6553, 0, 0, 40687, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054442097, 6553, 1, 0, 7826, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2054442097, 6553, 51018, 633701438, 67109889, 121564, 121564, 1, 121564, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2054442097, 6553, 51018, 633701438, 67109889, 121564, 121564, 1, 121564, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054528830, 6553, 3556.884, 5.11, 820.0278, 0, -0.9195, 0, 0.3932, 'Bruiser', 0, 81912, 81914, 81909, 81917, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054528830, 6553, 0, 269226497);
@@ -463,7 +463,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054528830, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054528830, 6553, 285, 19);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054528830, 6553, 0, 0, 40687, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054528830, 6553, 1, 0, 7826, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2054528830, 6553, 51018, 633751688, 67109889, 121564, 121564, 1, 121564, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2054528830, 6553, 51018, 633751688, 67109889, 121564, 121564, 1, 121564, 1);
 
 
 
@@ -551,7 +551,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054565179, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054565179, 6553, 0, 0, 205110, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054565179, 6553, 0, 0, 40690, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054565179, 6553, 1, 0, 258954, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2054565179, 6553, 51018, 633751916, -1006631391, 258818, 258818, 1, 258818, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2054565179, 6553, 51018, 633751916, -1006631391, 258818, 258818, 1, 258818, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536260, 6553, 3368.082, 17.11, 940.1855, 0, 0.9993, 0, 0.0372, 'Clan Bartender', 0, 37030, 40903, 37031, 30883, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536260, 6553, 0, 271061505);
@@ -573,7 +573,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536260, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536260, 6553, 285, 775);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536260, 6553, 0, 0, 40111, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536260, 6553, 1, 0, 7777, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536260, 6553, 51018, 633164678, 67109889, 121567, 121567, 1, 121567, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536260, 6553, 51018, 633164678, 67109889, 121567, 121567, 1, 121567, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536094, 6553, 3370.286, 17.11, 887.1992, 0, 0.7108, 0, 0.7033, 'Clan Equipment Vendor', 0, 37030, 40903, 37031, 30883, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536094, 6553, 0, 271061505);
@@ -595,7 +595,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536094, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536094, 6553, 285, 155);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536094, 6553, 0, 0, 40243, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536094, 6553, 1, 0, 7777, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536094, 6553, 51018, 633164568, 67109889, 121567, 121567, 1, 121567, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536094, 6553, 51018, 633164568, 67109889, 121567, 121567, 1, 121567, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536250, 6553, 3382.687, 17.11, 833.8551, 0, -0.0693, 0, 0.9976, 'Clan Guard Elina Jones', 22614, 285058, 22602, 285062, 22644, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536250, 6553, 0, 277352961);
@@ -617,7 +617,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536250, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536250, 6553, 285, 97);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536250, 6553, 0, 0, 40231, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536250, 6553, 1, 0, 27723, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536250, 6553, 51018, 633164668, 1027, 125036, 125036, 121, 125036, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536250, 6553, 51018, 633164668, 1027, 125036, 125036, 121, 125036, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536251, 6553, 3385.478, 17.11, 890.1804, 0, -0.9948, 0, 0.1022, 'Clan Protester', 0, 37030, 248873, 37031, 30883, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536251, 6553, 0, 268964353);
@@ -640,7 +640,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536251, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536251, 6553, 0, 0, 204921, 0);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536251, 6553, 0, 0, 40249, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536251, 6553, 1, 0, 259315, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536251, 6553, 51018, 633164669, -1006631391, 259318, 259318, 1, 259318, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536251, 6553, 51018, 633164669, -1006631391, 259318, 259318, 1, 259318, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536252, 6553, 3381.952, 17.11, 842.0018, 0, -0.0022, 0, 1, 'Clan Protester', 0, 37030, 248873, 37031, 30883, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536252, 6553, 0, 268964353);
@@ -663,7 +663,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536252, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536252, 6553, 0, 0, 204921, 0);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536252, 6553, 0, 0, 40249, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536252, 6553, 1, 0, 259163, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536252, 6553, 51018, 633164670, -1006631391, 259212, 259212, 1, 259212, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536252, 6553, 51018, 633164670, -1006631391, 259212, 259212, 1, 259212, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536253, 6553, 3381.906, 17.11, 890.0428, 0, 0.9991, 0, 0.043, 'Clan Protester', 0, 37030, 248873, 37031, 30883, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536253, 6553, 0, 268964353);
@@ -686,7 +686,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536253, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536253, 6553, 0, 0, 204935, 0);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536253, 6553, 0, 0, 40629, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536253, 6553, 1, 0, 259149, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536253, 6553, 51018, 633164671, -1006631391, 259198, 259198, 1, 259198, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536253, 6553, 51018, 633164671, -1006631391, 259198, 259198, 1, 259198, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536254, 6553, 3385.494, 17.11, 841.9976, 0, -0.203, 0, 0.9792, 'Clan Protester', 0, 37030, 248873, 37031, 30883, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536254, 6553, 0, 268964353);
@@ -709,7 +709,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536254, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536254, 6553, 0, 0, 204935, 0);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536254, 6553, 0, 0, 40629, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536254, 6553, 1, 0, 262812, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536254, 6553, 51018, 633164672, -1006631391, 262801, 262801, 1, 262801, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536254, 6553, 51018, 633164672, -1006631391, 262801, 262801, 1, 262801, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536255, 6553, 3377.997, 17.11, 842.0082, 0, 0.2138, 0, 0.9769, 'Clan Protester', 0, 37030, 248873, 37031, 30883, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536255, 6553, 0, 268964353);
@@ -731,7 +731,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536255, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536255, 6553, 285, 77);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536255, 6553, 0, 0, 40103, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536255, 6553, 1, 0, 259315, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536255, 6553, 51018, 633164673, -1006631391, 259318, 259318, 1, 259318, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536255, 6553, 51018, 633164673, -1006631391, 259318, 259318, 1, 259318, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536256, 6553, 3377.627, 17.11, 890.0243, 0, 0.9873, 0, 0.1592, 'Clan Protester', 0, 37030, 248873, 37031, 30883, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536256, 6553, 0, 268964353);
@@ -753,7 +753,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536256, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536256, 6553, 285, 77);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536256, 6553, 0, 0, 40103, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536256, 6553, 1, 0, 259315, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536256, 6553, 51018, 633164674, -1006631391, 259318, 259318, 1, 259318, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536256, 6553, 51018, 633164674, -1006631391, 259318, 259318, 1, 259318, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (7261155, 6553, 3622.967, 35.2177, 864.1743, 0, 0.7366, 0, 0.6763, 'Cleaning Robot', 0, 0, 0, 0, 0, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (7261155, 6553, 0, 268964353);
@@ -1269,7 +1269,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536239, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536239, 6553, 285, 81);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536239, 6553, 0, 0, 40147, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536239, 6553, 1, 0, 29084, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536239, 6553, 51018, 633164658, 134218785, 253353, 253353, 100, 253353, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536239, 6553, 51018, 633164658, 134218785, 253353, 253353, 100, 253353, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536240, 6553, 3438.512, 9.01, 846.9282, 0, 0.2186, 0, 0.9758, 'Cyrus Cervenak', 155947, 155944, 155945, 155946, 155943, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536240, 6553, 0, 268964353);
@@ -1291,7 +1291,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536240, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536240, 6553, 285, 8);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536240, 6553, 0, 0, 40108, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536240, 6553, 1, 0, 29084, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536240, 6553, 51018, 633164659, 134218785, 253353, 253353, 100, 253353, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536240, 6553, 51018, 633164659, 134218785, 253353, 253353, 100, 253353, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054081899, 6553, 3364.048, 2.11, 610.8335, 0, 0.1587, 0, 0.9873, 'Desert Reet', 0, 0, 0, 0, 0, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054081899, 6553, 0, 268964353);
@@ -1809,7 +1809,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (6940951, 6553, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (6940951, 6553, 0, 0, 205112, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (6940951, 6553, 0, 0, 40209, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (6940951, 6553, 1, 0, 292936, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (6940951, 6553, 51018, 633526384, 201327617, 300455, 300455, 1, 300455, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (6940951, 6553, 51018, 633526384, 201327617, 300455, 300455, 1, 300455, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536154, 6553, 3553.112, 6.085, 748.0159, 0, 0.0006, 0, 1, 'Dockworker', 295555, 295553, 295554, 295552, 295556, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536154, 6553, 0, 268964353);
@@ -1832,7 +1832,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536154, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536154, 6553, 0, 0, 205120, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536154, 6553, 0, 0, 40691, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536154, 6553, 1, 0, 81800, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536154, 6553, 51018, 633164584, 1027, 123362, 123363, 5, 123362, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536154, 6553, 51018, 633164584, 1027, 123362, 123363, 5, 123362, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536155, 6553, 3570.607, 6.91, 766.8278, 0, 0.0014, 0, 1, 'Dockworker', 295555, 295553, 295554, 295552, 295556, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536155, 6553, 0, 268964353);
@@ -1855,7 +1855,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536155, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536155, 6553, 0, 0, 205110, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536155, 6553, 0, 0, 40127, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536155, 6553, 1, 0, 81800, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536155, 6553, 51018, 633164586, 1027, 123362, 123363, 5, 123362, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536155, 6553, 51018, 633164586, 1027, 123362, 123363, 5, 123362, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536156, 6553, 3583.686, 6.91, 767.0845, 0, -0.0022, 0, 1, 'Dockworker', 295555, 295553, 295554, 295552, 295556, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536156, 6553, 0, 268964353);
@@ -1878,7 +1878,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536156, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536156, 6553, 0, 0, 205120, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536156, 6553, 0, 0, 40691, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536156, 6553, 1, 0, 30240, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536156, 6553, 51018, 633164588, 1027, 122829, 122830, 4, 122829, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536156, 6553, 51018, 633164588, 1027, 122829, 122830, 4, 122829, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536157, 6553, 3568.544, 6.085, 747.6589, 0, 0.4517, 0, 0.8922, 'Dockworker', 295555, 295553, 295554, 295552, 295556, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536157, 6553, 0, 268964353);
@@ -1901,7 +1901,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536157, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536157, 6553, 0, 0, 205120, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536157, 6553, 0, 0, 40691, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536157, 6553, 1, 0, 258954, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536157, 6553, 51018, 633164590, -1006631391, 258818, 258818, 1, 258818, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536157, 6553, 51018, 633164590, -1006631391, 258818, 258818, 1, 258818, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536158, 6553, 3576.349, 6.91, 779.9778, 0, 0.4526, 0, 0.8917, 'Dockworker', 295555, 295553, 295554, 295552, 295556, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536158, 6553, 0, 268964353);
@@ -1924,7 +1924,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536158, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536158, 6553, 0, 0, 205118, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536158, 6553, 0, 0, 40137, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536158, 6553, 1, 0, 258954, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536158, 6553, 51018, 633164591, -1006631391, 258818, 258818, 1, 258818, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536158, 6553, 51018, 633164591, -1006631391, 258818, 258818, 1, 258818, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536159, 6553, 3607.411, 6.91, 775.2784, 0, -0.7568, 0, 0.6537, 'Dockworker', 295555, 295553, 295554, 295552, 295556, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536159, 6553, 0, 268964353);
@@ -1947,7 +1947,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536159, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536159, 6553, 0, 0, 205120, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536159, 6553, 0, 0, 40691, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536159, 6553, 1, 0, 81800, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536159, 6553, 51018, 633164592, 1027, 123362, 123363, 4, 123362, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536159, 6553, 51018, 633164592, 1027, 123362, 123363, 4, 123362, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536160, 6553, 3528.693, 6.91, 776.4557, 0, -0.7877, 0, 0.616, 'Dockworker', 295555, 295553, 295554, 295552, 295556, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536160, 6553, 0, 268964353);
@@ -1970,7 +1970,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536160, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536160, 6553, 0, 0, 205118, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536160, 6553, 0, 0, 40137, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536160, 6553, 1, 0, 258983, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536160, 6553, 51018, 633164594, -1006631391, 258819, 258819, 1, 258819, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536160, 6553, 51018, 633164594, -1006631391, 258819, 258819, 1, 258819, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536162, 6553, 3533.002, 6.91, 757.9178, 0, -0.3442, 0, 0.9389, 'Dockworker', 295555, 295553, 295554, 295552, 295556, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536162, 6553, 0, 268964353);
@@ -1993,7 +1993,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536162, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536162, 6553, 0, 0, 205110, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536162, 6553, 0, 0, 40127, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536162, 6553, 1, 0, 264730, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536162, 6553, 51018, 633164596, 67109891, 264957, 264958, 5, 264957, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536162, 6553, 51018, 633164596, 67109891, 264957, 264958, 5, 264957, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536163, 6553, 3587.043, 40.965, 843.9985, 0, -0.7547, 0, 0.6561, 'Dockworker', 295555, 295553, 295554, 295552, 295556, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536163, 6553, 0, 268964353);
@@ -2016,7 +2016,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536163, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536163, 6553, 0, 0, 205112, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536163, 6553, 0, 0, 40209, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536163, 6553, 1, 0, 292936, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536163, 6553, 51018, 633164598, 201327617, 300455, 300455, 1, 300455, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536163, 6553, 51018, 633164598, 201327617, 300455, 300455, 1, 300455, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052991875, 6553, 3563.275, 5.11, 794.5087, 0, 0.2918, 0, 0.9565, 'Dockworker', 295555, 295553, 295554, 295552, 295556, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052991875, 6553, 0, 268964353);
@@ -2039,7 +2039,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052991875, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052991875, 6553, 0, 0, 205120, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052991875, 6553, 0, 0, 40691, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052991875, 6553, 1, 0, 258983, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052991875, 6553, 51018, 633191535, -1006631391, 258819, 258819, 1, 258819, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052991875, 6553, 51018, 633191535, -1006631391, 258819, 258819, 1, 258819, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052991878, 6553, 3545.769, 5.11, 800.4102, 0, 0.7424, 0, 0.67, 'Dockworker', 295555, 295553, 295554, 295552, 295556, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052991878, 6553, 0, 268964353);
@@ -2062,7 +2062,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052991878, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052991878, 6553, 0, 0, 205120, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052991878, 6553, 0, 0, 40691, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052991878, 6553, 1, 0, 81800, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052991878, 6553, 51018, 633191536, 1027, 123362, 123363, 5, 123362, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052991878, 6553, 51018, 633191536, 1027, 123362, 123363, 5, 123362, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2053157155, 6553, 3509.551, 6.085, 752.5298, 0, 0.4546, 0, 0.8907, 'Dockworker', 295555, 295553, 295554, 295552, 295556, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2053157155, 6553, 0, 268964353);
@@ -2085,7 +2085,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2053157155, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2053157155, 6553, 0, 0, 205120, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2053157155, 6553, 0, 0, 40691, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2053157155, 6553, 1, 0, 81800, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2053157155, 6553, 51018, 633320215, 1027, 123362, 123363, 4, 123362, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2053157155, 6553, 51018, 633320215, 1027, 123362, 123363, 4, 123362, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2053252397, 6553, 3579.589, 5.11, 804.0055, 0, 0.4562, 0, 0.8899, 'Dockworker', 295555, 295553, 295554, 295552, 295556, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2053252397, 6553, 0, 268964353);
@@ -2108,7 +2108,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2053252397, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2053252397, 6553, 0, 0, 205120, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2053252397, 6553, 0, 0, 40691, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2053252397, 6553, 1, 0, 264730, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2053252397, 6553, 51018, 633381370, 67109891, 264957, 264958, 6, 264957, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2053252397, 6553, 51018, 633381370, 67109891, 264957, 264958, 6, 264957, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536076, 6553, 3430.639, 9.215, 796.8203, 0, -0.504, 0, 0.8637, 'Dr. Mason', 213839, 213739, 213796, 213694, 213914, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536076, 6553, 0, 277352961);
@@ -2130,8 +2130,8 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536076, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536076, 6553, 285, 77);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536076, 6553, 0, 0, 40172, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536076, 6553, 1, 0, 262517, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536076, 6553, 51018, 633164555, 67109891, 265027, 265028, 19, 265027, 1);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536076, 6553, 51018, 633164557, 67109891, 265048, 265049, 19, 265048, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536076, 6553, 51018, 633164555, 67109891, 265027, 265028, 19, 265027, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536076, 6553, 51018, 633164557, 67109891, 265048, 265049, 19, 265048, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536238, 6553, 3472.174, 9.01, 851.72, 0, -0.7049, 0, 0.7093, 'Emile Western', 155947, 155944, 155945, 155946, 155943, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536238, 6553, 0, 268964353);
@@ -2153,7 +2153,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536238, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536238, 6553, 285, 89);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536238, 6553, 0, 0, 40282, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536238, 6553, 1, 0, 258990, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536238, 6553, 51018, 633164657, -1006631391, 258820, 258820, 1, 258820, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536238, 6553, 51018, 633164657, -1006631391, 258820, 258820, 1, 258820, 1);
 
 
 
@@ -2221,7 +2221,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536068, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536068, 6553, 0, 0, 205116, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536068, 6553, 0, 0, 40251, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536068, 6553, 1, 0, 264730, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536068, 6553, 51018, 633164544, 67109891, 264957, 264958, 24, 264957, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536068, 6553, 51018, 633164544, 67109891, 264957, 264958, 24, 264957, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536236, 6553, 3460.991, 9.135, 798.5488, 0, 0.549, 0, 0.8358, 'Florentino Delenick', 155947, 155944, 155945, 155946, 155943, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536236, 6553, 0, 268964353);
@@ -2243,7 +2243,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536236, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536236, 6553, 285, 85);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536236, 6553, 0, 0, 40120, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536236, 6553, 1, 0, 258990, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536236, 6553, 51018, 633164655, -1006631391, 258820, 258820, 1, 258820, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536236, 6553, 51018, 633164655, -1006631391, 258820, 258820, 1, 258820, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2053871266, 6553, 3439.588, 9.01, 849.7089, 0, 0.9999, 0, 0.0144, 'Food Provider', 0, 30862, 40903, 30839, 30886, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2053871266, 6553, 0, 271061505);
@@ -2265,7 +2265,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2053871266, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2053871266, 6553, 285, 39);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2053871266, 6553, 0, 0, 40629, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2053871266, 6553, 1, 0, 7777, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2053871266, 6553, 51018, 633527621, 67109889, 121567, 121567, 1, 121567, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2053871266, 6553, 51018, 633527621, 67109889, 121567, 121567, 1, 121567, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536096, 6553, 3438.079, 9.165, 892.1872, 0, 0.9997, 0, 0.0238, 'Furniture Merchant', 0, 30862, 40903, 30839, 30886, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536096, 6553, 0, 271061505);
@@ -2287,7 +2287,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536096, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536096, 6553, 285, 414);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536096, 6553, 0, 0, 40209, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536096, 6553, 1, 0, 7777, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536096, 6553, 51018, 633164570, 67109889, 121567, 121567, 1, 121567, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536096, 6553, 51018, 633164570, 67109889, 121567, 121567, 1, 121567, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536258, 6553, 3368.674, 17.11, 934.3622, 0, 0.6972, 0, 0.7169, 'Gamma Unit Sentinel', 0, 31605, 31607, 31606, 31608, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536258, 6553, 0, 268964353);
@@ -2310,7 +2310,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536258, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536258, 6553, 0, 0, 31604, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536258, 6553, 0, 0, 40686, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536258, 6553, 1, 0, 96307, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536258, 6553, 51018, 633164676, 1027, 211215, 211216, 20, 211215, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536258, 6553, 51018, 633164676, 1027, 211215, 211216, 20, 211215, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (7291759, 6553, 3448.966, 0.01, 830.7308, 0, 0.9988, 0, 0.0497, 'Garbage Flea', 0, 0, 0, 0, 0, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (7291759, 6553, 0, 268964353);
@@ -2750,7 +2750,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536241, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536241, 6553, 285, 85);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536241, 6553, 0, 0, 40110, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536241, 6553, 1, 0, 29084, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536241, 6553, 51018, 633164660, 134218785, 253353, 253353, 100, 253353, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536241, 6553, 51018, 633164660, 134218785, 253353, 253353, 100, 253353, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536070, 6553, 3510.732, 5.11, 826.9778, 0, 0.6702, 0, 0.7421, 'ICC Immigration Officer Bill', 286229, 286227, 286228, 286226, 286225, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536070, 6553, 0, 277352961);
@@ -2773,7 +2773,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536070, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536070, 6553, 0, 0, 40687, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536070, 6553, 1, 0, 99154, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536070, 6553, 3, 0, 286446, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536070, 6553, 51018, 633164548, 1027, 124136, 124137, 24, 124136, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536070, 6553, 51018, 633164548, 1027, 124136, 124137, 24, 124136, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (5715876, 6553, 3481.759, 7.8019, 786.6572, 0, 0.6414, 0, 0.7672, 'ICC Peacekeeper', 286229, 286227, 286228, 286226, 286225, 0x949700d2005737a4d20020d03d01ca45583268ca40c6cf0fca44449c329700d2005737a4d20020d03d01ca455789abca3f028f5cca4447fa7e9700d2005737a4d20020d03d00ca455880faca4102a506ca4444b7eb9700d2005737a4d20020d03d00ca45590cbfca41025f38ca4444ae4b0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715876, 6553, 0, 268964353);
@@ -2797,7 +2797,7 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (5715876, 6553, 0, 0, 40694, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (5715876, 6553, 1, 0, 262556, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (5715876, 6553, 3, 0, 286446, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (5715876, 6553, 51018, 633164644, 67109891, 265090, 265091, 40, 265090, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (5715876, 6553, 51018, 633164644, 67109891, 265090, 265091, 40, 265090, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (6851267, 6553, 3443.183, 3.4755, 780.4962, 0, 0.7459, 0, 0.6661, 'ICC Peacekeeper', 286229, 286227, 286228, 286226, 286225, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (6851267, 6553, 0, 268964353);
@@ -2821,7 +2821,7 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (6851267, 6553, 0, 0, 40694, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (6851267, 6553, 1, 0, 262556, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (6851267, 6553, 3, 0, 286446, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (6851267, 6553, 51018, 633439875, 67109891, 265090, 265091, 48, 265090, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (6851267, 6553, 51018, 633439875, 67109891, 265090, 265091, 48, 265090, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (7163932, 6553, 3455.196, 9.145, 895.1113, 0, 0.0751, 0, 0.9972, 'ICC Peacekeeper', 286229, 286227, 286228, 286226, 286225, 0x939700d2006d501cd20020d03d00ca45583adfca40cf460fca444483509700d2006d501cd20020d03d00ca45571c08ca410ffdc7ca44495eb29700d2006d501cd20020d03d00ca45579490ca41115e3dca4449a3b6000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (7163932, 6553, 0, 268964353);
@@ -2845,7 +2845,7 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (7163932, 6553, 0, 0, 40694, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (7163932, 6553, 1, 0, 262556, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (7163932, 6553, 3, 0, 286446, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (7163932, 6553, 51018, 633596145, 67109891, 265090, 265091, 45, 265090, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (7163932, 6553, 51018, 633596145, 67109891, 265090, 265091, 45, 265090, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (7164612, 6553, 3394.116, 11.9707, 801.7087, 0, 0.7396, 0, 0.673, 'ICC Peacekeeper', 286229, 286227, 286228, 286226, 286225, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (7164612, 6553, 0, 268964353);
@@ -2869,7 +2869,7 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (7164612, 6553, 0, 0, 40694, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (7164612, 6553, 1, 0, 262556, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (7164612, 6553, 3, 0, 286446, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (7164612, 6553, 51018, 633596370, 67109891, 265090, 265091, 42, 265090, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (7164612, 6553, 51018, 633596370, 67109891, 265090, 265091, 42, 265090, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2053984284, 6553, 3451.304, 9.165, 809.0034, 0, 0.4173, 0, 0.9088, 'ICC Peacekeeper', 286229, 286227, 286228, 286226, 286225, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2053984284, 6553, 0, 268964353);
@@ -2916,7 +2916,7 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054141175, 6553, 0, 0, 40694, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054141175, 6553, 1, 0, 262556, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054141175, 6553, 3, 0, 286446, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2054141175, 6553, 51018, 633658713, 67109891, 265090, 265091, 31, 265090, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2054141175, 6553, 51018, 633658713, 67109891, 265090, 265091, 31, 265090, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054388213, 6553, 3464.517, 4.1073, 782.0618, 0, -0.7034, 0, 0.7108, 'ICC Peacekeeper', 286229, 286227, 286228, 286226, 286225, 0x949700d27a7379f5d20020d03d01ca4557c182ca3fd22701ca444761bf9700d27a7379f5d20020d03d01ca4557ac29ca3f24c22aca4449b5b89700d27a7379f5d20020d03d00ca455880faca4102a506ca4444b7eb9700d27a7379f5d20020d03d00ca45590cbfca41025f38ca4444ae4b0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054388213, 6553, 0, 268964353);
@@ -2940,7 +2940,7 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054388213, 6553, 0, 0, 40694, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054388213, 6553, 1, 0, 262556, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054388213, 6553, 3, 0, 286446, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2054388213, 6553, 51018, 633701037, 67109891, 265090, 265091, 39, 265090, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2054388213, 6553, 51018, 633701037, 67109891, 265090, 265091, 39, 265090, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054388370, 6553, 3415.843, 4.7991, 781.6653, 0, 0.6931, 0, 0.7209, 'ICC Peacekeeper', 286229, 286227, 286228, 286226, 286225, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054388370, 6553, 0, 268964353);
@@ -2964,7 +2964,7 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054388370, 6553, 0, 0, 40694, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054388370, 6553, 1, 0, 262556, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054388370, 6553, 3, 0, 286446, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2054388370, 6553, 51018, 633701060, 67109891, 265090, 265091, 41, 265090, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2054388370, 6553, 51018, 633701060, 67109891, 265090, 265091, 41, 265090, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054505627, 6553, 3381.96, 15.865, 794.6795, 0, 0.5217, 0, 0.8532, 'ICC Peacekeeper', 286229, 286227, 286228, 286226, 286225, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054505627, 6553, 0, 268964353);
@@ -2988,7 +2988,7 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054505627, 6553, 0, 0, 40694, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054505627, 6553, 1, 0, 262556, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054505627, 6553, 3, 0, 286446, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2054505627, 6553, 51018, 633702135, 67109891, 265090, 265091, 40, 265090, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2054505627, 6553, 51018, 633702135, 67109891, 265090, 265091, 40, 265090, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054565109, 6553, 3426.707, 9.145, 868.8057, 0, 0.9999, 0, -0.0104, 'ICC Peacekeeper', 286229, 286227, 286228, 286226, 286225, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054565109, 6553, 0, 268964353);
@@ -3012,7 +3012,7 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054565109, 6553, 0, 0, 40694, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054565109, 6553, 1, 0, 262556, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054565109, 6553, 3, 0, 286446, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2054565109, 6553, 51018, 633751901, 67109891, 265090, 265091, 48, 265090, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2054565109, 6553, 51018, 633751901, 67109891, 265090, 265091, 48, 265090, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054565376, 6553, 3514.306, 5.305, 904.2186, 0, 0.999, 0, 0.0438, 'IIV-X Advanced Docker', 0, 0, 0, 0, 0, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054565376, 6553, 0, 268964353);
@@ -3053,7 +3053,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536246, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536246, 6553, 285, 12);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536246, 6553, 0, 0, 223900, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536246, 6553, 1, 0, 258990, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536246, 6553, 51018, 633164665, -1006631391, 258820, 258820, 1, 258820, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536246, 6553, 51018, 633164665, -1006631391, 258820, 258820, 1, 258820, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536243, 6553, 3439.949, 9.01, 860.5507, 0, 0.004, 0, 1, 'Joseph Schuemann', 155947, 155944, 155945, 155946, 155943, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536243, 6553, 0, 268964353);
@@ -3075,7 +3075,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536243, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536243, 6553, 285, 19);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536243, 6553, 0, 0, 40120, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536243, 6553, 1, 0, 29084, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536243, 6553, 51018, 633164662, 134218785, 253353, 253353, 100, 253353, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536243, 6553, 51018, 633164662, 134218785, 253353, 253353, 100, 253353, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536247, 6553, 3441.182, 9.01, 860.7526, 0, 0.0033, 0, 1, 'Kirby Schatz', 155947, 155944, 155945, 155946, 155943, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536247, 6553, 0, 268964353);
@@ -3097,7 +3097,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536247, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536247, 6553, 285, 70);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536247, 6553, 0, 0, 40271, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536247, 6553, 1, 0, 29084, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536247, 6553, 51018, 633164666, 134218785, 253353, 253353, 100, 253353, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536247, 6553, 51018, 633164666, 134218785, 253353, 253353, 100, 253353, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054141526, 6553, 3580.802, 8.055, 833.5438, 0, -0.7043, 0, 0.7099, 'Kneebreaker Alfonzo Rizzolo', 0, 284557, 247977, 247887, 248016, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054141526, 6553, 0, 268964353);
@@ -3160,8 +3160,8 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536071, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536071, 6553, 0, 0, 40242, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536071, 6553, 1, 0, 204732, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536071, 6553, 2, 0, 226469, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536071, 6553, 51018, 633164549, 1027, 226474, 226475, 14, 226474, 1);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536071, 6553, 51018, 633164551, 1027, 245605, 245605, 140, 245605, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536071, 6553, 51018, 633164549, 1027, 226474, 226475, 14, 226474, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536071, 6553, 51018, 633164551, 1027, 245605, 245605, 140, 245605, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536084, 6553, 3431.763, 9.145, 844.0756, 0, -0.6077, 0, 0.7941, 'Leonora Marty', 85939, 296228, 296231, 296229, 296230, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536084, 6553, 0, 277352961);
@@ -3183,7 +3183,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536084, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536084, 6553, 285, 39);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536084, 6553, 0, 0, 40228, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536084, 6553, 1, 0, 268673, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536084, 6553, 51018, 633164561, -1006631391, 268715, 268715, 1, 268715, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536084, 6553, 51018, 633164561, -1006631391, 268715, 268715, 1, 268715, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536234, 6553, 3420.936, 9.165, 811.6241, 0, -0.0028, 0, 1, 'Lili Ratti', 155947, 155944, 155945, 155946, 155943, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536234, 6553, 0, 268964353);
@@ -3205,7 +3205,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536234, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536234, 6553, 285, 31);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536234, 6553, 0, 0, 40644, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536234, 6553, 1, 0, 258990, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536234, 6553, 51018, 633164653, -1006631391, 258820, 258820, 1, 258820, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536234, 6553, 51018, 633164653, -1006631391, 258820, 258820, 1, 258820, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536088, 6553, 3408.109, 9.01, 866.9521, 0, 0.7054, 0, 0.7088, 'Logistics Manager Fausto', 0, 247966, 9619, 247920, 9626, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536088, 6553, 0, 277352961);
@@ -3362,7 +3362,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536248, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536248, 6553, 285, 116);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536248, 6553, 0, 0, 223900, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536248, 6553, 1, 0, 29084, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536248, 6553, 51018, 633164667, 134218785, 253353, 253353, 100, 253353, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536248, 6553, 51018, 633164667, 134218785, 253353, 253353, 100, 253353, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (7291949, 6553, 3613.56, 52.135, 785.4912, 0, 0.3082, 0, 0.9513, 'Malfunctioning Cleaning Robot', 0, 0, 0, 0, 0, 0x949700d2006f442dd20020d03d00ca456180b2ca4254fae1ca44486d019700d2006f442dd20020d03d00ca45624c89ca42520000ca44440d489700d2006f442dd20020d03d00ca4561c372ca42520000ca4444f2a19700d2006f442dd20020d03d00ca4560d46dca42520000ca4440f8920000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (7291949, 6553, 0, 268964353);
@@ -3633,7 +3633,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536066, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536066, 6553, 0, 0, 205120, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536066, 6553, 0, 0, 40667, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536066, 6553, 1, 0, 292936, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536066, 6553, 51018, 633164543, 201327617, 300455, 300455, 1, 300455, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536066, 6553, 51018, 633164543, 201327617, 300455, 300455, 1, 300455, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054082282, 6553, 3480.96, 2.11, 728.7435, 0, -0.4758, 0, 0.8795, 'Mario Carles', 0, 0, 0, 0, 0, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054082282, 6553, 0, 268964353);
@@ -3712,7 +3712,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536237, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536237, 6553, 285, 85);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536237, 6553, 0, 0, 40140, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536237, 6553, 1, 0, 29084, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536237, 6553, 51018, 633164656, 134218785, 253353, 253353, 100, 253353, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536237, 6553, 51018, 633164656, 134218785, 253353, 253353, 100, 253353, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536235, 6553, 3459.956, 9.135, 801.8843, 0, 0.7088, 0, 0.7054, 'Mickie Wittbrodt', 155947, 155944, 155945, 155946, 155943, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536235, 6553, 0, 268964353);
@@ -3734,7 +3734,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536235, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536235, 6553, 285, 77);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536235, 6553, 0, 0, 223916, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536235, 6553, 1, 0, 29084, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536235, 6553, 51018, 633164654, 134218785, 253353, 253353, 100, 253353, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536235, 6553, 51018, 633164654, 134218785, 253353, 253353, 100, 253353, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054565504, 6553, 3423.395, 0.01, 888.329, 0, 1, 0, -0.0008, 'Mutated Garbage Flea', 0, 0, 0, 0, 0, 0x969700d27a762e80d20020d03d01ca4555edd1ca3c23d70aca445de0c19700d27a762e80d20020d03d01ca45560ea7ca3f028f5cca445d1c2f9700d27a762e80d20020d03d01ca4555f5b1ca3f028f5cca445c877f9700d27a762e80d20020d03d01ca4555f81fca3f028f5cca445b51619700d27a762e80d20020d03d01ca4555f93aca3c23d70aca44597dab9700d27a762e80d20020d03d01ca4555d721ca3f028f5cca4456eec2000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054565504, 6553, 0, 268964353);
@@ -3795,7 +3795,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052991852, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052991852, 6553, 285, 19);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052991852, 6553, 0, 0, 40117, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052991852, 6553, 1, 0, 7826, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052991852, 6553, 51018, 633191526, 67109889, 121564, 121564, 1, 121564, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052991852, 6553, 51018, 633191526, 67109889, 121564, 121564, 1, 121564, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054528842, 6553, 3573.453, 5.11, 816.9311, 0, -0.5817, 0, 0.8134, 'Obedience Enforcement', 0, 81912, 81914, 81909, 81917, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054528842, 6553, 0, 269226497);
@@ -3817,7 +3817,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054528842, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054528842, 6553, 285, 19);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054528842, 6553, 0, 0, 40117, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054528842, 6553, 1, 0, 7826, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2054528842, 6553, 51018, 633751689, 67109889, 121564, 121564, 1, 121564, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2054528842, 6553, 51018, 633751689, 67109889, 121564, 121564, 1, 121564, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536214, 6553, 3390.004, 18.545, 856.056, 0, -0.7103, 0, 0.7039, 'Omni-AF Officer Milne', 15806, 204160, 15807, 15808, 15805, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536214, 6553, 0, 277352961);
@@ -3863,7 +3863,7 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536207, 6553, 3, 206969, 11535, 0);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536207, 6553, 4, 206969, 11535, 0);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536207, 6553, 5, 206969, 11543, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536207, 6553, 51018, 633164605, 67634179, 214210, 214210, 200, 214210, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536207, 6553, 51018, 633164605, 67634179, 214210, 214210, 200, 214210, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536212, 6553, 3370.309, 17.315, 806.9003, 0, 0.355, 0, 0.9349, 'Omni-AF Private', 15806, 204160, 15807, 15808, 15805, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536212, 6553, 0, 268964353);
@@ -3889,7 +3889,7 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536212, 6553, 3, 206969, 11535, 0);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536212, 6553, 4, 206969, 11535, 0);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536212, 6553, 5, 206969, 11543, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536212, 6553, 51018, 633164610, 67634179, 214210, 214210, 200, 214210, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536212, 6553, 51018, 633164610, 67634179, 214210, 214210, 200, 214210, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536213, 6553, 3372.759, 17.315, 809.2784, 0, -0.8852, 0, 0.4653, 'Omni-AF Private', 15806, 204160, 15807, 15808, 15805, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536213, 6553, 0, 268964353);
@@ -3915,7 +3915,7 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536213, 6553, 3, 206969, 11535, 0);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536213, 6553, 4, 206969, 11535, 0);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536213, 6553, 5, 206969, 11543, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536213, 6553, 51018, 633164611, 67634179, 214210, 214210, 200, 214210, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536213, 6553, 51018, 633164611, 67634179, 214210, 214210, 200, 214210, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054387968, 6553, 3393.195, 18.545, 858.1322, 0, -0.7377, 0, 0.6751, 'Omni-AF Private', 15806, 204160, 15807, 15808, 15805, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054387968, 6553, 0, 268964353);
@@ -3941,7 +3941,7 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054387968, 6553, 3, 206969, 11535, 0);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054387968, 6553, 4, 206969, 11535, 0);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054387968, 6553, 5, 206969, 11543, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2054387968, 6553, 51018, 633701009, 67634179, 214210, 214210, 200, 214210, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2054387968, 6553, 51018, 633701009, 67634179, 214210, 214210, 200, 214210, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054389260, 6553, 3393.157, 18.545, 854.9973, 0, -0.7092, 0, 0.705, 'Omni-AF Private', 15806, 204160, 15807, 15808, 15805, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054389260, 6553, 0, 268964353);
@@ -3967,7 +3967,7 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054389260, 6553, 3, 206969, 11535, 0);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054389260, 6553, 4, 206969, 11535, 0);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054389260, 6553, 5, 206969, 11543, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2054389260, 6553, 51018, 633701121, 67634179, 214210, 214210, 200, 214210, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2054389260, 6553, 51018, 633701121, 67634179, 214210, 214210, 200, 214210, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054527826, 6553, 3387.379, 18.545, 854.7548, 0, -0.7397, 0, 0.6729, 'Omni-AF Private', 15806, 204160, 15807, 15808, 15805, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054527826, 6553, 0, 268964353);
@@ -3993,7 +3993,7 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054527826, 6553, 3, 206969, 11535, 0);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054527826, 6553, 4, 206969, 11535, 0);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054527826, 6553, 5, 206969, 11543, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2054527826, 6553, 51018, 633751605, 67634179, 214210, 214210, 200, 214210, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2054527826, 6553, 51018, 633751605, 67634179, 214210, 214210, 200, 214210, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054527944, 6553, 3387.171, 18.545, 858.1792, 0, -0.7387, 0, 0.674, 'Omni-AF Private', 15806, 204160, 15807, 15808, 15805, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054527944, 6553, 0, 268964353);
@@ -4019,7 +4019,7 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054527944, 6553, 3, 206969, 11535, 0);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054527944, 6553, 4, 206969, 11535, 0);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054527944, 6553, 5, 206969, 11543, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2054527944, 6553, 51018, 633751620, 67634179, 214210, 214210, 200, 214210, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2054527944, 6553, 51018, 633751620, 67634179, 214210, 214210, 200, 214210, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536225, 6553, 3375.794, 18.525, 854.6063, 0, 0.7048, 0, 0.7094, 'Omni-Med Guard', 206966, 206963, 206965, 206964, 206968, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536225, 6553, 0, 268964353);
@@ -4043,8 +4043,8 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536225, 6553, 0, 0, 40249, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536225, 6553, 1, 0, 284456, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536225, 6553, 2, 0, 284456, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536225, 6553, 51018, 633164638, 67109889, 284457, 284457, 300, 284457, 1);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536225, 6553, 51018, 633164639, 67109889, 284458, 284458, 300, 284458, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536225, 6553, 51018, 633164638, 67109889, 284457, 284457, 300, 284457, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536225, 6553, 51018, 633164639, 67109889, 284458, 284458, 300, 284458, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536226, 6553, 3375.831, 18.525, 857.3398, 0, 0.7084, 0, 0.7058, 'Omni-Med Guard', 206966, 206963, 206965, 206964, 206968, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536226, 6553, 0, 268964353);
@@ -4068,8 +4068,8 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536226, 6553, 0, 0, 40249, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536226, 6553, 1, 0, 284456, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536226, 6553, 2, 0, 284456, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536226, 6553, 51018, 633164640, 67109889, 284457, 284457, 300, 284457, 1);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536226, 6553, 51018, 633164641, 67109889, 284458, 284458, 300, 284458, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536226, 6553, 51018, 633164640, 67109889, 284457, 284457, 300, 284457, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536226, 6553, 51018, 633164641, 67109889, 284458, 284458, 300, 284458, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536224, 6553, 3372.305, 18.525, 855.9407, 0, 0.7056, 0, 0.7086, 'Omni-Med Surgeon', 14048, 120608, 284442, 120607, 120606, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536224, 6553, 0, 268964353);
@@ -4091,7 +4091,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536224, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536224, 6553, 285, 77);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536224, 6553, 0, 0, 40694, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536224, 6553, 1, 0, 136587, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536224, 6553, 51018, 633164637, 4199425, 130612, 130612, 1, 130612, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536224, 6553, 51018, 633164637, 4199425, 130612, 130612, 1, 130612, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536216, 6553, 3383.568, 17.11, 881.8859, 0, -0.0018, 0, 1, 'Omni-Pol Guard', 8744, 8738, 8742, 8735, 8746, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536216, 6553, 0, 268964353);
@@ -4115,8 +4115,8 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536216, 6553, 0, 0, 40111, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536216, 6553, 1, 0, 7783, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536216, 6553, 2, 0, 155083, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536216, 6553, 51018, 633164614, 1025, 285501, 285501, 1, 285501, 1);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536216, 6553, 51018, 633164616, 1027, 121591, 121592, 19, 121591, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536216, 6553, 51018, 633164614, 1025, 285501, 285501, 1, 285501, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536216, 6553, 51018, 633164616, 1027, 121591, 121592, 19, 121591, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536217, 6553, 3380.799, 17.11, 881.8745, 0, 0.0025, 0, 1, 'Omni-Pol Guard', 8744, 8738, 8742, 8735, 8746, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536217, 6553, 0, 268964353);
@@ -4140,8 +4140,8 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536217, 6553, 0, 0, 40111, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536217, 6553, 1, 0, 7783, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536217, 6553, 2, 0, 155083, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536217, 6553, 51018, 633164617, 1025, 285501, 285501, 1, 285501, 1);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536217, 6553, 51018, 633164619, 1027, 121591, 121592, 20, 121591, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536217, 6553, 51018, 633164617, 1025, 285501, 285501, 1, 285501, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536217, 6553, 51018, 633164619, 1027, 121591, 121592, 20, 121591, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536218, 6553, 3381.248, 17.11, 850.7862, 0, 0.9998, 0, 0.0186, 'Omni-Pol Guard', 8744, 8738, 8742, 8735, 8746, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536218, 6553, 0, 268964353);
@@ -4165,8 +4165,8 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536218, 6553, 0, 0, 40111, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536218, 6553, 1, 0, 7783, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536218, 6553, 2, 0, 155083, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536218, 6553, 51018, 633164620, 1025, 285501, 285501, 1, 285501, 1);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536218, 6553, 51018, 633164622, 1027, 121591, 121592, 20, 121591, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536218, 6553, 51018, 633164620, 1025, 285501, 285501, 1, 285501, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536218, 6553, 51018, 633164622, 1027, 121591, 121592, 20, 121591, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536219, 6553, 3383.705, 17.11, 850.7416, 0, -0.9996, 0, 0.0282, 'Omni-Pol Guard', 8744, 8738, 8742, 8735, 8746, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536219, 6553, 0, 268964353);
@@ -4190,8 +4190,8 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536219, 6553, 0, 0, 40111, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536219, 6553, 1, 0, 7783, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536219, 6553, 2, 0, 155083, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536219, 6553, 51018, 633164623, 1025, 285501, 285501, 1, 285501, 1);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536219, 6553, 51018, 633164625, 1027, 121591, 121592, 16, 121591, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536219, 6553, 51018, 633164623, 1025, 285501, 285501, 1, 285501, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536219, 6553, 51018, 633164625, 1027, 121591, 121592, 16, 121591, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536220, 6553, 3371.524, 18.525, 877.873, 0, 0.707, 0, 0.7072, 'Omni-Pol Guard', 8744, 8738, 8742, 8735, 8746, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536220, 6553, 0, 268964353);
@@ -4215,8 +4215,8 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536220, 6553, 0, 0, 40629, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536220, 6553, 1, 0, 7783, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536220, 6553, 2, 0, 155083, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536220, 6553, 51018, 633164626, 1025, 285501, 285501, 1, 285501, 1);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536220, 6553, 51018, 633164628, 1027, 121591, 121592, 21, 121591, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536220, 6553, 51018, 633164626, 1025, 285501, 285501, 1, 285501, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536220, 6553, 51018, 633164628, 1027, 121591, 121592, 21, 121591, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536222, 6553, 3376.235, 18.525, 875.3539, 0, 0.7078, 0, 0.7065, 'Omni-Pol Guard', 8744, 8738, 8742, 8735, 8746, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536222, 6553, 0, 268964353);
@@ -4240,8 +4240,8 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536222, 6553, 0, 0, 40629, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536222, 6553, 1, 0, 7783, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536222, 6553, 2, 0, 155083, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536222, 6553, 51018, 633164631, 1025, 285501, 285501, 1, 285501, 1);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536222, 6553, 51018, 633164632, 1027, 121593, 121594, 30, 121593, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536222, 6553, 51018, 633164631, 1025, 285501, 285501, 1, 285501, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536222, 6553, 51018, 633164632, 1027, 121593, 121594, 30, 121593, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536223, 6553, 3376.502, 18.525, 878.1669, 0, 0.7063, 0, 0.7079, 'Omni-Pol Guard', 8744, 8738, 8742, 8735, 8746, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536223, 6553, 0, 268964353);
@@ -4265,8 +4265,8 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536223, 6553, 0, 0, 40629, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536223, 6553, 1, 0, 7783, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536223, 6553, 2, 0, 155083, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536223, 6553, 51018, 633164634, 1025, 285501, 285501, 1, 285501, 1);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536223, 6553, 51018, 633164635, 1027, 121593, 121594, 29, 121593, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536223, 6553, 51018, 633164634, 1025, 285501, 285501, 1, 285501, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536223, 6553, 51018, 633164635, 1027, 121593, 121594, 29, 121593, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536095, 6553, 3392.468, 18.545, 876.7653, 0, -0.6047, 0, 0.7964, 'Omni-Trans Equipment Vendor', 0, 22579, 9619, 22550, 22638, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536095, 6553, 0, 271061505);
@@ -4288,7 +4288,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536095, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536095, 6553, 285, 155);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536095, 6553, 0, 0, 40173, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536095, 6553, 1, 0, 7777, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536095, 6553, 51018, 633164569, 67109889, 121567, 121567, 1, 121567, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536095, 6553, 51018, 633164569, 67109889, 121567, 121567, 1, 121567, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536091, 6553, 3462.507, 9.01, 812.505, 0, -0.8432, 0, 0.5375, 'Patrick Sun', 0, 258544, 287244, 37036, 154204, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536091, 6553, 0, 277352961);
@@ -4311,7 +4311,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536091, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536091, 6553, 0, 0, 292933, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536091, 6553, 0, 0, 40694, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536091, 6553, 1, 0, 268625, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536091, 6553, 51018, 633164565, 201327649, 268693, 268693, 1, 268693, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536091, 6553, 51018, 633164565, 201327649, 268693, 268693, 1, 268693, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536232, 6553, 3471.316, 9.01, 883.7137, 0, 0.366, 0, 0.9306, 'Paula McCullors', 155947, 155944, 155945, 155946, 155943, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536232, 6553, 0, 268964353);
@@ -4333,7 +4333,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536232, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536232, 6553, 285, 35);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536232, 6553, 0, 0, 223911, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536232, 6553, 1, 0, 258990, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536232, 6553, 51018, 633164651, -1006631391, 258820, 258820, 1, 258820, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536232, 6553, 51018, 633164651, -1006631391, 258820, 258820, 1, 258820, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536233, 6553, 3447.351, 9.165, 810.2736, 0, 0.5015, 0, 0.8652, 'Percy Houston', 155947, 155944, 155945, 155946, 155943, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536233, 6553, 0, 268964353);
@@ -4355,7 +4355,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536233, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536233, 6553, 285, 54);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536233, 6553, 0, 0, 223900, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536233, 6553, 1, 0, 29084, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536233, 6553, 51018, 633164652, 134218785, 253353, 253353, 100, 253353, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536233, 6553, 51018, 633164652, 134218785, 253353, 253353, 100, 253353, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (6171498, 6553, 3541.968, 5.11, 784.5183, 0, 0.9963, 0, 0.0862, 'Protester', 295555, 295553, 295554, 295552, 295556, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (6171498, 6553, 0, 268964353);
@@ -4422,7 +4422,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052991850, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052991850, 6553, 0, 0, 205110, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052991850, 6553, 0, 0, 40127, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052991850, 6553, 1, 0, 284183, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052991850, 6553, 51018, 633191525, -1006631391, 284185, 284185, 1, 284185, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052991850, 6553, 51018, 633191525, -1006631391, 284185, 284185, 1, 284185, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054081628, 6553, 3542.527, 5.11, 823.5067, 0, 0.6424, 0, 0.7664, 'Protester', 295555, 295553, 295554, 295552, 295556, 0x949700d27a6ecc5cd20020d03d00ca455ee627ca40a38520ca444c18439700d27a6ecc5cd20020d03d00ca455ec1deca40a38520ca444a11ab9700d27a6ecc5cd20020d03d00ca455eaff3ca40a38520ca4447cd5a9700d27a6ecc5cd20020d03d00ca455d3fbfca40a3853eca444705690000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054081628, 6553, 0, 268964353);
@@ -4445,7 +4445,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054081628, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054081628, 6553, 0, 0, 205110, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054081628, 6553, 0, 0, 40127, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054081628, 6553, 1, 0, 284183, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2054081628, 6553, 51018, 633636516, -1006631391, 284185, 284185, 1, 284185, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2054081628, 6553, 51018, 633636516, -1006631391, 284185, 284185, 1, 284185, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054528643, 6553, 3575.237, 5.11, 825.5024, 0, 0.9945, 0, 0.1048, 'Protester', 295555, 295553, 295554, 295552, 295556, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054528643, 6553, 0, 268964353);
@@ -4468,7 +4468,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054528643, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054528643, 6553, 0, 0, 205110, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054528643, 6553, 0, 0, 40127, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054528643, 6553, 1, 0, 284183, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2054528643, 6553, 51018, 633751674, -1006631391, 284185, 284185, 1, 284185, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2054528643, 6553, 51018, 633751674, -1006631391, 284185, 284185, 1, 284185, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054565169, 6553, 3592.002, 5.11, 820.005, 0, 0.6366, 0, 0.7712, 'Protester', 295555, 295553, 295554, 295552, 295556, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054565169, 6553, 0, 268964353);
@@ -4491,7 +4491,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054565169, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054565169, 6553, 0, 0, 205110, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054565169, 6553, 0, 0, 40127, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054565169, 6553, 1, 0, 284183, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2054565169, 6553, 51018, 633751914, -1006631391, 284185, 284185, 1, 284185, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2054565169, 6553, 51018, 633751914, -1006631391, 284185, 284185, 1, 284185, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054565170, 6553, 3592.001, 5.11, 824.0021, 0, 0.7563, 0, 0.6542, 'Protester', 295555, 295553, 295554, 295552, 295556, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054565170, 6553, 0, 268964353);
@@ -4514,7 +4514,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054565170, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054565170, 6553, 0, 0, 205110, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054565170, 6553, 0, 0, 40127, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054565170, 6553, 1, 0, 284183, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2054565170, 6553, 51018, 633751915, -1006631391, 284185, 284185, 1, 284185, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2054565170, 6553, 51018, 633751915, -1006631391, 284185, 284185, 1, 284185, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536085, 6553, 3433.644, 9.01, 832.8001, 0, 0.1072, 0, 0.9942, 'Remi Gallois', 0, 21824, 42219, 21819, 21831, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536085, 6553, 0, 279450113);
@@ -4557,7 +4557,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536242, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536242, 6553, 285, 93);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536242, 6553, 0, 0, 40147, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536242, 6553, 1, 0, 29084, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536242, 6553, 51018, 633164661, 134218785, 253353, 253353, 100, 253353, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536242, 6553, 51018, 633164661, 134218785, 253353, 253353, 100, 253353, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536067, 6553, 3624.15, 51.745, 787.0334, 0, -0.7074, 0, 0.7069, 'Rex Larsson', 295555, 295553, 295554, 295552, 295556, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536067, 6553, 0, 277615105);
@@ -4792,7 +4792,7 @@ INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, 
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536073, 6553, 0, 0, 40618, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536073, 6553, 1, 0, 99152, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536073, 6553, 5, 0, 291500, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536073, 6553, 51018, 633164554, 1027, 124277, 124277, 21, 124277, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536073, 6553, 51018, 633164554, 1027, 124277, 124277, 21, 124277, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536101, 6553, 3440.289, 9.01, 863.5906, 0, 0.9614, 0, -0.2751, 'Secondhand Peddler', 40975, 82112, 40968, 40927, 40988, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536101, 6553, 0, 271061505);
@@ -4836,7 +4836,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536089, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536089, 6553, 0, 0, 40691, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536089, 6553, 1, 0, 30240, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536089, 6553, 5, 0, 268581, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536089, 6553, 51018, 633164564, 1027, 122830, 122830, 20, 122830, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536089, 6553, 51018, 633164564, 1027, 122830, 122830, 20, 122830, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536074, 6553, 3551.01, 8.315, 832.8512, 0, -0.7049, 0, 0.7093, 'Shipping Manifest Terminal', 0, 0, 0, 0, 0, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536074, 6553, 0, 277484033);
@@ -4878,7 +4878,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536069, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536069, 6553, 0, 0, 45777, 0);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536069, 6553, 0, 0, 40689, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536069, 6553, 1, 0, 258990, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536069, 6553, 51018, 633164546, -1006631391, 258820, 258820, 1, 258820, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536069, 6553, 51018, 633164546, -1006631391, 258820, 258820, 1, 258820, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054565421, 6553, 3505.862, 11.0269, 943.0099, 0, -0.996, 0, 0.0894, 'Supreme Collector of Waste', 0, 0, 0, 0, 0, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054565421, 6553, 0, 268964353);
@@ -4959,7 +4959,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536231, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536231, 6553, 285, 116);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536231, 6553, 0, 0, 40631, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536231, 6553, 1, 0, 258990, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536231, 6553, 51018, 633164650, -1006631391, 258820, 258820, 1, 258820, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536231, 6553, 51018, 633164650, -1006631391, 258820, 258820, 1, 258820, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536100, 6553, 3471.411, 9.01, 861.148, 0, 0.984, 0, -0.1782, 'Tailor', 0, 30862, 40903, 30839, 30886, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536100, 6553, 0, 271061505);
@@ -4981,7 +4981,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536100, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536100, 6553, 285, 550);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536100, 6553, 0, 0, 40635, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536100, 6553, 1, 0, 7777, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536100, 6553, 51018, 633164572, 67109889, 121567, 121567, 1, 121567, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536100, 6553, 51018, 633164572, 67109889, 121567, 121567, 1, 121567, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054527947, 6553, 3372, 17.11, 924.0476, 0, -0.0041, 0, 1, 'Vanguard Henri Zure', 292838, 292834, 292839, 292835, 292837, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054527947, 6553, 0, 268964353);
@@ -5003,7 +5003,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054527947, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054527947, 6553, 285, 39);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054527947, 6553, 0, 0, 40203, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2054527947, 6553, 1, 0, 21130, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2054527947, 6553, 51018, 633751621, 1027, 121798, 121799, 10, 121798, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2054527947, 6553, 51018, 633751621, 1027, 121798, 121799, 10, 121798, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536083, 6553, 3369.283, 18.1111, 828.8986, 0, 0.7096, 0, 0.7046, 'Vaughn Hammond', 286229, 286227, 286228, 286226, 286225, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536083, 6553, 0, 277352961);
@@ -5026,7 +5026,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536083, 655
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536083, 6553, 0, 286562, 265793, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536083, 6553, 1, 0, 264698, 2);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536083, 6553, 3, 0, 286446, 0);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536083, 6553, 51018, 633164559, 67109891, 265055, 265056, 20, 265055, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536083, 6553, 51018, 633164559, 67109891, 265055, 265056, 20, 265055, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536072, 6553, 3433.958, 12.285, 825.8997, 0, 0.9246, 0, 0.381, 'Vernon Godfray', 0, 164803, 164804, 164802, 164806, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536072, 6553, 0, 277352961);
@@ -5048,7 +5048,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536072, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536072, 6553, 285, 58);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536072, 6553, 0, 0, 40271, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536072, 6553, 1, 0, 35542, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536072, 6553, 51018, 633164552, 1027, 159024, 159025, 18, 159024, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536072, 6553, 51018, 633164552, 1027, 159024, 159025, 18, 159024, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536244, 6553, 3470.661, 9.01, 831.8828, 0, 1, 0, 0, 'Walter Miyashiro', 155947, 155944, 155945, 155946, 155943, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536244, 6553, 0, 268964353);
@@ -5070,7 +5070,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536244, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536244, 6553, 285, 43);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536244, 6553, 0, 0, 223889, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536244, 6553, 1, 0, 258990, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536244, 6553, 51018, 633164663, -1006631391, 258820, 258820, 1, 258820, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536244, 6553, 51018, 633164663, -1006631391, 258820, 258820, 1, 258820, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2054112623, 6553, 3586.2, 7.324, 921.9522, 0, -0.3888, 0, 0.9213, 'Waste Collector', 0, 0, 0, 0, 0, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2054112623, 6553, 0, 268964353);
@@ -5377,7 +5377,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536245, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536245, 6553, 285, 116);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536245, 6553, 0, 0, 40636, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536245, 6553, 1, 0, 258990, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536245, 6553, 51018, 633164664, -1006631391, 258820, 258820, 1, 258820, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536245, 6553, 51018, 633164664, -1006631391, 258820, 258820, 1, 258820, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (2052536257, 6553, 3370.108, 17.405, 883.9424, 0, 1, 0, -0.0025, 'Wounded Clan Protester', 0, 37030, 248873, 37031, 30883, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536257, 6553, 0, 268964353);
@@ -5395,18 +5395,19 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536257, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536257, 6553, 360, 100);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536257, 6553, 455, 104);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536257, 6553, 673, 31);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536257, 6553, 173, 8);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536257, 6553, 286, 36);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536257, 6553, 285, 77);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536257, 6553, 0, 0, 204887, 0);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536257, 6553, 0, 0, 40130, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536257, 6553, 1, 0, 262812, 2);
-INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, Unknown6, Unknown7) VALUES (2052536257, 6553, 51018, 633164675, -1006631391, 262801, 262801, 1, 262801, 1);
+INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance, ItemFlags, ItemLowId, ItemHighId, QualityLevel, StaticInstance, MultipleCount) VALUES (2052536257, 6553, 51018, 633164675, -1006631391, 262801, 262801, 1, 262801, 1);
 
 INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW, Name, Textures0, Textures1, Textures2, Textures3, Textures4, Waypoints) VALUES (5715728, 6553, 3620.403, 37.565, 854.5067, 0, 0.003, 0, 1, 'Wounded Dockworker', 295555, 295553, 295554, 295552, 295556, NULL);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 0, 277615105);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 1, 32);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 4, 4);
-INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 27, 32);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 27, 12);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 33, 0);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 47, 1);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 54, 1);
@@ -5418,6 +5419,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 360, 90);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 455, 137);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 673, 31);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 173, 8);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 286, 2);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715728, 6553, 285, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (5715728, 6553, 0, 0, 205110, 2);
@@ -5427,7 +5429,7 @@ INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, Hea
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 0, 277615105);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 1, 32);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 4, 4);
-INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 27, 32);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 27, 12);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 33, 0);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 47, 1);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 54, 1);
@@ -5439,6 +5441,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 360, 90);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 455, 137);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 673, 31);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 173, 8);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 286, 2);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (5715729, 6553, 285, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (5715729, 6553, 0, 0, 205110, 2);
@@ -5448,7 +5451,7 @@ INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, Hea
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 0, 277615105);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 1, 32);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 4, 4);
-INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 27, 32);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 27, 12);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 33, 0);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 47, 1);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 54, 1);
@@ -5460,6 +5463,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 360, 90);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 455, 137);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 673, 31);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 173, 8);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 286, 2);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536063, 6553, 285, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536063, 6553, 0, 0, 205110, 2);
@@ -5469,7 +5473,7 @@ INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, Hea
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 0, 277615105);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 1, 32);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 4, 4);
-INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 27, 32);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 27, 12);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 33, 0);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 47, 1);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 54, 1);
@@ -5481,6 +5485,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 360, 90);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 455, 137);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 673, 31);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 173, 8);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 286, 2);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536064, 6553, 285, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536064, 6553, 0, 0, 205110, 2);
@@ -5490,7 +5495,7 @@ INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, Hea
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 0, 277615105);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 1, 32);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 4, 4);
-INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 27, 32);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 27, 12);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 33, 0);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 47, 1);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 54, 1);
@@ -5502,6 +5507,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 360, 90);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 455, 137);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 673, 31);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 173, 8);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 286, 2);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536078, 6553, 285, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536078, 6553, 0, 0, 205110, 2);
@@ -5511,7 +5517,7 @@ INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, Hea
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 0, 277615105);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 1, 32);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 4, 4);
-INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 27, 32);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 27, 12);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 33, 0);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 47, 1);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 54, 1);
@@ -5523,6 +5529,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 360, 90);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 455, 137);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 673, 31);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 173, 8);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 286, 2);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536079, 6553, 285, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536079, 6553, 0, 0, 205110, 2);
@@ -5532,7 +5539,7 @@ INSERT INTO mobspawns (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, Hea
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 0, 277615105);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 1, 32);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 4, 4);
-INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 27, 32);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 27, 12);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 33, 0);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 47, 1);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 54, 1);
@@ -5544,6 +5551,7 @@ INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 655
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 360, 90);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 455, 137);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 673, 31);
+INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 173, 8);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 286, 2);
 INSERT INTO mobspawns_stats (Id, Playfield, Stat, Value) VALUES (2052536082, 6553, 285, 4);
 INSERT INTO mobspawnsmeshs (Id, Playfield, Position, OverrideTextureId, MeshId, Layer) VALUES (2052536082, 6553, 0, 0, 205110, 2);

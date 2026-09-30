@@ -17,4 +17,8 @@ namespace OmniCell.Database.Dao
     public class FixtureBehaviourDao : Dao<DBFixtureBehaviour, FixtureBehaviourDao>
     {
     }
+
+    public class PlayfieldStatelRunDao : Dao<DBPlayfieldStatelRun, PlayfieldStatelRunDao>
+    {
+    }
 }

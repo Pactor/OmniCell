@@ -161,6 +161,9 @@ namespace ZoneEngine.Core.MessageHandlers
                     ? new Identity { Type = IdentityType.Playfield2, Instance = playfield }
                     : Identity.None;
                 x.Playfield2 = destinationidentity;
+
+                // Trailer (AoMember 10) was null -> NullReferenceException in the serializer.
+                x.Trailer = new byte[0];
             };
         }
 
@@ -205,6 +208,9 @@ namespace ZoneEngine.Core.MessageHandlers
                     ? new Identity { Type = IdentityType.Playfield2, Instance = playfield.Instance }
                     : Identity.None;
                 x.Playfield2 = new Identity() { Type = IdentityType.Playfield3, Instance = playfield.Instance };
+
+                // Trailer (AoMember 10) was null -> NullReferenceException in the serializer.
+                x.Trailer = new byte[0];
             };
         }
     }

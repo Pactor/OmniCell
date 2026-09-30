@@ -54,7 +54,12 @@ namespace SmokeLounge.AOtomation.Messaging.GameData
 
         Door = 0x0000C748,
 
-        WeaponInstance = 0x0000C74A, 
+        // A player-held bag's own identity. Its contents are addressed as
+        // Backpack, (handle << 16) | slot. Chests and lootable corpses carry
+        // this type too.
+        Container = 0x0000C749,
+
+        WeaponInstance = 0x0000C74A,
 
         VendingMachine = 0x0000C75B, 
 
@@ -76,7 +81,19 @@ namespace SmokeLounge.AOtomation.Messaging.GameData
 
         MissionEntrance = 0x0000DAC6,
 
-        MissionTerminal = 0x0000DCA1,
+        /// <summary>
+        /// A mission terminal.
+        /// </summary>
+        /// <remarks>
+        /// 56001. This was 0x0000DCA1 until 2026-09-26, which is the same four
+        /// digits with two of them swapped and appears in no capture. Every
+        /// captured roll names its terminal 56001 - QuestAlternative's
+        /// MissionTerminalIdentity and the offers' QuestGiver both - which is
+        /// 0xDAC1, two below Quest at 0xDAC3 and five below MissionEntrance at
+        /// 0xDAC6. The mission family is one run of values and this is the
+        /// front of it.
+        /// </remarks>
+        MissionTerminal = 0x0000DAC1,
 
         TeamWindow = 0x0000DEA9, 
 

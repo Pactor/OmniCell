@@ -510,6 +510,15 @@ namespace SmokeLounge.AOtomation.Messaging.GameData
         /// zero in all 193 records, which would have meant a client that never
         /// draws a quest icon. Six values across the captures: 244818, 158429,
         /// 11330, 11340, 11342 and 11335.
+        ///
+        /// On a mission a terminal generated, this is also the mission's type -
+        /// see <see cref="MissionType"/>, which names five of those values. That
+        /// was settled on 2026-09-25 by expanding the offers inside the captured
+        /// QuestAlternative rolls and setting each offer's icon against the
+        /// assignment text the same record carries; the wordings are formulaic
+        /// and they separate cleanly. 244818 and 158429 are the two authored
+        /// Arete quests in the corpus, so the field is an icon that happens to
+        /// be the type for generated missions rather than a type field.
         /// </remarks>
         [AoMember(25)]
         public int MissionIconId { get; set; }
@@ -551,13 +560,14 @@ namespace SmokeLounge.AOtomation.Messaging.GameData
         /// A plain int32 count and then that many int32s - not X3F1. Each one
         /// is masked with 0x07FFFFFF at 0x100ABFE6 before the client keeps it,
         /// so the top five bits of every entry are on the wire and thrown away.
-        /// Empty in every captured record.
+        /// Each is the instance of a quest action's ActionTracking identity with those bits masked: in 127
+        /// of the 130 quest records in the retail recordings, and empty in the other three.
         /// </remarks>
         [AoMember(30, SerializeSize = ArraySizeType.Int32)]
-        public int[] Unknown18 { get; set; }
+        public int[] ActionTrackingInstances { get; set; }
         /// <remarks>
         /// The same shape and the same 0x07FFFFFF mask as
-        /// <see cref="Unknown18"/>, at 0x100AC022, into a different vector.
+        /// <see cref="ActionTrackingInstances"/>, at 0x100AC022, into a different vector.
         /// </remarks>
         [AoMember(31, SerializeSize = ArraySizeType.Int32)]
         public int[] Unknown19 { get; set; }
@@ -607,9 +617,13 @@ namespace SmokeLounge.AOtomation.Messaging.GameData
         /// <summary>
         /// Version 10 and up.
         /// </summary>
+        /// <remarks>
+        /// How many the objective asks for: 5 on "Terminate 5 Malfunctioning Cleaning Robots", 0 on
+        /// anything that is not a number of something (Tools/Capture/AreaExtract, QuestWireAuthoring).
+        /// </remarks>
         [AoMember(35)]
         [AoUsesFlags("questversion", typeof(int), FlagsCriteria.EqualsToAny, new[] { 10, 11, 12, 13, 14, 15 })]
-        public int? Unknown21 { get; set; }
+        public int? RequiredCount { get; set; }
 
         /// <summary>
         /// Version 11 and up.

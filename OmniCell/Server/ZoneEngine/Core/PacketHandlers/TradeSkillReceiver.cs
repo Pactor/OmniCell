@@ -109,7 +109,15 @@ namespace ZoneEngine.Core.PacketHandlers
 
             if (ts != null)
             {
-                quality = Math.Min(quality, ItemLoader.ItemList[ts.ResultHighId].Quality);
+                // The quality the client asks for is a choice inside the range it was offered, not a
+                // free one: what comes out is the target's own quality, plus whatever the builder's
+                // skill bumps it by. Taken as it came, a QL 10 implant handed to the Implant
+                // Disassembly Clinic asked for a QL 200 Basic Implant back.
+                quality = ResultQuality(
+                    ts,
+                    targetItem.Quality,
+                    Bump(ts, targetItem.Quality, client.Controller.Character),
+                    quality);
                 if (WindowBuild(client, quality, ts, sourceItem, targetItem))
                 {
                     Item newItem = new Item(quality, ts.ResultLowId, ts.ResultHighId);
@@ -262,10 +270,89 @@ namespace ZoneEngine.Core.PacketHandlers
                 return ts.MaxXP;
             }
 
-            return
-                (int)
-                    Math.Floor(
-                        (double)((ts.MaxXP - ts.MinXP) / (absMaxQL - absMinQL)) * (quality - absMinQL) + ts.MinXP);
+            // Both divisions are done in floating point. As two ints, (MaxXP - MinXP) / (maxQL -
+            // minQL) was 0 for every recipe whose quality range is wider than its experience range -
+            // 5 to 1000 experience over QL 1 to 200 is 4, but 995/199 as ints is 4 only by luck;
+            // 5 to 1000 over 1 to 300 was 3, and anything narrower paid MinXP flat.
+            return (int)Math.Floor((ts.MaxXP - ts.MinXP) / (double)(absMaxQL - absMinQL) * (quality - absMinQL) + ts.MinXP);
+        }
+
+        /// <summary>
+        /// How many quality levels above the target's own the builder's skill is worth.
+        /// </summary>
+        /// <remarks>
+        /// Every skill the recipe asks for is allowed its own bump and the lowest of them wins: a
+        /// build is held back by the skill the builder is worst at. This kept whichever skill came
+        /// last in the list instead, so a second skill far above its requirement could raise a
+        /// result the first skill could not have made. Skills below their requirement bump by
+        /// nothing rather than by a negative number.
+        ///
+        /// Implants have their own ceiling by quality - retail allows one more level per tier - and
+        /// a recipe's own MaxBump caps every kind, implants included; it was only ever read for
+        /// recipes that are not implants, where nothing read it at all.
+        /// </remarks>
+        public static int Bump(TradeSkillEntry ts, int targetQuality, ICharacter character)
+        {
+            return character == null
+                       ? 0
+                       : Bump(ts, targetQuality, statId => character.Stats[statId].Value);
+        }
+
+        /// <summary>
+        /// The bump, against any source of skill values. Taking the lookup rather than the character
+        /// keeps the rule testable on its own.
+        /// </summary>
+        public static int Bump(TradeSkillEntry ts, int targetQuality, Func<int, int> skillValue)
+        {
+            int ceiling = MaxBump(ts, targetQuality);
+            if ((ceiling <= 0) || (skillValue == null))
+            {
+                return 0;
+            }
+
+            int bump = ceiling;
+            foreach (TradeSkillSkill skill in ts.Skills)
+            {
+                if (skill.SkillPerBump <= 0)
+                {
+                    continue;
+                }
+
+                int above = skillValue(skill.StatId) - (int)Math.Ceiling(skill.Percent / 100M * targetQuality);
+                bump = Math.Min(bump, Math.Max(0, above / skill.SkillPerBump));
+            }
+
+            return Math.Max(0, Math.Min(bump, ceiling));
+        }
+
+        /// <summary>The most quality levels this recipe may add to its target's own.</summary>
+        public static int MaxBump(TradeSkillEntry ts, int targetQuality)
+        {
+            int ceiling = ts.MaxBump;
+            if (ts.IsImplant)
+            {
+                int tier = targetQuality >= 250 ? 5
+                           : targetQuality >= 201 ? 4
+                           : targetQuality >= 150 ? 3
+                           : targetQuality >= 100 ? 2
+                           : targetQuality >= 50 ? 1 : 0;
+                ceiling = ceiling > 0 ? Math.Min(ceiling, tier) : tier;
+            }
+
+            return Math.Max(0, ceiling);
+        }
+
+        /// <summary>
+        /// What quality comes out: the target's own, raised by the builder's skill, kept inside the
+        /// result template's own range, and never above what the client asked for.
+        /// </summary>
+        public static int ResultQuality(TradeSkillEntry ts, int targetQuality, int bump, int requested)
+        {
+            int lowest = ItemLoader.ItemList[ts.ResultLowId].Quality;
+            int highest = ItemLoader.ItemList[ts.ResultHighId].Quality;
+            int best = Math.Min(targetQuality + Math.Max(0, bump), highest);
+            int chosen = requested > 0 ? Math.Min(requested, best) : best;
+            return Math.Max(Math.Min(chosen, highest), lowest);
         }
 
         private static Item SelectedItem(ICharacter character, TradeSkillInfo selection)
@@ -317,49 +404,13 @@ namespace ZoneEngine.Core.PacketHandlers
                             }
                         }
 
-                        int leastbump = 0;
-                        int maxbump = 0;
-                        if (ts.IsImplant)
-                        {
-                            if (targetItem.Quality >= 250)
-                            {
-                                maxbump = 5;
-                            }
-                            else if (targetItem.Quality >= 201)
-                            {
-                                maxbump = 4;
-                            }
-                            else if (targetItem.Quality >= 150)
-                            {
-                                maxbump = 3;
-                            }
-                            else if (targetItem.Quality >= 100)
-                            {
-                                maxbump = 2;
-                            }
-                            else if (targetItem.Quality >= 50)
-                            {
-                                maxbump = 1;
-                            }
-                        }
+                        int leastbump = Bump(ts, targetItem.Quality, client.Controller.Character);
 
-                        foreach (TradeSkillSkill tsSkill in ts.Skills)
-                        {
-                            if (tsSkill.SkillPerBump != 0)
-                            {
-                                leastbump =
-                                    Math.Min(
-                                        Convert.ToInt32(
-                                            (client.Controller.Character.Stats[tsSkill.StatId].Value
-                                             - (tsSkill.Percent / 100M * targetItem.Quality)) / tsSkill.SkillPerBump),
-                                        maxbump);
-                            }
-                        }
-
+                        // The same numbers the build will use, so what is offered is what is built.
                         TradeSkillPacket.SendResult(
                             client.Controller.Character,
-                            targetItem.Quality,
-                            Math.Min(targetItem.Quality + leastbump, ItemLoader.ItemList[ts.ResultHighId].Quality),
+                            ResultQuality(ts, targetItem.Quality, 0, targetItem.Quality),
+                            ResultQuality(ts, targetItem.Quality, leastbump, targetItem.Quality + leastbump),
                             ts.ResultLowId,
                             ts.ResultHighId);
                     }
@@ -399,7 +450,11 @@ namespace ZoneEngine.Core.PacketHandlers
             Item sourceItem,
             Item targetItem)
         {
-            if (!((ts.MinTargetQL >= targetItem.Quality) || (ts.MinTargetQL == 0)))
+            // MinTarget is the lowest quality the target may be, "for things like tier armor where
+            // the item must be at max QL to tradeskill. 0 = Any ql" (tradeskill.sql). The test was
+            // the other way round, so a recipe with a minimum accepted anything below it and
+            // refused everything at or above it.
+            if ((ts.MinTargetQL != 0) && (targetItem.Quality < ts.MinTargetQL))
             {
                 return false;
             }

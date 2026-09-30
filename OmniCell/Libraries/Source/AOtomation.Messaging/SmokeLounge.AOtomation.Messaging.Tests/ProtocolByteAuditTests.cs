@@ -1131,11 +1131,11 @@ namespace SmokeLounge.AOtomation.Messaging.Tests
                 ItemLowId = 292235,
                 ItemHighId = 292235,
                 Quality = 1,
-                Unknown1 = 1,
-                Unknown2 = 6,
+                Amount = 1,
+                Action = 6,
                 Placement = Id(IdentityType.ArmorPage, 18),
-                Unknown3 = 0,
-                Unknown4 = 0
+                TargetType = 0,
+                TargetInstance = 0
             };
 
             AssertRetailPacket(
@@ -1159,11 +1159,11 @@ namespace SmokeLounge.AOtomation.Messaging.Tests
                 ItemLowId = 291082,
                 ItemHighId = 291082,
                 Quality = 1,
-                Unknown1 = 1,
-                Unknown2 = 3,
+                Amount = 1,
+                Action = 3,
                 Placement = Id(IdentityType.Inventory, 64),
-                Unknown3 = (int)IdentityType.CanbeAffected,
-                Unknown4 = unchecked((int)0x0A0B0C01)
+                TargetType = (int)IdentityType.CanbeAffected,
+                TargetInstance = unchecked((int)0x0A0B0C01)
             };
 
             AssertRetailPacket(
@@ -2078,6 +2078,198 @@ namespace SmokeLounge.AOtomation.Messaging.Tests
                 0x0002,
                 0x00000DB1,
                 0x0A0B0C08);
+        }
+
+        [TestMethod]
+        public void PlayfieldAnarchyFApartmentMatchesRetailCaptureByteForByte()
+        {
+            // Entering a private Sunrise Station luxury apartment, from
+            // 20260925-134417 stream 11. The DbObject this one ends with is
+            // neither of the two the reader knew: identity type 51067, which the
+            // client registers beside 51069 at Gamecode 0x101521F0 and whose
+            // only plausible name among the three generator classes it ships is
+            // AVOwnedBuildingGeneratorData_t. An apartment is a building
+            // somebody owns.
+            //
+            // Until 2026-09-25 this packet could not be read at all. The reader
+            // refused it outright rather than mis-reading it, which is why the
+            // failure showed up as an exception and not as a wrong apartment.
+            //
+            // The five runs are what the apartment is furnished with, and they
+            // check out against what the player then did: a run of three from
+            // instance 250173593 covers the market terminal he opened and the
+            // bank terminal at 250173594 that has no record of its own, and
+            // 250173596 is the grid terminal he tried. The start indexes run
+            // 0, 3, 4, 5, 6 against counts 3, 1, 1, 1, 2 - each start the
+            // previous start plus the previous count, the same arithmetic that
+            // settled the 51069 table.
+            //
+            // PlayfieldX and PlayfieldZ are -1, as they are for a mission: an
+            // apartment is not anywhere on the world map either.
+            var body = new PlayfieldAnarchyFMessage
+            {
+                Identity = Id(IdentityType.Playfield2, 111972),
+                Unknown = 0,
+                Version = 4,
+                CharacterCoordinates = new Vector3
+                {
+                    X = 500.012726f,
+                    Y = 51.7143097f,
+                    Z = 499.800079f
+                },
+                TokenMarker = 0x61,
+                ModelId = Id((IdentityType)51101, 522244),
+                Group = 0,
+                Subgroup = 0,
+                PlayfieldId = Id(IdentityType.Playfield2, 111972),
+                PlayfieldX = -1,
+                PlayfieldZ = -1,
+                OwnedBuildingGenerator = new OwnedBuildingGeneratorData
+                {
+                    Identity = Id((IdentityType)51067, 522244),
+                    Revision = 1,
+                    Version = 4,
+                    Unknown1 = 6001,
+                    Model = Id((IdentityType)51100, 6002),
+                    EntranceDoor = unchecked((int)0xC0001772),
+                    Position = new Vector3 { X = 0f, Y = 0f, Z = 0f },
+                    Marker = 100000,
+                    Unknown3 = 0x0C6377B0,
+                    Unknown4 = 0,
+                    Unknown5 = 30,
+                    Runs = new[]
+                    {
+                            Run(51005, 0, 3, 250173593),
+                            Run(51059, 3, 1, 557089),
+                            Run(51005, 4, 1, 250173596),
+                            Run(51016, 5, 1, 46978197),
+                            Run(51005, 6, 2, 250173597)
+                    }
+                }
+            };
+
+            AssertRetailPacket(
+                "00 02 00 0A 00 01 00 F6 00 00 0E 11 0D 90 43 36 5F 4B 1A 39 " +
+                "00 00 9C 50 00 01 B5 64 00 00 00 00 04 43 FA 01 A1 42 4E DB " +
+                "74 43 F9 E6 69 61 00 00 C7 9D 00 07 F8 04 00 00 00 00 00 00 " +
+                "00 00 00 00 9C 50 00 01 B5 64 00 00 C7 7B 00 07 F8 04 00 00 " +
+                "00 01 00 00 00 04 00 00 17 71 00 00 C7 9C 00 00 17 72 C0 00 " +
+                "17 72 00 00 00 00 00 00 00 00 00 00 00 00 00 01 86 A0 00 00 " +
+                "00 00 0C 63 77 B0 00 00 00 00 00 00 00 1E 00 00 00 05 00 00 " +
+                "C7 3D 00 00 00 01 00 00 00 00 00 00 00 03 0E E9 58 99 00 00 " +
+                "C7 73 00 00 00 01 00 00 00 03 00 00 00 01 00 08 80 21 00 00 " +
+                "C7 3D 00 00 00 01 00 00 00 04 00 00 00 01 0E E9 58 9C 00 00 " +
+                "C7 48 00 00 00 01 00 00 00 05 00 00 00 01 02 CC D4 95 00 00 " +
+                "C7 3D 00 00 00 01 00 00 00 06 00 00 00 02 0E E9 58 9D FF FF " +
+                "FF FF FF FF FF FF",
+                body,
+                0x0002,
+                0x00000E11,
+                unchecked((int)0x0D904336));
+        }
+
+        [TestMethod]
+        public void PlayfieldAnarchyFSecondApartmentMatchesRetailCaptureByteForByte()
+        {
+            // A second Sunrise Station apartment, from 20260925-141548 stream 19,
+            // taken by a different character through a different door. It is
+            // here because one copy of a record read off a disassembly is a
+            // reading and two are a shape: everything but the instances, the
+            // door and Unknown3 is identical to the first, including the 100000
+            // the client writes from a global and the empty second list.
+            //
+            // This capture is also what named EntranceDoor, and it records the
+            // whole of claiming an apartment. The player used his key on the
+            // door with a GenericCmd UseItemOnItem whose two targets are the key
+            // at inventory slot 69 and the door at 51016:0xC0021772 - and
+            // 0xC0021772 is what this apartment's generator carries. The server
+            // echoed it with Verification 1, put item 281570 into the overflow
+            // window with a TemplateAction 87 and a ContainerAddItem - the same
+            // pair a mission uses to hand over a reward, and the owner says this
+            // one is the gift for moving in, a vehicle nano the player then
+            // uploads - deleted inventory slot 69, and teleported. So the key is
+            // spent on the door, and claiming the apartment is what pays out.
+            var body = new PlayfieldAnarchyFMessage
+            {
+                Identity = Id(IdentityType.Playfield2, 112016),
+                Unknown = 0,
+                Version = 4,
+                CharacterCoordinates = new Vector3
+                {
+                    X = 500.012726f,
+                    Y = 51.7143097f,
+                    Z = 499.800079f
+                },
+                TokenMarker = 0x61,
+                ModelId = Id(IdentityType.Playfield, 522245),
+                Group = 0,
+                Subgroup = 0,
+                PlayfieldId = Id(IdentityType.Playfield2, 112016),
+                PlayfieldX = -1,
+                PlayfieldZ = -1,
+                OwnedBuildingGenerator = new OwnedBuildingGeneratorData
+                {
+                    Identity = Id((IdentityType)51067, 522245),
+                    Revision = 1,
+                    Version = 4,
+                    Unknown1 = 6001,
+                    Model = Id(IdentityType.Playfield1, 6002),
+                    EntranceDoor = unchecked((int)0xC0021772),
+                    Position = new Vector3 { X = 0f, Y = 0f, Z = 0f },
+                    Marker = 100000,
+                    Unknown3 = 0x6027A4C0,
+                    Unknown4 = 0,
+                    Unknown5 = 30,
+                    Runs = new[]
+                    {
+                            Run(51005, 0, 3, 250041994),
+                            Run(51059, 3, 1, 565284),
+                            Run(51005, 4, 1, 250041997),
+                            Run(51016, 5, 1, 46998435),
+                            Run(51005, 6, 2, 250041998)
+                    }
+                }
+            };
+
+            AssertRetailPacket(
+                "00 02 00 0A 00 01 00 F6 00 00 0E 1C 0D 90 43 18 5F 4B 1A 39 " +
+                "00 00 9C 50 00 01 B5 90 00 00 00 00 04 43 FA 01 A1 42 4E DB " +
+                "74 43 F9 E6 69 61 00 00 C7 9D 00 07 F8 05 00 00 00 00 00 00 " +
+                "00 00 00 00 9C 50 00 01 B5 90 00 00 C7 7B 00 07 F8 05 00 00 " +
+                "00 01 00 00 00 04 00 00 17 71 00 00 C7 9C 00 00 17 72 C0 02 " +
+                "17 72 00 00 00 00 00 00 00 00 00 00 00 00 00 01 86 A0 00 00 " +
+                "00 00 60 27 A4 C0 00 00 00 00 00 00 00 1E 00 00 00 05 00 00 " +
+                "C7 3D 00 00 00 01 00 00 00 00 00 00 00 03 0E E7 56 8A 00 00 " +
+                "C7 73 00 00 00 01 00 00 00 03 00 00 00 01 00 08 A0 24 00 00 " +
+                "C7 3D 00 00 00 01 00 00 00 04 00 00 00 01 0E E7 56 8D 00 00 " +
+                "C7 48 00 00 00 01 00 00 00 05 00 00 00 01 02 CD 23 A3 00 00 " +
+                "C7 3D 00 00 00 01 00 00 00 06 00 00 00 02 0E E7 56 8E FF FF " +
+                "FF FF FF FF FF FF",
+                body,
+                0x0002,
+                0x00000E1C,
+                unchecked((int)0x0D904318));
+        }
+
+        /// <summary>
+        /// One owned-building run holding a single placement, which is all any
+        /// captured apartment has held.
+        /// </summary>
+        private static OwnedBuildingDynelRun Run(int type, int start, int count, int firstInstance)
+        {
+            return new OwnedBuildingDynelRun
+                   {
+                       Type = (IdentityType)type,
+                       Placements = new[]
+                                    {
+                                        new OwnedBuildingPlacement
+                                        {
+                                            StartIndex = start,
+                                            Count = count,
+                                            FirstInstance = firstInstance
+                                        }
+                                    }
+                   };
         }
 
         [TestMethod]

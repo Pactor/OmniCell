@@ -19,7 +19,7 @@ Status meanings:
 | Full-stop `FollowTargetInfo` layout | **Confirmed** | Target identity, move type, one byte, three alignment bytes, XYZ floats, coordinate count, then coordinate list. |
 | Full-stop coordinate count/list | **Confirmed: 1 + stop XYZ** | The prior writer omitted this tail and shifted the float block. |
 | Three bytes after the one-byte field | **Observed / meaning unknown: zero padding** | Their byte position and zero values are confirmed; they are treated as alignment, not an invented integer. |
-| `CharDCMove.Unknown1/2/3` semantics | **Observed / meaning unknown** | Captured and logged without rewriting. `Unknown1` varies heavily; `Unknown2` and `Unknown3` have so far been zero locally. |
+| `CharDCMove` trailing fields | **Named** | Now `MillisecondsSincePreviousMove` (once `Unknown1`, varies heavily), `TiltWorldZ` and `TiltLocalX` (once `Unknown2`/`Unknown3`, zero locally). |
 
 ## Player weapon inventory and equip
 
@@ -31,15 +31,15 @@ Status meanings:
 | Weapon identity allocation | **Inferred** | Local derives a stable identity from character and placement. Retail's allocator is unknown. Type, uniqueness and equality between `FullCharacter` and `WeaponItemFullUpdate` are confirmed. |
 | `MsgVersion` | **Confirmed: 11** | Same in repeated retail player-weapon packets. |
 | `Character` | **Confirmed** | Owning character identity. |
-| `Unknown2` | **Confirmed value source** | Retail uses the playfield instance. Local uses its currently advertised Arete id, 6553; see the playfield divergence below. |
-| `Unknown3` | **Observed / meaning unknown: 1000015** | Constant in compared player-weapon packets. |
-| `Unknown4` | **Observed / meaning unknown: 0** | Constant in compared player-weapon packets. |
-| `Unknown5` | **Confirmed formula: `0x100 + placement`** | Retail examples: backpack placement 66 gives 322; equipment placements 6 and 8 give 262 and 264. |
-| `Unknown6` | **Observed / meaning unknown: 8072** | Constant for player-owned inventory weapons in two captured playfields. |
+| `Playfield` (once `Unknown2`) | **Confirmed value source** | Retail uses the playfield instance. Local uses its currently advertised Arete id, 6553; see the playfield divergence below. |
+| `StateMachine` (once `Unknown3`) | **Confirmed: 1000015:0** | The shared item-message marker, constant in compared player-weapon packets. |
+| `InventoryId` (once `Unknown4`) | **Confirmed: 0 here** | Constant in compared player-weapon packets. |
+| `InventoryId`/`BodyLocation` (once `Unknown5`) | **Confirmed formula: `0x100 + placement`** | Retail examples: backpack placement 66 gives 322; equipment placements 6 and 8 give 262 and 264. |
+| Stat list count (once `Unknown6`) | **Confirmed: X3F1 count, 8072 = seven stats** | 10090 when nine; see WeaponItemFullUpdateMessage. |
 | `Flags` | **Confirmed: 0** | Same across compared packets. |
 | `ItemFlags` | **Confirmed for samples: template flags OR `0x400`** | Reproduces captured Worn Blade and other player-weapon values. |
 | Stat-id/value run | **Confirmed** | IDs 23, 701, 702, 703, 412 and 26 occur in the captured order with item/quality/count/ammo values. |
-| `Unknown7` | **Observed / meaning unknown: 0** | Constant in compared packets. |
+| Closing int (once `Unknown7`) | **Observed: 0** | Constant in compared packets. |
 | Graphical-client equip after fix | **Awaiting user test** | The headless client received matching identities and completed `MoveItem 69 -> 6`; this does not prove the renderer accepts the object. |
 
 ## Marcus Stone Gas Fires (`SimpleItemFullUpdate`)
@@ -56,8 +56,8 @@ Four rows are installed for playfield template 6553 and verified through the com
 | Message version | **Confirmed: 11** | Exact captured value. |
 | `Identitytype`, `Instance` | **Observed / meaning unknown: 0, 0** | Exact captured values. |
 | Coordinates and headings | **Confirmed** | Copied from the marked retail quest capture for all four fires. |
-| `Unknown1` | **Observed / meaning unknown: `1000015:0`** | Exact captured identity. |
-| `Unknown2`, `Unknown3`, trailing `Unknown` | **Observed / meaning unknown: 0, 111, 0** | Exact captured values. |
+| `Marker` (once `Unknown1`) | **Confirmed: `1000015:0`** | The shared item-message marker. |
+| `InventoryId`, `BodyLocation` (once `Unknown2`, `Unknown3`), trailing `Unknown` | **Observed: 0, 111, 0** | Exact captured values; the trailing field is still unnamed. |
 | Name | **Confirmed: empty** | Exact captured value. |
 | Stat count and order | **Confirmed: 8** | `Flags`, `StaticInstance`, `ACGItemLevel`, `ACGItemTemplateID`, `ACGItemTemplateID2`, `MultipleCount`, `AnimPlay`, `AnimPos`. Local previously merged seven extra template stats and sorted the list; both divergences are fixed. |
 | Stat values | **Confirmed** | `0x800A2221`, 295883, 1, 295883, 295883, 1, 0, 0. |

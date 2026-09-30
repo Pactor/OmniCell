@@ -251,11 +251,11 @@ namespace ZoneEngine.Core.MessageHandlers
 
                 message.Stats = Stats(
                     unchecked((uint)weapon.ItemFlags),
-                    weapon.Unknown6,
+                    weapon.StaticInstance,
                     weapon.QualityLevel,
                     weapon.ItemLowId,
                     weapon.ItemHighId,
-                    weapon.Unknown7,
+                    weapon.MultipleCount,
                     weapon.ItemDelay,
                     weapon.RechargeDelay,
                     weapon.Energy);

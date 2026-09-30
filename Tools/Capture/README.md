@@ -132,6 +132,23 @@ recording, one file each — which also covers a recording with two clients in i
 | `AreaExtract.cs` | a whole playfield out of the traffic — spawn points, shops, quests, dialogue — as SQL |
 | `QuestExtract.cs` | quest stages, what grants and finishes each, rewards, and conversations keyed by quest state — see `OmniCell/Documentation/Quest-System.md` |
 
+## Asking one question of a whole session
+
+`PcapDecode` takes a third argument. `--ordered` prints every message in
+capture order; `--only=` narrows that to the message types named, with their
+raw bytes and their nested records opened up:
+
+```
+binPcapDecode.exe <stream>.csv binSmokeLounge.AOtomation.Messaging.dll --only=TeamMemberInfo,AddPet
+```
+
+The suffix is optional, so `--only=AddPet` and `--only=AddPetMessage` are the
+same. Use it when chasing one question through a session rather than reading a
+transcript: a zone stream's full ordered dump runs to tens of thousands of
+lines, and the answer is usually four of them. Opening the nested records is
+what matters for the character updates — a pet's type lives inside
+`CharacterInfo`, which otherwise prints as nothing but its type name.
+
 `build.bat` compiles all of the above into `bin/`, as .NET 10 programs, with
 the .NET 10 SDK the server uses. Each tool has a project in `projects/` that
 compiles its one `.cs` file. Build `OmniCell.sln` in Release first — it copies

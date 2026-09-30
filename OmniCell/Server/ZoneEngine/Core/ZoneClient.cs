@@ -45,6 +45,9 @@ namespace ZoneEngine.Core
     using OmniCell.Core.Entities;
     using OmniCell.Core.Network;
     using OmniCell.Core.Playfields;
+
+    using ZoneEngine.Core.Missions;
+    using ZoneEngine.Core.Playfields;
     using OmniCell.Database.Dao;
     using OmniCell.Database.Entities;
     using OmniCell.Enums;
@@ -237,10 +240,28 @@ namespace ZoneEngine.Core
                 throw new Exception("Character " + charId + " not found.");
             }
 
+            // A mission's playfield is made when the mission is taken and is
+            // gone when the server restarts, so a character who logged out
+            // inside one has a playfield number that means nothing any more.
+            // Without this they arrive in an empty world with no way out of
+            // it - the client would sit there and the character would be
+            // stuck for good.
+            int playfield = character.Playfield;
+            if (!PlayfieldLoader.PFData.ContainsKey(playfield)
+                && !MissionPlayfields.IsMission(playfield))
+            {
+                LogUtil.Debug(
+                    DebugInfoDetail.Zoning,
+                    "Character " + charId + " was in playfield " + playfield
+                    + ", which is gone; putting them at " + MissionPlayfields.Escape + ".");
+                playfield = MissionPlayfields.Escape;
+                character.Playfield = playfield;
+            }
+
             // TODO: Save playfield type into Character table and use it accordingly
             IPlayfield pf =
                 this.server.PlayfieldById(
-                    new Identity() { Type = IdentityType.Playfield, Instance = character.Playfield });
+                    new Identity() { Type = IdentityType.Playfield, Instance = playfield });
 
             if (
                 Pool.Instance.GetObject<Character>(

@@ -169,6 +169,14 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization.Serializers
             object value, 
             PropertyMetaData propertyMetaData = null)
         {
+            // A string nobody assigned is null, and every path below either
+            // takes its Length or hands it to the writer. The Int32Terminated
+            // branch already coalesced; the others threw, which took 19
+            // message types down if the server built one without filling in
+            // every name, title or line of text. An empty string is what a
+            // null one means on the wire.
+            value = (string)value ?? string.Empty;
+
             if (propertyMetaData.Options.SerializeSize == ArraySizeType.NullTerminated)
             {
                 streamWriter.WriteStringNullTerminated((string)value);
@@ -228,6 +236,10 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization.Serializers
             {
                 valueExpression = Expression.Convert(valueExpression, this.type);
             }
+
+            // The same guard, in the compiled path that actually runs.
+            valueExpression = Expression.Coalesce(
+                valueExpression, Expression.Constant(string.Empty, typeof(string)));
 
             if (propertyMetaData.Options.SerializeSize == ArraySizeType.NullTerminated)
             {

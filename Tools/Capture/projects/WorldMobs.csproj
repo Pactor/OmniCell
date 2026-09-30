@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The rest is set in Directory.Build.props. Reads the message models directly, because it works on
+       SimpleCharFullUpdate by type, and SharpZipLib to inflate the server's half of a capture. -->
+  <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib"><HintPath>$(CaptureBin)ICSharpCode.SharpZipLib.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="SmokeLounge.AOtomation.Messaging"><HintPath>$(CaptureBin)SmokeLounge.AOtomation.Messaging.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+</Project>

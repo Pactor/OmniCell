@@ -318,6 +318,16 @@ internal static class AreaExtract
 
         public int Level, Health, Playfield, RunSpeed;
 
+        // Health is the most the character can have; HealthDamage is how far below that it stood.
+        // The Wounded Dockworkers at Arete Landing are all 32 with 20 of damage, lying on the
+        // ground (20260914-124401 s4).
+        public int HealthDamage;
+
+        // The movement mode, the first byte of the movement state in VehicleData (offset 12).
+        // Walking and running creatures say 1 to 3; the wounded lying about Arete Landing say 8,
+        // which is sitting on the ground.
+        public int MoveMode;
+
         public bool IsNpc;
 
         public uint Appearance;
@@ -349,12 +359,12 @@ internal static class AreaExtract
 
         public readonly Dictionary<int, int> Stats = new Dictionary<int, int>();
 
-        public int Unknown20, Unknown23;
+        public int DeathAnimation, MonsterData;
     }
 
     private sealed class Weapon
     {
-        public int Owner, Type, Instance, InventoryId, BodyLocation, ItemFlags, LowId, HighId, Quality, Unknown6, Unknown7;
+        public int Owner, Type, Instance, InventoryId, BodyLocation, ItemFlags, LowId, HighId, Quality, StaticInstance, MultipleCount;
 
         public int? ItemDelay, RechargeDelay, Energy;
     }
@@ -419,7 +429,7 @@ internal static class AreaExtract
 
         // QuestInfo fields whose values vary by quest.
         public int WireGiverType, WireGiverInstance, QuestCode, UnknownHash, Quality;
-        public int TimeLimit, Unknown20, Unknown21, Unknown22, Unknown23Type, Unknown23Instance;
+        public int TimeLimit, Unknown20, RequiredCount, Unknown22, Unknown23Type, Unknown23Instance;
         public int Unknown25, Unknown26;
 
         // The captured quest action. Its tracking instance is allocated at
@@ -960,6 +970,7 @@ internal static class AreaExtract
                       HW = (float)(Get(heading, "W") ?? 0f),
                       Level = Int(Get(body, "Level")),
                       Health = Int(Get(body, "Health")),
+                      HealthDamage = Int(Get(body, "HealthDamage")),
                       IsNpc = Get(body, "CharacterInfo") != null
                               && Get(body, "CharacterInfo").GetType().Name == "SimpleNpcInfo",
                       Appearance = Convert.ToUInt32(Get(Get(body, "Appearance"), "Value") ?? 0u),
@@ -978,6 +989,9 @@ internal static class AreaExtract
         npc.Race = Int(Get(appearance, "Race"));
 
         npc.RunSpeed = Int(Get(body, "RunSpeedBase"));
+
+        byte[] vehicle = Get(body, "VehicleData") as byte[];
+        npc.MoveMode = vehicle != null && vehicle.Length > 12 ? vehicle[12] : 0;
 
         object info = Get(body, "CharacterInfo");
         if (info != null && info.GetType().Name == "SimpleNpcInfo")
@@ -1113,8 +1127,8 @@ internal static class AreaExtract
                                 LowId = unchecked((int)Held(stats, StatAcgItemTemplateId)),
                                 HighId = unchecked((int)Held(stats, StatAcgItemTemplateId2)),
                                 Quality = unchecked((int)Held(stats, StatAcgItemLevel)),
-                                Unknown6 = unchecked((int)Held(stats, StatStaticInstance)),
-                                Unknown7 = unchecked((int)Held(stats, StatMultipleCount)),
+                                StaticInstance = unchecked((int)Held(stats, StatStaticInstance)),
+                                MultipleCount = unchecked((int)Held(stats, StatMultipleCount)),
                                 ItemDelay = Optional(stats, StatItemDelay),
                                 RechargeDelay = Optional(stats, StatRechargeDelay),
                                 Energy = Optional(stats, StatEnergy)
@@ -1369,8 +1383,10 @@ internal static class AreaExtract
             var arguments = (byte[])Get(effect, "Arguments");
             if (arguments != null && arguments.Length >= 24)
             {
-                corpse.Unknown20 = BitConverter.ToInt32(arguments, 8);
-                corpse.Unknown23 = BitConverter.ToInt32(arguments, 20);
+                // Big-endian, like the rest of the wire. Read little-endian they came out
+                // byte-swapped: 503 as -150929408, and the client drew no corpse from them.
+                corpse.DeathAnimation = (arguments[8] << 24) | (arguments[9] << 16) | (arguments[10] << 8) | arguments[11];
+                corpse.MonsterData = (arguments[20] << 24) | (arguments[21] << 16) | (arguments[22] << 8) | arguments[23];
             }
 
             break;
@@ -1410,7 +1426,7 @@ internal static class AreaExtract
                 string.Format(
                     CultureInfo.InvariantCulture,
                     "REPLACE INTO mobcorpses (MobName, CatMesh, TimeExist, Cash, CanChangeClothes,"
-                    + " MonsterScale, Breed, Sex, Race, HeadMesh, DeadTimer, Unknown20, Unknown23)"
+                    + " MonsterScale, Breed, Sex, Race, HeadMesh, DeadTimer, DeathAnimation, MonsterData)"
                     + " VALUES ('{0}', {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12});",
                     Sql(c.MobName),
                     StatOr(c, 42, 0),
@@ -1423,8 +1439,8 @@ internal static class AreaExtract
                     StatOr(c, 89, 1),
                     StatOr(c, 64, 0),
                     StatOr(c, 34, 60),
-                    c.Unknown20,
-                    c.Unknown23));
+                    c.DeathAnimation,
+                    c.MonsterData));
         }
 
         File.WriteAllLines(Path.Combine(outDir, "corpses.sql"), sql);
@@ -1477,6 +1493,29 @@ internal static class AreaExtract
     /// is 18.8.50 and the captures are 18.8.62; the area gained machines in
     /// between, and a machine with no statel has nowhere to stand until the
     /// playfield file is rebuilt.
+    ///
+    /// **The stock is keyed on the machine, not on where it stands.** A machine
+    /// is built from an item template - 297433 is "Basic ICC Chemical
+    /// Supplies" - and the same template is stood in playfield after playfield.
+    /// Keying the stock on the playfield would say that Fair Trade's chemical
+    /// shop and the one in the next building are different shops, which they
+    /// are not; keying it on the template says they are the same machine, which
+    /// is what the client data says too. Sixty-four machines were opened in the
+    /// 2026-09-29 recording of Fair Trade, all sixty-four of different
+    /// templates, and those templates are stood 190 times across 26 playfields
+    /// - all of Neutral Supermarket Advanced, sixteen of Andromeda's seventeen,
+    /// two in Arete Landing. One recording stocks every one of them.
+    ///
+    /// **What it does not do is split a machine's stock between catalogues.**
+    /// A statel asks for its stock with Shophash(hash, low, high), and some ask
+    /// several times: the three chemical shops all name 5ZD6 and differ only in
+    /// the quality bands they may sell from - 1 to 109 for the basic one, 110
+    /// to 209 for the advanced, 210 to 300 for the superior. That is why the
+    /// three hold different things while naming one catalogue. A few machines
+    /// name more than one catalogue at once - the basic armour shop names A2YA,
+    /// 2DSI and 9LOD - and nothing on the wire says which item came from which,
+    /// so the stock is recorded against the machine that sold it rather than
+    /// guessed apart.
     /// </remarks>
     private static void WriteVendors(
         string outDir,
@@ -1491,82 +1530,94 @@ internal static class AreaExtract
             return;
         }
 
-        List<StatelData> statels = VendingMachineStatels(statelFile, playfield);
-        if (statels == null)
-        {
-            Console.WriteLine("vendors   no playfield " + playfield + " in " + statelFile);
-            return;
-        }
+        List<StatelData> statels = VendingMachineStatels(statelFile, playfield) ?? new List<StatelData>();
 
         var sql = new List<string>
                   {
-                      "-- The vending machines of playfield " + playfield + " and what they sell,",
-                      "-- read out of the ShopUpdates the live server sent.",
+                      "-- What the vending machines in these recordings were selling, read out",
+                      "-- of the ShopUpdates the live server sent.",
                       "--",
                       "-- A machine is placed by the playfield file, not by this. What is here is",
-                      "-- the link from each one to its stock: a vendors row, the vendortemplate",
-                      "-- it names, and the shopinventorytemplates rows that template names.",
+                      "-- its stock: a vendortemplate row for the machine, and the",
+                      "-- shopinventorytemplates rows it names.",
                       "--",
-                      "-- The hash is the playfield and the statel's index, so it says which",
-                      "-- machine it belongs to and cannot collide with another playfield's. The",
-                      "-- three columns that hold one were seven and four characters wide, which",
-                      "-- is not enough for that, so they are widened here too.",
+                      "-- The hash is the item template the machine is built from, so it belongs",
+                      "-- to the machine rather than to any one playfield, and every playfield",
+                      "-- that stands the same machine is stocked by the same rows. The column",
+                      "-- that holds it was four characters wide, which is not enough for that,",
+                      "-- so it is widened here too.",
+                      "--",
+                      "-- **A shop rolls what is on its shelves.** The same machine opened twice",
+                      "-- in one recording held the same two dozen items at different qualities -",
+                      "-- item 43145 at QL 179 one time and 189 the other - and sometimes a",
+                      "-- different number of them. So what is written is every distinct item and",
+                      "-- quality the machine was ever seen holding, which is a little more than",
+                      "-- it shows at any one moment and is all of it measured.",
                       string.Empty,
-                      "ALTER TABLE vendors MODIFY `Hash` varchar(32) NOT NULL;",
                       "ALTER TABLE vendortemplate MODIFY `Hash` varchar(32) NOT NULL;",
                       "ALTER TABLE vendortemplate MODIFY `ShopInvHash` varchar(32) NOT NULL;",
-                      string.Empty,
-                      "DELETE FROM vendors WHERE Playfield = " + playfield + ";",
-                      "DELETE FROM vendortemplate WHERE Hash LIKE '" + playfield + "-%';",
-                      "DELETE FROM shopinventorytemplates WHERE Hash LIKE '" + playfield + "-%';",
                       string.Empty
                   };
 
-        int placed = 0;
         var homeless = new List<Static>();
         var bare = new List<StatelData>(statels);
+        var written = new HashSet<string>();
+        var stocked = new HashSet<int>();
+        var rows = new List<string>();
+
+        // Every shelf of every machine of a kind, gathered under the kind.
+        // A building is a zone of its own and so a connection of its own, so
+        // one walk through a shopping district is several recordings and the
+        // same machine turns up in more than one of them. Each sighting is
+        // one roll of that shop's shelves; together they are what it stocks.
+        var catalogue = new Dictionary<int, SortedDictionary<string, string>>();
 
         foreach (Static machine in statics.Values
             .Where(s => s.Kind == "VendingMachine" && shops.ContainsKey(s.Instance))
             .OrderBy(s => s.Instance))
         {
-            StatelData statel = Standing(machine, statels);
-            if (statel == null)
+            int template = Template(machine);
+            if (template == 0)
             {
                 homeless.Add(machine);
                 continue;
             }
 
-            bare.Remove(statel);
-            placed++;
+            StatelData statel = Standing(machine, statels);
+            if (statel != null)
+            {
+                bare.Remove(statel);
+            }
 
-            int index = (statel.Identity.Instance >> 16) & 0xff;
-            string hash = playfield + "-" + index;
-            int template = Template(machine);
+            SortedDictionary<string, string> shelves;
+            if (!catalogue.TryGetValue(template, out shelves))
+            {
+                shelves = new SortedDictionary<string, string>(StringComparer.Ordinal);
+                catalogue[template] = shelves;
+            }
 
-            sql.Add(
-                string.Format(
-                    CultureInfo.InvariantCulture,
-                    "INSERT INTO vendors (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW,"
-                    + " Name, TemplateId, Hash)"
-                    + " VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, '', {9}, '{10}');",
-                    (playfield << 16) | index,
-                    playfield,
-                    Str(statel.X),
-                    Str(statel.Y),
-                    Str(statel.Z),
-                    Str(statel.HeadingX),
-                    Str(statel.HeadingY),
-                    Str(statel.HeadingZ),
-                    Str(statel.HeadingW),
-                    template,
-                    hash));
+            foreach (string slot in shops[machine.Instance])
+            {
+                // Low, high and quality together: the same item at three
+                // qualities is three things on the shelf, which is how the
+                // implant machines are stocked, so quality is part of what
+                // makes a shelf its own.
+                shelves[slot] = slot;
+            }
+        }
+
+        foreach (KeyValuePair<int, SortedDictionary<string, string>> kind in
+            catalogue.OrderBy(k => k.Key))
+        {
+            string hash = MachineHash(kind.Key);
+            written.Add(hash);
+            stocked.Add(kind.Key);
 
             // The machine's name is the name of the item it is built from, and
             // the server already has a table of those. Taking it from there as
             // the row goes in beats copying it into this file and letting the
             // two drift.
-            sql.Add(
+            rows.Add(
                 string.Format(
                     CultureInfo.InvariantCulture,
                     "INSERT INTO vendortemplate (Hash, Lvl, Name, ItemTemplate, ShopInvHash, MinQl, MaxQl,"
@@ -1574,12 +1625,12 @@ internal static class AreaExtract
                     + " COALESCE((SELECT Name FROM itemnames WHERE Id = {1}), ''), {1}, '{0}', 1, 500,"
                     + " 0.05, 1.00, 161;",
                     hash,
-                    template));
+                    kind.Key));
 
-            foreach (string slot in shops[machine.Instance])
+            foreach (string slot in kind.Value.Values)
             {
                 string[] parts = slot.Split(':');
-                sql.Add(
+                rows.Add(
                     string.Format(
                         CultureInfo.InvariantCulture,
                         "INSERT INTO shopinventorytemplates (Hash, LowId, HighId, MinQl, MaxQl,"
@@ -1591,14 +1642,35 @@ internal static class AreaExtract
                         parts[2]));
             }
 
-            sql.Add(string.Empty);
+            rows.Add(string.Empty);
         }
+
+        int placed = catalogue.Count;
+        sql.AddRange(Reach(statelFile, stocked));
+        sql.Add(string.Empty);
+        sql.AddRange(Shadowed(statelFile, stocked));
+        sql.Add(string.Empty);
+
+        // Only the machines this recording actually opened are replaced. A
+        // delete by playfield would take out every other recording's work, and
+        // these rows are not the playfield's to begin with.
+        foreach (string hash in written.OrderBy(h => h, StringComparer.Ordinal))
+        {
+            sql.Add("DELETE FROM vendortemplate WHERE Hash = '" + hash + "';");
+            sql.Add("DELETE FROM shopinventorytemplates WHERE Hash = '" + hash + "';");
+        }
+
+        sql.Add(string.Empty);
+        sql.AddRange(rows);
 
         // Shopkeepers. A machine stands on a statel; a shopkeeper's stock has
         // no position because it goes wherever its character goes, and the
-        // character is named on the record.
+        // character is named on the record. That is also why a shopkeeper is
+        // still keyed on the playfield: the stock belongs to one character
+        // standing in one place, not to a machine that is stood everywhere.
         int carried = 0;
         var noCharacter = new List<Static>();
+        var keepers = new List<string>();
         foreach (Static shop in statics.Values
             .Where(s => s.Npc != 0 && shops.ContainsKey(s.Instance))
             .OrderBy(s => s.Instance))
@@ -1614,7 +1686,7 @@ internal static class AreaExtract
             int template = Template(shop);
             carried++;
 
-            sql.Add(
+            keepers.Add(
                 string.Format(
                     CultureInfo.InvariantCulture,
                     "INSERT INTO vendors (Id, Playfield, X, Y, Z, HeadingX, HeadingY, HeadingZ, HeadingW,"
@@ -1633,7 +1705,7 @@ internal static class AreaExtract
                     hash,
                     keeper.Instance));
 
-            sql.Add(
+            keepers.Add(
                 string.Format(
                     CultureInfo.InvariantCulture,
                     "INSERT INTO vendortemplate (Hash, Lvl, Name, ItemTemplate, ShopInvHash, MinQl, MaxQl,"
@@ -1646,7 +1718,7 @@ internal static class AreaExtract
             foreach (string slot in shops[shop.Instance])
             {
                 string[] parts = slot.Split(':');
-                sql.Add(
+                keepers.Add(
                     string.Format(
                         CultureInfo.InvariantCulture,
                         "INSERT INTO shopinventorytemplates (Hash, LowId, HighId, MinQl, MaxQl,"
@@ -1658,8 +1730,32 @@ internal static class AreaExtract
                         parts[2]));
             }
 
-            sql.Add("-- " + keeper.Name + " sells " + shops[shop.Instance].Count + " things.");
+            keepers.Add("-- " + keeper.Name + " sells " + shops[shop.Instance].Count + " things.");
+            keepers.Add(string.Empty);
+        }
+
+        // A shopkeeper's stock belongs to one character standing in one
+        // place, so its row needs the playfield that character is in - and
+        // the wire only carries the instance, so the real one has to be given
+        // with --as. Without it the rows would say playfield 0, which is not
+        // a place, so they are reported instead of written.
+        if (carried > 0 && playfield == 0)
+        {
+            sql.Add(
+                "-- NEEDS REVIEW: " + carried + " shopkeeper(s) here were not written. A shopkeeper"
+                + " belongs to a playfield and none was given; re-run with --as <playfield> for the"
+                + " recording they are in.");
+            carried = 0;
+        }
+
+        if (carried > 0)
+        {
+            sql.Add("ALTER TABLE vendors MODIFY `Hash` varchar(32) NOT NULL;");
+            sql.Add("DELETE FROM vendors WHERE Playfield = " + playfield + " AND Npc <> 0;");
+            sql.Add("DELETE FROM vendortemplate WHERE Hash LIKE '" + playfield + "-s%';");
+            sql.Add("DELETE FROM shopinventorytemplates WHERE Hash LIKE '" + playfield + "-s%';");
             sql.Add(string.Empty);
+            sql.AddRange(keepers);
         }
 
         foreach (Static shop in noCharacter)
@@ -1674,8 +1770,8 @@ internal static class AreaExtract
             sql.Add(
                 string.Format(
                     CultureInfo.InvariantCulture,
-                    "-- NEEDS REVIEW: a machine at {0:0.##},{1:0.##},{2:0.##} selling {3} things stands on"
-                    + " no statel. The playfield file predates it.",
+                    "-- NEEDS REVIEW: a machine at {0:0.##},{1:0.##},{2:0.##} selling {3} things says"
+                    + " it is built from no item, so there is nothing to file its stock under.",
                     machine.X,
                     machine.Y,
                     machine.Z,
@@ -1684,8 +1780,8 @@ internal static class AreaExtract
 
         File.WriteAllLines(Path.Combine(outDir, "vendors.sql"), sql);
         Console.WriteLine(
-            "vendors   " + placed + " machines stocked and " + carried + " shopkeepers; "
-            + homeless.Count + " machines with no statel to stand on, " + bare.Count
+            "vendors   " + placed + " kinds of machine stocked and " + carried + " shopkeepers; "
+            + homeless.Count + " machines built from no item, " + bare.Count
             + " statels nobody opened, " + noCharacter.Count + " shops whose character is not here");
     }
 
@@ -1746,6 +1842,125 @@ internal static class AreaExtract
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// What a machine's stock is filed under: the item template it is built
+    /// from.
+    /// </summary>
+    /// <remarks>
+    /// The T keeps it clear of the four-character hashes the shop tables
+    /// already hold - GenN, AdvN and the rest - which are names, not numbers,
+    /// and could otherwise be read as one.
+    /// </remarks>
+    private static string MachineHash(int template)
+    {
+        return "T" + template.ToString(CultureInfo.InvariantCulture);
+    }
+
+    /// <summary>
+    /// Every playfield these machines are stood in, written into the file as
+    /// a comment.
+    /// </summary>
+    /// <remarks>
+    /// Because the stock is filed under the machine, one recording reaches
+    /// further than the room it was made in, and the only honest way to say
+    /// how much further is to count it. Counted here rather than written down
+    /// by hand, so that regenerating the file cannot leave a stale claim in
+    /// its header.
+    /// </remarks>
+    private static List<string> Reach(string statelFile, HashSet<int> stocked)
+    {
+        var found = new List<string>();
+        int machines = 0;
+
+        foreach (PlayfieldData data in OmniCellContentPack.ReadPlayfields(statelFile))
+        {
+            int hit = data.Statels.Count(
+                s => s.Identity.Type == IdentityType.VendingMachine && stocked.Contains(s.TemplateId));
+            if (hit == 0)
+            {
+                continue;
+            }
+
+            machines += hit;
+            found.Add(
+                string.Format(
+                    CultureInfo.InvariantCulture,
+                    "--   playfield {0,-6} {1,3} of these machines   {2}",
+                    data.PlayfieldId,
+                    hit,
+                    data.Name));
+        }
+
+        var lines = new List<string>
+                    {
+                        string.Empty,
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "-- These {0} machines are stood {1} times, across {2} playfields:",
+                            stocked.Count,
+                            machines,
+                            found.Count)
+                    };
+
+        lines.AddRange(found);
+        return lines;
+    }
+
+    /// <summary>
+    /// The old hand-written vendors rows that stand on a machine this
+    /// recording measured, and would otherwise be believed instead of it.
+    /// </summary>
+    /// <remarks>
+    /// A vendors row wins over the machine's own stock, which is what lets a
+    /// shop with something particular about it be given its own. The rows
+    /// CellAO shipped were not measured, though, and three of them are on the
+    /// wrong machine: 77725713 calls Superior ICC Chemical Supplies "Basic
+    /// Tools", and 77791235 and 77791236 call the two engineering shops
+    /// "Advanced Tools" and "Superior Tools". Left alone they would serve the
+    /// wrong shop at three machines we have the real contents of.
+    ///
+    /// Only those are removed. The test is the shape of the hash: a row
+    /// written from a recording is keyed on its playfield and the statel it
+    /// stands on, so it has a dash in it, and one of those is evidence like
+    /// this file is. Arete Landing's own captured shops keep their rows and
+    /// keep winning.
+    /// </remarks>
+    private static List<string> Shadowed(string statelFile, HashSet<int> stocked)
+    {
+        var ids = new List<int>();
+        foreach (PlayfieldData data in OmniCellContentPack.ReadPlayfields(statelFile))
+        {
+            foreach (StatelData statel in data.Statels)
+            {
+                if (statel.Identity.Type != IdentityType.VendingMachine
+                    || !stocked.Contains(statel.TemplateId))
+                {
+                    continue;
+                }
+
+                ids.Add((data.PlayfieldId << 16) | ((statel.Identity.Instance >> 16) & 0xff));
+            }
+        }
+
+        if (ids.Count == 0)
+        {
+            return new List<string>();
+        }
+
+        return new List<string>
+               {
+                   "-- A vendors row is believed before the machine's own stock is. These"
+                   + " stand on",
+                   "-- a machine this recording measured and were written by hand rather than"
+                   + " read",
+                   "-- off the wire, so they go. A row keyed on a playfield and a statel - the"
+                   + " shape",
+                   "-- this tool writes - came from a recording too, and is left alone.",
+                   "DELETE FROM vendors WHERE Hash NOT LIKE '%-%' AND Id IN ("
+                   + string.Join(", ", ids.Distinct().OrderBy(i => i)) + ");"
+               };
     }
 
     /// <summary>
@@ -1943,7 +2158,7 @@ internal static class AreaExtract
                                 Seen = ++questsSeen,
                                 GiverId = Int(Get(Get(info, "QuestGiver"), "Instance")),
                                 GiverType = Int(Get(Get(info, "QuestGiver"), "Type")),
-                                Needs = Int(Get(info, "Unknown21")),
+                                Needs = Int(Get(info, "RequiredCount")),
                                 IconId = Int(Get(info, "MissionIconId")),
                                 CashReward = Int(Get(info, "CashReward")),
                                 ExperienceReward = Int(Get(info, "ExperienceReward")),
@@ -1954,7 +2169,7 @@ internal static class AreaExtract
                                 Quality = Int(Get(info, "Quality")),
                                 TimeLimit = Int(Get(info, "TimeLimit")),
                                 Unknown20 = Int(Get(info, "Unknown20")),
-                                Unknown21 = Int(Get(info, "Unknown21")),
+                                RequiredCount = Int(Get(info, "RequiredCount")),
                                 Unknown22 = Int(Get(info, "Unknown22")),
                                 Unknown23Type = Int(Get(Get(info, "Unknown23"), "Type")),
                                 Unknown23Instance = Int(Get(Get(info, "Unknown23"), "Instance")),
@@ -1968,7 +2183,7 @@ internal static class AreaExtract
                     new[]
                         {
                             Int(Get(reward, "LowId")), Int(Get(reward, "HighId")),
-                            Int(Get(reward, "Quality")), Int(Get(reward, "Unknown1"))
+                            Int(Get(reward, "Quality")), Int(Get(reward, "Unused"))
                         });
             }
 
@@ -2008,7 +2223,7 @@ internal static class AreaExtract
                 row.ActionUnknown14Instance = Int(Get(Get(action, "Unknown14"), "Instance"));
                 row.ActionDeadline = Int(Get(action, "Deadline"));
                 row.ActionUnknown16 = Int(Get(action, "Unknown16"));
-                row.ActionTrackingType = Int(Get(Get(action, "Unknown17"), "Type"));
+                row.ActionTrackingType = Int(Get(Get(action, "ActionTracking"), "Type"));
                 row.ActionPlayfieldType = Int(Get(Get(action, "Playfield"), "Type"));
                 row.ActionPlayfieldInstance = Int(Get(Get(action, "Playfield"), "Instance"));
                 row.ActionUnknown18 = Int(Get(action, "Unknown18"));
@@ -2068,10 +2283,10 @@ internal static class AreaExtract
         foreach (Quest q in questRows.Values.Where(q => selected.Contains(q.Id)).OrderBy(q => q.Id))
         {
             sql.Add(
-                "REPLACE INTO questwire (QuestId, Source, GiverType, GiverInstance, QuestCode, UnknownHash, Quality, TimeLimit, Unknown20, Unknown21, Unknown22, Unknown23Type, Unknown23Instance, Unknown25, Unknown26) VALUES ("
+                "REPLACE INTO questwire (QuestId, Source, GiverType, GiverInstance, QuestCode, UnknownHash, Quality, TimeLimit, Unknown20, RequiredCount, Unknown22, Unknown23Type, Unknown23Instance, Unknown25, Unknown26) VALUES ("
                 + JoinSql(
                     q.Id, "'Captured'", q.WireGiverType, q.WireGiverInstance, q.QuestCode, q.UnknownHash,
-                    q.Quality, q.TimeLimit, q.Unknown20, q.Unknown21, q.Unknown22, q.Unknown23Type,
+                    q.Quality, q.TimeLimit, q.Unknown20, q.RequiredCount, q.Unknown22, q.Unknown23Type,
                     q.Unknown23Instance, q.Unknown25, q.Unknown26)
                 + ");");
 
@@ -2094,7 +2309,7 @@ internal static class AreaExtract
             {
                 int[] reward = q.WireRewards[ordinal];
                 sql.Add(
-                    "REPLACE INTO questwirerewards (QuestId, Ordinal, LowId, HighId, Quality, Unknown1) VALUES ("
+                    "REPLACE INTO questwirerewards (QuestId, Ordinal, LowId, HighId, Quality, Unused) VALUES ("
                     + JoinSql(q.Id, ordinal, reward[0], reward[1], reward[2], reward[3]) + ");");
             }
 
@@ -2477,7 +2692,7 @@ internal static class AreaExtract
             AddStat(sql, n, writeAs, 0, n.CharacterFlags);      // flags
             AddStat(sql, n, writeAs, 1, n.Health);              // life
             AddStat(sql, n, writeAs, 4, n.Breed);               // breed
-            AddStat(sql, n, writeAs, 27, n.Health);             // health
+            AddStat(sql, n, writeAs, 27, Math.Max(1, n.Health - n.HealthDamage)); // health, as it was
             AddStat(sql, n, writeAs, 33, n.Side);               // side
             AddStat(sql, n, writeAs, 47, n.Fatness);            // fatness
             AddStat(sql, n, writeAs, 54, n.Level);              // level
@@ -2489,6 +2704,14 @@ internal static class AreaExtract
             AddStat(sql, n, writeAs, 360, n.MonsterScale);      // monsterscale
             AddStat(sql, n, writeAs, 455, n.Family);            // npcfamily
             AddStat(sql, n, writeAs, 673, n.VisualFlags);       // visualflags
+
+            // Only a resting pose is kept: sitting (8), sleeping (11), lounging (12). Anything else is
+            // how the creature was getting about at the moment it was seen, and the server decides
+            // that for itself.
+            if (n.MoveMode == 8 || n.MoveMode == 11 || n.MoveMode == 12)
+            {
+                AddStat(sql, n, writeAs, 173, n.MoveMode);      // currentmovementmode
+            }
 
             // What this kind of character hits for: what it was seen hitting
             // for if it was ever in a fight, and the table otherwise.
@@ -2531,7 +2754,7 @@ internal static class AreaExtract
                         CultureInfo.InvariantCulture,
                         "INSERT INTO mobspawnsweapons (SpawnId, Playfield, WeaponType, WeaponInstance,"
                         + " InventoryId, BodyLocation, ItemFlags, ItemLowId, ItemHighId, QualityLevel,"
-                        + " Unknown6, Unknown7, ItemDelay, RechargeDelay, Energy)"
+                        + " StaticInstance, MultipleCount, ItemDelay, RechargeDelay, Energy)"
                         + " VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14});",
                         n.Instance,
                         writeAs,
@@ -2543,8 +2766,8 @@ internal static class AreaExtract
                         w.LowId,
                         w.HighId,
                         w.Quality,
-                        w.Unknown6,
-                        w.Unknown7,
+                        w.StaticInstance,
+                        w.MultipleCount,
                         SqlNullable(w.ItemDelay),
                         SqlNullable(w.RechargeDelay),
                         SqlNullable(w.Energy)));
@@ -3575,7 +3798,7 @@ internal static class AreaExtract
     /// </summary>
     /// <remarks>
     /// Second choice. The count is on the wire - QuestInfo carries it in the
-    /// field this still calls Unknown21, which is 5 on "Terminate 5
+    /// field RequiredCount (once called Unknown21), which is 5 on "Terminate 5
     /// Malfunctioning Cleaning Robots" and 5 on "Alien Invasion" and zero on
     /// every quest that is not a number of anything - so the sentence is only
     /// read when the record does not say.

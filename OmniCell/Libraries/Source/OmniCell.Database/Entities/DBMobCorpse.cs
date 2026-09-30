@@ -115,15 +115,18 @@ namespace OmniCell.Database.Entities
         public int DeadTimer { get; set; }
 
         /// <summary>
-        /// A value in the message tail that varies by creature, 502 or 503 in
-        /// the captures. Not understood, carried through rather than dropped.
+        /// The death animation the creature fell with when it was captured: Parameter2 of the
+        /// CharacterAction 99 sent at the kill, 500 to 503, repeated in the corpse's effect
+        /// (20260914-124401 s4 4609 and 4620, both 503). A kill here sends the one actually played;
+        /// this is what the capture saw.
         /// </summary>
-        public int Unknown20 { get; set; }
+        public int DeathAnimation { get; set; }
 
         /// <summary>
-        /// As Unknown20. Moves with CatMesh - 297023 against a CatMesh of
-        /// 297018 - so it is probably the same model in another form.
+        /// The creature's MonsterData (stat 359), repeated in the corpse's effect: 297023 for a
+        /// Cleaning Robot, 165196 for Kneebreaker Alfonzo Rizzolo - the same as the spawn's own stat
+        /// for every creature that has both. Used when the dying character has no MonsterData.
         /// </summary>
-        public int Unknown23 { get; set; }
+        public int MonsterData { get; set; }
     }
 }

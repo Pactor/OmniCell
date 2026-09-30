@@ -35,6 +35,7 @@ namespace ZoneEngine.Core.MessageHandlers
 
     // TODO: Make this to EntityEnvent or something like this
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     using OmniCell.Core.Components;
@@ -44,6 +45,8 @@ namespace ZoneEngine.Core.MessageHandlers
     using OmniCell.Core.Items;
     using OmniCell.Core.Network;
     using OmniCell.Enums;
+
+    using Utility;
     using OmniCell.Interfaces;
     using OmniCell.ObjectManager;
 
@@ -51,6 +54,7 @@ namespace ZoneEngine.Core.MessageHandlers
     using SmokeLounge.AOtomation.Messaging.Messages.N3Messages;
 
     using ZoneEngine.Core.Loot;
+    using ZoneEngine.Core.Missions;
     using ZoneEngine.Core.Quests;
 
     #endregion
@@ -61,6 +65,62 @@ namespace ZoneEngine.Core.MessageHandlers
     public class GenericCmdMessageHandler : BaseMessageHandler<GenericCmdMessage, GenericCmdMessageHandler>
     {
         #region Inbound
+
+        /// <summary>
+        /// The handle the first bag a character opens is given. The captures
+        /// start here (112) and climb one per open.
+        /// </summary>
+        private const int FirstBagHandle = 112;
+
+        /// <summary>
+        /// The next open-bag handle to hand out, per character. A bag's contents
+        /// are addressed Backpack, (handle &lt;&lt; 16) | slot, so each open gets
+        /// its own high half.
+        /// </summary>
+        private static readonly Dictionary<ulong, int> NextBagHandle = new Dictionary<ulong, int>();
+
+        /// <summary>
+        /// The next Container instance to mint for a bag that has none yet.
+        /// Seeded high to stay clear of loaded item instances. Session-only for
+        /// now; persisting a bag's identity across logins is a later step.
+        /// </summary>
+        private static int nextBagInstance = 0x40000000;
+
+        private static readonly object bagLock = new object();
+
+        /// <summary>
+        /// Answers a Use on a held bag with the bag's contents, so the client
+        /// opens its window. See InventoryUpdateMessageHandler.SendForBag.
+        /// </summary>
+        private void OpenBag(ICharacter character, Item bag)
+        {
+            // A bag needs a Container identity for the client to address it and
+            // its contents. If it has none yet, mint one and keep it on the item
+            // so this open and any later move line up.
+            if (bag.Identity == null
+                || bag.Identity.Type != IdentityType.Container
+                || bag.Identity.Instance == 0)
+            {
+                int instance;
+                lock (bagLock)
+                {
+                    instance = ++nextBagInstance;
+                }
+
+                bag.Identity = new Identity { Type = IdentityType.Container, Instance = instance };
+            }
+
+            BackPackInventoryPage page = BagAccess.PageFor(character.Identity, bag.Identity);
+            int handle = BagAccess.Open(character.Identity, bag.Identity);
+
+            NLog.LogManager.GetCurrentClassLogger().Info(
+                "BAG OPEN character={0} bag={1} handle={2} items={3}",
+                character.Identity.Instance,
+                bag.Identity.ToString(true),
+                handle,
+                page.List().Count);
+            InventoryUpdateMessageHandler.Default.SendForBag(character, bag.Identity, handle, page);
+        }
 
         /// <summary>
         /// </summary>
@@ -79,9 +139,35 @@ namespace ZoneEngine.Core.MessageHandlers
                 case GenericCmdAction.Drop:
                     break;
                 case GenericCmdAction.Use:
+                    // A mission's objective lies on the floor and is not one
+                    // of the playfield's own fixtures, so it is answered here
+                    // before anything is looked up.
+                    if (MissionCompletion.OnTake(client.Controller.Character, message.Target[0]))
+                    {
+                        this.Acknowledge(client.Controller.Character, message);
+                        break;
+                    }
+
                     if (message.Target[0].Type == IdentityType.Inventory)
                     {
-                        client.Controller.UseItem(message.Target[0]);
+                        Item inventoryItem = client.Controller.Character.BaseInventory.GetItemInContainer(
+                            (int)IdentityType.Inventory,
+                            message.Target[0].Instance);
+
+                        // A bag is opened, not used. The client sends the same
+                        // Use it sends for any inventory item; the server tells a
+                        // bag apart and answers with its contents so the window
+                        // fills, rather than running a use that a bag has no
+                        // action for and doing nothing - which is why a bought
+                        // bag would not open.
+                        if (inventoryItem != null && inventoryItem.IsContainer())
+                        {
+                            this.OpenBag(client.Controller.Character, inventoryItem);
+                        }
+                        else
+                        {
+                            client.Controller.UseItem(message.Target[0]);
+                        }
 
                         // Acknowledge action
                         this.Acknowledge(client.Controller.Character, message);
@@ -93,12 +179,59 @@ namespace ZoneEngine.Core.MessageHandlers
                             // A corpse is a normal item container. Opening it
                             // sends its current entries; taking one uses the
                             // same ContainerAddItem path as bags and inventory.
-                            if (message.Target[0].Type == IdentityType.Corpse)
+                            // A mission chest is the same thing as a corpse to
+                            // open: use it, get its contents, use it again to
+                            // close. The one difference the recording shows is
+                            // that a chest gets no CharacterAction 110 on close,
+                            // which is what CorpseLootAccess sends for a corpse.
+                            if (message.Target[0].Type == IdentityType.Corpse
+                                || (int)message.Target[0].Type == MissionChests.ChestType)
                             {
                                 CorpseLoot corpse = Pool.Instance.GetObject<CorpseLoot>(
                                     client.Controller.Character.Playfield.Identity,
                                     message.Target[0]);
-                                if (corpse != null)
+                                if (corpse != null
+                                    && CorpseLootAccess.IsOpen(client.Controller.Character, corpse.Identity))
+                                {
+                                    // The second use closes it. A corpse closed with nothing left in it
+                                    // is taken away (see Playfield.CorpseEmptied).
+                                    CorpseLootAccess.ForgetCharacter(client.Controller.Character.Identity);
+
+                                    // Closing one is announced. Both a corpse
+                                    // and a chest get ActionMessage 102 with
+                                    // the container as its identity; a corpse
+                                    // gets CharacterAction 110 as well and a
+                                    // chest does not.
+                                    MissionChests.Closed(
+                                        client.Controller.Character,
+                                        corpse.Identity,
+                                        message.Target[0].Type == IdentityType.Corpse);
+                                    this.Acknowledge(client.Controller.Character, message);
+
+                                    // An emptied corpse is taken away. An
+                                    // emptied chest is not - the boxes in a
+                                    // mission building stay where they are once
+                                    // they have been gone through.
+                                    var playfield = client.Controller.Character.Playfield as OmniCell.Core.Playfields.Playfield;
+                                    if (playfield != null
+                                        && message.Target[0].Type == IdentityType.Corpse
+                                        && CorpseLootAccess.IsEmpty(corpse))
+                                    {
+                                        playfield.CorpseEmptied(corpse.Identity);
+                                    }
+                                }
+                                else if (corpse != null
+                                         && MissionChests.IsLocked(corpse.Identity))
+                                {
+                                    // Shut until it is picked. What retail
+                                    // answers a plain use on a locked box
+                                    // with was never captured - nobody tried
+                                    // it - so nothing is said beyond the
+                                    // acknowledgement, rather than inventing
+                                    // a refusal.
+                                    this.Acknowledge(client.Controller.Character, message);
+                                }
+                                else if (corpse != null)
                                 {
                                     int virtualSlot = CorpseLootAccess.Open(client.Controller.Character, corpse);
                                     InventoryUpdateMessageHandler.Default.SendForCorpse(
@@ -195,12 +328,83 @@ namespace ZoneEngine.Core.MessageHandlers
                             // spawns: the Merchant's Strongbox, where the thief hides (20260911-163012_s8
                             // #2372, #6729). Using it is a quest event all the same.
                             QuestManager.OnUse(client.Controller.Character, message.Target[0]);
+
+                            // The Surgery Clinic runs its own data and opens the implant window;
+                            // retail acknowledges the use (20260909-142713 s3 7195).
+                            if (SurgeryClinic.TryUse(client.Controller.Character, message.Target[0]))
+                            {
+                                this.Acknowledge(client.Controller.Character, message);
+                                break;
+                            }
+
+                            // A mission terminal opens its own window, and the
+                            // acknowledgement is what opens it: retail answers
+                            // the use and the client then asks for a roll of
+                            // its own accord (20260926-135805 s4, client #7
+                            // acknowledged as server #77, client #9 the roll).
+                            // There is nothing to run here - the terminal has
+                            // no statel behaviour and the work starts when
+                            // QuestAlternative arrives.
+                            if (message.Target[0].Type == IdentityType.MissionTerminal)
+                            {
+                                LogUtil.Debug(
+                                    DebugInfoDetail.Engine,
+                                    "Mission terminal " + message.Target[0].Instance + " used by "
+                                    + client.Controller.Character.Identity.Instance
+                                    + "; acknowledged, waiting for the roll.");
+                                this.Acknowledge(client.Controller.Character, message);
+                                break;
+                            }
+
                             client.Controller.UseStatel(message.Target[0]);
                         }
                     }
 
                     break;
                 case GenericCmdAction.UseItemOnItem:
+                    // A lock pick on a mission chest. The recording has it as
+                    // the echo, ActionMessage 115, the contents - picking also
+                    // opens it - and "Lockpicking successful." The pick is not
+                    // consumed; five picks, five successes, and it stayed.
+                    if (message.Target.Length > 1
+                        && MissionChests.Pick(
+                            client.Controller.Character, message.Target[0], message.Target[1]))
+                    {
+                        this.Acknowledge(client.Controller.Character, message);
+                        break;
+                    }
+
+                    // The objective used on a mission terminal is how a return
+                    // item mission is handed in - the inventory slot first and
+                    // the terminal second, which is what the capture shows.
+                    if (message.Target.Length > 1
+                        && MissionCompletion.OnHandIn(
+                            client.Controller.Character, message.Target[1]))
+                    {
+                        this.Acknowledge(client.Controller.Character, message);
+                        break;
+                    }
+
+                    // The same two targets, but the second is the fixture a
+                    // repair mission wants mending rather than a terminal.
+                    if (message.Target.Length > 1
+                        && MissionCompletion.OnRepair(
+                            client.Controller.Character, message.Target[0], message.Target[1]))
+                    {
+                        this.Acknowledge(client.Controller.Character, message);
+                        break;
+                    }
+
+                    // The Mission Key Duplicator on a mission key, which is
+                    // two inventory slots and nothing in the playfield.
+                    if (message.Target.Length > 1
+                        && MissionCompletion.OnDuplicate(
+                            client.Controller.Character, message.Target[0], message.Target[1]))
+                    {
+                        this.Acknowledge(client.Controller.Character, message);
+                        break;
+                    }
+
                     IItem item =
                         Pool.Instance.GetObject<IInventoryPage>(
                             new Identity()

@@ -43,7 +43,9 @@ namespace OmniCell.Core.Playfields
     using OmniCell.Core.Entities;
     using OmniCell.Core.Events;
     using OmniCell.Core.Functions;
+    using OmniCell.Core.Inventory;
     using OmniCell.Core.Items;
+    using OmniCell.Core.Missions;
     using OmniCell.Core.Network;
     using OmniCell.Core.NPCHandler;
     using OmniCell.Core.Statels;
@@ -70,6 +72,7 @@ namespace OmniCell.Core.Playfields
     using ZoneEngine.Core.InternalMessages;
     using ZoneEngine.Core.KnuBot;
     using ZoneEngine.Core.Loot;
+    using ZoneEngine.Core.Missions;
     using ZoneEngine.Core.MessageHandlers;
     using ZoneEngine.Core.Quests;
     using ZoneEngine.Core.Packets;
@@ -154,12 +157,55 @@ namespace OmniCell.Core.Playfields
             this.memBusDisposeContainer.Add(this.playfieldBus.Subscribe<IMExecuteFunction>(this.ExecuteFunction));
             this.heartBeat = new Timer(this.HeartBeatTimer, null, HeartBeatMilliseconds, 0);
 
-            this.statels = PlayfieldLoader.PFData[this.Identity.Instance].Statels;
-            this.LoadMobSpawnWeapons(playfieldIdentity);
-            this.LoadMobSpawnMeshes(playfieldIdentity);
-            this.LoadMobSpawns(playfieldIdentity);
-            this.LoadVendors(playfieldIdentity);
-            this.LoadStaticDynels(playfieldIdentity);
+            // A mission's playfield is not in the content pack and never
+            // will be: it is a pool of rooms and a list of placements, made
+            // when somebody took the mission. Everything below reads the pack
+            // or the database by playfield number, and for a mission there is
+            // nothing in either - so it starts empty and the mission fills it.
+            PlayfieldData data;
+            this.Generated = !PlayfieldLoader.PFData.TryGetValue(this.Identity.Instance, out data);
+            this.statels = this.Generated ? new List<StatelData>() : data.Statels;
+
+            if (!this.Generated)
+            {
+                this.LoadMobSpawnWeapons(playfieldIdentity);
+                this.LoadMobSpawnMeshes(playfieldIdentity);
+                this.LoadMobSpawns(playfieldIdentity);
+                this.LoadVendors(playfieldIdentity);
+                this.LoadStaticDynels(playfieldIdentity);
+            }
+            else
+            {
+                MissionOffer mission = MissionPlayfields.Of(this.Identity.Instance);
+                if (mission != null)
+                {
+                    LogUtil.Debug(
+                        DebugInfoDetail.Engine,
+                        "Mission playfield " + this.Identity.Instance + " spawned "
+                        + MissionSpawner.Fill(this, mission) + " monsters and stocked "
+                        + MissionChests.Fill(this, mission) + " chests.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Whether this playfield was made at run time rather than read out of
+        /// the content pack - which today means it is a mission's.
+        /// </summary>
+        public bool Generated { get; private set; }
+
+        /// <summary>
+        /// Where a character spawned here belongs, so it can be put back.
+        /// </summary>
+        /// <remarks>
+        /// The spawn point map is private and filled while the playfield loads
+        /// from the database. A mission's monsters are made after that and by
+        /// somebody else, so they need a way in.
+        /// </remarks>
+        public void RememberSpawn(Identity character, Coordinate where, Quaternion heading)
+        {
+            this.spawnPoint[character] = where;
+            this.spawnHeading[character] = heading;
         }
 
         /// <summary>
@@ -240,6 +286,17 @@ namespace OmniCell.Core.Playfields
             new Dictionary<Identity, OmniCell.Core.Vector.Quaternion>();
 
         /// <summary>
+        /// The health each spawn point makes its character with, where that is less than its most.
+        /// </summary>
+        /// <remarks>
+        /// The Wounded Dockworkers of Arete Landing are 32 health with 20 of it missing, and they stay
+        /// that way: the live server tells everyone nearby, once a second, that each of them is on 12
+        /// (20260914-124401 s4, 12:47:49 to 12:48:19). Regeneration brings a character back up to this
+        /// and no further. Characters that spawn whole are not in here and heal all the way.
+        /// </remarks>
+        private readonly Dictionary<Identity, int> spawnHealth = new Dictionary<Identity, int>();
+
+        /// <summary>
         /// When each body should be taken away, and when its spawn point should
         /// produce another.
         /// </summary>
@@ -247,6 +304,42 @@ namespace OmniCell.Core.Playfields
             new Dictionary<Identity, DateTime>();
 
         private readonly Dictionary<Identity, DateTime> risesAt = new Dictionary<Identity, DateTime>();
+
+        /// <summary>
+        /// The corpses lying in this playfield: where, what a client is told about each, and when
+        /// each is taken away.
+        /// </summary>
+        private readonly Dictionary<Identity, LyingCorpse> corpses = new Dictionary<Identity, LyingCorpse>();
+
+        private sealed class LyingCorpse
+        {
+            public Coordinate Where;
+
+            public MessageBody[] Introduction;
+
+            public DateTime GoesAt;
+        }
+
+        /// <summary>
+        /// How long a corpse lies there if nobody empties it.
+        /// </summary>
+        /// <remarks>
+        /// Three minutes. Across the fifteen retail recordings, 1143 corpses: the ones nobody opened,
+        /// and the ones opened and left with something in them, go 181.7 to 186.9 seconds after they
+        /// appeared - over two hundred of them, and nothing lived longer. Anything shorter was taken
+        /// away because the player walked off or emptied it.
+        /// </remarks>
+        private const int CorpseSeconds = 180;
+
+        /// <summary>
+        /// How long an emptied corpse stays once its looter closes it.
+        /// </summary>
+        /// <remarks>
+        /// The client uses the corpse a second time to close it. If nothing is left in it the live
+        /// server takes it away 0.8 to 1.8 seconds later (20260915-182305, corpses 16877583, 16877577,
+        /// 16877573, 16877569); one with something left in it stays for its three minutes.
+        /// </remarks>
+        private static readonly TimeSpan EmptiedCorpseLingers = TimeSpan.FromSeconds(1);
 
         /// <summary>
         /// The lock over the two above.
@@ -463,6 +556,22 @@ namespace OmniCell.Core.Playfields
         }
 
         /// <summary>
+        /// Where a mission can be entered in this playfield.
+        /// </summary>
+        /// <remarks>
+        /// The MissionEntrance statels, which is what a mission offer names.
+        /// A captured offer read playfield 687 at 760.71, 51.76, 1154.49 and
+        /// the pack has an entrance at 761, 52, 1154 - the same door.
+        /// </remarks>
+        public IEnumerable<Coordinate> MissionEntrances()
+        {
+            return this.statels
+                .Where(s => s.Identity.Type == IdentityType.MissionEntrance)
+                .Select(s => s.Coord())
+                .ToList();
+        }
+
+        /// <summary>
         /// The meshes of the characters spawned in this playfield, by spawn id.
         /// </summary>
         /// <remarks>
@@ -601,6 +710,18 @@ namespace OmniCell.Core.Playfields
                         mob.HeadingY,
                         mob.HeadingZ,
                         mob.HeadingW);
+
+                    // Whether it wanders, and whether it picks fights: see NpcLife.
+                    NpcLife.Spawned(cmob, new Coordinate { x = mob.X, y = mob.Y, z = mob.Z });
+
+                    int health = cmob.Stats[StatIds.health].Value;
+                    if (health > 0 && health < cmob.Stats[StatIds.life].Value)
+                    {
+                        lock (this.spawnHealth)
+                        {
+                            this.spawnHealth[cmob.Identity] = health;
+                        }
+                    }
                 }
 
                 // What the live server had this character say, if a capture
@@ -973,6 +1094,26 @@ namespace OmniCell.Core.Playfields
                         player.Controller.Client.SendCompressed(DespawnMessageHandler.Default.Create(subject.Identity));
                     }
                 }
+
+                // Corpses, the same way: told on coming within reach, told to forget past it.
+                List<KeyValuePair<Identity, LyingCorpse>> lying;
+                lock (this.deadLock)
+                {
+                    lying = this.corpses.ToList();
+                }
+
+                foreach (KeyValuePair<Identity, LyingCorpse> corpse in lying)
+                {
+                    double distance = from.Distance2D(corpse.Value.Where);
+                    if (distance <= VicinityRadius)
+                    {
+                        this.IntroduceCorpse(player, corpse.Key, corpse.Value);
+                    }
+                    else if (distance > ForgetRadius)
+                    {
+                        this.ForgetCorpse(player, corpse.Key);
+                    }
+                }
             }
         }
 
@@ -1007,6 +1148,92 @@ namespace OmniCell.Core.Playfields
         }
 
         /// <summary>
+        /// A corpse was left in this playfield; it goes in three minutes unless emptied first.
+        /// </summary>
+        /// <remarks>
+        /// Whoever could see the body is told about the corpse at once. Anybody else is told by the
+        /// streaming pass when they come within reach, as for characters: the live server sends a
+        /// corpse again to a player who walks back to it.
+        /// </remarks>
+        public void CorpseLeft(ICharacter victim, Identity corpse, params MessageBody[] introduction)
+        {
+            var lying = new LyingCorpse
+                        {
+                            Where = new Coordinate(victim.RawCoordinates),
+                            Introduction = introduction,
+                            GoesAt = DateTime.UtcNow + TimeSpan.FromSeconds(CorpseSeconds)
+                        };
+
+            lock (this.deadLock)
+            {
+                this.corpses[corpse] = lying;
+            }
+
+            foreach (Character player in this.PlayersHere())
+            {
+                if (this.Knows(player.Identity, victim.Identity)
+                    || player.Identity == victim.Identity
+                    || new Coordinate(player.RawCoordinates).Distance2D(lying.Where) <= VicinityRadius)
+                {
+                    this.IntroduceCorpse(player, corpse, lying);
+                }
+            }
+        }
+
+        private List<Character> PlayersHere()
+        {
+            return Pool.Instance.GetAll<Character>((int)IdentityType.CanbeAffected)
+                .Where(x => x != null && x.InPlayfield(this.Identity) && x.Controller != null
+                            && x.Controller.Client != null && !x.EnteringWorld)
+                .ToList();
+        }
+
+        private void IntroduceCorpse(Character player, Identity corpse, LyingCorpse lying)
+        {
+            lock (this.introducedLock)
+            {
+                if (!this.Known(player.Identity).Add(corpse))
+                {
+                    return;
+                }
+            }
+
+            foreach (MessageBody message in lying.Introduction)
+            {
+                player.Controller.Client.SendCompressed(message);
+            }
+        }
+
+        private void ForgetCorpse(Character player, Identity corpse)
+        {
+            lock (this.introducedLock)
+            {
+                if (!this.Known(player.Identity).Remove(corpse))
+                {
+                    return;
+                }
+            }
+
+            player.Controller.Client.SendCompressed(DespawnMessageHandler.Default.Create(corpse));
+        }
+
+        /// <summary>
+        /// Somebody closed a corpse with nothing left in it: it goes almost at once.
+        /// </summary>
+        public void CorpseEmptied(Identity corpse)
+        {
+            lock (this.deadLock)
+            {
+                DateTime soon = DateTime.UtcNow + EmptiedCorpseLingers;
+                LyingCorpse lying;
+                if (this.corpses.TryGetValue(corpse, out lying) && lying.GoesAt > soon)
+                {
+                    lying.GoesAt = soon;
+                }
+            }
+        }
+
+        /// <summary>
         /// Take away the bodies that have lain long enough, and put back the
         /// characters whose spawn points are due.
         /// </summary>
@@ -1027,9 +1254,27 @@ namespace OmniCell.Core.Playfields
         {
             List<Identity> bodies = null;
             List<Identity> rising = null;
+            List<Identity> corpses = null;
 
             lock (this.deadLock)
             {
+                foreach (var due in this.corpses)
+                {
+                    if (due.Value.GoesAt <= DateTime.UtcNow)
+                    {
+                        corpses = corpses ?? new List<Identity>();
+                        corpses.Add(due.Key);
+                    }
+                }
+
+                if (corpses != null)
+                {
+                    foreach (Identity gone in corpses)
+                    {
+                        this.corpses.Remove(gone);
+                    }
+                }
+
                 foreach (var due in this.bodyGoesAt)
                 {
                     if (due.Value <= DateTime.UtcNow)
@@ -1065,22 +1310,28 @@ namespace OmniCell.Core.Playfields
                 }
             }
 
+            if (corpses != null)
+            {
+                List<Character> players = this.PlayersHere();
+                foreach (Identity corpse in corpses)
+                {
+                    // The corpse and its loot go together, so nothing can be taken out of a corpse
+                    // the client has been told is gone. Only those who were told about it are told.
+                    foreach (Character player in players)
+                    {
+                        this.ForgetCorpse(player, corpse);
+                    }
+
+                    this.Forget(corpse);
+                    CorpseLifecycle.Expire(this.Identity, corpse);
+                }
+            }
+
             if (bodies != null)
             {
                 foreach (Identity gone in bodies)
                 {
-                    var corpse = new Identity
-                                 {
-                                     Type = IdentityType.Corpse,
-                                     Instance = gone.Instance
-                                 };
-
-                    // The body and its transient inventory are separate pooled
-                    // identities. Expire both at the same point; otherwise the
-                    // invisible inventory remains addressable until this spawn
-                    // dies again.
-                    this.Announce(DespawnMessageHandler.Default.Create(corpse));
-                    CorpseLifecycle.Expire(this.Identity, corpse);
+                    // Only the fallen character. Its corpse is a separate thing on its own clock.
                     this.Despawn(gone);
                 }
             }
@@ -1101,7 +1352,7 @@ namespace OmniCell.Core.Playfields
                 // Whole again, and back where the spawn point put it. The
                 // streaming pass introduces it to whoever is near enough on its
                 // next turn - there is nothing to send from here.
-                character.Stats[StatIds.health].Value = character.Stats[StatIds.life].Value;
+                character.Stats[StatIds.health].Value = this.SpawnHealth(character);
                 character.Stats[StatIds.currentnano].Value = character.Stats[StatIds.maxnanoenergy].Value;
 
                 Coordinate where;
@@ -1140,6 +1391,10 @@ namespace OmniCell.Core.Playfields
                     known.Remove(gone);
                 }
             }
+
+            // Which statels they were standing on goes with them, so somebody
+            // who leaves through a door and comes back walks into it again.
+            this.steppedOn.Remove(gone);
         }
 
         /// <summary>
@@ -1231,6 +1486,8 @@ namespace OmniCell.Core.Playfields
             // character that is no longer in the playfield.
             Combat.Forget(identity);
             NanoCasting.Forget(identity);
+            SurgeryClinic.Forget(identity);
+            WoundedCharacters.Forget(identity);
             QuestManager.Forget(identity);
             Pets.Forget(identity);
             CorpseLootAccess.ForgetCharacter(identity);
@@ -1477,7 +1734,9 @@ namespace OmniCell.Core.Playfields
 
             if (newPlayfield == null)
             {
-                newPlayfield = new Playfield(this.server, playfield);
+                newPlayfield = new Playfield(
+                    this.server,
+                    new Identity { Type = IdentityType.Playfield, Instance = playfield.Instance });
             }
 
             dynel.Playfield = newPlayfield;
@@ -1777,27 +2036,294 @@ namespace OmniCell.Core.Playfields
         #region Methods
 
         /// <summary>
+        /// Standing on a statel, for each character, so that walking onto one
+        /// is told apart from standing on it.
         /// </summary>
-        /// <param name="dynel">
-        /// </param>
+        private readonly Dictionary<Identity, HashSet<int>> steppedOn =
+            new Dictionary<Identity, HashSet<int>>();
+
+        /// <summary>
+        /// How close a character has to get for a statel to notice them.
+        /// </summary>
+        private const float StatelReach = 2.0f;
+
+        /// <summary>
+        /// How far they have to get away again before it will notice them
+        /// twice.
+        /// </summary>
+        /// <remarks>
+        /// Wider than the reach on purpose, and wider than the two and a half
+        /// metres a door puts you down at. See
+        /// <see cref="CheckStatelCollision"/>.
+        /// </remarks>
+        private const float StatelRelease = 4.0f;
+
+        /// <summary>
+        /// A character standing on a statel that does something.
+        /// </summary>
+        /// <remarks>
+        /// This ran every tick and fired every tick, which is not what a door
+        /// is: walking into one is an event, standing in its doorway is not.
+        /// The two are told apart here by remembering what each character is
+        /// already standing on, and the difference is the whole of why you
+        /// could not stay inside a building.
+        ///
+        /// Going in, TeleportProxy puts you two and a half metres from the
+        /// door on the other side, and PlayfieldLoader has given that door an
+        /// ExitProxyPlayfield so you can walk back out of it. Two and a half
+        /// is only half a metre outside the two this fires at, so the first
+        /// step in any direction that was not away - or the client settling
+        /// your position after the zone - put you back on the door and it sent
+        /// you straight out again. Out in Borealis you landed two and a half
+        /// metres from the door you came in by, which sent you back. That is
+        /// the bouncing.
+        ///
+        /// So a statel has to let go of you before it can take you again, and
+        /// it lets go at <see cref="StatelRelease"/> rather than at
+        /// <see cref="StatelReach"/> - you have to actually walk away from a
+        /// door, not just jitter at the edge of it. A character seen here for
+        /// the first time, which is what arriving in a playfield looks like,
+        /// keeps whatever it is standing on without firing it: you are put
+        /// down next to a door, you did not walk into it.
+        /// </remarks>
         private void CheckStatelCollision(ICharacter dynel)
         {
+            HashSet<int> standing;
+            bool arrived = !this.steppedOn.TryGetValue(dynel.Identity, out standing);
+            if (arrived)
+            {
+                standing = new HashSet<int>();
+                this.steppedOn[dynel.Identity] = standing;
+            }
+
             foreach (StatelData sd in this.statels)
             {
+                if (!sd.Events.Any(
+                        x => (x.EventType == EventType.OnCollide) || (x.EventType == EventType.OnEnter)
+                             || (x.EventType == EventType.OnTargetInVicinity)))
+                {
+                    continue;
+                }
+
+                double distance = sd.Coord().Distance3D(dynel.Coordinates());
+                if (distance >= StatelRelease)
+                {
+                    standing.Remove(sd.Identity.Instance);
+                    continue;
+                }
+
+                if (arrived)
+                {
+                    // Put down here rather than walked here. Remember it, so
+                    // the door that just let you in does not throw you out.
+                    standing.Add(sd.Identity.Instance);
+                    continue;
+                }
+
+                if (distance >= StatelReach || !standing.Add(sd.Identity.Instance))
+                {
+                    continue;
+                }
+
+                LogUtil.Debug(DebugInfoDetail.Statel, "Stepped on Statel " + sd.Identity.ToString(true));
                 foreach (Event ev in
                     sd.Events.Where(
                         x =>
                             (x.EventType == EventType.OnCollide) || (x.EventType == EventType.OnEnter)
                             || (x.EventType == EventType.OnTargetInVicinity)))
                 {
-                    if (sd.Coord().Distance3D(dynel.Coordinates()) < 2.0f)
+                    LogUtil.Debug(DebugInfoDetail.Statel, ev.ToString());
+                    ev.Perform(dynel, sd);
+                }
+            }
+        }
+
+        /// <summary>
+        /// How close a character has to get to a mission door for it to take
+        /// them, in metres.
+        /// </summary>
+        /// <remarks>
+        /// The same two metres a statel's own collision events use. A mission
+        /// is entered by walking into the door rather than by clicking it -
+        /// the 2026-09-26 capture has no Use on the entrance at all, just the
+        /// teleport - so something has to notice the walking.
+        /// </remarks>
+        private const float MissionDoorReach = 2.0f;
+
+        /// <summary>
+        /// A character at a mission door, going in or coming out.
+        /// </summary>
+        /// <remarks>
+        /// Outside, the doors are the playfield's own MissionEntrance statels
+        /// - 2,235 of them across the pack - and which mission one leads to
+        /// depends on the key in the character's pocket rather than on the
+        /// door. Inside, there is one door, the socket the building was left
+        /// open on, and it leads back to wherever they came in from.
+        /// </remarks>
+        /// <summary>
+        /// Whether the player is standing at the entrance this mission names.
+        /// </summary>
+        /// <remarks>
+        /// The offer carries a playfield and a position, and together they
+        /// are a real MissionEntrance statel: a captured offer read playfield
+        /// 687 at 760.71, 51.76, 1154.49 and the pack has an entrance at 761,
+        /// 52, 1154.
+        ///
+        /// An offer whose position was never set - one taken before this
+        /// server filled them in - has nothing to check against, and is let
+        /// through at any entrance rather than being made unenterable.
+        /// </remarks>
+        private bool AtItsOwnEntrance(MissionOffer mission, ICharacter dynel)
+        {
+            bool nowhere = mission.X == 0f && mission.Y == 0f && mission.Z == 0f;
+            if (!nowhere && mission.Playfield != this.Identity.Instance)
+            {
+                return false;
+            }
+
+            Coordinate here = dynel.Coordinates();
+            foreach (Coordinate door in this.MissionEntrances())
+            {
+                if (door.Distance3D(here) >= MissionDoorReach)
+                {
+                    continue;
+                }
+
+                if (nowhere)
+                {
+                    return true;
+                }
+
+                double dx = door.x - mission.X;
+                double dy = door.y - mission.Y;
+                double dz = door.z - mission.Z;
+                if (Math.Sqrt((dx * dx) + (dy * dy) + (dz * dz)) < MissionDoorSame)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// How close two positions have to be to be the same door.
+        /// </summary>
+        /// <remarks>
+        /// The offer's position and the statel's agree to within a metre in
+        /// the captures - 760.71 against 761 - because one of them is rounded.
+        /// </remarks>
+        private const float MissionDoorSame = 2.0f;
+
+        private void CheckMissionDoor(ICharacter dynel)
+        {
+            var body = dynel as Dynel;
+            if (body == null || body.IsTeleporting || body.DoNotDoTimers)
+            {
+                return;
+            }
+
+            if (this.Generated)
+            {
+                this.CheckMissionExit(dynel);
+                return;
+            }
+
+            // The mission names its own door - playfield and position both -
+            // and that is the only one it opens at. Any entrance used to do,
+            // which let a mission taken for one building be walked into from
+            // a door on the other side of town.
+            MissionOffer mission = MissionPlayfields.OpenedBy(MissionKeysHeldBy(dynel));
+            if (mission != null && !this.AtItsOwnEntrance(mission, dynel))
+            {
+                mission = null;
+            }
+
+            if (mission == null || mission.Built == null)
+            {
+                return;
+            }
+
+            Coordinate here = dynel.Coordinates();
+            MissionPlayfields.Remember(
+                dynel.Identity, this.Identity.Instance, here.x, here.y, here.z);
+
+            float x, y, z;
+            MissionBuilding.Landing(mission.Built, out x, out y, out z);
+            this.Teleport(
+                (Dynel)dynel,
+                new Coordinate(x, y, z),
+                dynel.RawHeading,
+                new Identity
+                {
+                    Type = IdentityType.Playfield,
+                    Instance = mission.PlayfieldInstance
+                });
+        }
+
+        /// <summary>
+        /// The way out of a mission is the door it was entered by.
+        /// </summary>
+        private void CheckMissionExit(ICharacter dynel)
+        {
+            MissionOffer mission = MissionPlayfields.Of(this.Identity.Instance);
+            if (mission == null || mission.Built == null)
+            {
+                return;
+            }
+
+            Coordinate here = dynel.Coordinates();
+            var door = new Coordinate(
+                mission.Built.Layout.EntranceX,
+                MissionBuilding.GroundHeight,
+                mission.Built.Layout.EntranceZ);
+            if (door.Distance3D(here) >= MissionDoorReach)
+            {
+                return;
+            }
+
+            int playfield;
+            float x, y, z;
+            if (!MissionPlayfields.Recall(dynel.Identity, out playfield, out x, out y, out z))
+            {
+                // Nothing remembered - a relog inside, most likely. Out is
+                // better than stuck, so they go to the escape playfield at
+                // whatever the client last had them at.
+                x = here.x;
+                y = here.y;
+                z = here.z;
+            }
+
+            this.Teleport(
+                (Dynel)dynel,
+                new Coordinate(x, y, z),
+                dynel.RawHeading,
+                new Identity { Type = IdentityType.Playfield, Instance = playfield });
+        }
+
+        /// <summary>
+        /// The instances of the mission keys a character is carrying.
+        /// </summary>
+        private static IEnumerable<int> MissionKeysHeldBy(ICharacter dynel)
+        {
+            var keys = new List<int>();
+            if (dynel.BaseInventory == null)
+            {
+                return keys;
+            }
+
+            foreach (var page in dynel.BaseInventory.Pages)
+            {
+                foreach (var slot in page.Value.List())
+                {
+                    if (slot.Value != null && slot.Value.LowID == MissionKeys.Template)
                     {
-                        LogUtil.Debug(DebugInfoDetail.Statel, "Stepped on Statel " + sd.Identity.ToString(true));
-                        LogUtil.Debug(DebugInfoDetail.Statel, ev.ToString());
-                        ev.Perform(dynel, sd);
+                        keys.Add(slot.Value.Identity.Instance);
                     }
                 }
             }
+
+            return keys;
         }
 
         /// <summary>
@@ -1842,6 +2368,23 @@ namespace OmniCell.Core.Playfields
         }
 
         /// <summary>
+        /// The health a character is whole at: what its spawn point made it with, or its most.
+        /// </summary>
+        public int SpawnHealth(ICharacter character)
+        {
+            int health;
+            lock (this.spawnHealth)
+            {
+                if (this.spawnHealth.TryGetValue(character.Identity, out health))
+                {
+                    return health;
+                }
+            }
+
+            return character.Stats[StatIds.life].Value;
+        }
+
+        /// <summary>
         /// </summary>
         /// <param name="sender">
         /// </param>
@@ -1851,6 +2394,13 @@ namespace OmniCell.Core.Playfields
             dynels =
                 Pool.Instance.GetAll<ICharacter>((int)IdentityType.CanbeAffected)
                     .Where(xx => !xx.DoNotDoTimers && xx.InPlayfield(this.Identity));
+
+            // The players here, once per beat, for creatures deciding whether to pick a fight.
+            List<ICharacter> players = Pool.Instance.GetAll<Character>((int)IdentityType.CanbeAffected)
+                .Where(x => x != null && x.InPlayfield(this.Identity) && x.Controller != null
+                            && x.Controller.Client != null && !x.EnteringWorld)
+                .Cast<ICharacter>()
+                .ToList();
 
             foreach (ICharacter dynel in dynels)
             {
@@ -1890,7 +2440,11 @@ namespace OmniCell.Core.Playfields
                         int interval = healInterval.Value;
                         int delta = dynel.Stats[StatIds.healdelta].Value;
                         int before = dynel.Stats[StatIds.health].Value;
-                        dynel.Stats[StatIds.health].Value += delta;
+                        int ceiling = this.SpawnHealth(dynel);
+                        if (before < ceiling)
+                        {
+                            dynel.Stats[StatIds.health].Value = Math.Min(before + delta, ceiling);
+                        }
                         healInterval.LastTick = DateTime.UtcNow + TimeSpan.FromSeconds(interval);
                         changed |= dynel.Stats[StatIds.health].Value != before;
                     }
@@ -1926,6 +2480,12 @@ namespace OmniCell.Core.Playfields
                         }
                     }
 
+                    // Creatures wander and pick fights (NpcLife), before the swing below.
+                    if (dynel.Controller is NPCController)
+                    {
+                        NpcLife.Tick(dynel, players);
+                    }
+
                     // Auto attack. The client sends AttackMessage once and
                     // then says nothing per swing, so every swing after the
                     // first is scheduled here.
@@ -1940,11 +2500,17 @@ namespace OmniCell.Core.Playfields
                     // same reason: nothing else notices when it changes.
                     Leveling.Tick(dynel);
 
+                    // A pressed perk goes off a beat or two later and its
+                    // cooldown ends later still, and the client says nothing
+                    // in between either time.
+                    Perks.Tick(dynel);
+
                     if (dynel.Controller is PlayerController)
                     {
                         this.Keepalive(dynel);
                         this.CheckWallCollision(dynel);
                         this.CheckStatelCollision(dynel);
+                        this.CheckMissionDoor(dynel);
                     }
                 }
                 catch (Exception exception)

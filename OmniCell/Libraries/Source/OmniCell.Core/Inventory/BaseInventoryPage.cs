@@ -155,11 +155,11 @@ namespace OmniCell.Core.Inventory
                     + this.Identity.Instance);
             }
 
-            if ((slot < this.FirstSlotNumber) || (slot > this.FirstSlotNumber + this.MaxSlots))
+            if (!this.ValidSlot(slot))
             {
                 throw new ArgumentOutOfRangeException(
                     "Slot out of range: " + slot + " not in " + this.FirstSlotNumber + " to "
-                    + (this.FirstSlotNumber + this.MaxSlots));
+                    + (this.FirstSlotNumber + this.MaxSlots - 1));
             }
 
             this.Content.Add(slot, item);
@@ -404,7 +404,27 @@ namespace OmniCell.Core.Inventory
             }
 
             ItemDao.Instance.Save(DBuninstanced, null, null);
-            InstancedItemDao.Instance.Save(DBinstanced, null, null);
+
+            // Save on its own is an UPDATE by id, so an instanced item that has
+            // no row yet - a bag just bought, for one - was never written and
+            // was gone next login. Delete this item's own id then insert it, so
+            // a new one is created and an existing one replaced. Scoped to the
+            // item's id, it cannot touch anything else in the container.
+            foreach (DBInstancedItem dbi in DBinstanced)
+            {
+                if (dbi.Id != 0)
+                {
+                    InstancedItemDao.Instance.Delete(dbi.Id);
+                    InstancedItemDao.Instance.Add(dbi, dontUseId: false);
+                }
+                else
+                {
+                    // No stable id to key on; leave it to the update path as
+                    // before rather than insert a second id-0 row.
+                    InstancedItemDao.Instance.Save(dbi, null, null);
+                }
+            }
+
             return true;
         }
 

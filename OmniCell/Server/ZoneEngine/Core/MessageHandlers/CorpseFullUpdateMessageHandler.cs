@@ -41,10 +41,11 @@ namespace ZoneEngine.Core.MessageHandlers
     /// that differ by creature are in the mobcorpses table, extracted from the
     /// same captures - the corpse model, how long it lies there, what is on it.
     ///
-    /// Meshes are deliberately not sent. Eight of the 154 captured corpses set
-    /// HasMeshes to zero and end the message there, so that form is known to be
-    /// accepted by a real client, whereas inventing mesh names for a creature is
-    /// not. A corpse renders from its CatMesh.
+    /// Meshes come from the creature's own textures (NpcAppearance). Sent without them, as this
+    /// used to, a creature's corpse was not drawn at all: the client could only find it while the
+    /// dying body still lay on top of it. 146 of the 154 captured corpses carry meshes, and for every
+    /// kind that has both they are the textures the living creature wore - "Material #1" 295519 on a
+    /// Cleaning Robot, "Material #9" 95883 on a Garbage Flea. Only humanoid corpses have none.
     /// </remarks>
     [MessageHandler(MessageHandlerDirection.OutboundOnly)]
     public class CorpseFullUpdateMessageHandler :
@@ -103,21 +104,31 @@ namespace ZoneEngine.Core.MessageHandlers
         /// The corpse's identity, so that whatever wants to put loot in it can
         /// find it again.
         /// </returns>
-        public Identity Send(ICharacter victim)
+        public Identity Send(ICharacter victim, Identity identity, int deathVariant)
         {
-            DBMobCorpse corpse = MobCorpseDao.Instance.GetWhere(new { MobName = victim.Name }).FirstOrDefault();
-
-            var identity = new Identity
-                           {
-                               Type = IdentityType.Corpse,
-                               Instance = victim.Identity.Instance
-                           };
-
-            this.Send(victim, Filler(victim, corpse, identity), true);
+            this.Send(victim, Filler(victim, Look(victim), identity, deathVariant), true);
             return identity;
         }
 
-        private static MessageDataFiller Filler(ICharacter victim, DBMobCorpse corpse, Identity identity)
+        /// <summary>
+        /// The corpse message without sending it, for the playfield to tell whoever comes near while
+        /// the corpse lies there.
+        /// </summary>
+        /// <remarks>
+        /// <paramref name="deathVariant"/> is the Parameter2 of the CharacterAction 99 the victim fell
+        /// with; the corpse's effect repeats it (20260914-124401 s4: 503 in both at 4609 and 4620).
+        /// </remarks>
+        public CorpseFullUpdateMessage Build(ICharacter victim, Identity identity, int deathVariant)
+        {
+            return this.Create(victim, Filler(victim, Look(victim), identity, deathVariant));
+        }
+
+        private static DBMobCorpse Look(ICharacter victim)
+        {
+            return MobCorpseDao.Instance.GetWhere(new { MobName = victim.Name }).FirstOrDefault();
+        }
+
+        private static MessageDataFiller Filler(ICharacter victim, DBMobCorpse corpse, Identity identity, int deathVariant)
         {
             return message =>
             {
@@ -155,15 +166,16 @@ namespace ZoneEngine.Core.MessageHandlers
                 message.LockDifficulty = LockDifficultyConstant;
                 message.Keyholders = new Identity[0];
                 message.ChestVersion = ChestVersionConstant;
-                message.NanoEffects = new[] { Effect(victim, corpse) };
+                message.NanoEffects = new[] { Effect(victim, corpse, deathVariant) };
                 message.Owner = victim.Identity;
 
                 // Five places, ids all zero in every captured corpse.
                 message.Textures =
                     Enumerable.Range(0, 5).Select(i => new Texture { Place = i, Id = 0, Group = 0 }).ToArray();
 
-                message.HasMeshes = 0;
-                message.Meshes = new CorpseMesh[0];
+                CorpseMesh[] meshes = NpcAppearance.CorpseMeshesOf(victim.Name);
+                message.HasMeshes = meshes.Length > 0 ? 1 : 0;
+                message.Meshes = meshes;
             };
         }
 
@@ -227,15 +239,16 @@ namespace ZoneEngine.Core.MessageHandlers
         /// and come out of the database; two are fixed at 1 and 4 in every
         /// captured copy; the other three are zero.
         /// </remarks>
-        private static NanoEffect Effect(ICharacter victim, DBMobCorpse corpse)
+        private static NanoEffect Effect(ICharacter victim, DBMobCorpse corpse, int deathVariant)
         {
             var arguments = new byte[ArgumentBytes];
             WriteInt32(arguments, 0, 0);
             WriteInt32(arguments, 4, 0);
-            WriteInt32(arguments, 8, corpse == null ? 0 : corpse.Unknown20);
+            WriteInt32(arguments, 8, deathVariant);
             WriteInt32(arguments, 12, FixedArguments[0]);
             WriteInt32(arguments, 16, FixedArguments[1]);
-            WriteInt32(arguments, 20, corpse == null ? 0 : corpse.Unknown23);
+            int monsterData = victim.Stats[StatIds.monsterdata].Value;
+            WriteInt32(arguments, 20, monsterData != 0 ? monsterData : corpse == null ? 0 : corpse.MonsterData);
             WriteInt32(arguments, 24, 0);
 
             return new NanoEffect

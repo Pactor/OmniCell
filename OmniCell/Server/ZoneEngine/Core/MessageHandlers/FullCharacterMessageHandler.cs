@@ -878,7 +878,24 @@ namespace ZoneEngine.Core.MessageHandlers
 
                 fullCharacterMessage.Buffs = new NanoEffect[0];
 
-                fullCharacterMessage.ResearchGoals = new FullCharacterEntry[0];
+                // The perks this character owns. Retail puts them here and
+                // leaves PerkEntries empty - a capture of a Keeper who spent
+                // 48 minutes using five perks carried 147 ResearchGoals and no
+                // PerkEntries at all. Marker -254 and Value 0 are what every
+                // entry in that capture read; what either means is not known,
+                // so they go out as they were seen.
+                fullCharacterMessage.ResearchGoals =
+                    ((Character)character).Perks.OrderBy(perk => perk)
+                        .Select(
+                            perk =>
+                            new FullCharacterEntry
+                                {
+                                    Id = perk,
+                                    Marker = -254,
+                                    IdRepeated = perk,
+                                    Value = 0
+                                })
+                        .ToArray();
             };
         }
 

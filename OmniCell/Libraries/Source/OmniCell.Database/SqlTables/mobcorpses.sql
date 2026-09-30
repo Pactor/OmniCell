@@ -11,8 +11,8 @@ CREATE TABLE  `mobcorpses` (
   `Race` int(32) NOT NULL DEFAULT 1,
   `HeadMesh` int(32) NOT NULL DEFAULT 0,
   `DeadTimer` int(32) NOT NULL DEFAULT 60,
-  `Unknown20` int(32) NOT NULL DEFAULT 0,
-  `Unknown23` int(32) NOT NULL DEFAULT 0,
+  `DeathAnimation` int(32) NOT NULL DEFAULT 0,
+  `MonsterData` int(32) NOT NULL DEFAULT 0,
   PRIMARY KEY (`Id`) USING BTREE,
   UNIQUE KEY `mob` (`MobName`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -54,6 +54,15 @@ namespace OmniCell.Core.Entities
     {
         public Identity OriginalIdentity = Identity.None;
 
+        /// <summary>Stat 23, the item a machine is built from.</summary>
+        private const int StaticInstanceStat = 0x17;
+
+        /// <summary>Stat 501, which animation it is playing.</summary>
+        private const int AnimPlayStat = 0x1f5;
+
+        /// <summary>What every captured machine had in AnimPlay.</summary>
+        private const int MachineIsStanding = 2;
+
         /// <summary>
         /// The character this shop belongs to, or None when it is a machine
         /// standing on its own.
@@ -79,6 +88,24 @@ namespace OmniCell.Core.Entities
             {
                 this.Stats[s.Key].Value = s.Value;
             }
+            // What the machine is made of and what it is doing - the two the
+            // client needs before it can build one. The other constructor set
+            // them and this one did not, and which constructor a machine gets
+            // is decided by whether it has stock: giving the weapon shop its
+            // shelves moved all five of its machines onto this path and they
+            // went out with StaticInstance zero. The client cannot make a
+            // model out of nothing, and the whole zone-in stopped there - the
+            // character logged in, sent one movement and sat on the loading
+            // screen for good, because a character logged out inside that shop
+            // is logged back into it.
+            //
+            // Both values are what the live server sends: every machine in the
+            // 2026-09-29 Fair Trade recordings carries StaticInstance set to
+            // the item it is built from, and AnimPlay 2.
+            this.Stats[StaticInstanceStat].Value =
+                vendorTemplate != null ? vendorTemplate.ItemTemplate : this.Template.ID;
+            this.Stats[AnimPlayStat].Value = MachineIsStanding;
+
             this.BaseInventory = new VendorInventory(this);
             if (vendorTemplate != null)
             {
@@ -112,8 +139,8 @@ namespace OmniCell.Core.Entities
                 this.Stats[s.Key].Value = s.Value;
             }
 
-            this.Stats[0x17].Value = templateId;
-            this.Stats[0x1f5].Value = 2;
+            this.Stats[StaticInstanceStat].Value = templateId;
+            this.Stats[AnimPlayStat].Value = MachineIsStanding;
 
             this.TemplateHash = "";
             this.Name = ItemNamesDao.Instance.Get(this.Template.ID).Name;

@@ -48,7 +48,8 @@ namespace Extractor_Serializer
         /// </param>
         public bStream(string fileName)
             : base(
-                new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.RandomAccess)
+                // Shares read, write and delete so the extractor runs while the game client has the database open.
+                new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete, 4096, FileOptions.RandomAccess)
                 )
         {
         }

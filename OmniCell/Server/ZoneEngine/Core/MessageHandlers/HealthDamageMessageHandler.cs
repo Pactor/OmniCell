@@ -29,14 +29,14 @@ namespace ZoneEngine.Core.MessageHandlers
     /// There are only 29 in the captures against 434 AttackInfos, which is what
     /// you would expect from a character that healed itself a few times.
     ///
-    /// The two fields that matter read straight off those 29. Unknown1 tracks
-    /// the character's health after the change - one sequence runs 2060, 2310,
-    /// 2565, 2815, 3065 - and Unknown2 is the change itself, 250 in that same
+    /// The two fields that matter read straight off those 29. Health is the
+    /// character's health after the change - one sequence runs 2060, 2310,
+    /// 2565, 2815, 3065 - and Delta is the change itself, 250 in that same
     /// sequence, negative where health went down.
     ///
-    /// Unknown3 is 0 on every heal and 92 or 95 on the two decreases, and two
-    /// samples are not enough to say what it is. It is sent as zero, which is
-    /// what a heal sends, rather than guessed at.
+    /// DamageType is None on every heal. A decrease names its kind: a Wounded
+    /// Dockworker sitting back down loses its 20 as Melee (20260914-124401 s4
+    /// 5050), and that is what the four-argument Send is for.
     /// </remarks>
     [MessageHandler(MessageHandlerDirection.OutboundOnly)]
     public class HealthDamageMessageHandler :
@@ -49,10 +49,19 @@ namespace ZoneEngine.Core.MessageHandlers
         /// </summary>
         public void Send(ICharacter character, int newHealth, int delta)
         {
-            this.Send(character, Filler(character, newHealth, delta), true);
+            this.Send(character, Filler(character, newHealth, delta, DamageType.None), true);
         }
 
-        private static MessageDataFiller Filler(ICharacter character, int newHealth, int delta)
+        /// <summary>
+        /// Health changed on this character by <paramref name="delta"/>, as the given kind of harm. A
+        /// Wounded Dockworker sitting back down loses its 20 as Melee (20260914-124401 s4 5050).
+        /// </summary>
+        public void Send(ICharacter character, int newHealth, int delta, DamageType damageType)
+        {
+            this.Send(character, Filler(character, newHealth, delta, damageType), true);
+        }
+
+        private static MessageDataFiller Filler(ICharacter character, int newHealth, int delta, DamageType damageType)
         {
             return message =>
             {
@@ -60,7 +69,7 @@ namespace ZoneEngine.Core.MessageHandlers
                 message.Unknown = 0;
                 message.Health = newHealth;
                 message.Delta = delta;
-                message.DamageType = DamageType.None;
+                message.DamageType = damageType;
                 message.DeathCause = DeathCause.None;
                 message.Source = character.Identity;
                 message.SourceItem = 0;

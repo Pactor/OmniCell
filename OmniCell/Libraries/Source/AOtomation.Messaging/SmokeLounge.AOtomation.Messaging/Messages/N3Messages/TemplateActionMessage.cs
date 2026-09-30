@@ -40,20 +40,36 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
         [AoMember(2)]
         public int Quality { get; set; }
 
+        /// <summary>
+        /// The quantity the action is for: 1, or the stack size of an item arriving through the
+        /// overflow window (50 for fifty, 20260914-124401 #5493). "Amount" on the protocol page.
+        /// </summary>
         [AoMember(3)]
-        public int Unknown1 { get; set; }
+        public int Amount { get; set; }
 
+        /// <summary>
+        /// The action (GameData Action_e): 3 use, 6 wear, 7 remove, 32 use on a character, 87 an
+        /// item delivered to the overflow window.
+        /// </summary>
         [AoMember(4)]
-        public int Unknown2 { get; set; }
+        public int Action { get; set; }
 
         [AoMember(5)]
         public Identity Placement { get; set; }
 
+        /// <summary>
+        /// The second identity of the action, as a type: 50000 (CanbeAffected) when the item is used on
+        /// a character, 0 when there is none.
+        /// </summary>
         [AoMember(6)]
-        public int Unknown3 { get; set; }
+        public int TargetType { get; set; }
 
+        /// <summary>
+        /// The second identity's instance: the character the item is used on (20260914-124401 #4521,
+        /// the stim on Wounded Dockworker 2052536078), or 0.
+        /// </summary>
         [AoMember(7)]
-        public int Unknown4 { get; set; }
+        public int TargetInstance { get; set; }
 
         #endregion
     }

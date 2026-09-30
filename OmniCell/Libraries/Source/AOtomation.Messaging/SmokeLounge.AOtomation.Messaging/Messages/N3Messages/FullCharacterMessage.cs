@@ -418,6 +418,15 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
         /// The character's pets.
         /// </summary>
         /// <remarks>
+        /// Numbering restarts at 30 here, and 26 to 29 are empty. Nothing was
+        /// ever there: before the team block went in this was member 17, and
+        /// when six raid teams took 20 to 25 the tail was moved to a round
+        /// number rather than to 26. The attribute's argument is a sort key and
+        /// not an index - TypeSerializerBuilder orders by it and nothing else
+        /// reads it - so the gap costs nothing. Said here because it looks like
+        /// four deleted fields and is not.
+        /// </remarks>
+        /// <remarks>
         /// The reader at 0x1002BA77 takes an X3F1 count and then one Identity
         /// per entry - eight bytes, not the sixteen this model reads - and the
         /// dispatcher walks them into the pet subsystem at character +0x1D8 at

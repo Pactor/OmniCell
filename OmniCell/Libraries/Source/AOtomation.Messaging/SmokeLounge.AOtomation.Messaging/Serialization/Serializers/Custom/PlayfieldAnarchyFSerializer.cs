@@ -58,6 +58,16 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization.Serializers.Custom
         private const int BuildingGenerator = 51103;
 
         /// <summary>
+        /// AVOwnedBuildingGeneratorData_t - a private apartment.
+        /// </summary>
+        /// <remarks>
+        /// Registered beside 51069 at Gamecode 0x101521F0. Found on 2026-09-25
+        /// because entering a Sunrise Station apartment produced a
+        /// PlayfieldAnarchyF this reader threw on.
+        /// </remarks>
+        private const int OwnedBuildingGenerator = 51067;
+
+        /// <summary>
         /// TemplatePlayfieldGeneratorData_t - a playfield like Arete Landing.
         /// </summary>
         private const int TemplateGenerator = 51069;
@@ -177,6 +187,11 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization.Serializers.Custom
                     {
                         message.TemplateGenerator = ReadTemplateGenerator(streamReader, peeked, revision);
                     }
+                    else if ((int)peeked.Type == OwnedBuildingGenerator)
+                    {
+                        message.OwnedBuildingGenerator =
+                            ReadOwnedBuildingGenerator(streamReader, peeked, revision);
+                    }
                     else
                     {
                         throw new InvalidOperationException(
@@ -217,6 +232,10 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization.Serializers.Custom
                 else if (message.TemplateGenerator != null)
                 {
                     WriteTemplateGenerator(streamWriter, message.TemplateGenerator);
+                }
+                else if (message.OwnedBuildingGenerator != null)
+                {
+                    WriteOwnedBuildingGenerator(streamWriter, message.OwnedBuildingGenerator);
                 }
                 else
                 {
@@ -269,6 +288,137 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization.Serializers.Custom
 
             data.Rooms = rooms;
             return data;
+        }
+
+        /// <summary>
+        /// OwnedBuildingGeneratorData_t's blob, the reverse of its WriteBlob at
+        /// Gamecode.dll 0x10121709.
+        /// </summary>
+        /// <remarks>
+        /// Read off the writer rather than the reader because the writer is
+        /// short and says every shape outright: a literal 4, an int32, an
+        /// Identity, an int32, a Vector3 through the three-float helper at
+        /// 0x1000401B, the helper at 0x1000AA2D, three more int32s, and the
+        /// list.
+        ///
+        /// The 0x1000AA2D helper writes the global at 0x101BE3A8 - 100000 - and
+        /// then a second list, of 0x34 byte things, which is empty in both
+        /// captured apartments. Nothing here can say what is in a non-empty one,
+        /// so a non-empty one stops the read rather than being guessed past.
+        /// </remarks>
+        private static OwnedBuildingGeneratorData ReadOwnedBuildingGenerator(
+            StreamReader streamReader,
+            Identity identity,
+            int revision)
+        {
+            var data = new OwnedBuildingGeneratorData();
+            data.Identity = identity;
+            data.Revision = revision;
+
+            data.Version = streamReader.ReadInt32();
+            data.Unknown1 = streamReader.ReadInt32();
+            data.Model = streamReader.ReadIdentity();
+            data.EntranceDoor = streamReader.ReadInt32();
+            data.Position = new Vector3
+                            {
+                                X = streamReader.ReadSingle(),
+                                Y = streamReader.ReadSingle(),
+                                Z = streamReader.ReadSingle()
+                            };
+
+            data.Marker = streamReader.ReadInt32();
+
+            int unread = streamReader.ReadInt32();
+            if (unread != 0)
+            {
+                throw new InvalidOperationException(
+                    string.Format(
+                        "an owned building carrying {0} of the second kind of record has never been "
+                        + "captured, and nothing here knows how long one is, so the rest of the "
+                        + "message cannot be read",
+                        unread));
+            }
+
+            data.Unknown3 = streamReader.ReadInt32();
+            data.Unknown4 = streamReader.ReadInt32();
+            data.Unknown5 = streamReader.ReadInt32();
+
+            var runs = new OwnedBuildingDynelRun[streamReader.ReadInt32()];
+            for (var i = 0; i < runs.Length; i++)
+            {
+                var run = new OwnedBuildingDynelRun
+                          {
+                              Type = (IdentityType)streamReader.ReadInt32()
+                          };
+
+                var placements = new OwnedBuildingPlacement[streamReader.ReadInt32()];
+                for (var p = 0; p < placements.Length; p++)
+                {
+                    placements[p] = new OwnedBuildingPlacement
+                                    {
+                                        StartIndex = streamReader.ReadInt32(),
+                                        Count = streamReader.ReadInt32(),
+                                        FirstInstance = streamReader.ReadInt32()
+                                    };
+                }
+
+                run.Placements = placements;
+                runs[i] = run;
+            }
+
+            data.Runs = runs;
+            return data;
+        }
+
+        /// <summary>
+        /// The same fields back out, in the order the client writes them.
+        /// </summary>
+        private static void WriteOwnedBuildingGenerator(
+            StreamWriter streamWriter,
+            OwnedBuildingGeneratorData data)
+        {
+            streamWriter.WriteIdentity(data.Identity);
+            streamWriter.WriteInt32(data.Revision);
+
+            streamWriter.WriteInt32(data.Version);
+            streamWriter.WriteInt32(data.Unknown1);
+            streamWriter.WriteIdentity(data.Model);
+            streamWriter.WriteInt32(data.EntranceDoor);
+            streamWriter.WriteSingle(data.Position.X);
+            streamWriter.WriteSingle(data.Position.Y);
+            streamWriter.WriteSingle(data.Position.Z);
+
+            streamWriter.WriteInt32(data.Marker);
+
+            // The second list, which no capture has ever shown holding anything.
+            streamWriter.WriteInt32(0);
+
+            streamWriter.WriteInt32(data.Unknown3);
+            streamWriter.WriteInt32(data.Unknown4);
+            streamWriter.WriteInt32(data.Unknown5);
+
+            streamWriter.WriteInt32(data.Runs == null ? 0 : data.Runs.Length);
+            if (data.Runs == null)
+            {
+                return;
+            }
+
+            foreach (OwnedBuildingDynelRun run in data.Runs)
+            {
+                streamWriter.WriteInt32((int)run.Type);
+                streamWriter.WriteInt32(run.Placements == null ? 0 : run.Placements.Length);
+                if (run.Placements == null)
+                {
+                    continue;
+                }
+
+                foreach (OwnedBuildingPlacement placement in run.Placements)
+                {
+                    streamWriter.WriteInt32(placement.StartIndex);
+                    streamWriter.WriteInt32(placement.Count);
+                    streamWriter.WriteInt32(placement.FirstInstance);
+                }
+            }
         }
 
         /// <summary>

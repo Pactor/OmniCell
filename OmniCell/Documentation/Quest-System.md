@@ -51,7 +51,11 @@ shape as extracted ones.
   objective target, NPC or hand-in item cannot exist in the world, so nobody can get stuck silently.
 
 Character state stays in `charactersquests` (per stage: InProgress or Completed, progress count), keeping
-completed rows so conversations and prerequisites can see them.
+completed rows so conversations and prerequisites can see them. A quest patch never deletes these rows:
+stage ids are the capture's own, so applying a patch again leaves every character where they were. Rows
+for a stage that no longer exists are never read (progress is only looked at through the quests that
+exist). A patch that did delete them once left a character holding Marcus Stone's Generic Nano
+Transmitter with no progress at all, so neither Marcus's stim offer nor Flint Novak had anything to say.
 
 ## 2. Engine (ZoneEngine)
 

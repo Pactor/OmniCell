@@ -92,8 +92,8 @@ namespace ZoneEngine.Core.Packets
                                             ItemHighId = item.HighID,
                                             ItemLowId = item.LowID,
                                             Quality = item.Quality,
-                                            Unknown1 = 1,
-                                            Unknown2 = page is SocialArmorInventoryPage ? 7 : 6,
+                                            Amount = 1,
+                                            Action = page is SocialArmorInventoryPage ? 7 : 6,
                                             Placement = new Identity
                                                         {
                                                             Type = (IdentityType)page.Identity.Instance,

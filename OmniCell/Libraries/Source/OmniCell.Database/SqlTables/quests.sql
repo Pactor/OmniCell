@@ -8,5 +8,6 @@
   `ExperienceReward` int(32) NOT NULL DEFAULT 0,
   `Playfield` int(32) NOT NULL DEFAULT 0,
   `Requires` int(32) NOT NULL DEFAULT 0,
+  `RequiresProfession` int(32) NOT NULL DEFAULT 0,
   PRIMARY KEY (`Id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

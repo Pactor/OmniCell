@@ -30,7 +30,7 @@ namespace SmokeLounge.AOtomation.Messaging.GameData
         /// What kind of pet this is - stat 512.
         /// </summary>
         /// <remarks>
-        /// A byte when SimpleCharFullUpdateFlags.UnknownDataFlag is set and a
+        /// A byte when SimpleCharFullUpdateFlags.HasSmallPetType is set and a
         /// short when it is not, which is the same widening
         /// <see cref="Family"/> and <see cref="LosHeight"/> get from their own
         /// flags.

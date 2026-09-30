@@ -45,6 +45,16 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
 
         BuildingGeneratorData Generator { get; set; }
 
+        /// <summary>
+        /// The apartment this playfield is, when it is one.
+        /// </summary>
+        /// <remarks>
+        /// Identity type 51067. Null unless the message carries one, and only
+        /// one of the three generators is ever set.
+        /// </remarks>
+        OwnedBuildingGeneratorData OwnedBuildingGenerator { get; set; }
+
+
         PlayfieldTemplateGeneratorData TemplateGenerator { get; set; }
 
         #endregion

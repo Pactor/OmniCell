@@ -2032,6 +2032,24 @@ namespace OmniCell.Stats
         private readonly Stat pvpDuelScore;
 
         /// <summary>
+        /// Stat 685, a word of flags the playfields read.
+        /// </summary>
+        /// <remarks>
+        /// The server had no such stat at all, and reading one it does not
+        /// have throws - which a requirement check catches and turns into
+        /// "no", so every behaviour that asks about this one quietly refused.
+        /// Arete Landing's exit is three of them.
+        ///
+        /// Bit 16384 is the ID card: the "Exit Arete Landing" console does
+        /// its work behind `685 BitAnd 16384` and says "You need an ID card
+        /// to enter ICC HQ." behind `685 NotBitAnd 16384`. What the other
+        /// bits are is not known. A character captured inside an Arete
+        /// instance reads 16384 exactly and characters out on Rubi-Ka read
+        /// 28668, so they accumulate.
+        /// </remarks>
+        private readonly Stat progressFlags;
+
+        /// <summary>
         /// </summary>
         private readonly Stat pvpProfessionDuelDeaths;
 
@@ -3402,6 +3420,7 @@ namespace OmniCell.Stats
             this.pvpDuelDeaths = new Stat(this, 675, 0, false, false, false);
             this.pvpDuelKills = new Stat(this, 674, 0, false, false, false);
             this.pvpDuelScore = new Stat(this, 684, 0, false, false, false);
+            this.progressFlags = new Stat(this, 685, 0, false, false, false);
             this.pvpProfessionDuelDeaths = new Stat(this, 677, 0, false, false, false);
             this.pvpProfessionDuelKills = new Stat(this, 676, 0, false, false, false);
             this.pvpRankedSoloDeaths = new Stat(this, 679, 0, false, false, false);
@@ -4296,6 +4315,7 @@ namespace OmniCell.Stats
             this.all.Add(this.pvpSoloScore);
             this.all.Add(this.pvpTeamScore);
             this.all.Add(this.pvpDuelScore);
+            this.all.Add(this.progressFlags);
             this.all.Add(this.acgItemSeed);
             this.all.Add(this.acgItemLevel);
             this.all.Add(this.acgItemTemplateId);
@@ -9292,6 +9312,18 @@ namespace OmniCell.Stats
             get
             {
                 return this.pvpDuelScore;
+            }
+        }
+
+        /// <summary>
+        /// Stat 685, a word of flags the playfields read. Bit 16384 is the
+        /// Arete Landing ID card.
+        /// </summary>
+        public Stat ProgressFlags
+        {
+            get
+            {
+                return this.progressFlags;
             }
         }
 

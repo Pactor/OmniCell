@@ -269,9 +269,10 @@ fails on all perk records, because this is a different layout entirely.
 
 ### The actual blocker is the protocol, not the data
 
-`PerkUpdateMessage` (N3MessageType 0x435f7023) has three fields and all three are
-called `Unknown1`, `Unknown2`, `Unknown3`. Nothing in the codebase ever
-constructs or sends one. By comparison `CharacterActionMessage`, which works, has
+`PerkUpdateMessage` (N3MessageType 0x435f7023) has three fields, once all called
+`Unknown1`-`Unknown3` and since named `ResearchId`, `PersonalResearchGoal` and
+`ResearchXpRemaining`. At the time of this audit nothing in the codebase
+constructed or sent one. By comparison `CharacterActionMessage`, which works, has
 seven named members.
 
 So perk data can be extracted and stored, but there is currently no way to tell

@@ -18,8 +18,11 @@ namespace SmokeLounge.AOtomation.Messaging.GameData
     [AoMember(2)]
         public int Quality { get; set; }
 
-        // Always 0?
+        /// <summary>
+        /// The ACGItem_t's reserved fourth number: the writer pushes a literal zero and the reader drops
+        /// it (see AcgItem.Unused).
+        /// </summary>
         [AoMember(3)]
-    public int Unknown1 { get; set; }
+        public int Unused { get; set; }
     }
 }

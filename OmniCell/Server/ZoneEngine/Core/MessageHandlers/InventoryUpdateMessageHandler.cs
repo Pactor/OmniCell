@@ -65,8 +65,75 @@ namespace ZoneEngine.Core.MessageHandlers
             this.Send(character, this.FillCorpseData(character, corpse, virtualSlot));
         }
 
+        /// <summary>
+        /// Opens a player-held bag: the shape a real bag open takes on the wire.
+        /// </summary>
+        /// <remarks>
+        /// From the captures (work/decoded/20260923-201448 and 201746): a bag
+        /// answers with BagIdentity = its own Container identity, NumberOfSlots
+        /// 21, Access CanAdd|CanRemove, Open 1, and SlotnumberInMainInventory =
+        /// the handle. The handle is a per-character counter that starts at 112
+        /// and climbs one per open; it is the high half of every slot inside the
+        /// bag, Backpack (handle &lt;&lt; 16) | slot. Handle 0 is the empty shell
+        /// the client is given before a bag has been opened. <paramref
+        /// name="contents"/> is null for a bag with nothing in it yet.
+        /// </remarks>
+        public void SendForBag(ICharacter character, Identity bagIdentity, int handle, IInventoryPage contents)
+        {
+            this.Send(character, x =>
+            {
+                x.BagIdentity = bagIdentity;
+                x.NumberOfSlots = 21;
+                x.SlotnumberInMainInventory = handle;
+
+                var entries = new List<InventoryEntry>();
+                if (contents != null)
+                {
+                    foreach (KeyValuePair<int, IItem> kv in contents.List())
+                    {
+                        entries.Add(
+                            new InventoryEntry
+                            {
+                                Slotnumber = kv.Key,
+                                Identity = Identity.None,
+                                Quality = kv.Value.Quality,
+                                HighId = kv.Value.HighID,
+                                LowId = kv.Value.LowID,
+                                Flags = 0x21,
+                                Count = (short)kv.Value.MultipleCount,
+                                Unused = 0
+                            });
+                    }
+                }
+
+                x.Entries = entries.ToArray();
+                x.Open = 1;
+                x.Access = InventoryAccess.CanAdd | InventoryAccess.CanRemove;
+                x.Identity = character.Identity;
+                x.Unknown = 1;
+            });
+        }
+
+        /// <summary>
+        /// A mission chest is not quite a corpse.
+        /// </summary>
+        /// <remarks>
+        /// Same message and same slot count, two fields apart. The chests
+        /// opened in the 2026-09-28 recording carry Access CanAdd and
+        /// CanRemove where a corpse carries CanRemove only - you can put
+        /// something back in a box - and their entries read Flags 33 against
+        /// a corpse's 161.
+        /// </remarks>
+        private const short ChestItemFlags = 0x0021;
+
+        /// <summary>
+        /// The identity type a mission chest is sent as.
+        /// </summary>
+        private const int MissionChestType = 51017;
+
         public MessageDataFiller FillCorpseData(ICharacter character, CorpseLoot corpse, int virtualSlot)
         {
+            bool chest = (int)corpse.Identity.Type == MissionChestType;
             return x =>
                 {
                     IInventoryPage page = corpse.BaseInventory[corpse.BaseInventory.StandardPage];
@@ -85,7 +152,7 @@ namespace ZoneEngine.Core.MessageHandlers
                                     Quality = kv.Value.Quality,
                                     HighId = kv.Value.HighID,
                                     LowId = kv.Value.LowID,
-                                    Flags = unchecked((short)0x00A1),
+                                    Flags = chest ? ChestItemFlags : unchecked((short)0x00A1),
                                     Count = (short)kv.Value.MultipleCount,
                                     Unused = 0
                                 });
@@ -93,7 +160,9 @@ namespace ZoneEngine.Core.MessageHandlers
 
                     x.Entries = entries.ToArray();
                     x.Open = 1;
-                    x.Access = InventoryAccess.CanRemove;
+                    x.Access = chest
+                                   ? InventoryAccess.CanAdd | InventoryAccess.CanRemove
+                                   : InventoryAccess.CanRemove;
                     x.Identity = character.Identity;
                     x.Unknown = 1;
                 };

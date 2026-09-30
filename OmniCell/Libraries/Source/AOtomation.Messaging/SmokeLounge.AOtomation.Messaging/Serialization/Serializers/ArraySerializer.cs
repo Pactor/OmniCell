@@ -222,6 +222,16 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization.Serializers
             object value,
             PropertyMetaData propertyMetaData = null)
         {
+            // A property nobody assigned is null, and null is not a shape
+            // this can write: the cast below used to throw, halfway through a
+            // message, with the size already on the wire. An empty array is
+            // what a null one means - no elements, and a count of zero - and
+            // that is a shape the client is sent in earnest. N3Teleport's
+            // Trailer is the one that found this: six of the thirty three
+            // copies in the captures carry a zero count, and they are the six
+            // that always round-tripped.
+            value = value ?? this.Empty();
+
             if (propertyMetaData.Options.SerializeSize != ArraySizeType.NoSerialization)
             {
                 var arraySizeSerializer = new ArraySizeSerializer(propertyMetaData.Options.SerializeSize);
@@ -237,6 +247,15 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization.Serializers
             }
         }
 
+        /// <summary>
+        /// An array of this serializer's type with nothing in it.
+        /// </summary>
+        private Array Empty()
+        {
+            return Array.CreateInstance(
+                this.type.IsArray ? this.type.GetElementType() : this.type, 0);
+        }
+
         public Expression SerializerExpression(
             ParameterExpression streamWriterExpression,
             ParameterExpression serializationContextExpression,
@@ -246,6 +265,18 @@ namespace SmokeLounge.AOtomation.Messaging.Serialization.Serializers
             if (valueExpression.Type.IsAssignableFrom(this.type) == false)
             {
                 valueExpression = Expression.Convert(valueExpression, this.type);
+            }
+
+            // The same guard as Serialize, in the path that is compiled and
+            // actually used. Expression.ArrayLength on a null reference throws
+            // at run time, as does the size serializer reading the same value,
+            // so the null is turned into an empty array once, here, and both
+            // of them see it.
+            if (this.type.IsArray)
+            {
+                valueExpression = Expression.Coalesce(
+                    valueExpression,
+                    Expression.NewArrayBounds(this.type.GetElementType(), Expression.Constant(0)));
             }
 
             var expressions = new List<Expression>();

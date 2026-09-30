@@ -33,10 +33,13 @@ namespace ZoneEngine.Core.PacketHandlers
 {
     #region Usings ...
 
+    using System;
     using System.Linq;
     using System.Text;
 
     using OmniCell.Core.Entities;
+    using OmniCell.Core.Inventory;
+    using OmniCell.Core.Items;
     using OmniCell.Core.Playfields;
     using OmniCell.Enums;
     using OmniCell.ObjectManager;
@@ -46,9 +49,15 @@ namespace ZoneEngine.Core.PacketHandlers
     using Utility;
 
     using SmokeLounge.AOtomation.Messaging.GameData;
+    using SmokeLounge.AOtomation.Messaging.Messages;
     using SmokeLounge.AOtomation.Messaging.Messages.N3Messages;
 
     using ZoneEngine.Core.InternalMessages;
+    using System.Collections.Generic;
+
+    using OmniCell.Core.Missions;
+
+    using ZoneEngine.Core.Missions;
     using ZoneEngine.Core.Playfields;
     using ZoneEngine.Core.MessageHandlers;
     using ZoneEngine.Core.Quests;
@@ -148,14 +157,6 @@ namespace ZoneEngine.Core.PacketHandlers
                 client.Controller.Character.Playfield.Identity.Instance,
                 fixtures.Length);
 
-            foreach (
-Vendor vendor in
-Pool.Instance.GetAll<Vendor>(
-client.Controller.Character.Playfield.Identity,
-(int)IdentityType.VendingMachine))
-            {
-                VendingMachineFullUpdateMessageHandler.Default.Send(client.Controller.Character, vendor);
-            }
 
             // Doors. The live server reports the state of every door in a
             // playfield on entry - 28 of them on walking into the subway - and
@@ -163,6 +164,25 @@ client.Controller.Character.Playfield.Identity,
             foreach (Identity door in ((Playfield)client.Playfield).Doors())
             {
                 DoorStatusUpdateMessageHandler.Default.Send(client.Controller.Character, door);
+            }
+
+            // A mission's doors, chests and objective. The client has no
+            // playfield file to draw them from, so every one goes on the wire.
+            MissionOffer mission = MissionPlayfields.Of(
+                client.Controller.Character.Playfield.Identity.Instance);
+            if (mission != null)
+            {
+                List<MessageBody> contents = MissionContents.Messages(mission);
+                foreach (MessageBody body in contents)
+                {
+                    client.SendCompressed(body);
+                }
+
+                Log.Info(
+                    "ENTRY character={0} mission playfield={1} contents={2}",
+                    client.Controller.Character.Identity.Instance,
+                    mission.PlayfieldInstance,
+                    contents.Count);
             }
 
             var sendSCFUs = new IMSendPlayerSCFUs { toClient = client };
@@ -207,6 +227,48 @@ client.Controller.Character.Playfield.Identity,
                     weapon.Key);
             }
 
+            // The playfield's shop machines, here rather than first. They
+            // used to go out immediately after the playfield message, before
+            // the client had been told about its own character - and that is
+            // not where the live server puts them. In the retail entry
+            // captured on 2026-09-11 the player's own SimpleCharFullUpdate is
+            // sequence 7 and the machines are 72 to 82, after the world's
+            // characters and before FullCharacter. A character in a playfield
+            // with no machines got the right order by accident and walked in;
+            // one standing in a shop got five of them before it knew who it
+            // was, and sat on the loading screen.
+            // Each machine on its own, and said out loud. A machine that
+            // cannot be sent used to take the whole entry down with it, and
+            // the only sign was a character that logged in, sent one movement
+            // and never finished loading - no error anywhere, because an
+            // entry that stops halfway is not an error, it is just an entry
+            // that stopped.
+            int machines = 0;
+            foreach (
+Vendor vendor in
+Pool.Instance.GetAll<Vendor>(
+client.Controller.Character.Playfield.Identity,
+(int)IdentityType.VendingMachine))
+            {
+                try
+                {
+                    VendingMachineFullUpdateMessageHandler.Default.Send(client.Controller.Character, vendor);
+                    machines++;
+                }
+                catch (Exception exception)
+                {
+                    LogUtil.ErrorException(
+                        exception,
+                        "ENTRY could not send shop {0} (template hash '{1}', {2} stats) - the rest of the"
+                        + " playfield still goes",
+                        vendor.Identity.Instance,
+                        vendor.TemplateHash,
+                        vendor.Stats == null ? -1 : vendor.Stats.GetStatValues().Count);
+                }
+            }
+
+            Log.Info("ENTRY character={0} shops={1}", charID, machines);
+
             // No ChangeAnimationAndStance here. CellAO sent one ("Action 167
             // Animation and Stance Data maybe?") and none of the 59 player entries
             // in the retail captures carries one between the player's own
@@ -236,6 +298,37 @@ client.Controller.Character.Playfield.Identity,
 
             /* inventory, items and all that */
             FullCharacterMessageHandler.Default.Send(client.Controller.Character);
+
+            // A held bag is a container, and the client opens a container only
+            // once it has been sent the container itself - the same
+            // ChestItemFullUpdate a chest or a corpse gets. FullCharacter names
+            // the bag but does not carry the object; without this the client
+            // asks to open a bag it has no container for, over and over. One per
+            // bag in the main inventory.
+            int bagsRegistered = 0;
+            IInventoryPage mainPage;
+            if (client.Controller.Character.BaseInventory.Pages.TryGetValue(
+                    (int)IdentityType.Inventory, out mainPage))
+            {
+                foreach (KeyValuePair<int, IItem> slot in mainPage.List())
+                {
+                    Item held = slot.Value as Item;
+                    if (held != null && held.IsContainer())
+                    {
+                        ChestItemFullUpdateMessageHandler.Default.SendForHeldBag(
+                            client.Controller.Character,
+                            held,
+                            slot.Key);
+                        bagsRegistered++;
+                    }
+                }
+            }
+
+            Log.Info("ENTRY character={0} bags={1}", charID, bagsRegistered);
+
+            // Straight after FullCharacter: one CharacterAction 180 per perk
+            // action, or the Perk Actions menu never appears.
+            ZoneEngine.Core.Combat.Perks.AnnounceActions(client.Controller.Character);
 
             // The tower and city lists, empty here - 10 of each across the
             // captured sessions, all empty, because the newbie area and the
@@ -331,6 +424,10 @@ client.Controller.Character.Playfield.Identity,
 
             // Timers are allowed to update client stats now.
             client.Controller.Character.DoNotDoTimers = false;
+
+            // The loading screen is over by here. If this line is missing from
+            // the log, everything above it is where to look.
+            Log.Info("ENTRY DONE character={0}", charID);
         }
 
         /// <summary>

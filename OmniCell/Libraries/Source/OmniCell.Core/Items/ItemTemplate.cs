@@ -297,6 +297,21 @@ namespace OmniCell.Core.Items
         }
 
         /// <summary>
+        /// A container (bag) - something you open and put items in.
+        /// </summary>
+        /// <remarks>
+        /// Only containers carry a maximum mass (stat 24, MaxMass): the cap on
+        /// what they can hold. Checked against items.ocp on 2026-09-30, exactly
+        /// the 172 templates with this stat are bags, trunks and packs - no
+        /// armour or ordinary item has it. That is how the wire tells a bag from
+        /// anything else, and what gives it its Container identity.
+        /// </remarks>
+        public bool IsContainer()
+        {
+            return this.Stats.ContainsKey(24); // 24 = MaxMass
+        }
+
+        /// <summary>
         /// </summary>
         /// <returns>
         /// </returns>

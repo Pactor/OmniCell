@@ -60,8 +60,12 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
         [AoMember(1)]
         public Identity Target { get; set; }
 
+        /// <summary>
+        /// How the client shows the text: 0 spoken dialogue, 1 action or emote text ("Rex lowers his
+        /// voice."). Proven by the protocol page's retail content.
+        /// </summary>
         [AoMember(2)]
-        public int Unknown2 { get; set; }
+        public int PresentationMode { get; set; }
 
         [AoMember(3, SerializeSize = ArraySizeType.Int32)]
         public string Text { get; set; }

@@ -93,8 +93,13 @@ namespace ZoneEngine.ChatCommands
         /// </param>
         public override void ExecuteCommand(ICharacter character, Identity target, string[] args)
         {
-            // Fallback to self if no target is selected
-            if (target.Instance == 0)
+            // Fallback to self when nothing is selected, or when the selection
+            // is not a character. Targeting a shop terminal, a door or any
+            // other non-character dynel used to throw a TypeInstanceMismatch
+            // out of the pool lookup below and fail the command; players and
+            // NPCs both carry the character's own identity type, so anything
+            // else means "set it on me".
+            if (target.Instance == 0 || target.Type != character.Identity.Type)
             {
                 target.Type = character.Identity.Type;
                 target.Instance = character.Identity.Instance;

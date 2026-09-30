@@ -1,26 +1,213 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Experience needed to reach each level.
+  Experience needed to reach each level, 2 to 200.
 
-  Read out of captured NewLevel messages from the live server, which carry both
-  thresholds either side of the level being reached: the experience needed for
-  the level just gained and for the next one. Seven captures across several
-  18.8.x sessions agree on every value below, and the pairs chain correctly -
-  the "next" of level 2 is the "this" of level 3, and so on - which is what
-  makes these thresholds rather than guesses.
-
-  The emulator proof-of-concept stops at level 10. Levels 9 and 10 use the
-  canonical Rubi-Ka experience thresholds already represented by
-  OmniCell.Stats.SpecialStats.XPTable; they are not extrapolated.
+  Thresholds seen on the live server: the NewLevel message carries the experience
+  needed for the level just reached and for the next one. Thirty level-ups across
+  the fifteen 2026-09 retail recordings give levels 2-8, 13-16, 18-33,
+  marked captured below, and every one of them agrees with the Rubi-Ka table in
+  OmniCell.Stats.SpecialStats.XPTable (TableRKXP, level start column). The levels
+  in between and beyond come from that table, which the captures have checked at
+  27 points without a single difference.
 -->
 <Levels>
-  <Level id="2" experience="1450" />
-  <Level id="3" experience="4050" />
-  <Level id="4" experience="7150" />
-  <Level id="5" experience="11150" />
-  <Level id="6" experience="15650" />
-  <Level id="7" experience="20650" />
-  <Level id="8" experience="26150" />
+  <Level id="2" experience="1450" />  <!-- captured -->
+  <Level id="3" experience="4050" />  <!-- captured -->
+  <Level id="4" experience="7150" />  <!-- captured -->
+  <Level id="5" experience="11150" />  <!-- captured -->
+  <Level id="6" experience="15650" />  <!-- captured -->
+  <Level id="7" experience="20650" />  <!-- captured -->
+  <Level id="8" experience="26150" />  <!-- captured -->
   <Level id="9" experience="32150" />
   <Level id="10" experience="38650" />
+  <Level id="11" experience="45650" />
+  <Level id="12" experience="53350" />
+  <Level id="13" experience="61650" />  <!-- captured -->
+  <Level id="14" experience="70550" />  <!-- captured -->
+  <Level id="15" experience="80150" />  <!-- captured -->
+  <Level id="16" experience="90550" />  <!-- captured -->
+  <Level id="17" experience="101550" />
+  <Level id="18" experience="113450" />  <!-- captured -->
+  <Level id="19" experience="126150" />  <!-- captured -->
+  <Level id="20" experience="139850" />  <!-- captured -->
+  <Level id="21" experience="155250" />  <!-- captured -->
+  <Level id="22" experience="171650" />  <!-- captured -->
+  <Level id="23" experience="189250" />  <!-- captured -->
+  <Level id="24" experience="208050" />  <!-- captured -->
+  <Level id="25" experience="228150" />  <!-- captured -->
+  <Level id="26" experience="249650" />  <!-- captured -->
+  <Level id="27" experience="272550" />  <!-- captured -->
+  <Level id="28" experience="297050" />  <!-- captured -->
+  <Level id="29" experience="323150" />  <!-- captured -->
+  <Level id="30" experience="350950" />  <!-- captured -->
+  <Level id="31" experience="381850" />  <!-- captured -->
+  <Level id="32" experience="414850" />  <!-- captured -->
+  <Level id="33" experience="449950" />  <!-- captured -->
+  <Level id="34" experience="487350" />
+  <Level id="35" experience="527250" />
+  <Level id="36" experience="569650" />
+  <Level id="37" experience="614750" />
+  <Level id="38" experience="662650" />
+  <Level id="39" experience="713550" />
+  <Level id="40" experience="767550" />
+  <Level id="41" experience="824950" />
+  <Level id="42" experience="885850" />
+  <Level id="43" experience="950350" />
+  <Level id="44" experience="1018750" />
+  <Level id="45" experience="1095150" />
+  <Level id="46" experience="1176150" />
+  <Level id="47" experience="1262050" />
+  <Level id="48" experience="1353050" />
+  <Level id="49" experience="1449450" />
+  <Level id="50" experience="1551350" />
+  <Level id="51" experience="1659350" />
+  <Level id="52" experience="1773650" />
+  <Level id="53" experience="1894450" />
+  <Level id="54" experience="2022150" />
+  <Level id="55" experience="2157150" />
+  <Level id="56" experience="2299750" />
+  <Level id="57" experience="2450450" />
+  <Level id="58" experience="2609550" />
+  <Level id="59" experience="2777350" />
+  <Level id="60" experience="2954450" />
+  <Level id="61" experience="3157950" />
+  <Level id="62" experience="3372650" />
+  <Level id="63" experience="3599350" />
+  <Level id="64" experience="3838450" />
+  <Level id="65" experience="4090350" />
+  <Level id="66" experience="4356050" />
+  <Level id="67" experience="4636050" />
+  <Level id="68" experience="4930850" />
+  <Level id="69" experience="5241450" />
+  <Level id="70" experience="5568450" />
+  <Level id="71" experience="5912850" />
+  <Level id="72" experience="6275150" />
+  <Level id="73" experience="6656250" />
+  <Level id="74" experience="7057250" />
+  <Level id="75" experience="7478850" />
+  <Level id="76" experience="7922150" />
+  <Level id="77" experience="8430250" />
+  <Level id="78" experience="8964450" />
+  <Level id="79" experience="9526050" />
+  <Level id="80" experience="10116250" />
+  <Level id="81" experience="10736250" />
+  <Level id="82" experience="11387250" />
+  <Level id="83" experience="12070950" />
+  <Level id="84" experience="12788850" />
+  <Level id="85" experience="13542350" />
+  <Level id="86" experience="14333150" />
+  <Level id="87" experience="15162550" />
+  <Level id="88" experience="16032550" />
+  <Level id="89" experience="16945150" />
+  <Level id="90" experience="17901950" />
+  <Level id="91" experience="18904950" />
+  <Level id="92" experience="19956250" />
+  <Level id="93" experience="21057750" />
+  <Level id="94" experience="22211650" />
+  <Level id="95" experience="23420450" />
+  <Level id="96" experience="24686450" />
+  <Level id="97" experience="26011950" />
+  <Level id="98" experience="27399650" />
+  <Level id="99" experience="28851950" />
+  <Level id="100" experience="30371850" />
+  <Level id="101" experience="31962150" />
+  <Level id="102" experience="33625650" />
+  <Level id="103" experience="35365550" />
+  <Level id="104" experience="37185150" />
+  <Level id="105" experience="39087350" />
+  <Level id="106" experience="41076250" />
+  <Level id="107" experience="43154850" />
+  <Level id="108" experience="45326950" />
+  <Level id="109" experience="47596750" />
+  <Level id="110" experience="49967850" />
+  <Level id="111" experience="52444450" />
+  <Level id="112" experience="55031050" />
+  <Level id="113" experience="57732050" />
+  <Level id="114" experience="60551850" />
+  <Level id="115" experience="63495450" />
+  <Level id="116" experience="66567850" />
+  <Level id="117" experience="69773650" />
+  <Level id="118" experience="73118850" />
+  <Level id="119" experience="76608550" />
+  <Level id="120" experience="80248750" />
+  <Level id="121" experience="84045250" />
+  <Level id="122" experience="88004150" />
+  <Level id="123" experience="92132150" />
+  <Level id="124" experience="96435550" />
+  <Level id="125" experience="100921250" />
+  <Level id="126" experience="105596050" />
+  <Level id="127" experience="110467750" />
+  <Level id="128" experience="115543450" />
+  <Level id="129" experience="120831550" />
+  <Level id="130" experience="126339750" />
+  <Level id="131" experience="132076550" />
+  <Level id="132" experience="138051150" />
+  <Level id="133" experience="144271850" />
+  <Level id="134" experience="150748350" />
+  <Level id="135" experience="157490550" />
+  <Level id="136" experience="164508050" />
+  <Level id="137" experience="171811750" />
+  <Level id="138" experience="179411850" />
+  <Level id="139" experience="187319450" />
+  <Level id="140" experience="195546450" />
+  <Level id="141" experience="204104150" />
+  <Level id="142" experience="213005150" />
+  <Level id="143" experience="222261950" />
+  <Level id="144" experience="231887750" />
+  <Level id="145" experience="241896350" />
+  <Level id="146" experience="252301650" />
+  <Level id="147" experience="263118250" />
+  <Level id="148" experience="274360750" />
+  <Level id="149" experience="286045050" />
+  <Level id="150" experience="298186950" />
+  <Level id="151" experience="310803150" />
+  <Level id="152" experience="323910350" />
+  <Level id="153" experience="337726450" />
+  <Level id="154" experience="351870050" />
+  <Level id="155" experience="366559750" />
+  <Level id="156" experience="381815050" />
+  <Level id="157" experience="397656050" />
+  <Level id="158" experience="414103950" />
+  <Level id="159" experience="431179750" />
+  <Level id="160" experience="448905650" />
+  <Level id="161" experience="467305050" />
+  <Level id="162" experience="486401150" />
+  <Level id="163" experience="506218650" />
+  <Level id="164" experience="526782750" />
+  <Level id="165" experience="548119350" />
+  <Level id="166" experience="570255450" />
+  <Level id="167" experience="593219050" />
+  <Level id="168" experience="617038750" />
+  <Level id="169" experience="641743950" />
+  <Level id="170" experience="667365050" />
+  <Level id="171" experience="693934050" />
+  <Level id="172" experience="721482850" />
+  <Level id="173" experience="750045750" />
+  <Level id="174" experience="779656850" />
+  <Level id="175" experience="810352150" />
+  <Level id="176" experience="842168450" />
+  <Level id="177" experience="875143550" />
+  <Level id="178" experience="909317050" />
+  <Level id="179" experience="944729550" />
+  <Level id="180" experience="981422050" />
+  <Level id="181" experience="1019438550" />
+  <Level id="182" experience="1058822950" />
+  <Level id="183" experience="1099620650" />
+  <Level id="184" experience="1141879150" />
+  <Level id="185" experience="1185647450" />
+  <Level id="186" experience="1230975550" />
+  <Level id="187" experience="1277915450" />
+  <Level id="188" experience="1326520350" />
+  <Level id="189" experience="1376844950" />
+  <Level id="190" experience="1428946150" />
+  <Level id="191" experience="1482882450" />
+  <Level id="192" experience="1538714050" />
+  <Level id="193" experience="1596502750" />
+  <Level id="194" experience="1656312750" />
+  <Level id="195" experience="1718209750" />
+  <Level id="196" experience="1782261950" />
+  <Level id="197" experience="1848539150" />
+  <Level id="198" experience="1917113550" />
+  <Level id="199" experience="1988059250" />
+  <Level id="200" experience="2061453150" />
 </Levels>

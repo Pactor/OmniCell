@@ -8,7 +8,7 @@ CREATE TABLE `questwire` (
   `Quality` int(32) NOT NULL DEFAULT 0,
   `TimeLimit` int(32) NOT NULL DEFAULT 0,
   `Unknown20` int(32) NOT NULL DEFAULT 6,
-  `Unknown21` int(32) NOT NULL DEFAULT 0,
+  `RequiredCount` int(32) NOT NULL DEFAULT 0,
   `Unknown22` int(32) NOT NULL DEFAULT 0,
   `Unknown23Type` int(32) NOT NULL DEFAULT 0,
   `Unknown23Instance` int(32) NOT NULL DEFAULT 0,

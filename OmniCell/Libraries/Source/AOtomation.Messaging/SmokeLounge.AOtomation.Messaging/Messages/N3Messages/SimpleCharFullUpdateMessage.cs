@@ -233,7 +233,7 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
         public byte? ImmuneData { get; set; }
 
         /// <summary>
-        /// The same stat again, into the other map. Behind UnknownFlag3.
+        /// The same stat again, into the other map. Behind HasSecondMonsterScale.
         /// </summary>
         /// <remarks>
         /// + 0x121, taken by the dispatcher at 0x10078A40 and filed under the
@@ -245,10 +245,12 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
         /// N3Msg_GetSkill and N3Msg_SetSkillTmp against this subsystem and
         /// that is the same pairing.
         ///
-        /// Which of the two maps is the base one is not settled here.
+        /// Which of the two maps is the base one is not settled here. Every dynamic creature in the
+        /// retail recordings carries 40 (Cleanmeister Intelligence Robot, Supreme Collector of Waste,
+        /// Mutated Garbage Flea, IIV-X Advanced Docker), next to a MonsterScale of 110 to 600.
         /// </remarks>
         [AoMember(25)]
-        public byte? UnknownData3 { get; set; }
+        public byte? SecondMonsterScale { get; set; }
 
         [AoMember(26, SerializeSize = ArraySizeType.X3F1)]
         public ActiveNano[] ActiveNanos { get; set; }
@@ -272,10 +274,12 @@ namespace SmokeLounge.AOtomation.Messaging.Messages.N3Messages
         public WeaponPair[] NoWeaponPairs { get; set; }
 
         /// <summary>
-        /// A byte behind UnknownFlag4.
+        /// Shadowbreed, stat 532: the byte behind HasShadowBreed. The dispatcher at 0x100789F3 pushes
+        /// it with 0x214 into the character's stat table (Documentation/protocol/packets/
+        /// simple-char-full-update.html, proven).
         /// </summary>
         [AoMember(31)]
-        public byte? UnknownData4 { get; set; }
+        public byte? ShadowBreed { get; set; }
 
         /// <summary>
         /// The textures behind HasCatTextures, swapped onto the character's CAT

@@ -15,6 +15,7 @@ namespace ZoneEngine.Core.Combat
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Linq;
 
     using OmniCell.Core.Entities;
     using OmniCell.Core.Inventory;
@@ -28,6 +29,7 @@ namespace ZoneEngine.Core.Combat
     using ZoneEngine.Core.Controllers;
     using ZoneEngine.Core.Loot;
     using ZoneEngine.Core.MessageHandlers;
+    using ZoneEngine.Core.Missions;
     using ZoneEngine.Core.Quests;
 
     #endregion
@@ -101,11 +103,51 @@ namespace ZoneEngine.Core.Combat
             // visible attack state time to begin before damage can kill a
             // low-health target.
             var fight = new Fight(target) { NextSwing = DateTime.UtcNow + AttackDelay(attacker) };
+            Fight previous;
+            bool wasFighting = Fights.TryGetValue(attacker.Identity, out previous);
             Fights[attacker.Identity] = fight;
             attacker.Controller.State = CharacterState.Fighting;
-            SpecialAttackWeaponMessageHandler.Default.AnnounceCombatStart(attacker);
+
+            // A creature turning on a player is StopFight for the creature, then
+            // Attack, then SpecialAttackWeapon - Attack first. Seen in a PRK
+            // capture and the same order as retail (StopFight right before
+            // Attack 1,751 times in the bot recordings).
+            if (attacker.Controller is NPCController && !(victim.Controller is NPCController))
+            {
+                StopFightMessageHandler.Default.Announce(attacker);
+            }
+
             AttackMessageHandler.Default.Send(attacker, target);
+            SpecialAttackWeaponMessageHandler.Default.AnnounceCombatStart(attacker);
+
+            // IsFightingMe (410) on a player counts the fights they are in,
+            // both ways - up on each start, down on each stop (1, 2, 1, 0 over
+            // one fight in the PRK capture; 0 to 13 in the retail captures).
+            if (wasFighting)
+            {
+                FightingMe(attacker.Playfield.FindByIdentity<ICharacter>(previous.Target), -1);
+                FightingMe(attacker, -1);
+            }
+
+            FightingMe(attacker, 1);
+            FightingMe(victim, 1);
             return true;
+        }
+
+        /// <summary>
+        /// Moves a player's IsFightingMe by <paramref name="delta"/>, never below
+        /// zero, and sends it. Creatures are left alone.
+        /// </summary>
+        private static void FightingMe(ICharacter character, int delta)
+        {
+            if (character == null || character.Controller == null || character.Controller is NPCController)
+            {
+                return;
+            }
+
+            int now = StatValue.OrZero(character.Stats[StatIds.isfightingme].Value);
+            character.Stats[StatIds.isfightingme].Value = Math.Max(0, now + delta);
+            character.Controller.SendChangedStats();
         }
 
         /// <summary>
@@ -118,11 +160,21 @@ namespace ZoneEngine.Core.Combat
                 return;
             }
 
-            Fight ignored;
-            if (Fights.TryRemove(attacker.Identity, out ignored) && attacker.Controller != null
-                && attacker.Controller.State == CharacterState.Fighting)
+            Fight ended;
+            if (!Fights.TryRemove(attacker.Identity, out ended))
+            {
+                return;
+            }
+
+            if (attacker.Controller != null && attacker.Controller.State == CharacterState.Fighting)
             {
                 attacker.Controller.State = CharacterState.Idle;
+            }
+
+            FightingMe(attacker, -1);
+            if (attacker.Playfield != null)
+            {
+                FightingMe(attacker.Playfield.FindByIdentity<ICharacter>(ended.Target), -1);
             }
         }
 
@@ -149,11 +201,6 @@ namespace ZoneEngine.Core.Combat
                 return;
             }
 
-            if (DateTime.UtcNow < fight.NextSwing)
-            {
-                return;
-            }
-
             if (attacker.Playfield == null || IsDead(attacker))
             {
                 Stop(attacker);
@@ -167,6 +214,44 @@ namespace ZoneEngine.Core.Combat
                 // announced when the killing blow landed.
                 Stop(attacker);
                 StopFightMessageHandler.Default.Send(attacker);
+                (attacker.Controller as NPCController)?.Halt();
+                return;
+            }
+
+            // A creature closes the distance before it swings. The live server sends the attack, then
+            // runs the creature at its target a step at a time, and the first hit lands on arrival
+            // (Garbage Flea, 20260914-220505: attack at 17 m, runs of 5 m, hit 2.7 s later). It used to
+            // swing from wherever it stood. Checked every tick, not only when a swing is due, so the
+            // chase keeps up with a target that moves.
+            var creature = attacker.Controller as NPCController;
+            if (creature != null)
+            {
+                if (NpcLife.GivesUp(attacker, victim))
+                {
+                    Stop(attacker);
+                    StopFightMessageHandler.Default.Send(attacker);
+                    creature.Halt();
+                    return;
+                }
+
+                if (attacker.Coordinates().Distance2D(victim.Coordinates()) > NpcLife.Reach)
+                {
+                    if (!creature.IsFollowing(victim.Identity))
+                    {
+                        creature.Follow(victim.Identity);
+                    }
+
+                    return;
+                }
+
+                if (creature.IsFollowing())
+                {
+                    creature.Halt();
+                }
+            }
+
+            if (DateTime.UtcNow < fight.NextSwing)
+            {
                 return;
             }
 
@@ -236,8 +321,12 @@ namespace ZoneEngine.Core.Combat
         /// </summary>
         public static void Forget(Identity attacker)
         {
-            Fight ignored;
-            Fights.TryRemove(attacker, out ignored);
+            Fight ended;
+            if (Fights.TryRemove(attacker, out ended))
+            {
+                // Removed without Stop, so the count Stop keeps is lowered here.
+                FightingMe(Pool.Instance.GetObject(ended.Target) as ICharacter, -1);
+            }
         }
 
         #endregion
@@ -578,6 +667,30 @@ namespace ZoneEngine.Core.Combat
             Stop(attacker);
             StopFightMessageHandler.Default.Send(attacker);
 
+            // Everything else fighting the dead stops, and so does the dead - the live server stops
+            // every fight involved before anything else (20260914-124401 s4 4604-4608).
+            foreach (var entry in Fights)
+            {
+                if (entry.Value.Target == victim.Identity)
+                {
+                    Fight ignored;
+                    if (Fights.TryRemove(entry.Key, out ignored))
+                    {
+                        // Removed without Stop, so both sides' IsFightingMe come down here.
+                        FightingMe(Pool.Instance.GetObject(entry.Key) as ICharacter, -1);
+                        FightingMe(victim, -1);
+                    }
+                }
+            }
+
+            Stop(victim);
+
+            // Then it falls over. Without this the client kept the character standing where it was,
+            // on no health. CharacterAction 99 on the victim, before experience and the corpse
+            // (20260914-124401 s4 4609, then the corpse at 4620); Parameter2 is 500 to 503 across
+            // the 569 of them in the fifteen retail recordings.
+            int deathVariant = DeathMessage(victim);
+
             // Quests that are counting this kind of kill hear about it here.
             // Nothing else in the server knows a mob has died.
             // Experience, then "You can loot these remains.", then the corpse - the order the live
@@ -586,6 +699,10 @@ namespace ZoneEngine.Core.Combat
             try
             {
                 QuestManager.OnKill(attacker, victim);
+
+                // And a kill person mission, which names the thing it wants
+                // by the name the creature carries.
+                MissionCompletion.OnKill(attacker, victim);
             }
             catch (System.Exception e)
             {
@@ -606,18 +723,15 @@ namespace ZoneEngine.Core.Combat
             }
 
             // And something has to be left behind, or the kill produces nothing
-            // at all - no body, nothing to loot.
-            Identity corpse = CorpseFullUpdateMessageHandler.Default.Send(victim);
+            // at all - no body, nothing to loot. A corpse of its own: the character is taken away
+            // ten seconds after it falls, the corpse stays until it is looted or three minutes pass,
+            // and by then the spawn may have died again.
+            Identity corpse = NewCorpseIdentity();
+            var playfield = victim.Playfield as OmniCell.Core.Playfields.Playfield;
 
             // The wire object and its inventory are separate things.  Keep the
             // inventory in the object pool so opening the corpse and moving an
             // item out of it follow the same path as every other container.
-            CorpseLoot previous = Pool.Instance.GetObject<CorpseLoot>(victim.Playfield.Identity, corpse);
-            if (previous != null)
-            {
-                previous.Dispose();
-            }
-
             var loot = new CorpseLoot(victim.Playfield.Identity, corpse);
 
             // Loot comes from database rows. A bad row or a database error must not stop the rest of
@@ -631,33 +745,86 @@ namespace ZoneEngine.Core.Combat
                 global::Utility.LogUtil.ErrorException(e, "Loot for {0} could not be generated", victim.Name);
             }
 
-            // The corpse is the model; this is the container that makes it
-            // clickable. The live server sends both.
-            ChestItemFullUpdateMessageHandler.Default.SendForCorpse(
-                victim,
-                corpse,
-                victim.Stats[StatIds.cash].Value);
-
-            // And the playfield is told, because it owns the spawn point this
-            // one came from and it is the only thing that can put another one
-            // there. Without this a killed character stays dead where it fell
-            // for as long as the zone is up.
-            var playfield = victim.Playfield as OmniCell.Core.Playfields.Playfield;
+            // The playfield keeps the corpse message, tells whoever can see the body now, and tells
+            // anybody who walks up while the corpse still lies there.
             if (playfield != null)
             {
+                // No ChestItemFullUpdate: none of the 2717 in the retail recordings is for a corpse (all
+                // are identity type 51017), and one sent under the corpse's own identity took its place
+                // in the client - the corpse was never drawn and could not be clicked.
+                playfield.CorpseLeft(victim, corpse, CorpseFullUpdateMessageHandler.Default.Build(victim, corpse, deathVariant));
+
+                // And the playfield is told, because it owns the spawn point this
+                // one came from and it is the only thing that can put another one
+                // there. Without this a killed character stays dead where it fell
+                // for as long as the zone is up.
                 playfield.Died(victim);
             }
-
-            // Anything that was attacking the corpse should stop too, otherwise
-            // it keeps swinging at a dead target every heartbeat.
-            foreach (var entry in Fights)
+            else
             {
-                if (entry.Value.Target == victim.Identity)
-                {
-                    Fight ignored;
-                    Fights.TryRemove(entry.Key, out ignored);
-                }
+                CorpseFullUpdateMessageHandler.Default.Send(victim, corpse, deathVariant);
             }
+        }
+
+        /// <summary>
+        /// How often each death animation was seen: Parameter2 of the 569 captured deaths.
+        /// </summary>
+        private static readonly int[][] DeathVariants = { new[] { 500, 152 }, new[] { 501, 328 }, new[] { 502, 13 }, new[] { 503, 76 } };
+
+        private static int lastCorpse = 0x01010000;
+
+        /// <summary>
+        /// A corpse identity nothing else holds. The live server numbers corpses from 0x0101xxxx
+        /// (16848897, 16877569); a spawn that dies again while its last corpse still lies there gets
+        /// a second one rather than taking the first one's place.
+        /// </summary>
+        private static Identity NewCorpseIdentity()
+        {
+            return new Identity
+                   {
+                       Type = IdentityType.Corpse,
+                       Instance = System.Threading.Interlocked.Increment(ref lastCorpse)
+                   };
+        }
+
+        private static int DeathMessage(ICharacter victim)
+        {
+            int roll;
+            lock (Rng)
+            {
+                roll = Rng.Next(DeathVariants.Sum(v => v[1]));
+            }
+
+            int variant = DeathVariants[DeathVariants.Length - 1][0];
+            foreach (int[] candidate in DeathVariants)
+            {
+                if (roll < candidate[1])
+                {
+                    variant = candidate[0];
+                    break;
+                }
+
+                roll -= candidate[1];
+            }
+
+            if (victim.Playfield == null)
+            {
+                return variant;
+            }
+
+            victim.Playfield.Announce(
+                new SmokeLounge.AOtomation.Messaging.Messages.N3Messages.CharacterActionMessage
+                {
+                    Identity = victim.Identity,
+                    Unknown = 0,
+                    Action = SmokeLounge.AOtomation.Messaging.Messages.N3Messages.CharacterActionType.Death,
+                    Unknown1 = 0,
+                    Target = Identity.None,
+                    Parameter1 = 0,
+                    Parameter2 = variant,
+                    Unknown2 = 0
+                });
+            return variant;
         }
 
         private static bool IsDead(ICharacter character)
