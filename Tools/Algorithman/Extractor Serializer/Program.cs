@@ -578,6 +578,27 @@ namespace Extractor_Serializer
             return AOPath;
         }
 
+        private static List<(string low, string high, string )> NameSeparationList = new List<(string, string, string)>()
+        {
+            ("Omni Life", "Quality Omni Life", "Armor"),
+            ("Quality Omni Life", "Advanced Omni Life", "Armor"),
+            ("Quality Omni Life", "Advanced Omni Life", "Armor"),
+            ("Quality Omni-Pol Trooper", "Advanced Omni-Pol Trooper", "Armor"),
+            ("Basic ", "Augmented ", "Armor"),
+            ("Battered ", "Enhanced ", "Armor"),
+            ("Inferior ", "Flawless ", "Armor"),
+            ("Recruit-Issue ", "Assault-Issue ", "Armor"),
+            ("Senpai ", "Hanshi ", "Armor"),
+            ("Worn ", "High-Quality ", "Armor"),
+            ("Black Organic ", "Advanced Black Organic ", "Armor"),
+            ("Blue Organic ", "Advanced Blue Organic ", "Armor"),
+            ("Turquoise Organic ", "Advanced Turquoise Organic ", "Armor"),
+            ("Soft ", "Thick ", "Armor"),
+            ("Overtuned Worn ", "Overtuned High-Quality ", "Armor"),
+            ("Head Skinchip - ", "Advanced Head Skinchip - ", "Armor")
+        };
+
+        
         /// <summary>
         /// </summary>
         /// <param name="template">
