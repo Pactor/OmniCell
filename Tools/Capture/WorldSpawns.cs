@@ -1,4 +1,4 @@
-// --------------------------------------------------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="WorldSpawns.cs" company="OmniCell">
 //   Copyright © 2026 OmniCell contributors.
 // </copyright>
@@ -35,17 +35,22 @@ namespace OmniCell.Tools.Capture
     ///
     /// **Where a spawn is** comes from two places, in that order of trust.
     ///
-    /// The bot's per-playfield sighting log says, for each creature it
-    /// watched, whether it appeared while being watched - <c>popIn</c>. That
-    /// is the server creating something at a place, which is what a spawn
-    /// point is, and it is the best evidence there is. Repeat appearances at
-    /// one camp are collapsed within <see cref="SpawnRadius"/>.
+    /// The bot's per-playfield sighting log names every creature it watched
+    /// by the identity the live server gave it, and that identity is what
+    /// makes a count possible: one identity is one creature, however many
+    /// times it was seen. How many of a name there are is the most that were
+    /// ever in view at one moment, and where each one walks is the track it
+    /// was watched walking.
     ///
-    /// Where a playfield and creature have no such moment, its nav entry is
-    /// used instead. That is weaker: the bot records every NPC it sees,
-    /// deduped only at twenty metres, so one creature walking its patrol
-    /// becomes several entries. They are re-collapsed here at a wider radius,
-    /// and the row says which evidence it rests on.
+    /// Where a playfield and creature have no such moment, its nav entries
+    /// are used instead. That is weaker, and weaker in a particular way: the
+    /// bot records every NPC it passes and no identity with it, so one
+    /// creature walking its patrol leaves several entries and ten standing
+    /// still leave the same. **Those entries say a creature is in a playfield;
+    /// they do not say how many there are.** So they give one spawn, and the
+    /// places become the route it walks - the scatter is its pathing, not a
+    /// head count. Read as a count it made twelve of Levon Karubian, who is
+    /// one man.
     ///
     /// **Pets are thrown out by name.** The bot is a Meta-Physicist and its
     /// pets follow it everywhere, so they smear across every place it has
@@ -69,17 +74,6 @@ namespace OmniCell.Tools.Capture
     /// </remarks>
     internal static class WorldSpawns
     {
-        /// <summary>
-        /// How close two appearances have to be to be one spawn point.
-        /// </summary>
-        private const double SpawnRadius = 15.0;
-
-        /// <summary>
-        /// The same, for nav entries, which are already deduped at twenty
-        /// metres and smear along a patrol.
-        /// </summary>
-        private const double NavRadius = 45.0;
-
         /// <summary>
         /// Where generated spawn ids start.
         /// </summary>
@@ -429,13 +423,38 @@ namespace OmniCell.Tools.Capture
         #region where things stand
 
         /// <summary>
-        /// The places the bot watched something appear.
+        /// How many of each creature there are, and where each one walks.
         /// </summary>
         /// <remarks>
         /// One file per playfield, one json object per line, written as the
-        /// bot loses sight of a creature. <c>popIn</c> is the one that
-        /// matters: it means the creature was not there and then was, which
-        /// is the server spawning it.
+        /// bot loses sight of a creature. The field that matters is
+        /// <c>id</c> - the identity the live server gave that creature - and
+        /// it is what makes a count possible at all. Without it a name seen
+        /// in twelve places is either one creature on its round or twelve
+        /// standing still, and no amount of measuring distances tells them
+        /// apart.
+        ///
+        /// **What was here before counted camps, and camps are not
+        /// creatures.** It clustered <c>popIn</c> sightings at fifteen
+        /// metres, on the belief that popIn means the server created
+        /// something. It does not: it means the creature came into the bot's
+        /// awareness, which happens every time the bot walks back into range.
+        /// Levon Karubian popped in 140 times in Borealis. He is one man, and
+        /// he was in the database twelve times.
+        ///
+        /// So the count is the most identities of that name the bot ever saw
+        /// **at one moment** - the sweeps share a timestamp, so one sweep is
+        /// one look at the playfield, and if five Young Scab Hyenas were
+        /// visible together then there are at least five. That is a floor and
+        /// it is honest as one: the bot sees what is near it, so a creature
+        /// on the far side of a playfield is not counted. Forty distinct
+        /// hyenas were seen in pf 795 over days of walking, five together;
+        /// forty is how many times that camp respawned, not how many stand
+        /// there.
+        ///
+        /// Each one gets a <c>track</c> - where that identity was actually
+        /// watched moving - as its route, longest first, so the creature that
+        /// walks furthest is the one whose round is best known.
         /// </remarks>
         private static List<Spawn> ReadSightings(
             string directory,
@@ -457,7 +476,12 @@ namespace OmniCell.Tools.Capture
                     continue;
                 }
 
-                var here = new List<Spawn>();
+                // One sighting per identity, best of what was seen of it, and
+                // how many of that name were ever in view together.
+                var each = new Dictionary<string, Spawn>(StringComparer.Ordinal);
+                var together = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+                var sweep = new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
+
                 foreach (string line in File.ReadLines(path))
                 {
                     if (line.Length < 2)
@@ -477,10 +501,11 @@ namespace OmniCell.Tools.Capture
                         continue;
                     }
 
-                    // Every walk is worth keeping, whoever it belonged to and
-                    // whether or not we saw it arrive: a creature standing in
-                    // the nav list has a route if one of these was it.
                     List<double[]> walked = Path_(line);
+
+                    // Every walk is worth keeping, whoever it belonged to: a
+                    // creature standing in the nav list has a route if one of
+                    // these was it.
                     if (walked != null)
                     {
                         routes.Add(new Spawn
@@ -494,64 +519,100 @@ namespace OmniCell.Tools.Capture
                                    });
                     }
 
-                    if (!Json.Flag(line, "popIn"))
+                    string who = Json.String(line, "id");
+                    if (string.IsNullOrEmpty(who))
                     {
                         continue;
                     }
 
-                    var spawn = new Spawn
-                                {
-                                    Playfield = playfield,
-                                    Name = name,
-                                    X = first[0],
-                                    Y = first[1],
-                                    Z = first[2],
-                                    Level = (int)Json.Number(line, "lvl"),
-                                    Side = (int)Json.Number(line, "side"),
-                                    Watched = true,
-                                    Path = walked,
-                                    Monster = (int)Json.Number(line, "monsterData"),
-                                    Mesh = (int)Json.Number(line, "headMesh"),
-                                    Scale = (int)Json.Number(line, "monsterScale"),
-                                    Heading = Facing(line),
-                                };
-
-                    Spawn near = here.FirstOrDefault(
-                        s => string.Equals(s.Name, name, StringComparison.OrdinalIgnoreCase)
-                             && Apart(s, spawn) < SpawnRadius);
-                    if (near == null)
+                    // How many stood there at once. The sweeps share a
+                    // timestamp, so a timestamp is one look at the playfield.
+                    string when = Json.String(line, "t");
+                    if (!string.IsNullOrEmpty(when))
                     {
-                        here.Add(spawn);
+                        string moment = name.ToLowerInvariant() + "@" + when;
+                        HashSet<string> seen;
+                        if (!sweep.TryGetValue(moment, out seen))
+                        {
+                            seen = new HashSet<string>(StringComparer.Ordinal);
+                            sweep[moment] = seen;
+                        }
+
+                        seen.Add(who);
+                        int most;
+                        if (!together.TryGetValue(name, out most) || seen.Count > most)
+                        {
+                            together[name] = seen.Count;
+                        }
+                    }
+
+                    var sighting = new Spawn
+                                   {
+                                       Playfield = playfield,
+                                       Name = name,
+                                       X = first[0],
+                                       Y = first[1],
+                                       Z = first[2],
+                                       Level = (int)Json.Number(line, "lvl"),
+                                       Side = (int)Json.Number(line, "side"),
+                                       Watched = true,
+                                       Path = walked,
+                                       Monster = (int)Json.Number(line, "monsterData"),
+                                       Mesh = (int)Json.Number(line, "headMesh"),
+                                       Scale = (int)Json.Number(line, "monsterScale"),
+                                       Heading = Facing(line),
+                                   };
+
+                    Spawn known;
+                    if (!each.TryGetValue(who, out known))
+                    {
+                        each[who] = sighting;
                         continue;
                     }
 
-                    // Same camp, seen again: keep the longer path and the
-                    // higher level, because a camp holds a range and the
-                    // spawn should be able to cover it.
-                    if (spawn.Level > near.Level)
+                    // The same creature, watched again. Keep the longest walk
+                    // and the most that was ever learned about it.
+                    if (sighting.Level > known.Level)
                     {
-                        near.Level = spawn.Level;
+                        known.Level = sighting.Level;
                     }
 
-                    if (near.Path == null || (spawn.Path != null && spawn.Path.Count > near.Path.Count))
+                    if (known.Path == null
+                        || (sighting.Path != null && sighting.Path.Count > known.Path.Count))
                     {
-                        near.Path = spawn.Path;
+                        known.Path = sighting.Path;
                     }
 
-                    if (near.Monster == 0 && spawn.Monster > 0)
+                    if (known.Monster == 0 && sighting.Monster > 0)
                     {
-                        near.Monster = spawn.Monster;
-                        near.Mesh = spawn.Mesh;
-                        near.Scale = spawn.Scale;
+                        known.Monster = sighting.Monster;
+                        known.Mesh = sighting.Mesh;
+                        known.Scale = sighting.Scale;
                     }
 
-                    if (double.IsNaN(near.Heading))
+                    if (double.IsNaN(known.Heading))
                     {
-                        near.Heading = spawn.Heading;
+                        known.Heading = sighting.Heading;
                     }
                 }
 
-                spawns.AddRange(here.Where(s => s.Level > 0));
+                // As many of each name as were ever in view together, and the
+                // ones with the most walking behind them. An identity is one
+                // creature's life, and a camp that respawned forty times over
+                // a week is not forty creatures standing in it.
+                foreach (IGrouping<string, Spawn> kind in
+                    each.Values.Where(s => s.Level > 0)
+                        .GroupBy(s => s.Name, StringComparer.OrdinalIgnoreCase))
+                {
+                    int most;
+                    if (!together.TryGetValue(kind.Key, out most) || most < 1)
+                    {
+                        most = 1;
+                    }
+
+                    spawns.AddRange(
+                        kind.OrderByDescending(s => s.Path == null ? 0 : s.Path.Count).Take(most));
+                }
             }
 
             return spawns;
@@ -613,31 +674,96 @@ namespace OmniCell.Tools.Capture
                         continue;
                     }
 
-                    var spawn = new Spawn
-                                {
-                                    Playfield = playfield,
-                                    Name = name,
-                                    X = Json.Number(entry, "X"),
-                                    Y = Json.Number(entry, "Y"),
-                                    Z = Json.Number(entry, "Z"),
-                                    Level = level,
-                                    Monster = (int)Json.Number(entry, "MonsterData"),
-                                    Mesh = (int)Json.Number(entry, "Mesh"),
-                                };
-
-                    if (here.Any(s => string.Equals(s.Name, name, StringComparison.OrdinalIgnoreCase)
-                                      && Apart(s, spawn) < NavRadius))
-                    {
-                        continue;
-                    }
-
-                    here.Add(spawn);
+                    here.Add(
+                        new Spawn
+                            {
+                                Playfield = playfield,
+                                Name = name,
+                                X = Json.Number(entry, "X"),
+                                Y = Json.Number(entry, "Y"),
+                                Z = Json.Number(entry, "Z"),
+                                Level = level,
+                                Monster = (int)Json.Number(entry, "MonsterData"),
+                                Mesh = (int)Json.Number(entry, "Mesh"),
+                            });
                 }
 
-                spawns.AddRange(here);
+                spawns.AddRange(One(here));
             }
 
             return spawns;
+        }
+
+        /// <summary>
+        /// One spawn per creature per playfield, walking the places it was
+        /// seen.
+        /// </summary>
+        /// <remarks>
+        /// **A sighting says a creature was there. It does not say how many
+        /// there were.** The nav list records a name, a level and a place and
+        /// no identity at all, so one creature walking its round and ten
+        /// standing still leave the same trail, and nothing in the file tells
+        /// them apart. Collapsing at a radius guessed at how far a creature
+        /// wanders is guessing, and it guessed badly: Levon Karubian is one
+        /// named character and became twelve people in Borealis, the ICC
+        /// Peacekeeper twenty-four, and the bot logged Young Scab Hyena 201
+        /// times in one playfield.
+        ///
+        /// **The scattered sightings are the pathing, so they are kept as
+        /// pathing.** One creature seen in eight places is not eight
+        /// creatures; it is one that walks through eight places, and those
+        /// eight places are the most that is known about where it goes. So a
+        /// name gives one spawn and the sightings become its route, and
+        /// nothing that was measured is thrown away - it only stops being
+        /// read as a head count.
+        ///
+        /// It stands at the sighting nearest the middle of them, which for
+        /// something on patrol is a place along its round rather than
+        /// whichever end happened to be seen first, and it is a place the
+        /// creature was actually seen rather than an average of places.
+        ///
+        /// Two things this cannot do. The order is the order the bot wrote
+        /// them down, which is the order it passed them and not necessarily
+        /// the order the creature walks them - a real walk, where one was
+        /// watched, is better and <see cref="Route"/> still prefers it. And
+        /// counting properly needs the identity the server puts on each
+        /// creature, which is on the wire and is not written down; until the
+        /// bot records it, there is no count to be had.
+        /// </remarks>
+        private static List<Spawn> One(List<Spawn> sightings)
+        {
+            var kept = new List<Spawn>();
+            foreach (IGrouping<string, Spawn> creature in
+                sightings.GroupBy(s => s.Name.ToLowerInvariant()))
+            {
+                List<Spawn> seen = creature.ToList();
+                double x = seen.Average(s => s.X);
+                double y = seen.Average(s => s.Y);
+                double z = seen.Average(s => s.Z);
+
+                Spawn middle = seen.OrderBy(
+                    s => ((s.X - x) * (s.X - x)) + ((s.Y - y) * (s.Y - y)) + ((s.Z - z) * (s.Z - z))).First();
+
+                // A camp holds a range and the spawn should be able to cover
+                // it, the same as a watched one.
+                middle.Level = seen.Max(s => s.Level);
+
+                // Where it was seen is where it goes. Kept in the order they
+                // were written down, starting from the one it stands on, so
+                // the round begins where the creature does.
+                if (seen.Count > 1)
+                {
+                    var route = new List<double[]> { new[] { middle.X, middle.Y, middle.Z } };
+                    route.AddRange(
+                        seen.Where(s => !ReferenceEquals(s, middle))
+                            .Select(s => new[] { s.X, s.Y, s.Z }));
+                    middle.Path = route;
+                }
+
+                kept.Add(middle);
+            }
+
+            return kept;
         }
 
         /// <summary>
@@ -658,7 +784,10 @@ namespace OmniCell.Tools.Capture
             int given = 0;
             foreach (Spawn spawn in spawns)
             {
-                if (spawn.Path != null)
+                // A walk the bot actually followed beats a line drawn through
+                // the places a creature was noticed, so only a route that was
+                // itself walked is left alone here.
+                if (spawn.Path != null && spawn.Watched)
                 {
                     continue;
                 }
