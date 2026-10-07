@@ -1,37 +1,8 @@
-﻿#region License
-
-// Copyright (c) 2005-2014, CellAO Team
-// 
-// 
-// All rights reserved.
-// 
-// 
-// Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-// 
-// 
-//     * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-//     * Neither the name of the CellAO Team nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
-// 
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-// LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-// 
-
-#endregion
-
 namespace ChatEngine.PacketHandlers
 {
     #region Usings ...
+
+    using System.Linq;
 
     using ChatEngine.CoreClient;
 
@@ -45,21 +16,28 @@ namespace ChatEngine.PacketHandlers
         #region Fields
 
         /// <summary>
-        /// The message
+        /// The message body.
         /// </summary>
         private string message = string.Empty;
 
         /// <summary>
-        /// Player ID
+        /// The extended message blob.
         /// </summary>
-        private uint playerid;
+        private string blob = string.Empty;
+
+        /// <summary>
+        /// The private group id (owner character id) the message is sent to.
+        /// </summary>
+        private uint groupId;
 
         #endregion
 
         #region Public Methods and Operators
 
         /// <summary>
-        /// Read private group message
+        /// Read a private group message and fan it out to every member of the
+        /// group (the owner plus everyone joined), the sender included, which is
+        /// how the retail chat server echoes it back.
         /// </summary>
         /// <param name="client">
         /// Client sending
@@ -73,15 +51,50 @@ namespace ChatEngine.PacketHandlers
 
             reader.ReadUInt16(); // Packet ID
             reader.ReadUInt16(); // Data length
-            this.playerid = reader.ReadUInt32();
+            this.groupId = reader.ReadUInt32();
             this.message = reader.ReadString();
+            this.blob = reader.ReadString();
             client.Server.Debug(
                 client,
-                "{0} >> PrivGrpMessage: PlayerId: {1} Message: {2}",
+                "{0} >> PrivGrpMessage: Group: {1} Message: {2}",
                 client.Character.characterName,
-                this.playerid,
+                this.groupId,
                 this.message);
             reader.Finish();
+
+            uint senderId = client.Character.CharacterId;
+
+            if (!client.ChatServer().ConnectedClients.TryGetValue(this.groupId, out Client owner))
+            {
+                return; // the group owner is not online
+            }
+
+            uint[] members;
+            bool isMember;
+            lock (owner.PrivateGroupMembers)
+            {
+                isMember = senderId == this.groupId || owner.PrivateGroupMembers.Contains(senderId);
+                members = owner.PrivateGroupMembers.ToArray();
+            }
+
+            if (!isMember)
+            {
+                return; // only the owner or a joined member may talk in the group
+            }
+
+            byte[] outPacket = Packets.PrivateGroupMessage.Create(this.groupId, senderId, this.message, this.blob);
+
+            // Owner first, then each joined member. Everyone, sender included.
+            PrivateGroupHelper.TellName(owner, client);
+            owner.Send(outPacket);
+            foreach (uint memberId in members)
+            {
+                if (client.ChatServer().ConnectedClients.TryGetValue(memberId, out Client member))
+                {
+                    PrivateGroupHelper.TellName(member, client);
+                    member.Send(outPacket);
+                }
+            }
         }
 
         #endregion

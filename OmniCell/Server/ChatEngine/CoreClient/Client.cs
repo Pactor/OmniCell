@@ -68,6 +68,27 @@ namespace ChatEngine.CoreClient
         public readonly HashSet<uint> Buddies = new HashSet<uint>();
 
         /// <summary>
+        /// Characters currently joined to the private group this connection owns.
+        /// A character's private group id equals its own character id, so the
+        /// owner fans every private group message out to this set. Lock to use.
+        /// </summary>
+        public readonly HashSet<uint> PrivateGroupMembers = new HashSet<uint>();
+
+        /// <summary>
+        /// Private group ids (owner character ids) this connection has an
+        /// outstanding invite to and may still accept with a join (packet 52).
+        /// Lock to use.
+        /// </summary>
+        public readonly HashSet<uint> PendingPrivateGroupInvites = new HashSet<uint>();
+
+        /// <summary>
+        /// The private group this connection is currently a member of, if any
+        /// (the owner's character id); 0 when in none. A character may be in one
+        /// at a time, matching the retail client.
+        /// </summary>
+        public uint JoinedPrivateGroup;
+
+        /// <summary>
         /// Private known clients collection
         /// </summary>
         private readonly List<uint> knownClients;

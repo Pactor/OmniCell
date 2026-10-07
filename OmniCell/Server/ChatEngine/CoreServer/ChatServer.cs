@@ -131,6 +131,8 @@ namespace ChatEngine.CoreServer
                 channel.RemoveClient(cl);
             }
 
+            this.CleanupPrivateGroups(cl);
+
             if (cl.Character.CharacterId != 0)
             {
                 CharacterDao.Instance.SetOffline((int)cl.Character.CharacterId);
@@ -145,6 +147,82 @@ namespace ChatEngine.CoreServer
                 if (wasConnected)
                 {
                     this.NotifyBuddies(cl.Character.CharacterId, false);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Removes a disconnecting character from any private group it is in and
+        /// disbands the group it owns, telling everyone still online. Called while
+        /// the character is still registered so member lookups still resolve.
+        /// </summary>
+        public void CleanupPrivateGroups(Client cl)
+        {
+            uint id = cl.Character.CharacterId;
+
+            // Leave the group this character had joined.
+            uint joined = cl.JoinedPrivateGroup;
+            cl.JoinedPrivateGroup = 0;
+            if (joined != 0)
+            {
+                Client owner;
+                bool existed;
+                lock (this.ConnectedClients)
+                {
+                    existed = this.ConnectedClients.TryGetValue(joined, out owner);
+                }
+
+                if (existed && owner != cl)
+                {
+                    uint[] remaining;
+                    lock (owner.PrivateGroupMembers)
+                    {
+                        existed = owner.PrivateGroupMembers.Remove(id);
+                        remaining = owner.PrivateGroupMembers.ToArray();
+                    }
+
+                    if (existed)
+                    {
+                        byte[] left = PrivateGroupPlayerLeft.Create(joined, id);
+                        owner.Send(left);
+                        foreach (uint memberId in remaining)
+                        {
+                            Client member;
+                            lock (this.ConnectedClients)
+                            {
+                                this.ConnectedClients.TryGetValue(memberId, out member);
+                            }
+
+                            member?.Send(left);
+                        }
+                    }
+                }
+            }
+
+            // Disband the group this character owns.
+            uint[] members;
+            lock (cl.PrivateGroupMembers)
+            {
+                members = cl.PrivateGroupMembers.ToArray();
+                cl.PrivateGroupMembers.Clear();
+            }
+
+            if (members.Length != 0)
+            {
+                byte[] ownerLeft = PrivateGroupPlayerLeft.Create(id, id);
+                foreach (uint memberId in members)
+                {
+                    Client member;
+                    lock (this.ConnectedClients)
+                    {
+                        this.ConnectedClients.TryGetValue(memberId, out member);
+                    }
+
+                    if (member != null)
+                    {
+                        member.JoinedPrivateGroup = 0;
+                        member.Send(ownerLeft);
+                    }
                 }
             }
         }
